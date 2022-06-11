@@ -10,4 +10,10 @@ TFTourney is a hobby project for a website to display results and statistics of 
 
 # How to run
 
-Clone the repository, you should not need to install dependencies as they are already bundled at `.yarn/cache` thanks to [yarn zero-installs](https://yarnpkg.com/features/zero-installs). Then, on each package there are instructions on how to run them.
+Clone the repository and run on the root:
+
+```bash
+$ yarn install
+```
+
+ You should not need to install dependencies as they are already bundled at `.yarn/cache` thanks to [yarn zero-installs](https://yarnpkg.com/features/zero-installs), but some linking is still necessary. Then, on each package there are instructions on how to run them.
