@@ -1,0 +1,14 @@
+diff --git a/utils/load-package.util.js b/utils/load-package.util.js
+index e9510f4930be6968c8fe264b7cebc3473707f6b9..8cb7f8c96922a6258f81cb83da118707e017d280 100644
+--- a/utils/load-package.util.js
++++ b/utils/load-package.util.js
+@@ -9,7 +9,8 @@ function loadPackage(packageName, context, loaderFn) {
+         return loaderFn ? loaderFn() : require(packageName);
+     }
+     catch (e) {
+-        logger.error(MISSING_REQUIRED_DEPENDENCY(packageName, context));
++        logger.log(e);
++        // logger.error(MISSING_REQUIRED_DEPENDENCY(packageName, context));
+         logger_service_1.Logger.flush();
+         process.exit(1);
+     }
