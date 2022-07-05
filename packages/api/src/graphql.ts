@@ -74,5 +74,9 @@ export interface IQuery {
     playerFilterMeta(): PlayerFilterMeta | Promise<PlayerFilterMeta>;
 }
 
+export interface IMutation {
+    createUser(name: string, country: string, region: string): Player | Promise<Player>;
+}
+
 export type DateTime = any;
 type Nullable<T> = T | null;

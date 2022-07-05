@@ -16,6 +16,8 @@ interface PlayerRegion {
   region: string;
 }
 
+type CreatePlayerPayload = Omit<Player, "id">;
+
 @Injectable()
 export class PlayersService {
   constructor(
@@ -29,6 +31,14 @@ export class PlayersService {
 
   async findAll(filters: PlayersQueryFilter): Promise<Player[]> {
     return this.playerRepository.find({ where: filters });
+  }
+
+  async createOne({
+    name,
+    country,
+    region,
+  }: CreatePlayerPayload): Promise<Player> {
+    return this.playerRepository.save({ name, country, region });
   }
 
   async findUniqueCountries(): Promise<string[]> {

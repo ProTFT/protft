@@ -25,6 +25,7 @@ import { useWindowSize, WindowSize } from "./hooks/useWindowSize";
 import { PlayersContainer } from "./pages/Players/Players";
 import { Player } from "./pages/Player/Player";
 import { SuspenseElement } from "./components/SuspendedPage";
+import { TournamentWizard } from "./pages/TournamentWizard/TournamentWizard";
 
 const theme = extendTheme({
   fonts: {
@@ -64,6 +65,9 @@ export const App = () => {
             </Link>
             <Link to="/stats">
               <Button variant="ghost">Stats</Button>
+            </Link>
+            <Link to="/addTournament">
+              <Button variant="ghost">Add Tournament</Button>
             </Link>
           </Box>
           <Box>
@@ -120,6 +124,12 @@ export const App = () => {
             <Route
               path=":playerId"
               element={<SuspenseElement element={<Player />} />}
+            />
+          </Route>
+          <Route path="addTournament">
+            <Route
+              index
+              element={<SuspenseElement element={<TournamentWizard />} />}
             />
           </Route>
         </Routes>

@@ -1,4 +1,4 @@
-import { Lobby, PlayerLobbyResult, Round } from "../graphql/schema";
+import { Lobby, PlayerLobbyResult } from "../graphql/schema";
 
 interface LobbyGeneratorProps {
   id?: number;
@@ -7,7 +7,6 @@ interface LobbyGeneratorProps {
   tournamentId?: number;
   stageId?: number;
   roundCount?: number;
-  rounds?: Round[];
   playersResults?: PlayerLobbyResult[];
 }
 
@@ -17,7 +16,6 @@ export const lobby = ({
   sequence,
   tournamentId,
   stageId,
-  rounds,
   playersResults,
 }: LobbyGeneratorProps): Lobby => {
   const randomId = Math.floor(Math.random() * 99999);
@@ -28,7 +26,6 @@ export const lobby = ({
     tournamentId: tournamentId || randomId,
     stageId: stageId || randomId,
     roundCount: (playersResults && playersResults[0]?.positions.length) || 0,
-    rounds: rounds || [],
     playersResults: playersResults || [],
   };
 };

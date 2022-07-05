@@ -1,4 +1,4 @@
-import { Args, Int, Query, Resolver } from "@nestjs/graphql";
+import { Args, Int, Mutation, Query, Resolver } from "@nestjs/graphql";
 import { BaseResolver } from "../lib/BaseResolver";
 import { Player, PlayerFilterMeta } from "./player.entity";
 import { PlayersService } from "./players.service";
@@ -33,5 +33,15 @@ export class PlayersResolver extends BaseResolver {
       possibleCountries,
       possibleRegions,
     };
+  }
+
+  @Mutation(() => Player)
+  async createUser(
+    @Args({ name: "name" }) name: string,
+    @Args({ name: "country" }) country: string,
+    @Args({ name: "region" }) region: string,
+  ) {
+    const payload = { name, country, region };
+    return this.playersService.createOne(payload);
   }
 }

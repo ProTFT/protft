@@ -18,9 +18,9 @@ export interface Player {
   country?: Nullable<string>;
 }
 
-export interface PlayerListQueryResult {
-  players: Player[];
-  uniqueCountries: string[];
+export interface PlayerFilterMeta {
+  possibleCountries: string[];
+  possibleRegions: string[];
 }
 
 export interface Tournament {
@@ -37,24 +37,14 @@ export interface Tournament {
   stages?: Nullable<Stage[]>;
 }
 
-export interface RoundResult {
-  tournamentId: number;
-  stageId: number;
-  lobbyId: number;
-  roundId: number;
-  playerId: number;
-  position: number;
-  points: number;
-  player: Player;
-}
-
-export interface Round {
+export interface Stage {
   id: number;
+  name: string;
   sequence: number;
+  isFinal?: Nullable<boolean>;
   tournamentId: number;
-  stageId: number;
-  lobbyId: number;
-  roundResults?: Nullable<RoundResult[]>;
+  pointSchemaId: number;
+  lobbies?: Nullable<Lobby[]>;
 }
 
 export interface PlayerLobbyResult {
@@ -71,17 +61,6 @@ export interface Lobby {
   sequence: number;
   roundCount: number;
   playersResults?: Nullable<PlayerLobbyResult[]>;
-  rounds?: Nullable<Round[]>;
-}
-
-export interface Stage {
-  id: number;
-  name: string;
-  sequence: number;
-  isFinal?: Nullable<boolean>;
-  tournamentId: number;
-  pointSchemaId: number;
-  lobbies?: Nullable<Lobby[]>;
 }
 
 export interface IQuery {
@@ -92,8 +71,17 @@ export interface IQuery {
   players(
     region?: Nullable<string>,
     country?: Nullable<string>
-  ): PlayerListQueryResult | Promise<PlayerListQueryResult>;
+  ): Player[] | Promise<Player[]>;
   player(id: number): Player | Promise<Player>;
+  playerFilterMeta(): PlayerFilterMeta | Promise<PlayerFilterMeta>;
+}
+
+export interface IMutation {
+  createUser(
+    name: string,
+    country: string,
+    region: string
+  ): Player | Promise<Player>;
 }
 
 export type DateTime = any;

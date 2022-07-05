@@ -1,5 +1,7 @@
 import { ColorModeScript } from "@chakra-ui/react";
 import * as React from "react";
+import { DndProvider } from "react-dnd";
+import { HTML5Backend } from "react-dnd-html5-backend";
 import * as ReactDOM from "react-dom/client";
 import { BrowserRouter } from "react-router-dom";
 import { createClient, Provider } from "urql";
@@ -20,7 +22,9 @@ root.render(
     <BrowserRouter>
       <ColorModeScript />
       <Provider value={graphqlClient}>
-        <App />
+        <DndProvider backend={HTML5Backend}>
+          <App />
+        </DndProvider>
       </Provider>
     </BrowserRouter>
   </React.StrictMode>
