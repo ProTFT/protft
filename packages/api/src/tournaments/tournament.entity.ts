@@ -28,8 +28,8 @@ export class Tournament {
   name: string;
 
   @Field(() => [String], { nullable: true })
-  @Column({ nullable: true, array: true })
-  region: string;
+  @Column("varchar", { nullable: true, array: true })
+  region: string[];
 
   @Field({ nullable: true })
   @Column({ nullable: true })

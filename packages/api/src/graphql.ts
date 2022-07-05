@@ -75,6 +75,7 @@ export interface IQuery {
 }
 
 export interface IMutation {
+    createTournament(name: string, setId: number, region?: Nullable<string[]>, host?: Nullable<string>, participantsNumber?: Nullable<number>, prizePool?: Nullable<number>, startDate?: Nullable<DateTime>, endDate?: Nullable<DateTime>): Tournament | Promise<Tournament>;
     createUser(name: string, country: string, region: string): Player | Promise<Player>;
 }
 

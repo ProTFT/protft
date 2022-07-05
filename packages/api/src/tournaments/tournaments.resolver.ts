@@ -1,6 +1,7 @@
 import {
   Args,
   Int,
+  Mutation,
   Parent,
   Query,
   ResolveField,
@@ -39,5 +40,31 @@ export class TournamentsResolver {
   async stages(@Parent() tournament: Tournament) {
     const { id } = tournament;
     return this.stagesService.findAllByTournament(id);
+  }
+
+  @Mutation(() => Tournament)
+  async createTournament(
+    @Args({ name: "name" }) name: string,
+    @Args({ name: "setId" }) setId: number,
+    @Args({ name: "region", nullable: true, type: () => [String] })
+    region: string[],
+    @Args({ name: "host", nullable: true }) host: string,
+    @Args({ name: "participantsNumber", nullable: true })
+    participantsNumber: number,
+    @Args({ name: "prizePool", nullable: true }) prizePool: number,
+    @Args({ name: "startDate", nullable: true }) startDate: Date,
+    @Args({ name: "endDate", nullable: true }) endDate: Date,
+  ) {
+    const payload = {
+      name,
+      region,
+      host,
+      participantsNumber,
+      prizePool,
+      startDate,
+      endDate,
+      setId,
+    };
+    return this.tournamentsService.createOne(payload);
   }
 }

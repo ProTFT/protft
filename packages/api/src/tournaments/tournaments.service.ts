@@ -3,6 +3,8 @@ import { InjectRepository } from "@nestjs/typeorm";
 import { Repository } from "typeorm";
 import { Tournament } from "./tournament.entity";
 
+type CreateTournamentPayload = Partial<Omit<Tournament, "id">>;
+
 @Injectable()
 export class TournamentsService {
   constructor(
@@ -16,5 +18,9 @@ export class TournamentsService {
 
   findOne(id: number): Promise<Tournament> {
     return this.tournamentRepository.findOne(id);
+  }
+
+  createOne(payload: CreateTournamentPayload): Promise<Tournament> {
+    return this.tournamentRepository.save(payload);
   }
 }
