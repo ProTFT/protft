@@ -47,13 +47,13 @@ export class TournamentsResolver {
     @Args({ name: "name" }) name: string,
     @Args({ name: "setId" }) setId: number,
     @Args({ name: "region", nullable: true, type: () => [String] })
-    region: string[],
-    @Args({ name: "host", nullable: true }) host: string,
+    region?: string[],
+    @Args({ name: "host", nullable: true }) host?: string,
     @Args({ name: "participantsNumber", nullable: true })
-    participantsNumber: number,
-    @Args({ name: "prizePool", nullable: true }) prizePool: number,
-    @Args({ name: "startDate", nullable: true }) startDate: Date,
-    @Args({ name: "endDate", nullable: true }) endDate: Date,
+    participantsNumber?: number,
+    @Args({ name: "prizePool", nullable: true }) prizePool?: number,
+    @Args({ name: "startDate", nullable: true }) startDate?: Date,
+    @Args({ name: "endDate", nullable: true }) endDate?: Date,
   ) {
     const payload = {
       name,

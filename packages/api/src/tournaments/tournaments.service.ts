@@ -1,9 +1,10 @@
 import { Injectable } from "@nestjs/common";
 import { InjectRepository } from "@nestjs/typeorm";
 import { Repository } from "typeorm";
+import { MutationPayload } from "../lib/types";
 import { Tournament } from "./tournament.entity";
 
-type CreateTournamentPayload = Partial<Omit<Tournament, "id">>;
+type CreateTournamentPayload = MutationPayload<Tournament, "name" | "setId">;
 
 @Injectable()
 export class TournamentsService {

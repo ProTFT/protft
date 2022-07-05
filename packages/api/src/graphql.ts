@@ -42,7 +42,7 @@ export interface Stage {
     id: number;
     name: string;
     sequence: number;
-    isFinal?: Nullable<boolean>;
+    isFinal: boolean;
     tournamentId: number;
     pointSchemaId: number;
     lobbies?: Nullable<Lobby[]>;
@@ -76,6 +76,7 @@ export interface IQuery {
 
 export interface IMutation {
     createTournament(name: string, setId: number, region?: Nullable<string[]>, host?: Nullable<string>, participantsNumber?: Nullable<number>, prizePool?: Nullable<number>, startDate?: Nullable<DateTime>, endDate?: Nullable<DateTime>): Tournament | Promise<Tournament>;
+    createStage(tournamentId: number, pointSchemaId: number, name: string, sequence: number, isFinal: boolean): Stage | Promise<Stage>;
     createUser(name: string, country: string, region: string): Player | Promise<Player>;
 }
 
