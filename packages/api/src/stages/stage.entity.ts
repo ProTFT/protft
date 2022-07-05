@@ -28,8 +28,8 @@ export class Stage {
   @Column()
   sequence: number;
 
-  @Field({ nullable: true })
-  @Column({ nullable: true })
+  @Field()
+  @Column()
   isFinal: boolean;
 
   @Field()
