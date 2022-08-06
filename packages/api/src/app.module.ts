@@ -38,6 +38,7 @@ const prodDatabaseInfo: TypeOrmModuleOptions = {
         : localDatabaseInfo),
       autoLoadEntities: true,
       synchronize: true,
+      logging: true,
     }),
     GraphQLModule.forRoot<ApolloDriverConfig>({
       driver: ApolloDriver,

@@ -1,4 +1,4 @@
-import { Field, Int, ObjectType } from "@nestjs/graphql";
+import { Field, InputType, Int, ObjectType, OmitType } from "@nestjs/graphql";
 import { Column, Entity, PrimaryGeneratedColumn } from "typeorm";
 
 @ObjectType()
@@ -29,3 +29,6 @@ export class PlayerFilterMeta {
   @Field(() => [String])
   possibleRegions: string[];
 }
+
+// @InputType()
+// export class PlayerInput extends OmitType(Player, ["id"] as const, InputType) {}

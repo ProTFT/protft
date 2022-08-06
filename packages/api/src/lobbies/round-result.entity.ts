@@ -1,7 +1,4 @@
-import { Lobby } from "../lobbies/lobby.entity";
 import { Player } from "../players/player.entity";
-import { Stage } from "../stages/stage.entity";
-import { Tournament } from "../tournaments/tournament.entity";
 import {
   Column,
   Entity,
@@ -11,37 +8,24 @@ import {
   PrimaryColumn,
 } from "typeorm";
 import { Round } from "./round.entity";
+import { Lobby } from "./lobby.entity";
 
 @Entity()
-@Index(["tournamentId", "stageId", "lobbyId", "roundId", "position"], {
+@Index(["lobbyId", "roundId", "position"], {
   unique: true,
 })
 export class RoundResult {
   @PrimaryColumn()
-  tournamentId: number;
-
-  @PrimaryColumn()
-  stageId: number;
+  roundId: number;
 
   @PrimaryColumn()
   lobbyId: number;
-
-  @PrimaryColumn()
-  roundId: number;
 
   @Column()
   playerId: number;
 
   @PrimaryColumn()
   position: number;
-
-  @ManyToOne(() => Tournament)
-  @JoinColumn({ name: "tournamentId" })
-  tournament: Tournament;
-
-  @ManyToOne(() => Stage)
-  @JoinColumn({ name: "stageId" })
-  stage: Stage;
 
   @ManyToOne(() => Lobby)
   @JoinColumn({ name: "lobbyId" })

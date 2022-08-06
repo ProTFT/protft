@@ -1,17 +1,18 @@
-import { Field, Int, ObjectType } from "@nestjs/graphql";
+import { Field, InputType, Int, ObjectType, OmitType } from "@nestjs/graphql";
 import { Player } from "../players/player.entity";
 import { Stage } from "../stages/stage.entity";
-import { Tournament } from "../tournaments/tournament.entity";
 import {
   Column,
   Entity,
   Index,
-  JoinColumn,
+  JoinTable,
+  ManyToMany,
   ManyToOne,
   OneToMany,
   PrimaryGeneratedColumn,
 } from "typeorm";
-import { Round } from "./round.entity";
+import { RoundInput } from "./round.entity";
+import { RoundResult } from "./round-result.entity";
 
 @ObjectType()
 export class PlayerLobbyResult {
@@ -27,15 +28,11 @@ export class PlayerLobbyResult {
 
 @ObjectType()
 @Entity()
-@Index(["tournamentId", "stageId", "sequence"], { unique: true })
+@Index(["stageId", "sequence"], { unique: true })
 export class Lobby {
   @Field(() => Int)
   @PrimaryGeneratedColumn()
   id: number;
-
-  @Field()
-  @Column()
-  tournamentId: number;
 
   @Field()
   @Column()
@@ -55,14 +52,33 @@ export class Lobby {
   @Field(() => [PlayerLobbyResult], { nullable: true })
   playersResults: PlayerLobbyResult[];
 
-  @OneToMany(() => Round, (round) => round.lobbyId)
-  rounds: Round[];
+  @Field(() => [Player])
+  @ManyToMany(() => Player, { cascade: true })
+  @JoinTable()
+  players: Player[];
 
-  @ManyToOne(() => Tournament)
-  @JoinColumn({ name: "tournamentId" })
-  tournament: Tournament;
-
-  @ManyToOne(() => Stage)
-  @JoinColumn({ name: "stageId" })
+  @ManyToOne(() => Stage, (stage) => stage.id)
   stage: Stage;
+
+  @OneToMany(() => RoundResult, (roundResult) => roundResult.lobbyId)
+  roundResults: RoundResult[];
+}
+
+@InputType()
+export class LobbyInput extends OmitType(
+  Lobby,
+  ["id", "players", "playersResults", "stage", "stageId"] as const,
+  InputType,
+) {
+  @Field(() => [RoundInput])
+  rounds: RoundInput[];
+
+  @Field(() => [PlayerInput])
+  players: PlayerInput[];
+}
+
+@InputType()
+export class PlayerInput {
+  @Field()
+  id: number;
 }

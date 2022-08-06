@@ -4,6 +4,8 @@ import {
   GraphQLISODateTime,
   Int,
   ObjectType,
+  InputType,
+  OmitType,
 } from "@nestjs/graphql";
 import {
   Entity,
@@ -13,7 +15,7 @@ import {
   ManyToOne,
   OneToMany,
 } from "typeorm";
-import { Stage } from "../stages/stage.entity";
+import { Stage, StageInput } from "../stages/stage.entity";
 import { Set } from "../sets/set.entity";
 
 @ObjectType()
@@ -61,6 +63,18 @@ export class Tournament {
   set: Set;
 
   @Field(() => [Stage], { nullable: true })
-  @OneToMany(() => Stage, (stage) => stage.tournamentId)
+  @OneToMany(() => Stage, (stage) => stage.tournament, {
+    cascade: true,
+  })
   stages: Stage[];
+}
+
+@InputType()
+export class TournamentInput extends OmitType(
+  Tournament,
+  ["id", "set", "stages"] as const,
+  InputType,
+) {
+  @Field(() => [StageInput])
+  stages: StageInput[];
 }

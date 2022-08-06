@@ -9,7 +9,7 @@ import {
 } from "@nestjs/graphql";
 import { SetsService } from "../sets/sets.service";
 import { StagesService } from "../stages/stages.service";
-import { Tournament } from "./tournament.entity";
+import { Tournament, TournamentInput } from "./tournament.entity";
 import { TournamentsService } from "./tournaments.service";
 
 @Resolver(() => Tournament)
@@ -66,5 +66,13 @@ export class TournamentsResolver {
       setId,
     };
     return this.tournamentsService.createOne(payload);
+  }
+
+  @Mutation(() => Tournament)
+  async createDeepTournament(
+    @Args({ name: "tournament", type: () => TournamentInput })
+    tournament: TournamentInput,
+  ) {
+    return this.tournamentsService.createDeepOne(tournament);
   }
 }

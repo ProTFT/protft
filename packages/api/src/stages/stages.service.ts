@@ -6,7 +6,7 @@ import { Stage } from "./stage.entity";
 
 type CreateStagePayload = MutationPayload<
   Stage,
-  "tournamentId" | "pointSchemaId" | "name" | "sequence" | "isFinal"
+  "pointSchemaId" | "name" | "sequence" | "isFinal"
 >;
 
 @Injectable()

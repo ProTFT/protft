@@ -4,6 +4,8 @@ import {
   Parent,
   ResolveField,
   Resolver,
+  Query,
+  Int,
 } from "@nestjs/graphql";
 import { LobbiesService } from "../lobbies/lobbies.service";
 import { Stage } from "./stage.entity";
@@ -16,10 +18,21 @@ export class StagesResolver {
     private lobbiesService: LobbiesService,
   ) {}
 
+  @Query(() => [Stage])
+  async stages(@Args("tournamentId", { type: () => Int }) id: number) {
+    return this.stagesService.findAllByTournament(id);
+  }
+
   @ResolveField()
   async lobbies(@Parent() stage: Stage) {
     const { id } = stage;
     return this.lobbiesService.findAllByStage(id);
+  }
+
+  @ResolveField()
+  async rounds(@Parent() stage: Stage) {
+    const { id } = stage;
+    return this.lobbiesService.findRoundByStage(id);
   }
 
   @Mutation(() => Stage)
