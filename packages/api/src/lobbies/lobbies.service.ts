@@ -2,7 +2,7 @@ import { Injectable } from "@nestjs/common";
 import { InjectRepository } from "@nestjs/typeorm";
 import { Repository } from "typeorm";
 import { MutationPayload } from "../lib/types";
-import { Player } from "../players/player.entity";
+import { Player, PlayerStats } from "../players/player.entity";
 import { Points } from "../points/point.entity";
 import { Lobby } from "./lobby.entity";
 import { RoundResult } from "./round-result.entity";
@@ -42,11 +42,40 @@ export class LobbiesService {
   }
 
   findRoundByStage(stageId: number): Promise<Round[]> {
-    return this.roundsRepository.find({ where: { stageId } });
+    return this.roundsRepository.find({
+      where: { stageId },
+      order: { sequence: "ASC" },
+    });
   }
 
-  findRoundCount(lobbyId: number): Promise<number> {
-    return this.roundsRepository.count({ where: { lobbyId } });
+  async findRoundCount(lobbyId: number): Promise<number> {
+    const { count } = await this.roundResultsRepository
+      .createQueryBuilder()
+      .select(`COUNT(DISTINCT("roundId"))`, "count")
+      .where({ lobbyId })
+      .getRawOne<{ count: number }>();
+    return count;
+  }
+
+  async findStatsByPlayer(playerId: number) {
+    return this.roundResultsRepository
+      .createQueryBuilder()
+      .select(`COALESCE(AVG(position),0)`, "averagePosition")
+      .addSelect(`COUNT(*)`, "totalGames")
+      .addSelect(
+        `COALESCE(SUM(CASE WHEN position <= 4 THEN 1 ELSE 0 END),0)`,
+        "topFourCount",
+      )
+      .addSelect(
+        `COALESCE(SUM(CASE WHEN position = 1 THEN 1 ELSE 0 END),0)`,
+        "topOneCount",
+      )
+      .addSelect(
+        `COALESCE(SUM(CASE WHEN position = 8 THEN 1 ELSE 0 END),0)`,
+        "eigthCount",
+      )
+      .where({ playerId })
+      .getRawOne();
   }
 
   createOne(payload: CreateLobbyPayload): Promise<Lobby> {
@@ -55,6 +84,10 @@ export class LobbiesService {
 
   createOneRound(payload: CreateRoundPayload): Promise<Round> {
     return this.roundsRepository.save(payload);
+  }
+
+  createResults(results: RoundResult[]): Promise<any> {
+    return this.roundResultsRepository.save(results);
   }
 
   async createPlayerLobby(payload: any): Promise<any> {
@@ -73,8 +106,9 @@ export class LobbiesService {
       .select(
         "result.roundId, result.position, result.playerId, round.sequence, player.name, player.region, player.country, points.points",
       )
+      .innerJoin("result.lobby", "lobby")
       .innerJoin("result.player", "player")
-      .innerJoin("result.stage", "stage")
+      .innerJoin("stage", "stage", "stage.id = lobby.stageId")
       .innerJoin(
         "points",
         "points",

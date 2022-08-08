@@ -27,7 +27,6 @@ export class TournamentsService {
 
   async createDeepOne(tournament: TournamentInput): Promise<Tournament> {
     const saved = await this.tournamentRepository.save(tournament);
-    console.log(saved.stages[0].lobbies[0].rounds);
     return saved;
   }
 }

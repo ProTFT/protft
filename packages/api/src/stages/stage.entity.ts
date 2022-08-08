@@ -8,10 +8,22 @@ import {
   OneToMany,
   PrimaryGeneratedColumn,
 } from "typeorm";
-import { Lobby, LobbyInput } from "../lobbies/lobby.entity";
+import { BasePlayer, Lobby, LobbyInput } from "../lobbies/lobby.entity";
 import { Round } from "../lobbies/round.entity";
 import { PointSchema } from "../points/point.entity";
 import { Tournament } from "../tournaments/tournament.entity";
+
+@ObjectType()
+export class PlayerStageResult {
+  @Field(() => BasePlayer)
+  player: BasePlayer;
+
+  @Field(() => [Int])
+  positions: number[];
+
+  @Field(() => [Int])
+  points: number[];
+}
 
 @ObjectType()
 @Entity()
@@ -40,6 +52,12 @@ export class Stage {
   @Field()
   @Column()
   pointSchemaId: number;
+
+  @Field(() => [PlayerStageResult], { nullable: true })
+  playersResults: PlayerStageResult[];
+
+  @Field(() => Int)
+  roundCount: number;
 
   @Field(() => [Lobby], { nullable: true })
   @OneToMany(() => Lobby, (lobby) => lobby.stage, {
@@ -70,6 +88,8 @@ export class StageInput extends OmitType(
     "pointSchema",
     "tournament",
     "tournamentId",
+    "playersResults",
+    "roundCount",
   ] as const,
   InputType,
 ) {

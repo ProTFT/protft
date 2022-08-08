@@ -43,14 +43,33 @@ export interface PlayerInput {
     id: number;
 }
 
+export interface PlayerLobbyResultInput {
+    playerId: number;
+    positions: PositionResultInput[];
+}
+
+export interface PositionResultInput {
+    roundId: number;
+    position: number;
+}
+
 export interface Set {
     id: number;
     name: string;
 }
 
+export interface PlayerStats {
+    averagePosition: number;
+    totalGames: number;
+    topFourCount: number;
+    topOneCount: number;
+    eigthCount: number;
+}
+
 export interface Player {
     id: number;
     name: string;
+    playerStats: PlayerStats;
     region?: Nullable<string>;
     country?: Nullable<string>;
 }
@@ -80,6 +99,12 @@ export interface Tournament {
     stages?: Nullable<Stage[]>;
 }
 
+export interface PlayerStageResult {
+    player: BasePlayer;
+    positions: number[];
+    points: number[];
+}
+
 export interface Stage {
     id: number;
     name: string;
@@ -87,12 +112,21 @@ export interface Stage {
     isFinal: boolean;
     tournamentId: number;
     pointSchemaId: number;
+    playersResults?: Nullable<PlayerStageResult[]>;
+    roundCount: number;
     lobbies?: Nullable<Lobby[]>;
     rounds?: Nullable<Round[]>;
 }
 
+export interface BasePlayer {
+    id: number;
+    name: string;
+    region?: Nullable<string>;
+    country?: Nullable<string>;
+}
+
 export interface PlayerLobbyResult {
-    player: Player;
+    player: BasePlayer;
     positions: number[];
     points: number[];
 }
@@ -105,6 +139,11 @@ export interface Lobby {
     roundCount: number;
     playersResults?: Nullable<PlayerLobbyResult[]>;
     players: Player[];
+}
+
+export interface BooleanResult {
+    result: boolean;
+    error?: Nullable<string>;
 }
 
 export interface IQuery {
@@ -126,6 +165,7 @@ export interface IMutation {
     createLobby(stageId: number, name: string, sequence: number): Lobby | Promise<Lobby>;
     createRound(stageId: number, sequence: number): Round | Promise<Round>;
     createPlayerLobby(lobbyId: number, playerIds: number[]): Round | Promise<Round>;
+    createLobbyResult(lobbyId: number, players: PlayerLobbyResultInput[]): BooleanResult | Promise<BooleanResult>;
     createUser(name: string, country: string, region: string): Player | Promise<Player>;
 }
 

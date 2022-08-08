@@ -27,6 +27,11 @@ export const STAGES_QUERY = gql`
       lobbies {
         id
         name
+        players {
+          id
+          name
+          country
+        }
       }
       rounds {
         id

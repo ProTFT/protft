@@ -11900,6 +11900,16 @@ function $$SETUP_STATE(hydrateRuntimeState, basePath) {
           "linkType": "HARD"\
         }]\
       ]],\
+      ["@types/lodash.chunk", [\
+        ["npm:4.2.7", {\
+          "packageLocation": "./.yarn/cache/@types-lodash.chunk-npm-4.2.7-7f0e0d6d06-09df5ca00d.zip/node_modules/@types/lodash.chunk/",\
+          "packageDependencies": [\
+            ["@types/lodash.chunk", "npm:4.2.7"],\
+            ["@types/lodash", "npm:4.14.182"]\
+          ],\
+          "linkType": "HARD"\
+        }]\
+      ]],\
       ["@types/lodash.groupby", [\
         ["npm:4.6.7", {\
           "packageLocation": "./.yarn/cache/@types-lodash.groupby-npm-4.6.7-e1e48324d8-2dd7f5c43c.zip/node_modules/@types/lodash.groupby/",\
@@ -23697,6 +23707,15 @@ function $$SETUP_STATE(hydrateRuntimeState, basePath) {
           "linkType": "HARD"\
         }]\
       ]],\
+      ["lodash.chunk", [\
+        ["npm:4.2.0", {\
+          "packageLocation": "./.yarn/cache/lodash.chunk-npm-4.2.0-a54ef4d7dd-6286c6d068.zip/node_modules/lodash.chunk/",\
+          "packageDependencies": [\
+            ["lodash.chunk", "npm:4.2.0"]\
+          ],\
+          "linkType": "HARD"\
+        }]\
+      ]],\
       ["lodash.debounce", [\
         ["npm:4.0.8", {\
           "packageLocation": "./.yarn/cache/lodash.debounce-npm-4.0.8-f1d6e09799-a3f527d22c.zip/node_modules/lodash.debounce/",\
@@ -31559,6 +31578,7 @@ function $$SETUP_STATE(hydrateRuntimeState, basePath) {
             ["@testing-library/react", "virtual:3092e9bdeb2f61fa78a9a164e2bb1ca1921f2b51020eb6bcc3613c846f986a7ca2f9185805b22c7d3d088025a5ae8bef8eac791ac73b49e871f5ed8305c99579#npm:13.3.0"],\
             ["@testing-library/user-event", "virtual:3092e9bdeb2f61fa78a9a164e2bb1ca1921f2b51020eb6bcc3613c846f986a7ca2f9185805b22c7d3d088025a5ae8bef8eac791ac73b49e871f5ed8305c99579#npm:14.2.0"],\
             ["@types/jest", "npm:25.2.3"],\
+            ["@types/lodash.chunk", "npm:4.2.7"],\
             ["@types/lodash.groupby", "npm:4.6.7"],\
             ["@types/node", "npm:12.20.54"],\
             ["@types/react", "npm:18.0.10"],\
@@ -31567,6 +31587,7 @@ function $$SETUP_STATE(hydrateRuntimeState, basePath) {
             ["eslint-config-react-app", "virtual:3092e9bdeb2f61fa78a9a164e2bb1ca1921f2b51020eb6bcc3613c846f986a7ca2f9185805b22c7d3d088025a5ae8bef8eac791ac73b49e871f5ed8305c99579#npm:7.0.1"],\
             ["framer-motion", "virtual:3092e9bdeb2f61fa78a9a164e2bb1ca1921f2b51020eb6bcc3613c846f986a7ca2f9185805b22c7d3d088025a5ae8bef8eac791ac73b49e871f5ed8305c99579#npm:6.3.6"],\
             ["graphql", "npm:16.5.0"],\
+            ["lodash.chunk", "npm:4.2.0"],\
             ["lodash.groupby", "npm:4.6.0"],\
             ["react", "npm:18.1.0"],\
             ["react-dnd", "virtual:3092e9bdeb2f61fa78a9a164e2bb1ca1921f2b51020eb6bcc3613c846f986a7ca2f9185805b22c7d3d088025a5ae8bef8eac791ac73b49e871f5ed8305c99579#npm:16.0.1"],\

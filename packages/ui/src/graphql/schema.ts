@@ -42,6 +42,16 @@ export interface PlayerInput {
   id: number;
 }
 
+export interface PlayerLobbyResultInput {
+  playerId: number;
+  positions: PositionResultInput[];
+}
+
+export interface PositionResultInput {
+  roundId: number;
+  position: number;
+}
+
 export interface Set {
   id: number;
   name: string;
@@ -59,6 +69,12 @@ export interface PlayerFilterMeta {
   possibleRegions: string[];
 }
 
+export interface Round {
+  id: number;
+  stageId: number;
+  sequence: number;
+}
+
 export interface Tournament {
   id: number;
   name: string;
@@ -73,6 +89,12 @@ export interface Tournament {
   stages?: Nullable<Stage[]>;
 }
 
+export interface PlayerStageResult {
+  player: Player;
+  positions: number[];
+  points: number[];
+}
+
 export interface Stage {
   id: number;
   name: string;
@@ -80,8 +102,10 @@ export interface Stage {
   isFinal: boolean;
   tournamentId: number;
   pointSchemaId: number;
+  playersResults?: Nullable<PlayerStageResult[]>;
+  roundCount: number;
   lobbies?: Nullable<Lobby[]>;
-  rounds?: Nullable<Lobby[]>;
+  rounds?: Nullable<Round[]>;
 }
 
 export interface PlayerLobbyResult {
@@ -97,6 +121,12 @@ export interface Lobby {
   sequence: number;
   roundCount: number;
   playersResults?: Nullable<PlayerLobbyResult[]>;
+  players: Player[];
+}
+
+export interface BooleanResult {
+  result: boolean;
+  error?: Nullable<string>;
 }
 
 export interface IQuery {
@@ -140,6 +170,15 @@ export interface IMutation {
     name: string,
     sequence: number
   ): Lobby | Promise<Lobby>;
+  createRound(stageId: number, sequence: number): Round | Promise<Round>;
+  createPlayerLobby(
+    lobbyId: number,
+    playerIds: number[]
+  ): Round | Promise<Round>;
+  createLobbyResult(
+    lobbyId: number,
+    players: PlayerLobbyResultInput[]
+  ): BooleanResult | Promise<BooleanResult>;
   createUser(
     name: string,
     country: string,

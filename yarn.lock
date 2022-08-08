@@ -6318,6 +6318,15 @@ __metadata:
   languageName: node
   linkType: hard
 
+"@types/lodash.chunk@npm:^4.2.7":
+  version: 4.2.7
+  resolution: "@types/lodash.chunk@npm:4.2.7"
+  dependencies:
+    "@types/lodash": "*"
+  checksum: 09df5ca00d8866776038bf94658d30b4ea84bffe5f81c14c01568bcb6be692bf59f6ea093de2bb0afbb3f8e54ae96ebd97595f2838ab59b77865427ca77d391e
+  languageName: node
+  linkType: hard
+
 "@types/lodash.groupby@npm:^4.6.7":
   version: 4.6.7
   resolution: "@types/lodash.groupby@npm:4.6.7"
@@ -15913,6 +15922,13 @@ __metadata:
   languageName: node
   linkType: hard
 
+"lodash.chunk@npm:^4.2.0":
+  version: 4.2.0
+  resolution: "lodash.chunk@npm:4.2.0"
+  checksum: 6286c6d06814fbeda502164015c42ef53a9194e6ebaac52ec2b41e83344aefe7bc3d94fdfec525adcd2c66cefdf05dc333b6a1128e4de739797342315c17cbc7
+  languageName: node
+  linkType: hard
+
 "lodash.debounce@npm:^4.0.8":
   version: 4.0.8
   resolution: "lodash.debounce@npm:4.0.8"
@@ -22091,6 +22107,7 @@ __metadata:
     "@testing-library/react": ^13.2.0
     "@testing-library/user-event": ^14.2.0
     "@types/jest": ^25.2.3
+    "@types/lodash.chunk": ^4.2.7
     "@types/lodash.groupby": ^4.6.7
     "@types/node": ^12.20.52
     "@types/react": ^18.0.9
@@ -22099,6 +22116,7 @@ __metadata:
     eslint-config-react-app: ^7.0.1
     framer-motion: ^6.3.4
     graphql: ^16.5.0
+    lodash.chunk: ^4.2.0
     lodash.groupby: ^4.6.0
     react: ^18.1.0
     react-dnd: ^16.0.1

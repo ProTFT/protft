@@ -15,9 +15,24 @@ import { RoundInput } from "./round.entity";
 import { RoundResult } from "./round-result.entity";
 
 @ObjectType()
+export class BasePlayer {
+  @Field(() => Int)
+  id: number;
+
+  @Field()
+  name: string;
+
+  @Field({ nullable: true })
+  region: string;
+
+  @Field({ nullable: true })
+  country: string;
+}
+
+@ObjectType()
 export class PlayerLobbyResult {
-  @Field(() => Player)
-  player: Player;
+  @Field(() => BasePlayer)
+  player: BasePlayer;
 
   @Field(() => [Int])
   positions: number[];

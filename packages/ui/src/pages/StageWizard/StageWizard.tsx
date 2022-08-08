@@ -21,7 +21,7 @@ import {
 interface StageListProps {
   stages?: Stage[];
   selectedStage: number;
-  onSelectStage: (selectedId: number) => void;
+  onSelectStage: (selectedId: number, stage?: Stage) => void;
 }
 
 export const StageList = ({
@@ -36,7 +36,7 @@ export const StageList = ({
         <Text
           textColor={stage.id === selectedStage ? "red" : "white"}
           key={stage.id}
-          onClick={() => onSelectStage(stage.id)}
+          onClick={() => onSelectStage(stage.id, stage)}
         >
           {stage.name}
         </Text>

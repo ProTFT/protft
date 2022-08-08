@@ -1,12 +1,34 @@
-import { Args, Int, Mutation, Query, Resolver } from "@nestjs/graphql";
+import {
+  Args,
+  Int,
+  Mutation,
+  Parent,
+  Query,
+  ResolveField,
+  Resolver,
+} from "@nestjs/graphql";
 import { BaseResolver } from "../lib/BaseResolver";
-import { Player, PlayerFilterMeta } from "./player.entity";
+import { LobbiesService } from "../lobbies/lobbies.service";
+import { Player, PlayerFilterMeta, PlayerStats } from "./player.entity";
 import { PlayersService } from "./players.service";
 
 @Resolver(() => Player)
 export class PlayersResolver extends BaseResolver {
-  constructor(private playersService: PlayersService) {
+  constructor(
+    private playersService: PlayersService,
+    private lobbiesService: LobbiesService,
+  ) {
     super();
+  }
+
+  @ResolveField(() => PlayerStats)
+  async playerStats(@Parent() player: Player): Promise<PlayerStats> {
+    const stats = await this.lobbiesService.findStatsByPlayer(player.id);
+    console.log(player.id, stats.topFourCount);
+    return {
+      ...stats,
+      averagePosition: Number(parseFloat(stats.averagePosition).toFixed(2)),
+    };
   }
 
   @Query(() => [Player])

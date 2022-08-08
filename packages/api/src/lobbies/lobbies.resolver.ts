@@ -1,7 +1,10 @@
 import {
   Args,
+  Field,
+  InputType,
   Int,
   Mutation,
+  ObjectType,
   Parent,
   Query,
   ResolveField,
@@ -66,4 +69,55 @@ export class LobbiesResolver {
     const payload = { lobbyId, playerIds };
     return this.lobbiesService.createPlayerLobby(payload);
   }
+
+  @Mutation(() => BooleanResult)
+  async createLobbyResult(
+    @Args({ name: "lobbyId", type: () => Int }) lobbyId: number,
+    @Args({ name: "players", type: () => [PlayerLobbyResultInput] })
+    players: PlayerLobbyResultInput[],
+  ) {
+    const positionInputs = [];
+    players.forEach(({ playerId, positions }) => {
+      positions.forEach(({ roundId, position }) => {
+        positionInputs.push({
+          lobbyId,
+          playerId,
+          position,
+          roundId,
+        });
+      });
+    });
+    try {
+      await this.lobbiesService.createResults(positionInputs);
+      return { result: true };
+    } catch (error) {
+      return { result: false, error: String(error) };
+    }
+  }
+}
+
+@ObjectType()
+class BooleanResult {
+  @Field()
+  result: boolean;
+
+  @Field({ nullable: true })
+  error: string;
+}
+
+@InputType()
+class PlayerLobbyResultInput {
+  @Field(() => Int)
+  playerId: number;
+
+  @Field(() => [PositionResultInput])
+  positions: PositionResultInput[];
+}
+
+@InputType()
+class PositionResultInput {
+  @Field(() => Int)
+  roundId: number;
+  @Field(() => Int)
+  position: number;
 }

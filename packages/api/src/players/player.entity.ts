@@ -1,5 +1,23 @@
-import { Field, InputType, Int, ObjectType, OmitType } from "@nestjs/graphql";
+import { Field, Float, Int, ObjectType } from "@nestjs/graphql";
 import { Column, Entity, PrimaryGeneratedColumn } from "typeorm";
+
+@ObjectType()
+export class PlayerStats {
+  @Field(() => Float)
+  averagePosition: number;
+
+  @Field(() => Int)
+  totalGames: number;
+
+  @Field(() => Int)
+  topFourCount: number;
+
+  @Field(() => Int)
+  topOneCount: number;
+
+  @Field(() => Int)
+  eigthCount: number;
+}
 
 @ObjectType()
 @Entity()
@@ -11,6 +29,9 @@ export class Player {
   @Field()
   @Column()
   name: string;
+
+  @Field()
+  playerStats: PlayerStats;
 
   @Field({ nullable: true })
   @Column({ nullable: true })
@@ -29,6 +50,3 @@ export class PlayerFilterMeta {
   @Field(() => [String])
   possibleRegions: string[];
 }
-
-// @InputType()
-// export class PlayerInput extends OmitType(Player, ["id"] as const, InputType) {}

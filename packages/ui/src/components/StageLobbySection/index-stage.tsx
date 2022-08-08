@@ -1,21 +1,17 @@
 import {
   AccordionPanel,
   Box,
-  Flex,
   Table,
   TableContainer,
   Tbody,
   Td,
-  Text,
   Th,
   Thead,
   Tr,
   useColorModeValue,
 } from "@chakra-ui/react";
-import { Lobby, Player, PlayerLobbyResult } from "../../graphql/schema";
-import groupBy from "lodash.groupby";
+import { Player, PlayerLobbyResult, Stage } from "../../graphql/schema";
 import { getFlagEmoji } from "../../formatter/FlagEmoji";
-import { useWindowSize } from "../../hooks/useWindowSize";
 
 // For finals
 // First sort by points
@@ -23,67 +19,44 @@ import { useWindowSize } from "../../hooks/useWindowSize";
 // Then sort by top fours
 // Then sort by quantity top 1, 2, 3, 4 maybe?
 
+// G&G world finals
+// Highest amount of 1st's
+// Highest amount of Top 4's
+// Highest placement in most recent game (if tied, look at previous game until no tie)
+// Round eliminated in most recent game (if tied, look at previous until no tie)
+// Coinflip
+
 interface StageLobbySectionProps {
-  lobbies?: Lobby[] | null;
+  stage: Stage;
   lobbyCount?: number;
   isFinal?: boolean | null;
 }
 
-export const StageLobbySection = ({
-  lobbies,
-  lobbyCount,
-  isFinal,
-}: StageLobbySectionProps) => {
-  const size = useWindowSize();
-  const groups = groupBy(lobbies, (lobby) => lobby.name.charAt(1) || 0);
-  const getStageProperties = (lobbyCount?: number) =>
-    lobbyCount && lobbyCount > 1 ? { flex: 1 } : {};
-  const getParentProperties = (lobbyCount?: number) => ({
-    justify:
-      lobbyCount && lobbyCount === 1 && size.width && size.width > 800
-        ? "center"
-        : "space-between",
-  });
-
+export const NewStageLobbySection = ({ stage }: StageLobbySectionProps) => {
   return (
-    <AccordionPanel display="flex" flexWrap="wrap" gap={10}>
-      {Object.keys(groups).map((lobbyGroup) => (
-        <Flex
-          key={lobbyGroup}
-          flexDir="row"
-          flexWrap="wrap"
-          {...getParentProperties(lobbyCount)}
-          // width="100%"
-          overflow="scroll"
-          gap={5}
-        >
-          {groups[lobbyGroup].map((lobby: Lobby) => (
-            <Box key={lobby.sequence} {...getStageProperties(lobbyCount)}>
-              <Text>Lobby {lobby?.name}</Text>
-              <TableContainer>
-                <Table variant="simple" size="sm" colorScheme="orange">
-                  <Thead>
-                    <ColumnHeaders lobby={lobby} />
-                  </Thead>
-                  <Tbody>
-                    <TableBody lobby={lobby} isFinal={isFinal} />
-                  </Tbody>
-                </Table>
-              </TableContainer>
-            </Box>
-          ))}
-        </Flex>
-      ))}
+    <AccordionPanel display="flex" justifyContent="center">
+      <Box>
+        <TableContainer>
+          <Table variant="simple" size="sm" colorScheme="orange">
+            <Thead>
+              <ColumnHeaders stage={stage} />
+            </Thead>
+            <Tbody>
+              <TableBody stage={stage} isFinal={stage?.isFinal} />
+            </Tbody>
+          </Table>
+        </TableContainer>
+      </Box>
     </AccordionPanel>
   );
 };
 
 interface ColumnHeadersProps {
-  lobby: Lobby;
+  stage: Stage;
 }
 
-function ColumnHeaders({ lobby }: ColumnHeadersProps) {
-  const roundCount = lobby.roundCount;
+function ColumnHeaders({ stage }: ColumnHeadersProps) {
+  const roundCount = stage?.roundCount;
   const hasMoreThanOneRound = roundCount > 1;
 
   const roundHeaders = () => {
@@ -94,6 +67,7 @@ function ColumnHeaders({ lobby }: ColumnHeadersProps) {
 
   return (
     <Tr>
+      <Th>#</Th>
       <Th colSpan={2}>Player</Th>
       {roundHeaders()}
       {hasMoreThanOneRound && <Th>P</Th>}
@@ -102,11 +76,11 @@ function ColumnHeaders({ lobby }: ColumnHeadersProps) {
 }
 
 interface TableBodyProps {
-  lobby: Lobby;
+  stage: Stage;
   isFinal?: boolean | null;
 }
 
-function TableBody({ lobby, isFinal }: TableBodyProps) {
+function TableBody({ stage, isFinal }: TableBodyProps) {
   // Sorting should be moved to the backend
   const sortSingleRoundLobby = (a: PlayerLobbyResult, b: PlayerLobbyResult) =>
     a.positions[0] - b.positions[0];
@@ -121,12 +95,14 @@ function TableBody({ lobby, isFinal }: TableBodyProps) {
     a.positions[a.positions.length - 1] - b.positions[b.positions.length - 1];
 
   const getSortingMethod = () => {
-    if (lobby.roundCount === 1) {
+    if (stage.roundCount === 1) {
       return sortSingleRoundLobby;
     }
+
     if (isFinal) {
       return sortFinalsLobby;
     }
+
     return sortCommonLobby;
   };
 
@@ -137,9 +113,9 @@ function TableBody({ lobby, isFinal }: TableBodyProps) {
     return playerResults.sort(sortingMethod);
   };
 
-  const playerResults = [...lobby?.playersResults!];
+  const playerResults = [...stage?.playersResults!];
   const sortedResults = sortResults(playerResults);
-  const roundCount = lobby.roundCount;
+  const roundCount = stage.roundCount;
   return (
     <>
       {sortedResults.map((playerResult, index) => (
@@ -149,6 +125,7 @@ function TableBody({ lobby, isFinal }: TableBodyProps) {
           player={playerResult.player}
           roundCount={roundCount}
         >
+          <Td>{index + 1}</Td>
           <Td>{getFlagEmoji(playerResult.player.country || "")}</Td>
           <Td>{playerResult.player.name}</Td>
           <PositionDataCell
@@ -224,6 +201,3 @@ function PointsDataCell({ roundCount, playerResult }: PointsDataCellProps) {
   }
   return <></>;
 }
-
-
-

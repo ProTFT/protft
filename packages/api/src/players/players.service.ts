@@ -16,7 +16,7 @@ interface PlayerRegion {
   region: string;
 }
 
-type CreatePlayerPayload = Omit<Player, "id">;
+type CreatePlayerPayload = Omit<Player, "id" | "playerStats">;
 
 @Injectable()
 export class PlayersService {

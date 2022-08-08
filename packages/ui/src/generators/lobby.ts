@@ -24,6 +24,7 @@ export const lobby = ({
     name: name || `Lobby ${id}`,
     sequence: sequence || randomId,
     stageId: stageId || randomId,
+    players: [],
     roundCount: (playersResults && playersResults[0]?.positions.length) || 0,
     playersResults: playersResults || [],
   };
