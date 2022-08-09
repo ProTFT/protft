@@ -1,5 +1,26 @@
+import { CreateLobbyResultArgs } from "./dto/create-lobby-result.args";
 import { RawRoundResults } from "./lobbies.service";
 import { PlayerLobbyResult } from "./lobby.entity";
+import { RoundResult } from "./round-result.entity";
+
+export function formatResults({
+  players,
+  lobbyId,
+}: CreateLobbyResultArgs): RoundResult[] {
+  // tentar fazer um reduce aqui?
+  const positionInputs = [];
+  players.forEach(({ playerId, positions }) => {
+    positions.forEach(({ roundId, position }) => {
+      positionInputs.push({
+        lobbyId,
+        playerId,
+        position,
+        roundId,
+      });
+    });
+  });
+  return positionInputs;
+}
 
 export function fromRawToConsolidatedRoundResults(
   rawResults: RawRoundResults[],

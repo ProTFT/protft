@@ -1,4 +1,4 @@
-import { Field, InputType, Int, ObjectType, OmitType } from "@nestjs/graphql";
+import { Field, Int, ObjectType } from "@nestjs/graphql";
 import { Player } from "../players/player.entity";
 import { Stage } from "../stages/stage.entity";
 import {
@@ -11,9 +11,8 @@ import {
   OneToMany,
   PrimaryGeneratedColumn,
 } from "typeorm";
-import { RoundInput } from "./round.entity";
 import { RoundResult } from "./round-result.entity";
-
+//vao morrer ambos
 @ObjectType()
 export class BasePlayer {
   @Field(() => Int)
@@ -49,7 +48,7 @@ export class Lobby {
   @PrimaryGeneratedColumn()
   id: number;
 
-  @Field()
+  @Field(() => Int)
   @Column()
   stageId: number;
 
@@ -57,43 +56,24 @@ export class Lobby {
   @Column()
   name: string;
 
-  @Field()
+  @Field(() => Int)
   @Column()
   sequence: number;
 
-  @Field()
+  @Field(() => Int)
   roundCount: number;
 
   @Field(() => [PlayerLobbyResult], { nullable: true })
-  playersResults: PlayerLobbyResult[];
+  playersResults?: PlayerLobbyResult[];
 
-  @Field(() => [Player])
+  @Field(() => [Player], { nullable: true })
   @ManyToMany(() => Player, { cascade: true })
   @JoinTable()
-  players: Player[];
+  players?: Player[];
 
   @ManyToOne(() => Stage, (stage) => stage.id)
   stage: Stage;
 
   @OneToMany(() => RoundResult, (roundResult) => roundResult.lobbyId)
-  roundResults: RoundResult[];
-}
-
-@InputType()
-export class LobbyInput extends OmitType(
-  Lobby,
-  ["id", "players", "playersResults", "stage", "stageId"] as const,
-  InputType,
-) {
-  @Field(() => [RoundInput])
-  rounds: RoundInput[];
-
-  @Field(() => [PlayerInput])
-  players: PlayerInput[];
-}
-
-@InputType()
-export class PlayerInput {
-  @Field()
-  id: number;
+  roundResults?: RoundResult[];
 }

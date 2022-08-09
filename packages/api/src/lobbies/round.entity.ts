@@ -7,7 +7,7 @@ import {
   PrimaryGeneratedColumn,
 } from "typeorm";
 import { RoundResult } from "./round-result.entity";
-import { Field, InputType, Int, ObjectType } from "@nestjs/graphql";
+import { Field, Int, ObjectType } from "@nestjs/graphql";
 import { Stage } from "../stages/stage.entity";
 
 @Entity()
@@ -27,14 +27,8 @@ export class Round {
   sequence: number;
 
   @OneToMany(() => RoundResult, (roundResult) => roundResult.roundId)
-  roundResults: RoundResult[];
+  roundResults?: RoundResult[];
 
   @ManyToOne(() => Stage, (stage) => stage.id)
   stage: Stage;
-}
-
-@InputType() // pq ele não salva isso? Precisa que o Round seja um object type? não faz sentido por ser banco <> graphql
-export class RoundInput {
-  @Field()
-  sequence: number;
 }

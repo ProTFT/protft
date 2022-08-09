@@ -29,13 +29,16 @@ class RoundResultFakeRepository {
   execute() {
     return expectedRoundResult;
   }
+  getRawOne() {
+    return expectedRoundResult;
+  }
 }
 
 describe("LobbiesService", () => {
   let service: LobbiesService;
   const stageIdWithLobbies = 1;
   const stageIdWithoutLobbies = 4;
-  const lobbyIdWithRounds = 3;
+  const stageIdWithRounds = 3;
   const lobbyRepository = new FakeRepository<Lobby>([
     lobby({ id: 1, stageId: stageIdWithLobbies }),
     lobby({ id: 2, stageId: stageIdWithLobbies }),
@@ -44,11 +47,11 @@ describe("LobbiesService", () => {
   ]);
 
   const roundsRepository = new FakeRepository<Round>([
-    round({ lobbyId: lobbyIdWithRounds }),
-    round({ lobbyId: lobbyIdWithRounds }),
-    round({ lobbyId: lobbyIdWithRounds }),
-    round({ lobbyId: 5 }),
-    round({ lobbyId: 6 }),
+    round({ stageId: stageIdWithRounds }),
+    round({ stageId: stageIdWithRounds }),
+    round({ stageId: stageIdWithRounds }),
+    round({ stageId: 5 }),
+    round({ stageId: 6 }),
   ]);
   const roundResultsRepository = new RoundResultFakeRepository();
 
@@ -87,11 +90,11 @@ describe("LobbiesService", () => {
   });
 
   it("should count rounds of a lobby", async () => {
-    expect(await service.findRoundCount(lobbyIdWithRounds)).toBe(3);
+    expect(await service.findRoundCount(stageIdWithRounds)).toBe(3);
   });
 
   it("should return round result query result", async () => {
-    expect(await service.findLobbyResults(lobbyIdWithRounds)).toStrictEqual(
+    expect(await service.findLobbyResults(stageIdWithRounds)).toStrictEqual(
       expectedRoundResult,
     );
   });

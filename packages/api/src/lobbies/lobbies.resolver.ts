@@ -1,17 +1,22 @@
 import {
   Args,
-  Field,
-  InputType,
   Int,
   Mutation,
-  ObjectType,
   Parent,
   Query,
   ResolveField,
   Resolver,
 } from "@nestjs/graphql";
 import { Player } from "../players/player.entity";
-import { fromRawToConsolidatedRoundResults } from "./lobbies.adapter";
+import { CreateLobbyResultArgs } from "./dto/create-lobby-result.args";
+import { CreateLobbyArgs } from "./dto/create-lobby.args";
+import { CreatePlayerLobbyArgs } from "./dto/create-player-lobby.args";
+import { CreateRoundArgs } from "./dto/create-round.args";
+import { BooleanResult } from "./dto/create-lobby-result.out";
+import {
+  formatResults,
+  fromRawToConsolidatedRoundResults,
+} from "./lobbies.adapter";
 import { LobbiesService } from "./lobbies.service";
 import { Lobby, PlayerLobbyResult } from "./lobby.entity";
 import { Round } from "./round.entity";
@@ -33,7 +38,9 @@ export class LobbiesResolver {
 
   @ResolveField()
   async players(@Parent() lobby: Lobby): Promise<Player[]> {
-    const lobbyWithPlayers = await this.lobbiesService.findOne(lobby.id);
+    const lobbyWithPlayers = await this.lobbiesService.findOneWithPlayers(
+      lobby.id,
+    );
     return lobbyWithPlayers.players;
   }
 
@@ -43,50 +50,28 @@ export class LobbiesResolver {
   }
 
   @Mutation(() => Lobby)
-  async createLobby(
-    @Args({ name: "stageId" }) stageId: number,
-    @Args({ name: "name" }) name: string,
-    @Args({ name: "sequence" }) sequence: number,
-  ) {
+  async createLobby(@Args() { stageId, name, sequence }: CreateLobbyArgs) {
     const payload = { stageId, name, sequence };
     return this.lobbiesService.createOne(payload);
   }
 
   @Mutation(() => Round)
-  async createRound(
-    @Args({ name: "stageId" }) stageId: number,
-    @Args({ name: "sequence" }) sequence: number,
-  ) {
+  async createRound(@Args() { sequence, stageId }: CreateRoundArgs) {
     const payload = { sequence, stageId };
     return this.lobbiesService.createOneRound(payload);
   }
 
   @Mutation(() => Round)
   async createPlayerLobby(
-    @Args({ name: "lobbyId" }) lobbyId: number,
-    @Args({ name: "playerIds", type: () => [Int] }) playerIds: number[],
+    @Args() { lobbyId, playerIds }: CreatePlayerLobbyArgs,
   ) {
     const payload = { lobbyId, playerIds };
     return this.lobbiesService.createPlayerLobby(payload);
   }
 
   @Mutation(() => BooleanResult)
-  async createLobbyResult(
-    @Args({ name: "lobbyId", type: () => Int }) lobbyId: number,
-    @Args({ name: "players", type: () => [PlayerLobbyResultInput] })
-    players: PlayerLobbyResultInput[],
-  ) {
-    const positionInputs = [];
-    players.forEach(({ playerId, positions }) => {
-      positions.forEach(({ roundId, position }) => {
-        positionInputs.push({
-          lobbyId,
-          playerId,
-          position,
-          roundId,
-        });
-      });
-    });
+  async createLobbyResult(@Args() args: CreateLobbyResultArgs) {
+    const positionInputs = formatResults(args);
     try {
       await this.lobbiesService.createResults(positionInputs);
       return { result: true };
@@ -94,30 +79,4 @@ export class LobbiesResolver {
       return { result: false, error: String(error) };
     }
   }
-}
-
-@ObjectType()
-class BooleanResult {
-  @Field()
-  result: boolean;
-
-  @Field({ nullable: true })
-  error: string;
-}
-
-@InputType()
-class PlayerLobbyResultInput {
-  @Field(() => Int)
-  playerId: number;
-
-  @Field(() => [PositionResultInput])
-  positions: PositionResultInput[];
-}
-
-@InputType()
-class PositionResultInput {
-  @Field(() => Int)
-  roundId: number;
-  @Field(() => Int)
-  position: number;
 }

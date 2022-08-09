@@ -58,6 +58,11 @@ export interface Set {
     name: string;
 }
 
+export interface BooleanResult {
+    result: boolean;
+    error?: Nullable<string>;
+}
+
 export interface PlayerStats {
     averagePosition: number;
     totalGames: number;
@@ -133,12 +138,7 @@ export interface Lobby {
     sequence: number;
     roundCount: number;
     playersResults?: Nullable<PlayerLobbyResult[]>;
-    players: Player[];
-}
-
-export interface BooleanResult {
-    result: boolean;
-    error?: Nullable<string>;
+    players?: Nullable<Player[]>;
 }
 
 export interface PlayerFilterMeta {

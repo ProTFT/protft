@@ -1,19 +1,14 @@
 import { Injectable } from "@nestjs/common";
 import { InjectRepository } from "@nestjs/typeorm";
 import { Repository } from "typeorm";
-import { MutationPayload } from "../lib/types";
 import { Player } from "../players/player.entity";
 import { Points } from "../points/point.entity";
+import { CreateLobbyArgs } from "./dto/create-lobby.args";
+import { CreatePlayerLobbyArgs } from "./dto/create-player-lobby.args";
+import { CreateRoundArgs } from "./dto/create-round.args";
 import { Lobby } from "./lobby.entity";
 import { RoundResult } from "./round-result.entity";
 import { Round } from "./round.entity";
-
-type CreateLobbyPayload = MutationPayload<
-  Lobby,
-  "stageId" | "name" | "sequence"
->;
-
-type CreateRoundPayload = MutationPayload<Round, "sequence">;
 
 export type RawRoundResults = Pick<
   RoundResult,
@@ -41,7 +36,7 @@ export class LobbiesService {
     private roundsRepository: Repository<Round>,
   ) {}
 
-  findOne(lobbyId: number): Promise<Lobby> {
+  findOneWithPlayers(lobbyId: number): Promise<Lobby> {
     return this.lobbiesRepository.findOne(lobbyId, {
       relations: ["players"],
     });
@@ -88,11 +83,11 @@ export class LobbiesService {
       .getRawOne();
   }
 
-  createOne(payload: CreateLobbyPayload): Promise<Lobby> {
+  createOne(payload: CreateLobbyArgs): Promise<Lobby> {
     return this.lobbiesRepository.save(payload);
   }
 
-  createOneRound(payload: CreateRoundPayload): Promise<Round> {
+  createOneRound(payload: CreateRoundArgs): Promise<Round> {
     return this.roundsRepository.save(payload);
   }
 
@@ -100,13 +95,13 @@ export class LobbiesService {
     return this.roundResultsRepository.save(results);
   }
 
-  async createPlayerLobby(payload: any): Promise<any> {
+  async createPlayerLobby(payload: CreatePlayerLobbyArgs): Promise<any> {
     const { lobbyId, playerIds } = payload;
     const lobby = await this.lobbiesRepository.findOne(lobbyId);
     const playerObjects = playerIds.map((id: number) => ({
       id,
     }));
-    lobby.players = playerObjects;
+    lobby.players = playerObjects as Player[];
     return this.lobbiesRepository.save(lobby);
   }
 
