@@ -2,6 +2,7 @@ import { Test, TestingModule } from "@nestjs/testing";
 import { getRepositoryToken } from "@nestjs/typeorm";
 import { player } from "../../test/generators/player";
 import { FakeIndexedRepository } from "../../test/stubs/fakeRepository";
+import { CreatePlayerArgs } from "./dto/create-player.args";
 import { Player } from "./player.entity";
 import { PlayersService } from "./players.service";
 
@@ -87,6 +88,19 @@ describe("PlayersService", () => {
         "NA",
         "EU",
       ]);
+    });
+  });
+
+  describe("create one", () => {
+    it("should be able to create one", async () => {
+      const payload: CreatePlayerArgs = {
+        name: "anyName",
+        country: "anyCountry",
+        region: "anyRegion",
+      };
+      const playerCount = (await service.findAll({})).length;
+      await service.createOne(payload);
+      expect(await service.findAll({})).toHaveLength(playerCount + 1);
     });
   });
 });
