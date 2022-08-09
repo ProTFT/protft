@@ -8,7 +8,7 @@ import {
   Resolver,
 } from "@nestjs/graphql";
 import { BaseResolver } from "../lib/BaseResolver";
-import { LobbiesService } from "../lobbies/lobbies.service";
+import { RoundResultsService } from "../round-results/round-results.service";
 import { CreatePlayerArgs } from "./dto/create-player.args";
 import { PlayerFilterMeta } from "./dto/get-player-filter-meta.out";
 import { PlayerStats } from "./dto/get-player-stats.out";
@@ -21,15 +21,16 @@ import { PlayersService } from "./players.service";
 export class PlayersResolver extends BaseResolver {
   constructor(
     private playersService: PlayersService,
-    private lobbiesService: LobbiesService,
+    private roundResultsService: RoundResultsService,
   ) {
     super();
   }
 
-  // vai mudar para pegar do round results
   @ResolveField(() => PlayerStats)
   async playerStats(@Parent() player: Player): Promise<PlayerStats> {
-    const rawStats = await this.lobbiesService.findStatsByPlayer(player.id);
+    const rawStats = await this.roundResultsService.findStatsByPlayer(
+      player.id,
+    );
     return formatStats(rawStats);
   }
 

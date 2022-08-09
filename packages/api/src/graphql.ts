@@ -58,11 +58,6 @@ export interface Set {
     name: string;
 }
 
-export interface BooleanResult {
-    result: boolean;
-    error?: Nullable<string>;
-}
-
 export interface PlayerStats {
     averagePosition: number;
     totalGames: number;
@@ -79,12 +74,6 @@ export interface Player {
     country?: Nullable<string>;
 }
 
-export interface Round {
-    id: number;
-    stageId: number;
-    sequence: number;
-}
-
 export interface Tournament {
     id: number;
     name: string;
@@ -99,7 +88,14 @@ export interface Tournament {
     stages?: Nullable<Stage[]>;
 }
 
-export interface PlayerStageResult {
+export interface BasePlayer {
+    id: number;
+    name: string;
+    region?: Nullable<string>;
+    country?: Nullable<string>;
+}
+
+export interface PlayerResults {
     player: BasePlayer;
     positions: number[];
     points: number[];
@@ -112,23 +108,10 @@ export interface Stage {
     isFinal: boolean;
     tournamentId: number;
     pointSchemaId: number;
-    playersResults?: Nullable<PlayerStageResult[]>;
+    playersResults?: Nullable<PlayerResults[]>;
     roundCount: number;
     lobbies?: Nullable<Lobby[]>;
     rounds?: Nullable<Round[]>;
-}
-
-export interface BasePlayer {
-    id: number;
-    name: string;
-    region?: Nullable<string>;
-    country?: Nullable<string>;
-}
-
-export interface PlayerLobbyResult {
-    player: BasePlayer;
-    positions: number[];
-    points: number[];
 }
 
 export interface Lobby {
@@ -137,8 +120,19 @@ export interface Lobby {
     name: string;
     sequence: number;
     roundCount: number;
-    playersResults?: Nullable<PlayerLobbyResult[]>;
+    playersResults?: Nullable<PlayerResults[]>;
     players?: Nullable<Player[]>;
+}
+
+export interface Round {
+    id: number;
+    stageId: number;
+    sequence: number;
+}
+
+export interface BooleanResult {
+    result: boolean;
+    error?: Nullable<string>;
 }
 
 export interface PlayerFilterMeta {

@@ -11,6 +11,8 @@ import { PointsModule } from "./points/points.module";
 import { LobbiesModule } from "./lobbies/lobbies.module";
 import { PlayersModule } from "./players/players.module";
 import { join } from "path";
+import { RoundsModule } from "./rounds/rounds.module";
+import { RoundResultsModule } from "./round-results/round-results.module";
 
 const localDatabaseInfo: TypeOrmModuleOptions = {
   host: "localhost",
@@ -55,6 +57,8 @@ const isProd = (): boolean => process.env.NODE_ENV === "production";
     LobbiesModule,
     PointsModule,
     PlayersModule,
+    RoundsModule,
+    RoundResultsModule,
   ],
   controllers: [AppController],
   providers: [AppService],

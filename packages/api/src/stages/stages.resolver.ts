@@ -7,10 +7,13 @@ import {
   Query,
   Int,
 } from "@nestjs/graphql";
-import { fromRawToConsolidatedRoundResults } from "../lobbies/lobbies.adapter";
 import { LobbiesService } from "../lobbies/lobbies.service";
+import { PlayerResults } from "../round-results/dto/get-results.out";
+import { fromRawToConsolidatedRoundResults } from "../round-results/round-result.adapter";
+import { RoundResultsService } from "../round-results/round-results.service";
+import { RoundsService } from "../rounds/rounds.service";
 import { CreateStageArgs } from "./dto/create-stage.args";
-import { PlayerStageResult, Stage } from "./stage.entity";
+import { Stage } from "./stage.entity";
 import { StagesService } from "./stages.service";
 
 @Resolver(() => Stage)
@@ -18,6 +21,8 @@ export class StagesResolver {
   constructor(
     private stagesService: StagesService,
     private lobbiesService: LobbiesService,
+    private roundsService: RoundsService,
+    private roundResultsService: RoundResultsService,
   ) {}
 
   @Query(() => [Stage])
@@ -34,17 +39,17 @@ export class StagesResolver {
   @ResolveField()
   async rounds(@Parent() stage: Stage) {
     const { id } = stage;
-    return this.lobbiesService.findRoundByStage(id);
+    return this.roundsService.findByStage(id);
   }
 
   @ResolveField()
   async roundCount(@Parent() { id }: Stage) {
-    return this.stagesService.findRoundCount(id);
+    return this.roundsService.countByStage(id);
   }
 
   @ResolveField()
-  async playersResults(@Parent() stage: Stage): Promise<PlayerStageResult[]> {
-    const rawResults = await this.stagesService.getConsolidatedResults(
+  async playersResults(@Parent() stage: Stage): Promise<PlayerResults[]> {
+    const rawResults = await this.roundResultsService.findResultsByStage(
       stage.id,
     );
     return fromRawToConsolidatedRoundResults(rawResults);

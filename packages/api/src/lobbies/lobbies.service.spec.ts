@@ -2,11 +2,11 @@ import { Test, TestingModule } from "@nestjs/testing";
 import { getRepositoryToken } from "@nestjs/typeorm";
 import { lobby } from "../../test/generators/lobby";
 import { round } from "../../test/generators/round";
-import { FakeRepository } from "../../test/stubs/fakeRepository";
+import { FakeIndexedRepository } from "../../test/stubs/fakeRepository";
 import { LobbiesService } from "./lobbies.service";
 import { Lobby } from "./lobby.entity";
-import { RoundResult } from "./round-result.entity";
-import { Round } from "./round.entity";
+import { RoundResult } from "../round-results/round-result.entity";
+import { Round } from "../rounds/round.entity";
 
 const expectedRoundResult = { any: "Object" };
 
@@ -39,14 +39,14 @@ describe("LobbiesService", () => {
   const stageIdWithLobbies = 1;
   const stageIdWithoutLobbies = 4;
   const stageIdWithRounds = 3;
-  const lobbyRepository = new FakeRepository<Lobby>([
+  const lobbyRepository = new FakeIndexedRepository<Lobby>([
     lobby({ id: 1, stageId: stageIdWithLobbies }),
     lobby({ id: 2, stageId: stageIdWithLobbies }),
     lobby({ id: 3 }),
     lobby({ id: 4 }),
   ]);
 
-  const roundsRepository = new FakeRepository<Round>([
+  const roundsRepository = new FakeIndexedRepository<Round>([
     round({ stageId: stageIdWithRounds }),
     round({ stageId: stageIdWithRounds }),
     round({ stageId: stageIdWithRounds }),
@@ -87,15 +87,5 @@ describe("LobbiesService", () => {
 
   it("should find no lobbies if stage does not have it", async () => {
     expect(await service.findAllByStage(stageIdWithoutLobbies)).toHaveLength(0);
-  });
-
-  it("should count rounds of a lobby", async () => {
-    expect(await service.findRoundCount(stageIdWithRounds)).toBe(3);
-  });
-
-  it("should return round result query result", async () => {
-    expect(await service.findLobbyResults(stageIdWithRounds)).toStrictEqual(
-      expectedRoundResult,
-    );
   });
 });

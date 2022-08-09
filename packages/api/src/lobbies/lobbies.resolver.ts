@@ -11,28 +11,37 @@ import { Player } from "../players/player.entity";
 import { CreateLobbyResultArgs } from "./dto/create-lobby-result.args";
 import { CreateLobbyArgs } from "./dto/create-lobby.args";
 import { CreatePlayerLobbyArgs } from "./dto/create-player-lobby.args";
-import { CreateRoundArgs } from "./dto/create-round.args";
+import { CreateRoundArgs } from "../rounds/dto/create-round.args";
 import { BooleanResult } from "./dto/create-lobby-result.out";
+import { LobbiesService } from "./lobbies.service";
+import { Lobby } from "./lobby.entity";
+import { Round } from "../rounds/round.entity";
+import { RoundsService } from "../rounds/rounds.service";
+import { RoundResultsService } from "../round-results/round-results.service";
 import {
   formatResults,
   fromRawToConsolidatedRoundResults,
-} from "./lobbies.adapter";
-import { LobbiesService } from "./lobbies.service";
-import { Lobby, PlayerLobbyResult } from "./lobby.entity";
-import { Round } from "./round.entity";
+} from "../round-results/round-result.adapter";
+import { PlayerResults } from "../round-results/dto/get-results.out";
 
 @Resolver(() => Lobby)
 export class LobbiesResolver {
-  constructor(private lobbiesService: LobbiesService) {}
+  constructor(
+    private lobbiesService: LobbiesService,
+    private roundsService: RoundsService,
+    private roundResultsService: RoundResultsService,
+  ) {}
 
   @ResolveField()
   async roundCount(@Parent() { id }: Lobby) {
-    return this.lobbiesService.findRoundCount(id);
+    return this.roundResultsService.findRoundCount(id);
   }
 
   @ResolveField()
-  async playersResults(@Parent() lobby: Lobby): Promise<PlayerLobbyResult[]> {
-    const rawResults = await this.lobbiesService.findLobbyResults(lobby.id);
+  async playersResults(@Parent() lobby: Lobby): Promise<PlayerResults[]> {
+    const rawResults = await this.roundResultsService.findResultsByLobby(
+      lobby.id,
+    );
     return fromRawToConsolidatedRoundResults(rawResults);
   }
 
@@ -58,7 +67,7 @@ export class LobbiesResolver {
   @Mutation(() => Round)
   async createRound(@Args() { sequence, stageId }: CreateRoundArgs) {
     const payload = { sequence, stageId };
-    return this.lobbiesService.createOneRound(payload);
+    return this.roundsService.createOne(payload);
   }
 
   @Mutation(() => Round)
@@ -73,7 +82,7 @@ export class LobbiesResolver {
   async createLobbyResult(@Args() args: CreateLobbyResultArgs) {
     const positionInputs = formatResults(args);
     try {
-      await this.lobbiesService.createResults(positionInputs);
+      await this.roundResultsService.createResults(positionInputs);
       return { result: true };
     } catch (error) {
       return { result: false, error: String(error) };

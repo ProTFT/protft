@@ -1,13 +1,13 @@
 import { Test, TestingModule } from "@nestjs/testing";
 import { getRepositoryToken } from "@nestjs/typeorm";
 import { set } from "../../test/generators/set";
-import { FakeRepository } from "../../test/stubs/fakeRepository";
+import { FakeIndexedRepository } from "../../test/stubs/fakeRepository";
 import { Set } from "./set.entity";
 import { SetsService } from "./sets.service";
 
 describe("SetsService", () => {
   let service: SetsService;
-  const setRepository = new FakeRepository<Set>([
+  const setRepository = new FakeIndexedRepository<Set>([
     set({ id: 1 }),
     set({ id: 2 }),
   ]);

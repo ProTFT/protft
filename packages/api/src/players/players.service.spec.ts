@@ -1,11 +1,11 @@
 import { Test, TestingModule } from "@nestjs/testing";
 import { getRepositoryToken } from "@nestjs/typeorm";
 import { player } from "../../test/generators/player";
-import { FakeRepository } from "../../test/stubs/fakeRepository";
+import { FakeIndexedRepository } from "../../test/stubs/fakeRepository";
 import { Player } from "./player.entity";
 import { PlayersService } from "./players.service";
 
-class PlayerFakeRepository extends FakeRepository<Player> {
+class PlayerFakeRepository extends FakeIndexedRepository<Player> {
   createQueryBuilder() {
     return this;
   }

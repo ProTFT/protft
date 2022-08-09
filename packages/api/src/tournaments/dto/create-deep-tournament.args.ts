@@ -51,7 +51,8 @@ export class PlayerInput {
   id: number;
 }
 
-@InputType() // pq ele não salva isso? Precisa que o Round seja um object type? não faz sentido por ser banco <> graphql
+// this was not working
+@InputType()
 export class RoundInput {
   @Field()
   sequence: number;

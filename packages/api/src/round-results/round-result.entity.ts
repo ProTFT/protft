@@ -7,8 +7,8 @@ import {
   ManyToOne,
   PrimaryColumn,
 } from "typeorm";
-import { Round } from "./round.entity";
-import { Lobby } from "./lobby.entity";
+import { Round } from "../rounds/round.entity";
+import { Lobby } from "../lobbies/lobby.entity";
 
 @Entity()
 @Index(["lobbyId", "roundId", "position"], {

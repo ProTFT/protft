@@ -1,13 +1,13 @@
 import { Test, TestingModule } from "@nestjs/testing";
 import { getRepositoryToken } from "@nestjs/typeorm";
 import { tournament } from "../../test/generators/tournament";
-import { FakeRepository } from "../../test/stubs/fakeRepository";
+import { FakeIndexedRepository } from "../../test/stubs/fakeRepository";
 import { Tournament } from "./tournament.entity";
 import { TournamentsService } from "./tournaments.service";
 
 describe("TournamentsService", () => {
   let service: TournamentsService;
-  const tournamentRepository = new FakeRepository<Tournament>([
+  const tournamentRepository = new FakeIndexedRepository<Tournament>([
     tournament({ id: 1 }),
     tournament({ id: 2 }),
   ]);

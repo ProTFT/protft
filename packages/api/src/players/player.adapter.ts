@@ -1,4 +1,4 @@
-import { RawPlayerStats } from "../lobbies/lobbies.service";
+import { PlayerStatsRaw } from "../round-results/dto/get-player-stats.raw";
 import { PlayerStats } from "./dto/get-player-stats.out";
 
 export function formatStats({
@@ -7,7 +7,7 @@ export function formatStats({
   topOneCount,
   totalGames,
   averagePosition,
-}: RawPlayerStats): PlayerStats {
+}: PlayerStatsRaw): PlayerStats {
   return {
     eigthCount: Number(eigthCount),
     topFourCount: Number(topFourCount),

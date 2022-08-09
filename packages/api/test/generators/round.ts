@@ -1,4 +1,4 @@
-import { Round } from "../../src/lobbies/round.entity";
+import { Round } from "../../src/rounds/round.entity";
 import { stage as genStage } from "./stage";
 
 export function round({

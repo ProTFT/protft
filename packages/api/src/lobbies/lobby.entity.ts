@@ -11,34 +11,8 @@ import {
   OneToMany,
   PrimaryGeneratedColumn,
 } from "typeorm";
-import { RoundResult } from "./round-result.entity";
-//vao morrer ambos
-@ObjectType()
-export class BasePlayer {
-  @Field(() => Int)
-  id: number;
-
-  @Field()
-  name: string;
-
-  @Field({ nullable: true })
-  region: string;
-
-  @Field({ nullable: true })
-  country: string;
-}
-
-@ObjectType()
-export class PlayerLobbyResult {
-  @Field(() => BasePlayer)
-  player: BasePlayer;
-
-  @Field(() => [Int])
-  positions: number[];
-
-  @Field(() => [Int])
-  points: number[];
-}
+import { RoundResult } from "../round-results/round-result.entity";
+import { PlayerResults } from "../round-results/dto/get-results.out";
 
 @ObjectType()
 @Entity()
@@ -63,8 +37,8 @@ export class Lobby {
   @Field(() => Int)
   roundCount: number;
 
-  @Field(() => [PlayerLobbyResult], { nullable: true })
-  playersResults?: PlayerLobbyResult[];
+  @Field(() => [PlayerResults], { nullable: true })
+  playersResults?: PlayerResults[];
 
   @Field(() => [Player], { nullable: true })
   @ManyToMany(() => Player, { cascade: true })

@@ -6,7 +6,7 @@ import {
   OneToMany,
   PrimaryGeneratedColumn,
 } from "typeorm";
-import { RoundResult } from "./round-result.entity";
+import { RoundResult } from "../round-results/round-result.entity";
 import { Field, Int, ObjectType } from "@nestjs/graphql";
 import { Stage } from "../stages/stage.entity";
 
