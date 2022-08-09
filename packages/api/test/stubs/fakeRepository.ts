@@ -27,4 +27,8 @@ export class FakeRepository<T extends IndexedObject> {
   findOne(id: number): T | undefined {
     return this.entries.find((entry) => entry.id === id);
   }
+
+  save(payload: T) {
+    this.entries.push(payload);
+  }
 }

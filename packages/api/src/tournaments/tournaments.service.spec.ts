@@ -41,4 +41,10 @@ describe("TournamentsService", () => {
   it("should not find an unregistered id", async () => {
     expect(await service.findOne(3)).toBeUndefined();
   });
+
+  it("should be able to create one", async () => {
+    const payload = { id: 4, name: "anyName", setId: 1 };
+    await service.createOne(payload);
+    expect(await service.findOne(4)).toBeTruthy();
+  });
 });

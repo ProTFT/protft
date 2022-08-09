@@ -1,4 +1,6 @@
+import { ApolloDriver, ApolloDriverConfig } from "@nestjs/apollo";
 import { Module } from "@nestjs/common";
+import { GraphQLModule } from "@nestjs/graphql";
 import { TypeOrmModule, TypeOrmModuleOptions } from "@nestjs/typeorm";
 import { AppController } from "./app.controller";
 import { AppService } from "./app.service";
@@ -8,8 +10,6 @@ import { StagesModule } from "./stages/stages.module";
 import { PointsModule } from "./points/points.module";
 import { LobbiesModule } from "./lobbies/lobbies.module";
 import { PlayersModule } from "./players/players.module";
-import { GraphQLModule } from "@nestjs/graphql";
-import { ApolloDriver, ApolloDriverConfig } from "@nestjs/apollo";
 import { join } from "path";
 
 const localDatabaseInfo: TypeOrmModuleOptions = {
@@ -29,16 +29,16 @@ const prodDatabaseInfo: TypeOrmModuleOptions = {
   },
 };
 
+const isProd = (): boolean => process.env.NODE_ENV === "production";
+
 @Module({
   imports: [
     TypeOrmModule.forRoot({
       type: "postgres",
-      ...(process.env.NODE_ENV === "production"
-        ? prodDatabaseInfo
-        : localDatabaseInfo),
+      ...(isProd() ? prodDatabaseInfo : localDatabaseInfo),
       autoLoadEntities: true,
-      synchronize: true,
-      logging: true,
+      synchronize: !isProd(),
+      logging: !isProd(),
     }),
     GraphQLModule.forRoot<ApolloDriverConfig>({
       driver: ApolloDriver,
@@ -46,7 +46,7 @@ const prodDatabaseInfo: TypeOrmModuleOptions = {
       definitions: {
         path: join(process.cwd(), "src/graphql.ts"),
       },
-      playground: true,
+      playground: !isProd(),
       introspection: true,
     }),
     SetsModule,

@@ -9,7 +9,9 @@ import {
 } from "@nestjs/graphql";
 import { SetsService } from "../sets/sets.service";
 import { StagesService } from "../stages/stages.service";
-import { Tournament, TournamentInput } from "./tournament.entity";
+import { DeepTournamentInput } from "./dto/create-deep-tournament.args";
+import { CreateTournamentArgs } from "./dto/create-tournament.args";
+import { Tournament } from "./tournament.entity";
 import { TournamentsService } from "./tournaments.service";
 
 @Resolver(() => Tournament)
@@ -44,16 +46,17 @@ export class TournamentsResolver {
 
   @Mutation(() => Tournament)
   async createTournament(
-    @Args({ name: "name" }) name: string,
-    @Args({ name: "setId" }) setId: number,
-    @Args({ name: "region", nullable: true, type: () => [String] })
-    region?: string[],
-    @Args({ name: "host", nullable: true }) host?: string,
-    @Args({ name: "participantsNumber", nullable: true })
-    participantsNumber?: number,
-    @Args({ name: "prizePool", nullable: true }) prizePool?: number,
-    @Args({ name: "startDate", nullable: true }) startDate?: Date,
-    @Args({ name: "endDate", nullable: true }) endDate?: Date,
+    @Args()
+    {
+      name,
+      region,
+      host,
+      participantsNumber,
+      prizePool,
+      startDate,
+      endDate,
+      setId,
+    }: CreateTournamentArgs,
   ) {
     const payload = {
       name,
@@ -70,8 +73,8 @@ export class TournamentsResolver {
 
   @Mutation(() => Tournament)
   async createDeepTournament(
-    @Args({ name: "tournament", type: () => TournamentInput })
-    tournament: TournamentInput,
+    @Args({ name: "tournament", type: () => DeepTournamentInput })
+    tournament: DeepTournamentInput,
   ) {
     return this.tournamentsService.createDeepOne(tournament);
   }

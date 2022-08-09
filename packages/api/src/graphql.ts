@@ -7,7 +7,7 @@
 
 /* tslint:disable */
 /* eslint-disable */
-export interface TournamentInput {
+export interface DeepTournamentInput {
     name: string;
     region?: Nullable<string[]>;
     host?: Nullable<string>;
@@ -160,7 +160,7 @@ export interface IQuery {
 
 export interface IMutation {
     createTournament(name: string, setId: number, region?: Nullable<string[]>, host?: Nullable<string>, participantsNumber?: Nullable<number>, prizePool?: Nullable<number>, startDate?: Nullable<DateTime>, endDate?: Nullable<DateTime>): Tournament | Promise<Tournament>;
-    createDeepTournament(tournament: TournamentInput): Tournament | Promise<Tournament>;
+    createDeepTournament(tournament: DeepTournamentInput): Tournament | Promise<Tournament>;
     createStage(tournamentId: number, pointSchemaId: number, name: string, sequence: number, isFinal: boolean): Stage | Promise<Stage>;
     createLobby(stageId: number, name: string, sequence: number): Lobby | Promise<Lobby>;
     createRound(stageId: number, sequence: number): Round | Promise<Round>;

@@ -1,10 +1,9 @@
 import { Injectable } from "@nestjs/common";
 import { InjectRepository } from "@nestjs/typeorm";
 import { Repository } from "typeorm";
-import { MutationPayload } from "../lib/types";
-import { Tournament, TournamentInput } from "./tournament.entity";
-
-type CreateTournamentPayload = MutationPayload<Tournament, "name" | "setId">;
+import { DeepTournamentInput } from "./dto/create-deep-tournament.args";
+import { CreateTournamentArgs } from "./dto/create-tournament.args";
+import { Tournament } from "./tournament.entity";
 
 @Injectable()
 export class TournamentsService {
@@ -21,12 +20,11 @@ export class TournamentsService {
     return this.tournamentRepository.findOne(id);
   }
 
-  createOne(payload: CreateTournamentPayload): Promise<Tournament> {
+  createOne(payload: CreateTournamentArgs): Promise<Tournament> {
     return this.tournamentRepository.save(payload);
   }
 
-  async createDeepOne(tournament: TournamentInput): Promise<Tournament> {
-    const saved = await this.tournamentRepository.save(tournament);
-    return saved;
+  createDeepOne(tournament: DeepTournamentInput): Promise<Tournament> {
+    return this.tournamentRepository.save(tournament);
   }
 }
