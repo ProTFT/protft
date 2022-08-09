@@ -1,12 +1,9 @@
 import { Injectable } from "@nestjs/common";
 import { InjectRepository } from "@nestjs/typeorm";
 import { Repository } from "typeorm";
+import { CreatePlayerArgs } from "./dto/create-player.args";
+import { GetPlayerArgs } from "./dto/get-players.args";
 import { Player } from "./player.entity";
-
-export interface PlayersQueryFilter {
-  region?: string;
-  country?: string;
-}
 
 interface PlayerCountry {
   country: string;
@@ -15,8 +12,6 @@ interface PlayerCountry {
 interface PlayerRegion {
   region: string;
 }
-
-type CreatePlayerPayload = Omit<Player, "id" | "playerStats">;
 
 @Injectable()
 export class PlayersService {
@@ -29,7 +24,7 @@ export class PlayersService {
     return this.playerRepository.findOne(id);
   }
 
-  async findAll(filters: PlayersQueryFilter): Promise<Player[]> {
+  async findAll(filters: GetPlayerArgs): Promise<Player[]> {
     return this.playerRepository.find({ where: filters });
   }
 
@@ -37,7 +32,7 @@ export class PlayersService {
     name,
     country,
     region,
-  }: CreatePlayerPayload): Promise<Player> {
+  }: CreatePlayerArgs): Promise<Player> {
     return this.playerRepository.save({ name, country, region });
   }
 

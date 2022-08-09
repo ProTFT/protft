@@ -69,14 +69,9 @@ export interface PlayerStats {
 export interface Player {
     id: number;
     name: string;
-    playerStats: PlayerStats;
+    playerStats?: Nullable<PlayerStats>;
     region?: Nullable<string>;
     country?: Nullable<string>;
-}
-
-export interface PlayerFilterMeta {
-    possibleCountries: string[];
-    possibleRegions: string[];
 }
 
 export interface Round {
@@ -146,6 +141,11 @@ export interface BooleanResult {
     error?: Nullable<string>;
 }
 
+export interface PlayerFilterMeta {
+    possibleCountries: string[];
+    possibleRegions: string[];
+}
+
 export interface IQuery {
     sets(): Set[] | Promise<Set[]>;
     set(id: number): Nullable<Set> | Promise<Nullable<Set>>;
@@ -166,7 +166,7 @@ export interface IMutation {
     createRound(stageId: number, sequence: number): Round | Promise<Round>;
     createPlayerLobby(lobbyId: number, playerIds: number[]): Round | Promise<Round>;
     createLobbyResult(lobbyId: number, players: PlayerLobbyResultInput[]): BooleanResult | Promise<BooleanResult>;
-    createUser(name: string, country: string, region: string): Player | Promise<Player>;
+    createPlayer(name: string, country: string, region: string): Player | Promise<Player>;
 }
 
 export type DateTime = any;

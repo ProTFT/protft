@@ -1,23 +1,6 @@
-import { Field, Float, Int, ObjectType } from "@nestjs/graphql";
+import { Field, Int, ObjectType } from "@nestjs/graphql";
 import { Column, Entity, PrimaryGeneratedColumn } from "typeorm";
-
-@ObjectType()
-export class PlayerStats {
-  @Field(() => Float)
-  averagePosition: number;
-
-  @Field(() => Int)
-  totalGames: number;
-
-  @Field(() => Int)
-  topFourCount: number;
-
-  @Field(() => Int)
-  topOneCount: number;
-
-  @Field(() => Int)
-  eigthCount: number;
-}
+import { PlayerStats } from "./dto/get-player-stats.out";
 
 @ObjectType()
 @Entity()
@@ -30,23 +13,14 @@ export class Player {
   @Column()
   name: string;
 
-  @Field()
-  playerStats: PlayerStats;
+  @Field({ nullable: true })
+  playerStats?: PlayerStats;
 
   @Field({ nullable: true })
   @Column({ nullable: true })
-  region: string;
+  region?: string;
 
   @Field({ nullable: true })
   @Column({ nullable: true })
-  country: string;
-}
-
-@ObjectType()
-export class PlayerFilterMeta {
-  @Field(() => [String])
-  possibleCountries: string[];
-
-  @Field(() => [String])
-  possibleRegions: string[];
+  country?: string;
 }

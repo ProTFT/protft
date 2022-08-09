@@ -10,7 +10,7 @@ import {
   ResolveField,
   Resolver,
 } from "@nestjs/graphql";
-import { Player } from "../graphql";
+import { Player } from "../players/player.entity";
 import { fromRawToConsolidatedRoundResults } from "./lobbies.adapter";
 import { LobbiesService } from "./lobbies.service";
 import { Lobby, PlayerLobbyResult } from "./lobby.entity";

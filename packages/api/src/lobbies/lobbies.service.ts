@@ -2,7 +2,7 @@ import { Injectable } from "@nestjs/common";
 import { InjectRepository } from "@nestjs/typeorm";
 import { Repository } from "typeorm";
 import { MutationPayload } from "../lib/types";
-import { Player, PlayerStats } from "../players/player.entity";
+import { Player } from "../players/player.entity";
 import { Points } from "../points/point.entity";
 import { Lobby } from "./lobby.entity";
 import { RoundResult } from "./round-result.entity";
@@ -23,6 +23,14 @@ export type RawRoundResults = Pick<
   Pick<Points, "points"> &
   Pick<Round, "sequence">;
 
+export interface RawPlayerStats {
+  averagePosition: string;
+  totalGames: string;
+  topFourCount: string;
+  topOneCount: string;
+  eigthCount: string;
+}
+
 @Injectable()
 export class LobbiesService {
   constructor(
@@ -34,7 +42,9 @@ export class LobbiesService {
   ) {}
 
   findOne(lobbyId: number): Promise<Lobby> {
-    return this.lobbiesRepository.findOne(lobbyId, { relations: ["players"] });
+    return this.lobbiesRepository.findOne(lobbyId, {
+      relations: ["players"],
+    });
   }
 
   findAllByStage(stageId: number): Promise<Lobby[]> {
@@ -57,7 +67,7 @@ export class LobbiesService {
     return count;
   }
 
-  async findStatsByPlayer(playerId: number) {
+  async findStatsByPlayer(playerId: number): Promise<RawPlayerStats> {
     return this.roundResultsRepository
       .createQueryBuilder()
       .select(`COALESCE(AVG(position),0)`, "averagePosition")

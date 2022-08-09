@@ -9,7 +9,12 @@ import {
 } from "@nestjs/graphql";
 import { BaseResolver } from "../lib/BaseResolver";
 import { LobbiesService } from "../lobbies/lobbies.service";
-import { Player, PlayerFilterMeta, PlayerStats } from "./player.entity";
+import { CreatePlayerArgs } from "./dto/create-player.args";
+import { PlayerFilterMeta } from "./dto/get-player-filter-meta.out";
+import { PlayerStats } from "./dto/get-player-stats.out";
+import { GetPlayerArgs } from "./dto/get-players.args";
+import { formatStats } from "./player.adapter";
+import { Player } from "./player.entity";
 import { PlayersService } from "./players.service";
 
 @Resolver(() => Player)
@@ -21,21 +26,15 @@ export class PlayersResolver extends BaseResolver {
     super();
   }
 
+  // vai mudar para pegar do round results
   @ResolveField(() => PlayerStats)
   async playerStats(@Parent() player: Player): Promise<PlayerStats> {
-    const stats = await this.lobbiesService.findStatsByPlayer(player.id);
-    console.log(player.id, stats.topFourCount);
-    return {
-      ...stats,
-      averagePosition: Number(parseFloat(stats.averagePosition).toFixed(2)),
-    };
+    const rawStats = await this.lobbiesService.findStatsByPlayer(player.id);
+    return formatStats(rawStats);
   }
 
   @Query(() => [Player])
-  async players(
-    @Args("region", { nullable: true }) region: string,
-    @Args("country", { nullable: true }) country: string,
-  ) {
+  async players(@Args() { region, country }: GetPlayerArgs) {
     const filters = this.cleanGraphQLFilters({ region, country });
     return this.playersService.findAll(filters);
   }
@@ -58,11 +57,7 @@ export class PlayersResolver extends BaseResolver {
   }
 
   @Mutation(() => Player)
-  async createUser(
-    @Args({ name: "name" }) name: string,
-    @Args({ name: "country" }) country: string,
-    @Args({ name: "region" }) region: string,
-  ) {
+  async createPlayer(@Args() { name, country, region }: CreatePlayerArgs) {
     const payload = { name, country, region };
     return this.playersService.createOne(payload);
   }
