@@ -1,15 +1,10 @@
 import { Injectable } from "@nestjs/common";
 import { InjectRepository } from "@nestjs/typeorm";
 import { Repository } from "typeorm";
-import { MutationPayload } from "../lib/types";
 import { RawRoundResults } from "../lobbies/lobbies.service";
 import { RoundResult } from "../lobbies/round-result.entity";
+import { CreateStageArgs } from "./dto/create-stage.args";
 import { Stage } from "./stage.entity";
-
-type CreateStagePayload = MutationPayload<
-  Stage,
-  "pointSchemaId" | "name" | "sequence" | "isFinal"
->;
 
 @Injectable()
 export class StagesService {
@@ -21,10 +16,11 @@ export class StagesService {
     return this.stageRepository.find({ where: { tournamentId } });
   }
 
-  createOne(payload: CreateStagePayload): Promise<Stage> {
+  createOne(payload: CreateStageArgs): Promise<Stage> {
     return this.stageRepository.save(payload);
   }
 
+  // Isso pode ser movido para uma entidade/service de round? E ser importado aq
   async findRoundCount(id: number): Promise<number> {
     const query = await this.stageRepository.findOne({
       where: { id },
@@ -33,6 +29,7 @@ export class StagesService {
     return query.rounds.length;
   }
 
+  // vai sair pra pegar do round result
   getConsolidatedResults(stageId: number): Promise<RawRoundResults[]> {
     return this.stageRepository
       .createQueryBuilder("stage")

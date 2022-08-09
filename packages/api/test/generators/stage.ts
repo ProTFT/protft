@@ -1,8 +1,6 @@
 import { Stage } from "../../src/stages/stage.entity";
 import { tournament as genTournament } from "./tournament";
 
-type StageGeneratorParams = Partial<Stage>;
-
 export function stage({
   id,
   name,
@@ -13,13 +11,15 @@ export function stage({
   sequence,
   tournament,
   tournamentId,
-}: StageGeneratorParams): Stage {
+  rounds,
+}: Partial<Stage>): Stage {
   const randomId = Math.random() * 999;
   return {
     id: id || randomId,
     name: name || "",
     isFinal: isFinal || false,
     lobbies: lobbies || [],
+    roundCount: rounds?.length || 0,
     pointSchema: pointSchema || { id: randomId, name: "" },
     pointSchemaId: pointSchemaId || randomId,
     sequence: sequence || randomId,

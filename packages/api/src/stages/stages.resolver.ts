@@ -9,6 +9,7 @@ import {
 } from "@nestjs/graphql";
 import { fromRawToConsolidatedRoundResults } from "../lobbies/lobbies.adapter";
 import { LobbiesService } from "../lobbies/lobbies.service";
+import { CreateStageArgs } from "./dto/create-stage.args";
 import { PlayerStageResult, Stage } from "./stage.entity";
 import { StagesService } from "./stages.service";
 
@@ -51,11 +52,8 @@ export class StagesResolver {
 
   @Mutation(() => Stage)
   async createStage(
-    @Args({ name: "tournamentId" }) tournamentId: number,
-    @Args({ name: "pointSchemaId" }) pointSchemaId: number,
-    @Args({ name: "name" }) name: string,
-    @Args({ name: "sequence" }) sequence: number,
-    @Args({ name: "isFinal" }) isFinal: boolean,
+    @Args()
+    { tournamentId, pointSchemaId, name, sequence, isFinal }: CreateStageArgs,
   ) {
     const payload = { tournamentId, pointSchemaId, name, sequence, isFinal };
     return this.stagesService.createOne(payload);

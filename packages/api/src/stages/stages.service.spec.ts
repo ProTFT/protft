@@ -29,7 +29,7 @@ describe("Stages Service", () => {
   });
 
   it("should be defined", async () => {
-    expect(await service).toBeDefined();
+    expect(service).toBeDefined();
   });
 
   it("should get all stages from a tournament", async () => {
@@ -42,5 +42,19 @@ describe("Stages Service", () => {
     expect(
       await service.findAllByTournament(tournamentIdWithoutStages),
     ).toHaveLength(0);
+  });
+
+  it("should be able to create a stage", async () => {
+    const payload = stage({
+      id: 10,
+      tournamentId: 10,
+    });
+    expect(
+      await service.findAllByTournament(payload.tournamentId),
+    ).toHaveLength(0);
+    await service.createOne(payload);
+    expect(
+      await service.findAllByTournament(payload.tournamentId),
+    ).toHaveLength(1);
   });
 });
