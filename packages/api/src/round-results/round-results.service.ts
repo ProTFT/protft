@@ -42,7 +42,7 @@ export class RoundResultsService {
       .getRawOne();
   }
 
-  createResults(results: RoundResult[]): Promise<any> {
+  createResults(results: RoundResult[]): Promise<RoundResult[]> {
     return this.roundResultsRepository.save(results);
   }
 

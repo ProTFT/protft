@@ -54,27 +54,39 @@ describe("PlayersService", () => {
     expect(service).toBeDefined();
   });
 
-  it("should return all players", async () => {
-    expect(await service.findAll({})).toHaveLength(4);
+  describe("find all", () => {
+    it("should return all players", async () => {
+      expect(await service.findAll({})).toHaveLength(4);
+    });
   });
 
-  it("should find one player", async () => {
-    expect(await service.findOne(2)).toBeTruthy();
+  describe("find one", () => {
+    it("should find one player", async () => {
+      expect(await service.findOne(2)).toBeTruthy();
+    });
+
+    it("should not find an unregistered id", async () => {
+      expect(await service.findOne(10)).toBeUndefined();
+    });
   });
 
-  it("should not find an unregistered id", async () => {
-    expect(await service.findOne(10)).toBeUndefined();
+  describe("find unique countries", () => {
+    it("should extract distinct countries", async () => {
+      expect(await service.findUniqueCountries()).toStrictEqual([
+        "Brazil",
+        "Canada",
+        "Germany",
+      ]);
+    });
   });
 
-  it("should extract distinct countries", async () => {
-    expect(await service.findUniqueCountries()).toStrictEqual([
-      "Brazil",
-      "Canada",
-      "Germany",
-    ]);
-  });
-
-  it("should extract distinct regions", async () => {
-    expect(await service.findUniqueRegions()).toStrictEqual(["BR", "NA", "EU"]);
+  describe("find unique regions", () => {
+    it("should extract distinct regions", async () => {
+      expect(await service.findUniqueRegions()).toStrictEqual([
+        "BR",
+        "NA",
+        "EU",
+      ]);
+    });
   });
 });

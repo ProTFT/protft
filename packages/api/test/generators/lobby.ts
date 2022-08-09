@@ -9,6 +9,7 @@ export function lobby({
   sequence,
   stage,
   stageId,
+  players,
 }: Partial<Lobby>): Lobby {
   const randomId = Math.random() * 999;
   return {
@@ -19,5 +20,6 @@ export function lobby({
     sequence: sequence || randomId,
     stage: stage || genStage({}),
     stageId: stageId || randomId,
+    players: players || [],
   };
 }

@@ -2,11 +2,11 @@ import { PlayerStatsRaw } from "../round-results/dto/get-player-stats.raw";
 import { PlayerStats } from "./dto/get-player-stats.out";
 
 export function formatStats({
+  averagePosition,
   eigthCount,
   topFourCount,
   topOneCount,
   totalGames,
-  averagePosition,
 }: PlayerStatsRaw): PlayerStats {
   return {
     eigthCount: Number(eigthCount),

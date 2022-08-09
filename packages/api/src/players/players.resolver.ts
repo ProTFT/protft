@@ -13,7 +13,7 @@ import { CreatePlayerArgs } from "./dto/create-player.args";
 import { PlayerFilterMeta } from "./dto/get-player-filter-meta.out";
 import { PlayerStats } from "./dto/get-player-stats.out";
 import { GetPlayerArgs } from "./dto/get-players.args";
-import { formatStats } from "./player.adapter";
+import { formatStats } from "./players.adapter";
 import { Player } from "./player.entity";
 import { PlayersService } from "./players.service";
 

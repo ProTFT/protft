@@ -32,29 +32,33 @@ describe("Stages Service", () => {
     expect(service).toBeDefined();
   });
 
-  it("should get all stages from a tournament", async () => {
-    expect(
-      await service.findAllByTournament(tournamentIdWithStages),
-    ).toHaveLength(2);
-  });
-
-  it("should return empty array if tournament id has no stages registered", async () => {
-    expect(
-      await service.findAllByTournament(tournamentIdWithoutStages),
-    ).toHaveLength(0);
-  });
-
-  it("should be able to create a stage", async () => {
-    const payload = stage({
-      id: 10,
-      tournamentId: 10,
+  describe("find all by tournament", () => {
+    it("should get all stages from a tournament", async () => {
+      expect(
+        await service.findAllByTournament(tournamentIdWithStages),
+      ).toHaveLength(2);
     });
-    expect(
-      await service.findAllByTournament(payload.tournamentId),
-    ).toHaveLength(0);
-    await service.createOne(payload);
-    expect(
-      await service.findAllByTournament(payload.tournamentId),
-    ).toHaveLength(1);
+
+    it("should return empty array if tournament id has no stages registered", async () => {
+      expect(
+        await service.findAllByTournament(tournamentIdWithoutStages),
+      ).toHaveLength(0);
+    });
+  });
+
+  describe("create one", () => {
+    it("should be able to create a stage", async () => {
+      const payload = stage({
+        id: 10,
+        tournamentId: 10,
+      });
+      expect(
+        await service.findAllByTournament(payload.tournamentId),
+      ).toHaveLength(0);
+      await service.createOne(payload);
+      expect(
+        await service.findAllByTournament(payload.tournamentId),
+      ).toHaveLength(1);
+    });
   });
 });
