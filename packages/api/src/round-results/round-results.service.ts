@@ -54,7 +54,7 @@ export class RoundResultsService {
 
   findResultsByStage(stageId: number): Promise<RoundResultsRaw[]> {
     return this.baseResultQuery()
-      .where("stage.stageId = :stageId", { stageId })
+      .where("stage.id = :stageId", { stageId })
       .execute();
   }
 

@@ -18,11 +18,9 @@ import { Lobby } from "./lobby.entity";
 import { Round } from "../rounds/round.entity";
 import { RoundsService } from "../rounds/rounds.service";
 import { RoundResultsService } from "../round-results/round-results.service";
-import {
-  formatResults,
-  fromRawToConsolidatedRoundResults,
-} from "../round-results/round-result.adapter";
+import { formatResults } from "../round-results/round-result.adapter";
 import { PlayerResults } from "../round-results/dto/get-results.out";
+import { RoundResultsFacade } from "../round-results/round-results.facade";
 
 @Resolver(() => Lobby)
 export class LobbiesResolver {
@@ -30,6 +28,7 @@ export class LobbiesResolver {
     private lobbiesService: LobbiesService,
     private roundsService: RoundsService,
     private roundResultsService: RoundResultsService,
+    private roundResultsFacade: RoundResultsFacade,
   ) {}
 
   @ResolveField()
@@ -39,10 +38,7 @@ export class LobbiesResolver {
 
   @ResolveField()
   async playersResults(@Parent() lobby: Lobby): Promise<PlayerResults[]> {
-    const rawResults = await this.roundResultsService.findResultsByLobby(
-      lobby.id,
-    );
-    return fromRawToConsolidatedRoundResults(rawResults);
+    return this.roundResultsFacade.findResultsByLobby(lobby.id);
   }
 
   @ResolveField()

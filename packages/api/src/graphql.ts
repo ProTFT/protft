@@ -88,15 +88,8 @@ export interface Tournament {
     stages?: Nullable<Stage[]>;
 }
 
-export interface BasePlayer {
-    id: number;
-    name: string;
-    region?: Nullable<string>;
-    country?: Nullable<string>;
-}
-
 export interface PlayerResults {
-    player: BasePlayer;
+    player: Player;
     positions: number[];
     points: number[];
 }

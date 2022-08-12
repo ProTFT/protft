@@ -81,44 +81,11 @@ interface TableBodyProps {
 }
 
 function TableBody({ stage, isFinal }: TableBodyProps) {
-  // Sorting should be moved to the backend
-  const sortSingleRoundLobby = (a: PlayerLobbyResult, b: PlayerLobbyResult) =>
-    a.positions[0] - b.positions[0];
-
-  const sortCommonLobby = (a: PlayerLobbyResult, b: PlayerLobbyResult) =>
-    a.positions.reduce((prev, curr) => prev + curr) -
-    b.positions.reduce((prev, curr) => prev + curr);
-
-  const sortFinalsLobby = (a: PlayerLobbyResult, b: PlayerLobbyResult) =>
-    b.points.reduce((prev, curr) => prev + curr) -
-      a.points.reduce((prev, curr) => prev + curr) ||
-    a.positions[a.positions.length - 1] - b.positions[b.positions.length - 1];
-
-  const getSortingMethod = () => {
-    if (stage.roundCount === 1) {
-      return sortSingleRoundLobby;
-    }
-
-    if (isFinal) {
-      return sortFinalsLobby;
-    }
-
-    return sortCommonLobby;
-  };
-
-  const sortResults = (
-    playerResults: PlayerLobbyResult[]
-  ): PlayerLobbyResult[] => {
-    const sortingMethod = getSortingMethod();
-    return playerResults.sort(sortingMethod);
-  };
-
-  const playerResults = [...stage?.playersResults!];
-  const sortedResults = sortResults(playerResults);
+  const playerResults = stage?.playersResults!;
   const roundCount = stage.roundCount;
   return (
     <>
-      {sortedResults.map((playerResult, index) => (
+      {playerResults.map((playerResult, index) => (
         <TableRow
           key={playerResult.player.id}
           index={index}

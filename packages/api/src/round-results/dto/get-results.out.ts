@@ -1,24 +1,10 @@
 import { Field, Int, ObjectType } from "@nestjs/graphql";
-
-@ObjectType()
-export class BasePlayer {
-  @Field(() => Int)
-  id: number;
-
-  @Field()
-  name: string;
-
-  @Field({ nullable: true })
-  region: string;
-
-  @Field({ nullable: true })
-  country: string;
-}
+import { Player } from "../../players/player.entity";
 
 @ObjectType()
 export class PlayerResults {
-  @Field(() => BasePlayer)
-  player: BasePlayer;
+  @Field(() => Player)
+  player: Player;
 
   @Field(() => [Int])
   positions: number[];

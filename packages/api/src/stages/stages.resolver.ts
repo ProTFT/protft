@@ -9,8 +9,7 @@ import {
 } from "@nestjs/graphql";
 import { LobbiesService } from "../lobbies/lobbies.service";
 import { PlayerResults } from "../round-results/dto/get-results.out";
-import { fromRawToConsolidatedRoundResults } from "../round-results/round-result.adapter";
-import { RoundResultsService } from "../round-results/round-results.service";
+import { RoundResultsFacade } from "../round-results/round-results.facade";
 import { RoundsService } from "../rounds/rounds.service";
 import { CreateStageArgs } from "./dto/create-stage.args";
 import { Stage } from "./stage.entity";
@@ -22,7 +21,7 @@ export class StagesResolver {
     private stagesService: StagesService,
     private lobbiesService: LobbiesService,
     private roundsService: RoundsService,
-    private roundResultsService: RoundResultsService,
+    private roundResultsFacade: RoundResultsFacade,
   ) {}
 
   @Query(() => [Stage])
@@ -49,10 +48,7 @@ export class StagesResolver {
 
   @ResolveField()
   async playersResults(@Parent() stage: Stage): Promise<PlayerResults[]> {
-    const rawResults = await this.roundResultsService.findResultsByStage(
-      stage.id,
-    );
-    return fromRawToConsolidatedRoundResults(rawResults);
+    return this.roundResultsFacade.findResultsByStage(stage.id);
   }
 
   @Mutation(() => Stage)
