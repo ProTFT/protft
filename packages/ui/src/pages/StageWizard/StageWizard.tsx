@@ -2,7 +2,7 @@ import { Box, Flex, Text, Input, Checkbox, Button } from "@chakra-ui/react";
 import { useState } from "react";
 import { useNavigate, useParams } from "react-router-dom";
 import { useMutation, useQuery } from "urql";
-import { Lobby, Stage } from "../../graphql/schema";
+import { Stage } from "../../graphql/schema";
 import { Section } from "../TournamentWizard/TournamentWizard";
 import {
   CreateLobbyResult,
@@ -80,6 +80,7 @@ export const StageWizard = () => {
   const { tournamentId } = useParams();
   const navigate = useNavigate();
   const [selectedStage, setSelectedStage] = useState<number>(0);
+  const [saveStageStatus, setSaveStageStatus] = useState<string>("waiting");
   const [stageInput, setStageInput] = useState<Partial<CreateStageVariables>>(
     {}
   );
@@ -94,6 +95,7 @@ export const StageWizard = () => {
   const [{ data: stages }, fetchStages] = useQuery<StagesQueryResult>({
     query: STAGES_QUERY,
     variables: { tournamentId: Number(tournamentId) },
+    requestPolicy: "cache-and-network",
   });
 
   const [, createStage] = useMutation<CreateStageResult, CreateStageVariables>(
@@ -118,8 +120,15 @@ export const StageWizard = () => {
         isFinal: isFinal || false,
         lobbies: [],
       };
-      await createStage(payload);
-      fetchStages();
+      setSaveStageStatus("saving");
+      const result = await createStage(payload);
+      if (result.error) {
+        setSaveStageStatus("error");
+        console.log(result.error);
+      } else {
+        setSaveStageStatus("saved");
+        fetchStages();
+      }
     }
   };
 
@@ -208,6 +217,7 @@ export const StageWizard = () => {
           <Text>Point Schema Id</Text>
           <Input name="pointSchemaId" onChange={handleChange} />
           <Button onClick={saveStage}>Save</Button>
+          <Text>{saveStageStatus}</Text>
         </Section>
         <Section>
           <Text>Add Lobby</Text>

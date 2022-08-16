@@ -29,11 +29,11 @@ export const CREATE_TOURNAMENT_QUERY = gql`
     $name: String!
     $region: [String!]
     $host: String
-    $participantsNumber: Float
+    $participantsNumber: Int
     $prizePool: Float
     $startDate: DateTime
     $endDate: DateTime
-    $setId: Float!
+    $setId: Int!
   ) {
     createTournament(
       name: $name

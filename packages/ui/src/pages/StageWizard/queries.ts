@@ -51,10 +51,10 @@ export type CreateStageVariables = Omit<StageInput, "lobbies"> & {
 
 export const CREATE_STAGE_QUERY = gql`
   mutation createStage(
-    $tournamentId: Float!
-    $pointSchemaId: Float!
+    $tournamentId: Int!
+    $pointSchemaId: Int!
     $name: String!
-    $sequence: Float!
+    $sequence: Int!
     $isFinal: Boolean!
   ) {
     createStage(
@@ -90,7 +90,7 @@ export type CreateLobbyVariables = Omit<
 };
 
 export const CREATE_LOBBY_QUERY = gql`
-  mutation createLobby($stageId: Float!, $name: String!, $sequence: Float!) {
+  mutation createLobby($stageId: Int!, $name: String!, $sequence: Int!) {
     createLobby(stageId: $stageId, name: $name, sequence: $sequence) {
       id
     }
@@ -106,7 +106,7 @@ export type CreateRoundVariables = RoundInput & {
 };
 
 export const CREATE_ROUND_QUERY = gql`
-  mutation createRound($stageId: Float!, $sequence: Float!) {
+  mutation createRound($stageId: Int!, $sequence: Int!) {
     createRound(stageId: $stageId, sequence: $sequence) {
       id
     }

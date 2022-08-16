@@ -43,10 +43,13 @@ const TournamentPlayers = () => {
   const [, drop] = useDrop<Player>(() => ({
     accept: "Player",
     drop({ id, name, country, region }, monitor) {
-      setTournamentPlayers((players) => [
-        ...players,
-        { id, name, country, region },
-      ]);
+      setTournamentPlayers((players) => {
+        const tournamentPlayers = [
+          ...players,
+          { id, name, country, region },
+        ].sort((a, b) => a.name.localeCompare(b.name));
+        return tournamentPlayers;
+      });
     },
     collect: (monitor) => ({
       isOver: monitor.isOver(),
@@ -88,12 +91,20 @@ const LobbyPlayers = ({
     CreatePlayerLobbyVariables
   >(CREATE_PLAYER_LOBBY);
 
-  const saveLobbyPlayers = () => {
+  const [saveLobbyStatus, setSaveLobbyStatus] = useState<string>("waiting");
+
+  const saveLobbyPlayers = async () => {
     if (lobbyPlayers.length > 0) {
-      createPlayerLobby({
+      setSaveLobbyStatus("saving");
+      const result = await createPlayerLobby({
         lobbyId,
         playerIds: lobbyPlayers.map((player) => player.id),
       });
+      if (result.error) {
+        setSaveLobbyStatus(result.error.message);
+      } else {
+        setSaveLobbyStatus("saved");
+      }
     }
   };
 
@@ -120,7 +131,10 @@ const LobbyPlayers = ({
           onClick={removeLobbyPlayer}
         />
       ))}
-      <Button onClick={saveLobbyPlayers}>Save</Button>
+      <Button disabled={lobbyPlayers.length !== 8} onClick={saveLobbyPlayers}>
+        Save
+      </Button>
+      <Text>{saveLobbyStatus}</Text>
     </Section>
   );
 };

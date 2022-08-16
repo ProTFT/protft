@@ -1,14 +1,20 @@
-import { Box, Flex, Text, Input, Button } from "@chakra-ui/react";
+import {
+  Box,
+  Flex,
+  Text,
+  Input,
+  Button,
+  Table,
+  TableContainer,
+  Tbody,
+  Tr,
+  Td,
+  Checkbox,
+} from "@chakra-ui/react";
 import { useState } from "react";
 import { useParams } from "react-router-dom";
 import { useMutation, useQuery } from "urql";
-import {
-  BooleanResult,
-  Lobby,
-  PlayerLobbyResultInput,
-  PositionResultInput,
-  Round,
-} from "../../graphql/schema";
+import { BooleanResult, Lobby, Round } from "../../graphql/schema";
 import { StagesQueryResult, STAGES_QUERY } from "../StageWizard/queries";
 import { LobbyList, StageList } from "../StageWizard/StageWizard";
 import { Section } from "../TournamentWizard/TournamentWizard";
@@ -24,7 +30,7 @@ interface PositionResult {
 
 export const ResultsWizard = () => {
   const { tournamentId } = useParams();
-  const [{ data: stages }, fetchStages] = useQuery<StagesQueryResult>({
+  const [{ data: stages }] = useQuery<StagesQueryResult>({
     query: STAGES_QUERY,
     variables: { tournamentId: Number(tournamentId) },
   });
@@ -33,9 +39,12 @@ export const ResultsWizard = () => {
   );
   const [selectedStage, setSelectedStage] = useState<number>(0);
   const [selectedLobby, setSelectedLobby] = useState<number>(0);
-  const [lobbies, setLobbies] = useState<Lobby[]>([]);
+  const [, setLobbies] = useState<Lobby[]>([]);
   const [rounds, setRounds] = useState<Round[]>([]);
   const [playerResultInput, setPlayerResultInput] = useState<Lala>({});
+  const [availableRounds, setAvailableRounds] = useState<{
+    [key: string]: boolean;
+  }>({});
 
   const onChangePosition = (event: React.ChangeEvent<HTMLInputElement>) => {
     const name = event.target.name;
@@ -45,6 +54,17 @@ export const ResultsWizard = () => {
       currentResult[playerId] = currentResult[playerId] || {};
       currentResult[playerId][roundId] = position;
       return currentResult;
+    });
+  };
+
+  const onSelectRound = (event: React.ChangeEvent<HTMLInputElement>) => {
+    const roundId = event.target.name;
+    const checked = event.target.checked;
+    setAvailableRounds((currentRounds) => {
+      return {
+        ...currentRounds,
+        [roundId]: checked,
+      };
     });
   };
 
@@ -93,34 +113,49 @@ export const ResultsWizard = () => {
         />
         <Section>
           <Text>Rounds</Text>
-          {stages?.stages
-            .find((stage) => stage.id === selectedStage)
-            ?.rounds?.map((round) => (
-              <Text key={round.id}>{round.sequence}</Text>
-            ))}
+          <Flex flexDirection="column">
+            {stages?.stages
+              .find((stage) => stage.id === selectedStage)
+              ?.rounds?.map((round) => (
+                <Checkbox
+                  key={round.id}
+                  name={String(round.id)}
+                  onChange={onSelectRound}
+                >
+                  {round.sequence + 1}
+                </Checkbox>
+              ))}
+          </Flex>
         </Section>
         <Section>
           <Text>Players</Text>
-          {stages?.stages
-            .find((stage) => stage.id === selectedStage)
-            ?.lobbies?.find((lobby) => lobby.id === selectedLobby)
-            ?.players.map((player) => (
-              <Flex key={player.id} flexDirection="row">
-                <Text>{player.name}</Text>
-                {rounds.map((round) => (
-                  <div key={round.id}>
-                    <Text>{round.sequence}</Text>
-                    <Input
-                      key={round.id}
-                      name={`${selectedLobby}-${player.id}-${round.id}`}
-                      onChange={onChangePosition}
-                      maxLength={1}
-                      width={12}
-                    />
-                  </div>
-                ))}
-              </Flex>
-            ))}
+          <TableContainer>
+            <Table>
+              <Tbody>
+                {stages?.stages
+                  .find((stage) => stage.id === selectedStage)
+                  ?.lobbies?.find((lobby) => lobby.id === selectedLobby)
+                  ?.players.map((player) => (
+                    <Tr key={player.id} flexDirection="row">
+                      <Td>{player.name}</Td>
+                      {rounds.map((round) => (
+                        <Td key={round.id}>
+                          <Text>{round.sequence + 1}</Text>
+                          <Input
+                            key={round.id}
+                            name={`${selectedLobby}-${player.id}-${round.id}`}
+                            onChange={onChangePosition}
+                            disabled={!availableRounds[round.id]}
+                            maxLength={1}
+                            width={12}
+                          />
+                        </Td>
+                      ))}
+                    </Tr>
+                  ))}
+              </Tbody>
+            </Table>
+          </TableContainer>
           <Button onClick={saveResults}>Save</Button>
         </Section>
       </Flex>

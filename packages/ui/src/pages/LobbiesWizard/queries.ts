@@ -11,7 +11,7 @@ export type CreatePlayerLobbyVariables = {
 };
 
 export const CREATE_PLAYER_LOBBY = gql`
-  mutation createPlayerLobby($lobbyId: Float!, $playerIds: [Int!]!) {
+  mutation createPlayerLobby($lobbyId: Int!, $playerIds: [Int!]!) {
     createPlayerLobby(lobbyId: $lobbyId, playerIds: $playerIds) {
       id
     }

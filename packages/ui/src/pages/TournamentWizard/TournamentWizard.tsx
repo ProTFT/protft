@@ -78,20 +78,10 @@ export const TournamentWizard = () => {
   const [name, setName] = useState<string>();
   const [country, setCountry] = useState<string>();
   const [region, setRegion] = useState<string>();
+  const [saveStatus, setSaveStatus] = useState<string>("Waiting");
   const [tournamentInput, setTournamentInput] = useState<
     Partial<TournamentInput>
   >({});
-
-  const [{ data: players }] = useQuery<
-    PlayersQueryResult,
-    PlayersQueryVariables
-  >({ query: PLAYERS_QUERY });
-
-  const [filteredPlayers, setFilteredPlayers] = useState<
-    PlayersQueryResult | undefined
-  >(players);
-
-  const [filterQuery, setFilterQuery] = useState<string>("");
 
   const [, createPlayer] = useMutation<
     CreatePlayerResult,
@@ -122,7 +112,10 @@ export const TournamentWizard = () => {
         country,
         region,
       };
-      await createPlayer(payload);
+      setSaveStatus("saving");
+      createPlayer(payload)
+        .then(() => setSaveStatus("saved"))
+        .catch(() => setSaveStatus("error"));
     }
   };
 
@@ -154,6 +147,7 @@ export const TournamentWizard = () => {
           <Input onChange={(event) => updateState(setRegion, event)}></Input>
 
           <Button onClick={saveUser}>Save</Button>
+          <Text>{saveStatus}</Text>
         </Section>
         <Section>
           Tournament
@@ -167,4 +161,4 @@ export const TournamentWizard = () => {
       </Flex>
     </Box>
   );
-};;;;;
+};
