@@ -1,4 +1,4 @@
-import { CreateLobbyResultArgs } from "../lobbies/dto/create-lobby-result.args";
+import { CreateLobbyResultArgs } from "./dto/create-lobby-result.args";
 import { PlayerResults } from "./dto/get-results.out";
 import { RoundResultsRaw } from "./dto/get-results.raw";
 import { RoundResult } from "./round-result.entity";

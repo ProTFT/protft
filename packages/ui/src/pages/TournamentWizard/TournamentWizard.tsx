@@ -3,7 +3,7 @@ import React, { useState } from "react";
 import { useMutation, useQuery } from "urql";
 import { useNavigate } from "react-router-dom";
 import { getFlagEmoji } from "../../formatter/FlagEmoji";
-import { Player, TournamentInput } from "../../graphql/schema";
+import { Player, Tournament } from "../../graphql/schema";
 import {
   PlayersQueryResult,
   PlayersQueryVariables,
@@ -79,9 +79,9 @@ export const TournamentWizard = () => {
   const [country, setCountry] = useState<string>();
   const [region, setRegion] = useState<string>();
   const [saveStatus, setSaveStatus] = useState<string>("Waiting");
-  const [tournamentInput, setTournamentInput] = useState<
-    Partial<TournamentInput>
-  >({});
+  const [tournamentInput, setTournamentInput] = useState<Partial<Tournament>>(
+    {}
+  );
 
   const [, createPlayer] = useMutation<
     CreatePlayerResult,

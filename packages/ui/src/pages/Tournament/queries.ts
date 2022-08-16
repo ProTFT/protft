@@ -25,30 +25,6 @@ export const TOURNAMENT_QUERY = gql`
         name
         sequence
         isFinal
-        roundCount
-        playersResults {
-          player {
-            id
-            name
-            country
-          }
-          positions
-          points
-        }
-        lobbies {
-          name
-          sequence
-          roundCount
-          playersResults {
-            player {
-              id
-              name
-              country
-            }
-            positions
-            points
-          }
-        }
       }
     }
   }

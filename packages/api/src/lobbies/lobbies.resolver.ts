@@ -8,38 +8,20 @@ import {
   Resolver,
 } from "@nestjs/graphql";
 import { Player } from "../players/player.entity";
-import { CreateLobbyResultArgs } from "./dto/create-lobby-result.args";
 import { CreateLobbyArgs } from "./dto/create-lobby.args";
 import { CreatePlayerLobbyArgs } from "./dto/create-player-lobby.args";
 import { CreateRoundArgs } from "../rounds/dto/create-round.args";
-import { BooleanResult } from "./dto/create-lobby-result.out";
 import { LobbiesService } from "./lobbies.service";
 import { Lobby } from "./lobby.entity";
 import { Round } from "../rounds/round.entity";
 import { RoundsService } from "../rounds/rounds.service";
-import { RoundResultsService } from "../round-results/round-results.service";
-import { formatResults } from "../round-results/round-result.adapter";
-import { PlayerResults } from "../round-results/dto/get-results.out";
-import { RoundResultsFacade } from "../round-results/round-results.facade";
 
 @Resolver(() => Lobby)
 export class LobbiesResolver {
   constructor(
     private lobbiesService: LobbiesService,
     private roundsService: RoundsService,
-    private roundResultsService: RoundResultsService,
-    private roundResultsFacade: RoundResultsFacade,
   ) {}
-
-  @ResolveField()
-  async roundCount(@Parent() { id }: Lobby) {
-    return this.roundResultsService.findRoundCount(id);
-  }
-
-  @ResolveField()
-  async playersResults(@Parent() lobby: Lobby): Promise<PlayerResults[]> {
-    return this.roundResultsFacade.findResultsByLobby(lobby.id);
-  }
 
   @ResolveField()
   async players(@Parent() lobby: Lobby): Promise<Player[]> {
@@ -72,16 +54,5 @@ export class LobbiesResolver {
   ) {
     const payload = { lobbyId, playerIds };
     return this.lobbiesService.createPlayerLobby(payload);
-  }
-
-  @Mutation(() => BooleanResult)
-  async createLobbyResult(@Args() args: CreateLobbyResultArgs) {
-    const positionInputs = formatResults(args);
-    try {
-      await this.roundResultsService.createResults(positionInputs);
-      return { result: true };
-    } catch (error) {
-      return { result: false, error: String(error) };
-    }
   }
 }

@@ -13,7 +13,7 @@ import { PlayersModule } from "./players/players.module";
 import { join } from "path";
 import { RoundsModule } from "./rounds/rounds.module";
 import { RoundResultsModule } from "./round-results/round-results.module";
-import { StagePlayerInfosModule } from './stage-player-infos/stage-player-infos.module';
+import { StagePlayerInfosModule } from "./stage-player-infos/stage-player-infos.module";
 
 const localDatabaseInfo: TypeOrmModuleOptions = {
   host: "localhost",

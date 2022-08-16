@@ -12,7 +12,6 @@ import { Lobby } from "../lobbies/lobby.entity";
 import { Round } from "../rounds/round.entity";
 import { PointSchema } from "../points/point.entity";
 import { Tournament } from "../tournaments/tournament.entity";
-import { PlayerResults } from "../round-results/dto/get-results.out";
 
 @ObjectType()
 @Entity()
@@ -44,12 +43,6 @@ export class Stage {
 
   @Column("int", { nullable: true, array: true })
   tiebreakers?: number[];
-
-  @Field(() => [PlayerResults], { nullable: true })
-  playersResults?: PlayerResults[];
-
-  @Field(() => Int)
-  roundCount: number;
 
   @Field(() => [Lobby], { nullable: true })
   @OneToMany(() => Lobby, (lobby) => lobby.stage, {

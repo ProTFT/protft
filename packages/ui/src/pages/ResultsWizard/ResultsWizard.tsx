@@ -135,7 +135,7 @@ export const ResultsWizard = () => {
                 {stages?.stages
                   .find((stage) => stage.id === selectedStage)
                   ?.lobbies?.find((lobby) => lobby.id === selectedLobby)
-                  ?.players.map((player) => (
+                  ?.players?.map((player) => (
                     <Tr key={player.id} flexDirection="row">
                       <Td>{player.name}</Td>
                       {rounds.map((round) => (

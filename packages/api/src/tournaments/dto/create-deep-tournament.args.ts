@@ -23,8 +23,6 @@ export class StageInput extends OmitType(
     "pointSchema",
     "tournament",
     "tournamentId",
-    "playersResults",
-    "roundCount",
   ] as const,
   InputType,
 ) {
@@ -35,7 +33,7 @@ export class StageInput extends OmitType(
 @InputType()
 export class LobbyInput extends OmitType(
   Lobby,
-  ["id", "players", "playersResults", "stage", "stageId"] as const,
+  ["id", "players", "stage", "stageId"] as const,
   InputType,
 ) {
   @Field(() => [RoundInput])

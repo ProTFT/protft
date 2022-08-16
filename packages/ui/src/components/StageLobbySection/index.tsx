@@ -12,16 +12,10 @@ import {
   Tr,
   useColorModeValue,
 } from "@chakra-ui/react";
-import { Lobby, Player, PlayerLobbyResult } from "../../graphql/schema";
+import { Lobby, Player, PlayerResults } from "../../graphql/schema";
 import groupBy from "lodash.groupby";
 import { getFlagEmoji } from "../../formatter/FlagEmoji";
 import { useWindowSize } from "../../hooks/useWindowSize";
-
-// For finals
-// First sort by points
-// Then sort by first place in the last round (if not first place, =0)
-// Then sort by top fours
-// Then sort by quantity top 1, 2, 3, 4 maybe?
 
 interface StageLobbySectionProps {
   lobbies?: Lobby[] | null;
@@ -66,7 +60,7 @@ export const StageLobbySection = ({
                     <ColumnHeaders lobby={lobby} />
                   </Thead>
                   <Tbody>
-                    <TableBody lobby={lobby} isFinal={isFinal} />
+                    {/* <TableBody lobby={lobby} isFinal={isFinal} /> */}
                   </Tbody>
                 </Table>
               </TableContainer>
@@ -83,7 +77,7 @@ interface ColumnHeadersProps {
 }
 
 function ColumnHeaders({ lobby }: ColumnHeadersProps) {
-  const roundCount = lobby.roundCount;
+  const roundCount = 10; //TODO: arrumar aqui
   const hasMoreThanOneRound = roundCount > 1;
 
   const roundHeaders = () => {
@@ -102,13 +96,11 @@ function ColumnHeaders({ lobby }: ColumnHeadersProps) {
 }
 
 interface TableBodyProps {
-  lobby: Lobby;
-  isFinal?: boolean | null;
+  playerResults: PlayerResults[];
 }
 
-function TableBody({ lobby, isFinal }: TableBodyProps) {
-  const playerResults = lobby?.playersResults!;
-  const roundCount = lobby.roundCount;
+function TableBody({ playerResults }: TableBodyProps) {
+  const roundCount = playerResults[0].points.length;
   return (
     <>
       {playerResults.map((playerResult, index) => (
@@ -158,7 +150,7 @@ function TableRow({
 }
 
 interface PositionDataCellProps {
-  playerResult: PlayerLobbyResult;
+  playerResult: PlayerResults;
   roundCount: number;
 }
 
@@ -184,7 +176,7 @@ function PositionDataCell({ playerResult, roundCount }: PositionDataCellProps) {
 
 interface PointsDataCellProps {
   roundCount: number;
-  playerResult: PlayerLobbyResult;
+  playerResult: PlayerResults;
 }
 
 function PointsDataCell({ roundCount, playerResult }: PointsDataCellProps) {

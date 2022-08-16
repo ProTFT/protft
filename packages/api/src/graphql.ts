@@ -30,7 +30,6 @@ export interface StageInput {
 export interface LobbyInput {
     name: string;
     sequence: number;
-    roundCount: number;
     rounds: RoundInput[];
     players: PlayerInput[];
 }
@@ -88,12 +87,6 @@ export interface Tournament {
     stages?: Nullable<Stage[]>;
 }
 
-export interface PlayerResults {
-    player: Player;
-    positions: number[];
-    points: number[];
-}
-
 export interface Stage {
     id: number;
     name: string;
@@ -101,8 +94,6 @@ export interface Stage {
     isFinal: boolean;
     tournamentId: number;
     pointSchemaId: number;
-    playersResults?: Nullable<PlayerResults[]>;
-    roundCount: number;
     lobbies?: Nullable<Lobby[]>;
     rounds?: Nullable<Round[]>;
 }
@@ -112,8 +103,6 @@ export interface Lobby {
     stageId: number;
     name: string;
     sequence: number;
-    roundCount: number;
-    playersResults?: Nullable<PlayerResults[]>;
     players?: Nullable<Player[]>;
 }
 
@@ -126,6 +115,12 @@ export interface Round {
 export interface BooleanResult {
     result: boolean;
     error?: Nullable<string>;
+}
+
+export interface PlayerResults {
+    player: Player;
+    positions: number[];
+    points: number[];
 }
 
 export interface PlayerFilterMeta {
@@ -143,6 +138,8 @@ export interface IQuery {
     players(region?: Nullable<string>, country?: Nullable<string>): Player[] | Promise<Player[]>;
     player(id: number): Player | Promise<Player>;
     playerFilterMeta(): PlayerFilterMeta | Promise<PlayerFilterMeta>;
+    resultsByStage(stageId: number): PlayerResults[] | Promise<PlayerResults[]>;
+    resultsByLobby(lobbyId: number): PlayerResults[] | Promise<PlayerResults[]>;
 }
 
 export interface IMutation {
@@ -152,8 +149,8 @@ export interface IMutation {
     createLobby(stageId: number, name: string, sequence: number): Lobby | Promise<Lobby>;
     createRound(stageId: number, sequence: number): Round | Promise<Round>;
     createPlayerLobby(lobbyId: number, playerIds: number[]): Round | Promise<Round>;
-    createLobbyResult(lobbyId: number, players: PlayerLobbyResultInput[]): BooleanResult | Promise<BooleanResult>;
     createPlayer(name: string, country: string, region: string): Player | Promise<Player>;
+    createLobbyResult(lobbyId: number, players: PlayerLobbyResultInput[]): BooleanResult | Promise<BooleanResult>;
 }
 
 export type DateTime = any;

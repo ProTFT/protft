@@ -9,7 +9,7 @@ import {
 import { ComponentMeta, ComponentStory } from "@storybook/react";
 import { StageLobbySection } from ".";
 import { lobby } from "../../generators/lobby";
-import { Lobby, PlayerLobbyResult } from "../../graphql/schema";
+import { Lobby, PlayerResults } from "../../graphql/schema";
 
 export default {
   title: "Stage Lobby Section",
@@ -40,7 +40,7 @@ export default {
 
 const generatePlayers = (numberOfRounds: number) => {
   const possiblePositions = [1, 2, 3, 4, 5, 6, 7, 8];
-  const players: PlayerLobbyResult[] = [
+  const players: PlayerResults[] = [
     { player: { id: 1, name: "Mortdog" }, positions: [], points: [] },
     { player: { id: 2, name: "Mortdragon" }, positions: [], points: [] },
     { player: { id: 3, name: "Mismatched Socks" }, positions: [], points: [] },
@@ -64,26 +64,6 @@ const generatePlayers = (numberOfRounds: number) => {
 
 const lobbyWithNoRounds: Lobby[] = [lobby({})];
 
-export const OneLobbyWithNoResults: ComponentStory<
-  typeof StageLobbySection
-> = () => <StageLobbySection lobbies={lobbyWithNoRounds} />;
-
-const lobbyWithOneRound: Lobby[] = [
-  lobby({ playersResults: generatePlayers(1) }),
-];
-
-export const OneLobbyWithOneRound: ComponentStory<
-  typeof StageLobbySection
-> = () => <StageLobbySection lobbies={lobbyWithOneRound} />;
-
-const lobbyWithSeveralRounds: Lobby[] = [
-  lobby({ playersResults: generatePlayers(4) }),
-];
-
-export const OneLobbyWithSeveralRounds: ComponentStory<
-  typeof StageLobbySection
-> = () => <StageLobbySection lobbies={lobbyWithSeveralRounds} />;
-
-export const FinalsLobby: ComponentStory<typeof StageLobbySection> = () => (
-  <StageLobbySection lobbies={lobbyWithSeveralRounds} isFinal={true} />
+export const OneLobbyWithNoResults: ComponentStory<typeof StageLobbySection> = () => (
+  <StageLobbySection lobbies={lobbyWithNoRounds} />
 );

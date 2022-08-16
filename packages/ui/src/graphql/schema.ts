@@ -6,7 +6,7 @@
 
 /* tslint:disable */
 /* eslint-disable */
-export interface TournamentInput {
+export interface DeepTournamentInput {
   name: string;
   region?: Nullable<string[]>;
   host?: Nullable<string>;
@@ -29,7 +29,6 @@ export interface StageInput {
 export interface LobbyInput {
   name: string;
   sequence: number;
-  roundCount: number;
   rounds: RoundInput[];
   players: PlayerInput[];
 }
@@ -57,22 +56,20 @@ export interface Set {
   name: string;
 }
 
+export interface PlayerStats {
+  averagePosition: number;
+  totalGames: number;
+  topFourCount: number;
+  topOneCount: number;
+  eigthCount: number;
+}
+
 export interface Player {
   id: number;
   name: string;
+  playerStats?: Nullable<PlayerStats>;
   region?: Nullable<string>;
   country?: Nullable<string>;
-}
-
-export interface PlayerFilterMeta {
-  possibleCountries: string[];
-  possibleRegions: string[];
-}
-
-export interface Round {
-  id: number;
-  stageId: number;
-  sequence: number;
 }
 
 export interface Tournament {
@@ -89,12 +86,6 @@ export interface Tournament {
   stages?: Nullable<Stage[]>;
 }
 
-export interface PlayerStageResult {
-  player: Player;
-  positions: number[];
-  points: number[];
-}
-
 export interface Stage {
   id: number;
   name: string;
@@ -102,16 +93,9 @@ export interface Stage {
   isFinal: boolean;
   tournamentId: number;
   pointSchemaId: number;
-  playersResults?: Nullable<PlayerStageResult[]>;
   roundCount: number;
   lobbies?: Nullable<Lobby[]>;
   rounds?: Nullable<Round[]>;
-}
-
-export interface PlayerLobbyResult {
-  player: Player;
-  positions: number[];
-  points: number[];
 }
 
 export interface Lobby {
@@ -119,14 +103,29 @@ export interface Lobby {
   stageId: number;
   name: string;
   sequence: number;
-  roundCount: number;
-  playersResults?: Nullable<PlayerLobbyResult[]>;
-  players: Player[];
+  players?: Nullable<Player[]>;
+}
+
+export interface Round {
+  id: number;
+  stageId: number;
+  sequence: number;
 }
 
 export interface BooleanResult {
   result: boolean;
   error?: Nullable<string>;
+}
+
+export interface PlayerResults {
+  player: Player;
+  positions: number[];
+  points: number[];
+}
+
+export interface PlayerFilterMeta {
+  possibleCountries: string[];
+  possibleRegions: string[];
 }
 
 export interface IQuery {
@@ -142,6 +141,8 @@ export interface IQuery {
   ): Player[] | Promise<Player[]>;
   player(id: number): Player | Promise<Player>;
   playerFilterMeta(): PlayerFilterMeta | Promise<PlayerFilterMeta>;
+  resultsByStage(stageId: number): PlayerResults[] | Promise<PlayerResults[]>;
+  resultsByLobby(lobbyId: number): PlayerResults[] | Promise<PlayerResults[]>;
 }
 
 export interface IMutation {
@@ -156,7 +157,7 @@ export interface IMutation {
     endDate?: Nullable<DateTime>
   ): Tournament | Promise<Tournament>;
   createDeepTournament(
-    tournament: TournamentInput
+    tournament: DeepTournamentInput
   ): Tournament | Promise<Tournament>;
   createStage(
     tournamentId: number,
@@ -175,15 +176,15 @@ export interface IMutation {
     lobbyId: number,
     playerIds: number[]
   ): Round | Promise<Round>;
-  createLobbyResult(
-    lobbyId: number,
-    players: PlayerLobbyResultInput[]
-  ): BooleanResult | Promise<BooleanResult>;
-  createUser(
+  createPlayer(
     name: string,
     country: string,
     region: string
   ): Player | Promise<Player>;
+  createLobbyResult(
+    lobbyId: number,
+    players: PlayerLobbyResultInput[]
+  ): BooleanResult | Promise<BooleanResult>;
 }
 
 export type DateTime = any;

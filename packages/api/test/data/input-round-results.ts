@@ -1,4 +1,4 @@
-import { CreateLobbyResultArgs } from "../../src/lobbies/dto/create-lobby-result.args";
+import { CreateLobbyResultArgs } from "../../src/round-results/dto/create-lobby-result.args";
 
 export const inputRoundResults: CreateLobbyResultArgs = {
   lobbyId: 1,

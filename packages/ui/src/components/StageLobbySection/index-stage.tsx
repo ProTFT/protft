@@ -10,53 +10,62 @@ import {
   Tr,
   useColorModeValue,
 } from "@chakra-ui/react";
-import { Player, PlayerLobbyResult, Stage } from "../../graphql/schema";
+import { Player, PlayerResults } from "../../graphql/schema";
 import { getFlagEmoji } from "../../formatter/FlagEmoji";
-
-// For finals
-// First sort by points
-// Then sort by first place in the last round (if not first place, =0)
-// Then sort by top fours
-// Then sort by quantity top 1, 2, 3, 4 maybe?
-
-// G&G world finals
-// Highest amount of 1st's
-// Highest amount of Top 4's
-// Highest placement in most recent game (if tied, look at previous game until no tie)
-// Round eliminated in most recent game (if tied, look at previous until no tie)
-// Coinflip
+import { gql, useQuery } from "urql";
 
 interface StageLobbySectionProps {
-  stage: Stage;
-  lobbyCount?: number;
-  isFinal?: boolean | null;
+  stageId: number;
 }
 
-export const NewStageLobbySection = ({ stage }: StageLobbySectionProps) => {
+const RESULT_QUERY = gql`
+  query resultsByStage($stageId: Int!) {
+    resultsByStage(stageId: $stageId) {
+      player {
+        id
+        name
+        country
+      }
+      positions
+      points
+    }
+  }
+`;
+
+export const NewStageLobbySection = ({ stageId }: StageLobbySectionProps) => {
+  const [{ data }] = useQuery<{ resultsByStage: PlayerResults[] }>({
+    query: RESULT_QUERY,
+    variables: { stageId },
+  });
   return (
     <AccordionPanel display="flex" justifyContent="center">
       <Box>
-        <TableContainer>
-          <Table variant="simple" size="sm" colorScheme="orange">
-            <Thead>
-              <ColumnHeaders stage={stage} />
-            </Thead>
-            <Tbody>
-              <TableBody stage={stage} isFinal={stage?.isFinal} />
-            </Tbody>
-          </Table>
-        </TableContainer>
+        {!data || data.resultsByStage.length === 0 ? (
+          <div>No data</div>
+        ) : (
+          <TableContainer>
+            <Table variant="simple" size="sm" colorScheme="orange">
+              <Thead>
+                <ColumnHeaders
+                  roundCount={data.resultsByStage[0].points.length}
+                />
+              </Thead>
+              <Tbody>
+                <TableBody results={data.resultsByStage} />
+              </Tbody>
+            </Table>
+          </TableContainer>
+        )}
       </Box>
     </AccordionPanel>
   );
 };
 
 interface ColumnHeadersProps {
-  stage: Stage;
+  roundCount: number;
 }
 
-function ColumnHeaders({ stage }: ColumnHeadersProps) {
-  const roundCount = stage?.roundCount;
+function ColumnHeaders({ roundCount }: ColumnHeadersProps) {
   const hasMoreThanOneRound = roundCount > 1;
 
   const roundHeaders = () => {
@@ -76,16 +85,14 @@ function ColumnHeaders({ stage }: ColumnHeadersProps) {
 }
 
 interface TableBodyProps {
-  stage: Stage;
-  isFinal?: boolean | null;
+  results: PlayerResults[];
 }
 
-function TableBody({ stage, isFinal }: TableBodyProps) {
-  const playerResults = stage?.playersResults!;
-  const roundCount = stage.roundCount;
+function TableBody({ results }: TableBodyProps) {
+  const roundCount = results[0].points.length;
   return (
     <>
-      {playerResults.map((playerResult, index) => (
+      {results.map((playerResult, index) => (
         <TableRow
           key={playerResult.player.id}
           index={index}
@@ -133,7 +140,7 @@ function TableRow({
 }
 
 interface PositionDataCellProps {
-  playerResult: PlayerLobbyResult;
+  playerResult: PlayerResults;
   roundCount: number;
 }
 
@@ -159,7 +166,7 @@ function PositionDataCell({ playerResult, roundCount }: PositionDataCellProps) {
 
 interface PointsDataCellProps {
   roundCount: number;
-  playerResult: PlayerLobbyResult;
+  playerResult: PlayerResults;
 }
 
 function PointsDataCell({ roundCount, playerResult }: PointsDataCellProps) {

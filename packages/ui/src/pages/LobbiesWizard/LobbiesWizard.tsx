@@ -1,4 +1,4 @@
-import { Box, Flex, Text, Input, Checkbox, Button } from "@chakra-ui/react";
+import { Box, Flex, Text, Button } from "@chakra-ui/react";
 import { useState } from "react";
 import { useDrag, useDrop } from "react-dnd";
 import { useNavigate, useParams } from "react-router-dom";
@@ -23,7 +23,7 @@ const DragAndDropPlayer = ({
   player,
   onClick = () => {},
 }: DragAndDropPlayerProps) => {
-  const [{ isDragging }, drag] = useDrag(() => ({
+  const [, drag] = useDrag(() => ({
     type: "Player",
     item: player,
     collect: (monitor) => ({
@@ -145,7 +145,7 @@ export const LobbiesWizard = () => {
   const [selectedStage, setSelectedStage] = useState<number>(0);
   const [selectedLobby, setSelectedLobby] = useState<number>(0);
 
-  const [{ data: stages }, fetchStages] = useQuery<StagesQueryResult>({
+  const [{ data: stages }] = useQuery<StagesQueryResult>({
     query: STAGES_QUERY,
     variables: { tournamentId: Number(tournamentId) },
   });

@@ -5,8 +5,8 @@ import {
   AccordionItem,
   Box,
 } from "@chakra-ui/react";
+import { Suspense } from "react";
 import { Stage } from "../../graphql/schema";
-import { StageLobbySection } from "../StageLobbySection";
 import { NewStageLobbySection } from "../StageLobbySection/index-stage";
 
 interface TournamentStageSectionProps {
@@ -19,19 +19,25 @@ export const TournamentStageSection = ({
   <Accordion allowMultiple allowToggle display="flex" flexDirection="column">
     {stages?.map((stage) => (
       <AccordionItem key={stage.id} display="flex" flexDir="column">
-        <h2>
-          <AccordionButton>
-            <Box flex="1" textAlign="left">
-              {stage.name}
-            </Box>
-            <AccordionIcon />
-          </AccordionButton>
-        </h2>
-        <NewStageLobbySection
-          stage={stage}
-          lobbyCount={stage?.lobbies?.length}
-          isFinal={stage?.isFinal}
-        />
+        {({ isExpanded }) => (
+          <>
+            <h2>
+              <AccordionButton>
+                <Box flex="1" textAlign="left">
+                  {stage.name}
+                </Box>
+                <AccordionIcon />
+              </AccordionButton>
+            </h2>
+            {isExpanded ? (
+              <Suspense fallback={<div>Loading</div>}>
+                <NewStageLobbySection stageId={stage.id} />
+              </Suspense>
+            ) : (
+              <></>
+            )}
+          </>
+        )}
       </AccordionItem>
     ))}
   </Accordion>

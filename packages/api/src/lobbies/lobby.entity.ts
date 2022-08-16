@@ -34,12 +34,6 @@ export class Lobby {
   @Column()
   sequence: number;
 
-  @Field(() => Int)
-  roundCount: number;
-
-  @Field(() => [PlayerResults], { nullable: true })
-  playersResults?: PlayerResults[];
-
   @Field(() => [Player], { nullable: true })
   @ManyToMany(() => Player, { cascade: true })
   @JoinTable()
