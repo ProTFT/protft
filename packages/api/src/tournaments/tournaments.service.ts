@@ -13,7 +13,7 @@ export class TournamentsService {
   ) {}
 
   findAll(): Promise<Tournament[]> {
-    return this.tournamentRepository.find();
+    return this.tournamentRepository.find({ order: { startDate: "DESC" } });
   }
 
   findOne(id: number): Promise<Tournament> {
