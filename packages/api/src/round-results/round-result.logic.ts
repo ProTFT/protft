@@ -8,6 +8,7 @@ export enum SortingMethods {
   LESS_TOP_EIGTH = 4,
   FIRST_PLACES = 5,
   LAST_ROUND_FIRST_PLACE = 6,
+  LAST_ROUND_POSITION = 7,
 }
 
 // b - a, if MORE = highest position
@@ -54,6 +55,9 @@ export const sortByLastRoundFirstPlace = (
   return 0;
 };
 
+export const sortByLastRoundPosition = (a: PlayerResults, b: PlayerResults) =>
+  a.positions[a.positions.length - 1] - b.positions[b.positions.length - 1];
+
 export const sortingMethods: {
   [key in SortingMethods]: (a: PlayerResults, b: PlayerResults) => number;
 } = {
@@ -64,6 +68,7 @@ export const sortingMethods: {
   [SortingMethods.LESS_TOP_EIGTH]: sortByLessTopEigth,
   [SortingMethods.FIRST_PLACES]: sortByFirstPlaces,
   [SortingMethods.LAST_ROUND_FIRST_PLACE]: sortByLastRoundFirstPlace,
+  [SortingMethods.LAST_ROUND_POSITION]: sortByLastRoundPosition,
 };
 
 export const sortResults = (

@@ -3,6 +3,7 @@ import {
   sortByAveragePosition,
   sortByFirstPlaces,
   sortByLastRoundFirstPlace,
+  sortByLastRoundPosition,
   sortByLessTopEigth,
   sortByPoints,
   sortByRecentHighestPlacement,
@@ -154,6 +155,30 @@ describe("Sorting with tie breakers", () => {
     it("should be zero if none of the players got top 1 last round", () => {
       expect(
         sortByLastRoundFirstPlace(middleRoundTop1Player, noTop1Player),
+      ).toBe(0);
+    });
+  });
+
+  describe("sort by last round position", () => {
+    const lastRoundWinner = generatePlayer([8, 8, 1]);
+    const lastRoundLoser = generatePlayer([1, 1, 8]);
+    const lastRoundMiddlePack = generatePlayer([2, 3, 4]);
+
+    it("should be negative if a has higher placement than b", () => {
+      expect(
+        sortByLastRoundPosition(lastRoundWinner, lastRoundMiddlePack),
+      ).toBeLessThan(0);
+    });
+
+    it("should be positive if b has higher placement than a", () => {
+      expect(
+        sortByLastRoundPosition(lastRoundLoser, lastRoundWinner),
+      ).toBeGreaterThan(0);
+    });
+
+    it("should be zero if both players had the same position", () => {
+      expect(
+        sortByLastRoundPosition(lastRoundMiddlePack, lastRoundMiddlePack),
       ).toBe(0);
     });
   });

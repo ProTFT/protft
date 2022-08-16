@@ -5,7 +5,7 @@ export class CreateTournamentArgs {
   @Field({ name: "name" })
   name: string;
 
-  @Field({ name: "setId" })
+  @Field(() => Int, { name: "setId" })
   setId: number;
 
   @Field(() => [String], { name: "region", nullable: true })

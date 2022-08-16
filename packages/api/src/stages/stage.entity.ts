@@ -42,6 +42,9 @@ export class Stage {
   @Column()
   pointSchemaId: number;
 
+  @Column("int", { nullable: true, array: true })
+  tiebreakers?: number[];
+
   @Field(() => [PlayerResults], { nullable: true })
   playersResults?: PlayerResults[];
 

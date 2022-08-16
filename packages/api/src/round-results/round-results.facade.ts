@@ -21,10 +21,12 @@ export class RoundResultsFacade {
 
   private formatAndSort(results: RoundResultsRaw[]): PlayerResults[] {
     const formattedResults = fromRawToConsolidatedRoundResults(results);
-    return sortResults(formattedResults, [
-      SortingMethods.LAST_ROUND_FIRST_PLACE,
+    const tiebreakerMethods = [
       SortingMethods.POINTS,
+      SortingMethods.FIRST_PLACES,
       SortingMethods.TOP_FOURS,
-    ]);
+      SortingMethods.LAST_ROUND_POSITION,
+    ];
+    return sortResults(formattedResults, tiebreakerMethods);
   }
 }
