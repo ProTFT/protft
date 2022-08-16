@@ -22,8 +22,8 @@ export const Tournament = () => {
         position="initial"
         gap={10}
         scrollBehavior="auto"
-        paddingLeft="10%"
-        paddingRight="10%"
+        paddingLeft="20%"
+        paddingRight="20%"
       >
         <PageTitle text={data?.tournament.name} />
         <List width="80%" alignSelf="center">

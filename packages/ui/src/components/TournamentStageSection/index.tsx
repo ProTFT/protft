@@ -7,6 +7,7 @@ import {
 } from "@chakra-ui/react";
 import { Stage } from "../../graphql/schema";
 import { StageLobbySection } from "../StageLobbySection";
+import { NewStageLobbySection } from "../StageLobbySection/index-stage";
 
 interface TournamentStageSectionProps {
   stages?: Stage[] | null;
@@ -26,8 +27,8 @@ export const TournamentStageSection = ({
             <AccordionIcon />
           </AccordionButton>
         </h2>
-        <StageLobbySection
-          lobbies={stage?.lobbies}
+        <NewStageLobbySection
+          stage={stage}
           lobbyCount={stage?.lobbies?.length}
           isFinal={stage?.isFinal}
         />

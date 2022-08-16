@@ -1,43 +1,28 @@
 import { Field, Int, ObjectType } from "@nestjs/graphql";
 import { Player } from "../players/player.entity";
 import { Stage } from "../stages/stage.entity";
-import { Tournament } from "../tournaments/tournament.entity";
 import {
   Column,
   Entity,
   Index,
-  JoinColumn,
+  JoinTable,
+  ManyToMany,
   ManyToOne,
   OneToMany,
   PrimaryGeneratedColumn,
 } from "typeorm";
-import { Round } from "./round.entity";
-
-@ObjectType()
-export class PlayerLobbyResult {
-  @Field(() => Player)
-  player: Player;
-
-  @Field(() => [Int])
-  positions: number[];
-
-  @Field(() => [Int])
-  points: number[];
-}
+import { RoundResult } from "../round-results/round-result.entity";
+import { PlayerResults } from "../round-results/dto/get-results.out";
 
 @ObjectType()
 @Entity()
-@Index(["tournamentId", "stageId", "sequence"], { unique: true })
+@Index(["stageId", "sequence"], { unique: true })
 export class Lobby {
   @Field(() => Int)
   @PrimaryGeneratedColumn()
   id: number;
 
-  @Field()
-  @Column()
-  tournamentId: number;
-
-  @Field()
+  @Field(() => Int)
   @Column()
   stageId: number;
 
@@ -45,24 +30,24 @@ export class Lobby {
   @Column()
   name: string;
 
-  @Field()
+  @Field(() => Int)
   @Column()
   sequence: number;
 
-  @Field()
+  @Field(() => Int)
   roundCount: number;
 
-  @Field(() => [PlayerLobbyResult], { nullable: true })
-  playersResults: PlayerLobbyResult[];
+  @Field(() => [PlayerResults], { nullable: true })
+  playersResults?: PlayerResults[];
 
-  @OneToMany(() => Round, (round) => round.lobbyId)
-  rounds: Round[];
+  @Field(() => [Player], { nullable: true })
+  @ManyToMany(() => Player, { cascade: true })
+  @JoinTable()
+  players?: Player[];
 
-  @ManyToOne(() => Tournament)
-  @JoinColumn({ name: "tournamentId" })
-  tournament: Tournament;
-
-  @ManyToOne(() => Stage)
-  @JoinColumn({ name: "stageId" })
+  @ManyToOne(() => Stage, (stage) => stage.id)
   stage: Stage;
+
+  @OneToMany(() => RoundResult, (roundResult) => roundResult.lobbyId)
+  roundResults?: RoundResult[];
 }

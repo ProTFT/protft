@@ -26,6 +26,9 @@ import { PlayersContainer } from "./pages/Players/Players";
 import { Player } from "./pages/Player/Player";
 import { SuspenseElement } from "./components/SuspendedPage";
 import { TournamentWizard } from "./pages/TournamentWizard/TournamentWizard";
+import { StageWizard } from "./pages/StageWizard/StageWizard";
+import { LobbiesWizard } from "./pages/LobbiesWizard/LobbiesWizard";
+import { ResultsWizard } from "./pages/ResultsWizard/ResultsWizard";
 
 const theme = extendTheme({
   fonts: {
@@ -131,6 +134,20 @@ export const App = () => {
               index
               element={<SuspenseElement element={<TournamentWizard />} />}
             />
+            <Route path=":tournamentId">
+              <Route
+                index
+                element={<SuspenseElement element={<StageWizard />} />}
+              />
+              <Route
+                path="lobbies"
+                element={<SuspenseElement element={<LobbiesWizard />} />}
+              />
+              <Route
+                path="results"
+                element={<SuspenseElement element={<ResultsWizard />} />}
+              />
+            </Route>
           </Route>
         </Routes>
       </Box>

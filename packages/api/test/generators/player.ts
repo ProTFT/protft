@@ -14,5 +14,6 @@ export function player({
     name: name || "",
     region: region || "",
     country: country || "",
+    playerStats: null,
   };
 }

@@ -9,8 +9,10 @@ import {
   PrimaryGeneratedColumn,
 } from "typeorm";
 import { Lobby } from "../lobbies/lobby.entity";
+import { Round } from "../rounds/round.entity";
 import { PointSchema } from "../points/point.entity";
 import { Tournament } from "../tournaments/tournament.entity";
+import { PlayerResults } from "../round-results/dto/get-results.out";
 
 @ObjectType()
 @Entity()
@@ -24,28 +26,44 @@ export class Stage {
   @Column()
   name: string;
 
-  @Field()
+  @Field(() => Int)
   @Column()
   sequence: number;
 
   @Field()
-  @Column()
+  @Column({ default: false })
   isFinal: boolean;
 
-  @Field()
+  @Field(() => Int)
   @Column()
   tournamentId: number;
 
-  @Field()
+  @Field(() => Int)
   @Column()
   pointSchemaId: number;
 
-  @Field(() => [Lobby], { nullable: true })
-  @OneToMany(() => Lobby, (lobby) => lobby.stageId)
-  lobbies: Lobby[];
+  @Column("int", { nullable: true, array: true })
+  tiebreakers?: number[];
 
-  @ManyToOne(() => Tournament)
-  @JoinColumn({ name: "tournamentId" })
+  @Field(() => [PlayerResults], { nullable: true })
+  playersResults?: PlayerResults[];
+
+  @Field(() => Int)
+  roundCount: number;
+
+  @Field(() => [Lobby], { nullable: true })
+  @OneToMany(() => Lobby, (lobby) => lobby.stage, {
+    cascade: true,
+  })
+  lobbies?: Lobby[];
+
+  @Field(() => [Round], { nullable: true })
+  @OneToMany(() => Round, (round) => round.stage, {
+    cascade: true,
+  })
+  rounds?: Round[];
+
+  @ManyToOne(() => Tournament, (tournament) => tournament.id)
   tournament: Tournament;
 
   @JoinColumn({ name: "pointSchemaId" })

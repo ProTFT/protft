@@ -6,7 +6,7 @@ interface QueryOptions {
   where?: { [key: string]: string };
 }
 
-export class FakeRepository<T extends IndexedObject> {
+export class FakeIndexedRepository<T extends IndexedObject> {
   constructor(private entries: T[]) {}
 
   find(queryOptions: QueryOptions): T[] {
@@ -26,5 +26,17 @@ export class FakeRepository<T extends IndexedObject> {
 
   findOne(id: number): T | undefined {
     return this.entries.find((entry) => entry.id === id);
+  }
+
+  save(payload: T) {
+    this.entries.push(payload);
+  }
+}
+
+export class FakeRepository<T> {
+  constructor(private entries: T[]) {}
+
+  find(): T[] {
+    return this.entries;
   }
 }

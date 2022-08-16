@@ -29,27 +29,27 @@ export class Tournament {
 
   @Field(() => [String], { nullable: true })
   @Column("varchar", { nullable: true, array: true })
-  region: string[];
+  region?: string[];
 
   @Field({ nullable: true })
   @Column({ nullable: true })
-  host: string;
+  host?: string;
 
   @Field(() => Int, { nullable: true })
   @Column({ nullable: true })
-  participantsNumber: number;
+  participantsNumber?: number;
 
   @Field(() => Float, { nullable: true })
   @Column({ nullable: true })
-  prizePool: number;
+  prizePool?: number;
 
   @Field(() => GraphQLISODateTime, { nullable: true })
   @Column({ nullable: true })
-  startDate: Date;
+  startDate?: Date;
 
   @Field(() => GraphQLISODateTime, { nullable: true })
   @Column({ nullable: true })
-  endDate: Date;
+  endDate?: Date;
 
   @Field()
   @Column()
@@ -61,6 +61,8 @@ export class Tournament {
   set: Set;
 
   @Field(() => [Stage], { nullable: true })
-  @OneToMany(() => Stage, (stage) => stage.tournamentId)
-  stages: Stage[];
+  @OneToMany(() => Stage, (stage) => stage.tournament, {
+    cascade: true,
+  })
+  stages?: Stage[];
 }

@@ -1,13 +1,8 @@
 import { Injectable } from "@nestjs/common";
 import { InjectRepository } from "@nestjs/typeorm";
 import { Repository } from "typeorm";
-import { MutationPayload } from "../lib/types";
+import { CreateStageArgs } from "./dto/create-stage.args";
 import { Stage } from "./stage.entity";
-
-type CreateStagePayload = MutationPayload<
-  Stage,
-  "tournamentId" | "pointSchemaId" | "name" | "sequence" | "isFinal"
->;
 
 @Injectable()
 export class StagesService {
@@ -19,7 +14,7 @@ export class StagesService {
     return this.stageRepository.find({ where: { tournamentId } });
   }
 
-  createOne(payload: CreateStagePayload): Promise<Stage> {
+  createOne(payload: CreateStageArgs): Promise<Stage> {
     return this.stageRepository.save(payload);
   }
 }

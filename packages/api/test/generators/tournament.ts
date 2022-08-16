@@ -20,7 +20,7 @@ export function tournament({
   return {
     id: id || randomId,
     name: name || "",
-    region: region || "",
+    region: region || [],
     host: host || "",
     participantsNumber: participantsNumber || randomId,
     prizePool: prizePool || randomId,

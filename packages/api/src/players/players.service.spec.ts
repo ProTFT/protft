@@ -1,11 +1,12 @@
 import { Test, TestingModule } from "@nestjs/testing";
 import { getRepositoryToken } from "@nestjs/typeorm";
 import { player } from "../../test/generators/player";
-import { FakeRepository } from "../../test/stubs/fakeRepository";
+import { FakeIndexedRepository } from "../../test/stubs/fakeRepository";
+import { CreatePlayerArgs } from "./dto/create-player.args";
 import { Player } from "./player.entity";
 import { PlayersService } from "./players.service";
 
-class PlayerFakeRepository extends FakeRepository<Player> {
+class PlayerFakeRepository extends FakeIndexedRepository<Player> {
   createQueryBuilder() {
     return this;
   }
@@ -54,27 +55,52 @@ describe("PlayersService", () => {
     expect(service).toBeDefined();
   });
 
-  it("should return all players", async () => {
-    expect(await service.findAll({})).toHaveLength(4);
+  describe("find all", () => {
+    it("should return all players", async () => {
+      expect(await service.findAll({})).toHaveLength(4);
+    });
   });
 
-  it("should find one player", async () => {
-    expect(await service.findOne(2)).toBeTruthy();
+  describe("find one", () => {
+    it("should find one player", async () => {
+      expect(await service.findOne(2)).toBeTruthy();
+    });
+
+    it("should not find an unregistered id", async () => {
+      expect(await service.findOne(10)).toBeUndefined();
+    });
   });
 
-  it("should not find an unregistered id", async () => {
-    expect(await service.findOne(10)).toBeUndefined();
+  describe("find unique countries", () => {
+    it("should extract distinct countries", async () => {
+      expect(await service.findUniqueCountries()).toStrictEqual([
+        "Brazil",
+        "Canada",
+        "Germany",
+      ]);
+    });
   });
 
-  it("should extract distinct countries", async () => {
-    expect(await service.findUniqueCountries()).toStrictEqual([
-      "Brazil",
-      "Canada",
-      "Germany",
-    ]);
+  describe("find unique regions", () => {
+    it("should extract distinct regions", async () => {
+      expect(await service.findUniqueRegions()).toStrictEqual([
+        "BR",
+        "NA",
+        "EU",
+      ]);
+    });
   });
 
-  it("should extract distinct regions", async () => {
-    expect(await service.findUniqueRegions()).toStrictEqual(["BR", "NA", "EU"]);
+  describe("create one", () => {
+    it("should be able to create one", async () => {
+      const payload: CreatePlayerArgs = {
+        name: "anyName",
+        country: "anyCountry",
+        region: "anyRegion",
+      };
+      const playerCount = (await service.findAll({})).length;
+      await service.createOne(payload);
+      expect(await service.findAll({})).toHaveLength(playerCount + 1);
+    });
   });
 });

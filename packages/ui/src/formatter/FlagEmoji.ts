@@ -17,6 +17,7 @@ const countryToFlagEmoji: { [key: string]: string } = {
   "Czech Republic": "🇨🇿",
   Germany: "🇩🇪",
   Poland: "🇵🇱",
+  Denmark: "🇩🇰",
   "": "",
 };
 

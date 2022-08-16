@@ -35,7 +35,7 @@ export const StageLobbySection = ({
   isFinal,
 }: StageLobbySectionProps) => {
   const size = useWindowSize();
-  const groups = groupBy(lobbies, (lobby) => lobby.name.charAt(0));
+  const groups = groupBy(lobbies, (lobby) => lobby.name.charAt(1) || 0);
   const getStageProperties = (lobbyCount?: number) =>
     lobbyCount && lobbyCount > 1 ? { flex: 1 } : {};
   const getParentProperties = (lobbyCount?: number) => ({
@@ -53,9 +53,9 @@ export const StageLobbySection = ({
           flexDir="row"
           flexWrap="wrap"
           {...getParentProperties(lobbyCount)}
-          width="100%"
+          // width="100%"
           overflow="scroll"
-          gap={10}
+          gap={5}
         >
           {groups[lobbyGroup].map((lobby: Lobby) => (
             <Box key={lobby.sequence} {...getStageProperties(lobbyCount)}>
@@ -107,42 +107,11 @@ interface TableBodyProps {
 }
 
 function TableBody({ lobby, isFinal }: TableBodyProps) {
-  // Sorting should be moved to the backend
-  const sortSingleRoundLobby = (a: PlayerLobbyResult, b: PlayerLobbyResult) =>
-    a.positions[0] - b.positions[0];
-
-  const sortCommonLobby = (a: PlayerLobbyResult, b: PlayerLobbyResult) =>
-    a.positions.reduce((prev, curr) => prev + curr) -
-    b.positions.reduce((prev, curr) => prev + curr);
-
-  const sortFinalsLobby = (a: PlayerLobbyResult, b: PlayerLobbyResult) =>
-    b.points.reduce((prev, curr) => prev + curr) -
-      a.points.reduce((prev, curr) => prev + curr) ||
-    a.positions[a.positions.length - 1] - b.positions[b.positions.length - 1];
-
-  const getSortingMethod = () => {
-    if (lobby.roundCount === 1) {
-      return sortSingleRoundLobby;
-    }
-    if (isFinal) {
-      return sortFinalsLobby;
-    }
-    return sortCommonLobby;
-  };
-
-  const sortResults = (
-    playerResults: PlayerLobbyResult[]
-  ): PlayerLobbyResult[] => {
-    const sortingMethod = getSortingMethod();
-    return playerResults.sort(sortingMethod);
-  };
-
-  const playerResults = [...lobby?.playersResults!];
-  const sortedResults = sortResults(playerResults);
+  const playerResults = lobby?.playersResults!;
   const roundCount = lobby.roundCount;
   return (
     <>
-      {sortedResults.map((playerResult, index) => (
+      {playerResults.map((playerResult, index) => (
         <TableRow
           key={playerResult.player.id}
           index={index}
