@@ -66,9 +66,6 @@ export const App = () => {
             <Link to="/players">
               <Button variant="ghost">Players</Button>
             </Link>
-            <Link to="/stats">
-              <Button variant="ghost">Stats</Button>
-            </Link>
             <Link to="/addTournament">
               <Button variant="ghost">Add Tournament</Button>
             </Link>
@@ -99,9 +96,6 @@ export const App = () => {
                 </Link>
                 <Link to="/players" onClick={onClose}>
                   <Button variant="ghost">Players</Button>
-                </Link>
-                <Link to="/stats" onClick={onClose}>
-                  <Button variant="ghost">Stats</Button>
                 </Link>
               </VStack>
             </DrawerBody>
