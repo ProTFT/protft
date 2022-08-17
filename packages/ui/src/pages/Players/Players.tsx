@@ -1,4 +1,4 @@
-import { Box, List, Select } from "@chakra-ui/react";
+import { Box, Input, Select, Text } from "@chakra-ui/react";
 import { useState } from "react";
 import { Link } from "react-router-dom";
 import { useQuery } from "urql";
@@ -14,47 +14,79 @@ import {
 } from "./queries";
 
 export const PlayersContainer = () => {
-  const [countryFilter, setCountryFilter] = useState<string | undefined>(
-    undefined
-  );
+  const [countryFilter, setCountryFilter] = useState<string>("");
+
+  const [playerNameInput, setPlayerNameInput] = useState<string>("");
 
   const [{ data: filterData }] = useQuery<PlayerFilterQueryResult>({
     query: PLAYER_FILTERS_QUERY,
   });
 
   return (
-    <Box textAlign="center" display="flex" px="15%" pt={3}>
-      <Select onChange={(event) => setCountryFilter(event.target.value)}>
-        {filterData?.playerFilterMeta.possibleCountries.map(
-          (country: string) => (
-            <option key={country} value={country}>
-              {getFlagEmoji(country)}
-              {country}
-            </option>
-          )
-        )}
-      </Select>
-      <SuspenseElement element={<Players countryFilter={countryFilter} />} />
+    <Box textAlign="center" display="flex" px="20%" pt={3} flexDir="column">
+      <Box display="flex" gap={10}>
+        <div>
+          <Text>Player name</Text>
+          <Input
+            onChange={(event) => {
+              setPlayerNameInput(event.target.value);
+            }}
+          ></Input>
+        </div>
+        <div>
+          <Text>Country</Text>
+          <Select onChange={(event) => setCountryFilter(event.target.value)}>
+            {filterData?.playerFilterMeta.possibleCountries.map(
+              (country: string) => (
+                <option key={country} value={country}>
+                  {getFlagEmoji(country)}
+                  {country}
+                </option>
+              )
+            )}
+          </Select>
+        </div>
+      </Box>
+      <SuspenseElement
+        element={
+          <Players countryFilter={countryFilter} query={playerNameInput} />
+        }
+      />
     </Box>
   );
 };
 
-export const Players = ({ countryFilter }: any) => {
+export const Players = ({ countryFilter, query }: any) => {
   const [{ data: playersData }] = useQuery<
     PlayersQueryResult,
     PlayersQueryVariables
   >({ query: PLAYERS_QUERY, variables: { country: countryFilter } });
-
+  console.log(query);
   return (
-    <List width="100%">
-      {playersData?.players.map((player: Player) => (
-        <Link key={player.id} to={String(player.id)}>
-          <Box marginTop={4}>
-            {getFlagEmoji(player?.country!)}
-            {player.name}
-          </Box>
-        </Link>
-      ))}
-    </List>
+    <Box display="flex" gap={10} flexWrap="wrap">
+      {playersData?.players
+        .filter((player) =>
+          player.name.toLowerCase().includes(query.toLowerCase())
+        )
+        .map((player: Player) => (
+          <Link key={player.id} to={String(player.id)}>
+            <Box
+              marginTop={4}
+              borderColor="white"
+              borderWidth="thin"
+              padding={2}
+              borderRadius="md"
+              textAlign="left"
+              flex="1 1 0"
+            >
+              <p>Name: {player.name}</p>
+              <p>
+                Country: {getFlagEmoji(player?.country!)} {player.country}
+              </p>
+              <p>Region: {player.region}</p>
+            </Box>
+          </Link>
+        ))}
+    </Box>
   );
 };

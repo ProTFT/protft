@@ -135,6 +135,7 @@ export interface IQuery {
     tournament(id: number): Tournament | Promise<Tournament>;
     stages(tournamentId: number): Stage[] | Promise<Stage[]>;
     lobbies(stageId: number): Lobby[] | Promise<Lobby[]>;
+    tournamentsPlayed(playerId: number): Tournament[] | Promise<Tournament[]>;
     players(region?: Nullable<string>, country?: Nullable<string>): Player[] | Promise<Player[]>;
     player(id: number): Player | Promise<Player>;
     playerFilterMeta(): PlayerFilterMeta | Promise<PlayerFilterMeta>;

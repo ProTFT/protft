@@ -1,5 +1,18 @@
 import { gql } from "urql";
-import { Player } from "../../graphql/schema";
+import { Player, Tournament } from "../../graphql/schema";
+
+export interface PlayerTournamentQueryResult {
+  tournamentsPlayed: Tournament[];
+}
+
+export const PLAYER_TOURNAMENT_QUERY = gql`
+  query tournamentsPlayed($playerId: Int!) {
+    tournamentsPlayed(playerId: $playerId) {
+      id
+      name
+    }
+  }
+`;
 
 export interface PlayerQueryResult {
   player: Player;
@@ -12,6 +25,12 @@ export const PLAYER_QUERY = gql`
       name
       region
       country
+      playerStats {
+        averagePosition
+        totalGames
+        topFourCount
+        topOneCount
+      }
     }
   }
 `;

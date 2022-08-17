@@ -13,6 +13,7 @@ import {
 import { Player, PlayerResults } from "../../graphql/schema";
 import { getFlagEmoji } from "../../formatter/FlagEmoji";
 import { gql, useQuery } from "urql";
+import { Link } from "react-router-dom";
 
 interface StageLobbySectionProps {
   stageId: number;
@@ -101,7 +102,11 @@ function TableBody({ results }: TableBodyProps) {
         >
           <Td>{index + 1}</Td>
           <Td>{getFlagEmoji(playerResult.player.country || "")}</Td>
-          <Td>{playerResult.player.name}</Td>
+          <Td>
+            <Link to={`/players/${playerResult.player.id}`}>
+              {playerResult.player.name}
+            </Link>
+          </Td>
           <PositionDataCell
             playerResult={playerResult}
             roundCount={roundCount}

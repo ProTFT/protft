@@ -16,6 +16,7 @@ import { GetPlayerArgs } from "./dto/get-players.args";
 import { formatStats } from "./players.adapter";
 import { Player } from "./player.entity";
 import { PlayersService } from "./players.service";
+import { Tournament } from "../tournaments/tournament.entity";
 
 @Resolver(() => Player)
 export class PlayersResolver extends BaseResolver {
@@ -32,6 +33,11 @@ export class PlayersResolver extends BaseResolver {
       player.id,
     );
     return formatStats(rawStats);
+  }
+
+  @Query(() => [Tournament])
+  async tournamentsPlayed(@Args("playerId", { type: () => Int }) id: number) {
+    return this.playersService.findTournamentsPlayed(id);
   }
 
   @Query(() => [Player])
