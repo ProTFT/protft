@@ -102,7 +102,7 @@ export const App = () => {
           </DrawerContent>
         </Drawer>
         <Routes>
-          <Route path="/" element={<Home />} />
+          <Route path="/" element={<SuspenseElement element={<Home />} />} />
           <Route path="tournaments">
             <Route
               index

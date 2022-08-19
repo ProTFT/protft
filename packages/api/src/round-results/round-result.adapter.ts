@@ -9,7 +9,16 @@ export function fromRawToConsolidatedRoundResults(
   const consolidatedResults: { [key: number]: PlayerResults } = {};
 
   rawResults.forEach(
-    ({ position, playerId, name, region, country, points }) => {
+    ({
+      position,
+      playerId,
+      name,
+      region,
+      country,
+      points,
+      extraPoints,
+      tiebreakerRanking,
+    }) => {
       if (!consolidatedResults[playerId]) {
         consolidatedResults[playerId] = {
           player: {
@@ -18,14 +27,16 @@ export function fromRawToConsolidatedRoundResults(
             region,
             country,
           },
+          tiebreakerRanking,
           positions: [],
-          points: [],
+          points: [extraPoints],
         };
       }
       consolidatedResults[playerId].positions.push(position);
       consolidatedResults[playerId].points.push(points);
     },
   );
+  // console.log(consolidatedResults);
   return Object.values(consolidatedResults);
 }
 

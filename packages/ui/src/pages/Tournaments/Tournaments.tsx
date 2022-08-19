@@ -4,11 +4,15 @@ import { TournamentListItem } from "../../components/TournamentListItem";
 import { Tournament } from "../../graphql/schema";
 import { useQuery } from "urql";
 import { TournamentsQueryResult, TOURNAMENTS_QUERY } from "./queries";
+import { useEffect } from "react";
 
 export const Tournaments = () => {
   const [{ data }] = useQuery<TournamentsQueryResult>({
     query: TOURNAMENTS_QUERY,
   });
+  useEffect(() => {
+    document.title = "TFTourney";
+  }, []);
   return (
     <Box textAlign="center" display="flex" px="15%" pt={3}>
       <List width="100%">

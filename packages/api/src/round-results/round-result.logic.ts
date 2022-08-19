@@ -9,6 +9,7 @@ export enum SortingMethods {
   FIRST_PLACES = 5,
   LAST_ROUND_FIRST_PLACE = 6,
   LAST_ROUND_POSITION = 7,
+  EXTERNAL_TIEBREAKER = 8,
 }
 
 // b - a, if MORE = highest position
@@ -58,6 +59,9 @@ export const sortByLastRoundFirstPlace = (
 export const sortByLastRoundPosition = (a: PlayerResults, b: PlayerResults) =>
   a.positions[a.positions.length - 1] - b.positions[b.positions.length - 1];
 
+export const sortByExternalTiebreaker = (a: PlayerResults, b: PlayerResults) =>
+  a.tiebreakerRanking - b.tiebreakerRanking;
+
 export const sortingMethods: {
   [key in SortingMethods]: (a: PlayerResults, b: PlayerResults) => number;
 } = {
@@ -69,13 +73,16 @@ export const sortingMethods: {
   [SortingMethods.FIRST_PLACES]: sortByFirstPlaces,
   [SortingMethods.LAST_ROUND_FIRST_PLACE]: sortByLastRoundFirstPlace,
   [SortingMethods.LAST_ROUND_POSITION]: sortByLastRoundPosition,
+  [SortingMethods.EXTERNAL_TIEBREAKER]: sortByExternalTiebreaker,
 };
 
 export const sortResults = (
   results: PlayerResults[],
   sortMethodIds: number[],
 ) => {
-  const sortMethods = sortMethodIds.map((id) => sortingMethods[id]);
+  const sortMethods = (sortMethodIds || [SortingMethods.POINTS]).map(
+    (id) => sortingMethods[id],
+  );
   const sortedResults = [...results].sort((a, b) => {
     for (const sortMethod of sortMethods) {
       const result = sortMethod(a, b);

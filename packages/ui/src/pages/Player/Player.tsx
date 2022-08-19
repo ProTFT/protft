@@ -9,6 +9,7 @@ import {
 } from "./queries";
 import { PageTitle } from "../../components/PageTitle";
 import { getFlagEmoji } from "../../formatter/FlagEmoji";
+import { useEffect } from "react";
 
 const StatBox = ({
   text,
@@ -36,6 +37,10 @@ export const Player = () => {
     query: PLAYER_TOURNAMENT_QUERY,
     variables: { playerId: Number(playerId) },
   });
+
+  useEffect(() => {
+    document.title = `${data?.player.name}`;
+  }, [data?.player.name]);
 
   return (
     <Box textAlign="center" fontSize="xl" display="flex">

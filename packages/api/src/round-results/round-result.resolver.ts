@@ -1,9 +1,15 @@
 import { Args, Int, Mutation, Query, Resolver } from "@nestjs/graphql";
+import { StagesService } from "../stages/stages.service";
 import { CreateLobbyResultArgs } from "./dto/create-lobby-result.args";
 import { BooleanResult } from "./dto/create-lobby-result.out";
 import { PlayerResults } from "./dto/get-results.out";
-import { formatResults } from "./round-result.adapter";
+import { RoundResultsRaw } from "./dto/get-results.raw";
+import {
+  formatResults,
+  fromRawToConsolidatedRoundResults,
+} from "./round-result.adapter";
 import { RoundResult } from "./round-result.entity";
+import { sortResults } from "./round-result.logic";
 import { RoundResultsFacade } from "./round-results.facade";
 import { RoundResultsService } from "./round-results.service";
 
@@ -12,12 +18,14 @@ export class RoundResultsResolver {
   constructor(
     private roundResultsFacade: RoundResultsFacade,
     private roundResultsService: RoundResultsService,
+    private stagesService: StagesService,
   ) {}
 
   @Query(() => [PlayerResults])
   async resultsByStage(@Args("stageId", { type: () => Int }) stageId: number) {
-    // await new Promise((resolve) => setTimeout(resolve, 4000));
-    return this.roundResultsFacade.findResultsByStage(stageId);
+    const { tiebreakers } = await this.stagesService.findOne(stageId);
+    const results = await this.roundResultsService.findResultsByStage(stageId);
+    return this.formatAndSort(results, tiebreakers);
   }
 
   @Query(() => [PlayerResults])
@@ -34,5 +42,13 @@ export class RoundResultsResolver {
     } catch (error) {
       return { result: false, error: String(error) };
     }
+  }
+
+  private formatAndSort(
+    results: RoundResultsRaw[],
+    tiebreakers: number[],
+  ): PlayerResults[] {
+    const formattedResults = fromRawToConsolidatedRoundResults(results);
+    return sortResults(formattedResults, tiebreakers);
   }
 }

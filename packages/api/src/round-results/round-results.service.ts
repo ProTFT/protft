@@ -52,8 +52,15 @@ export class RoundResultsService {
       .execute();
   }
 
-  findResultsByStage(stageId: number): Promise<RoundResultsRaw[]> {
+  async findResultsByStage(stageId: number): Promise<RoundResultsRaw[]> {
     return this.baseResultQuery()
+      .leftJoin(
+        "stage_player_info",
+        "spi",
+        "spi.stageId = stage.id and spi.playerId = player.id",
+      )
+      .addSelect("COALESCE(spi.extraPoints, 0)", "extraPoints")
+      .addSelect("COALESCE(spi.tiebreakerRanking, 0)", "tiebreakerRanking")
       .where("stage.id = :stageId", { stageId })
       .execute();
   }

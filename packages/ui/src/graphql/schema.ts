@@ -111,6 +111,12 @@ export interface Round {
   sequence: number;
 }
 
+export interface TournamentOverview {
+  pastTournaments: Tournament[];
+  liveTournaments: Tournament[];
+  upcomingTournaments: Tournament[];
+}
+
 export interface BooleanResult {
   result: boolean;
   error?: Nullable<string>;
@@ -132,6 +138,7 @@ export interface IQuery {
   set(id: number): Nullable<Set> | Promise<Nullable<Set>>;
   tournaments(): Tournament[] | Promise<Tournament[]>;
   tournament(id: number): Tournament | Promise<Tournament>;
+  tournamentOverview(): TournamentOverview | Promise<TournamentOverview>;
   stages(tournamentId: number): Stage[] | Promise<Stage[]>;
   lobbies(stageId: number): Lobby[] | Promise<Lobby[]>;
   tournamentsPlayed(playerId: number): Tournament[] | Promise<Tournament[]>;

@@ -11,6 +11,7 @@ import { SetsService } from "../sets/sets.service";
 import { StagesService } from "../stages/stages.service";
 import { DeepTournamentInput } from "./dto/create-deep-tournament.args";
 import { CreateTournamentArgs } from "./dto/create-tournament.args";
+import { TournamentOverview } from "./dto/get-tournament-overview.out";
 import { Tournament } from "./tournament.entity";
 import { TournamentsService } from "./tournaments.service";
 
@@ -30,6 +31,21 @@ export class TournamentsResolver {
   @Query(() => Tournament)
   async tournament(@Args("id", { type: () => Int }) id: number) {
     return this.tournamentsService.findOne(id);
+  }
+
+  @Query(() => TournamentOverview)
+  async tournamentOverview() {
+    const [pastTournaments, liveTournaments, upcomingTournaments] =
+      await Promise.all([
+        this.tournamentsService.findPast(),
+        this.tournamentsService.findLive(),
+        this.tournamentsService.findUpcoming(),
+      ]);
+    return {
+      pastTournaments,
+      liveTournaments,
+      upcomingTournaments,
+    };
   }
 
   @ResolveField()

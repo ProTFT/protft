@@ -11,4 +11,6 @@ export class PlayerResults {
 
   @Field(() => [Int])
   points: number[];
+
+  tiebreakerRanking: number;
 }

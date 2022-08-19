@@ -10,8 +10,15 @@ export class StagesService {
     @InjectRepository(Stage) private stageRepository: Repository<Stage>,
   ) {}
 
+  findOne(id: number): Promise<Stage> {
+    return this.stageRepository.findOne(id);
+  }
+
   findAllByTournament(tournamentId: number): Promise<Stage[]> {
-    return this.stageRepository.find({ where: { tournamentId } });
+    return this.stageRepository.find({
+      where: { tournamentId },
+      order: { sequence: "ASC" },
+    });
   }
 
   createOne(payload: CreateStageArgs): Promise<Stage> {

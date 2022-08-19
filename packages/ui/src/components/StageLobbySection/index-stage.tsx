@@ -48,7 +48,7 @@ export const NewStageLobbySection = ({ stageId }: StageLobbySectionProps) => {
             <Table variant="simple" size="sm" colorScheme="orange">
               <Thead>
                 <ColumnHeaders
-                  roundCount={data.resultsByStage[0].points.length}
+                  roundCount={data.resultsByStage[0].positions.length}
                 />
               </Thead>
               <Tbody>

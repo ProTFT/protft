@@ -1,5 +1,5 @@
-import { Box, Input, Select, Text } from "@chakra-ui/react";
-import { useState } from "react";
+import { Box, Input, Select, Text, useColorModeValue } from "@chakra-ui/react";
+import { useEffect, useState } from "react";
 import { Link } from "react-router-dom";
 import { useQuery } from "urql";
 import { SuspenseElement } from "../../components/SuspendedPage";
@@ -61,7 +61,11 @@ export const Players = ({ countryFilter, query }: any) => {
     PlayersQueryResult,
     PlayersQueryVariables
   >({ query: PLAYERS_QUERY, variables: { country: countryFilter } });
-  console.log(query);
+  const borderColor = useColorModeValue("black", "white");
+
+  useEffect(() => {
+    document.title = "TFTourney";
+  }, []);
   return (
     <Box display="flex" gap={10} flexWrap="wrap">
       {playersData?.players
@@ -72,7 +76,7 @@ export const Players = ({ countryFilter, query }: any) => {
           <Link key={player.id} to={String(player.id)}>
             <Box
               marginTop={4}
-              borderColor="white"
+              borderColor={borderColor}
               borderWidth="thin"
               padding={2}
               borderRadius="md"
