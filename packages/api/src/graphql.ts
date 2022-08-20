@@ -94,6 +94,7 @@ export interface Stage {
     isFinal: boolean;
     tournamentId: number;
     pointSchemaId: number;
+    roundCount: number;
     lobbies?: Nullable<Lobby[]>;
     rounds?: Nullable<Round[]>;
 }

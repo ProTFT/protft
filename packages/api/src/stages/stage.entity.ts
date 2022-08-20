@@ -44,6 +44,9 @@ export class Stage {
   @Column("int", { nullable: true, array: true })
   tiebreakers?: number[];
 
+  @Field(() => Int)
+  roundCount: number;
+
   @Field(() => [Lobby], { nullable: true })
   @OneToMany(() => Lobby, (lobby) => lobby.stage, {
     cascade: true,

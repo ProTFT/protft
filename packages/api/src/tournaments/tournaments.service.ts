@@ -31,8 +31,8 @@ export class TournamentsService {
   findLive(): Promise<Tournament[]> {
     return this.tournamentRepository.find({
       where: {
-        startDate: Raw((alias) => `${alias} < CURRENT_DATE`),
-        endDate: Raw((alias) => `${alias} > CURRENT_DATE`),
+        startDate: Raw((alias) => `${alias} <= CURRENT_DATE`),
+        endDate: Raw((alias) => `${alias} >= CURRENT_DATE`),
       },
       order: { startDate: "DESC" },
     });

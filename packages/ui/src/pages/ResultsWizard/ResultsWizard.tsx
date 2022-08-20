@@ -69,6 +69,7 @@ export const ResultsWizard = () => {
   };
 
   const saveResults = async () => {
+    setSaveStatus("saving");
     const playerIds = Object.keys(playerResultInput).map(Number);
     const positionInput = playerIds.map((playerId: number) => {
       const playerResultMap = playerResultInput[playerId];
@@ -86,9 +87,16 @@ export const ResultsWizard = () => {
       lobbyId: selectedLobby,
       players: positionInput,
     };
-    await createResults(result);
+    const response = await createResults(result);
+    if (response.error) {
+      setSaveStatus(response.error.message);
+    } else {
+      setSaveStatus("saved");
+    }
     setPlayerResultInput(() => ({}));
   };
+
+  const [saveStatus, setSaveStatus] = useState<string>("waiting");
 
   return (
     <Box display="flex" px="15%" pt={3} flexDir="column">
@@ -157,6 +165,7 @@ export const ResultsWizard = () => {
             </Table>
           </TableContainer>
           <Button onClick={saveResults}>Save</Button>
+          <Text>{saveStatus}</Text>
         </Section>
       </Flex>
     </Box>

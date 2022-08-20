@@ -38,6 +38,12 @@ export class StagesResolver {
     return this.roundsService.findByStage(id);
   }
 
+  @ResolveField()
+  async roundCount(@Parent() stage: Stage) {
+    const { id } = stage;
+    return this.roundsService.countByStage(id);
+  }
+
   @Mutation(() => Stage)
   async createStage(
     @Args()

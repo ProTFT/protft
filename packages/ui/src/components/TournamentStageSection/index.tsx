@@ -13,25 +13,23 @@ interface TournamentStageSectionProps {
   stages?: Stage[] | null;
 }
 
-export const TournamentStageSection = ({
-  stages,
-}: TournamentStageSectionProps) => (
+export const TournamentStageSection = ({ stages }: TournamentStageSectionProps) => (
   <Accordion allowMultiple allowToggle display="flex" flexDirection="column">
-    {stages?.map((stage) => (
-      <AccordionItem key={stage.id} display="flex" flexDir="column">
+    {stages?.map(({ id, name, roundCount }) => (
+      <AccordionItem key={id} display="flex" flexDir="column">
         {({ isExpanded }) => (
           <>
             <h2>
               <AccordionButton>
                 <Box flex="1" textAlign="left">
-                  {stage.name}
+                  {name}
                 </Box>
                 <AccordionIcon />
               </AccordionButton>
             </h2>
             {isExpanded ? (
               <Suspense fallback={<div>Loading</div>}>
-                <NewStageLobbySection stageId={stage.id} />
+                <NewStageLobbySection stageId={id} roundCount={roundCount} />
               </Suspense>
             ) : (
               <></>

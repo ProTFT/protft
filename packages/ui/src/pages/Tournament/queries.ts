@@ -25,6 +25,7 @@ export const TOURNAMENT_QUERY = gql`
         name
         sequence
         isFinal
+        roundCount
       }
     }
   }

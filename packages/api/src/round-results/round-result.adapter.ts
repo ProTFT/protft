@@ -32,8 +32,10 @@ export function fromRawToConsolidatedRoundResults(
           points: [extraPoints],
         };
       }
-      consolidatedResults[playerId].positions.push(position);
-      consolidatedResults[playerId].points.push(points);
+      if (position && points) {
+        consolidatedResults[playerId].positions.push(position);
+        consolidatedResults[playerId].points.push(points);
+      }
     },
   );
   // console.log(consolidatedResults);

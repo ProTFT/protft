@@ -23,6 +23,7 @@ export class StageInput extends OmitType(
     "pointSchema",
     "tournament",
     "tournamentId",
+    "roundCount",
   ] as const,
   InputType,
 ) {

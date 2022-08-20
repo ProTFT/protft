@@ -17,6 +17,7 @@ import { Link } from "react-router-dom";
 
 interface StageLobbySectionProps {
   stageId: number;
+  roundCount: number;
 }
 
 const RESULT_QUERY = gql`
@@ -33,7 +34,10 @@ const RESULT_QUERY = gql`
   }
 `;
 
-export const NewStageLobbySection = ({ stageId }: StageLobbySectionProps) => {
+export const NewStageLobbySection = ({
+  stageId,
+  roundCount,
+}: StageLobbySectionProps) => {
   const [{ data }] = useQuery<{ resultsByStage: PlayerResults[] }>({
     query: RESULT_QUERY,
     variables: { stageId },
@@ -47,12 +51,13 @@ export const NewStageLobbySection = ({ stageId }: StageLobbySectionProps) => {
           <TableContainer>
             <Table variant="simple" size="sm" colorScheme="orange">
               <Thead>
-                <ColumnHeaders
-                  roundCount={data.resultsByStage[0].positions.length}
-                />
+                <ColumnHeaders roundCount={roundCount} />
               </Thead>
               <Tbody>
-                <TableBody results={data.resultsByStage} />
+                <TableBody
+                  results={data.resultsByStage}
+                  roundCount={roundCount}
+                />
               </Tbody>
             </Table>
           </TableContainer>
@@ -87,10 +92,10 @@ function ColumnHeaders({ roundCount }: ColumnHeadersProps) {
 
 interface TableBodyProps {
   results: PlayerResults[];
+  roundCount: number;
 }
 
-function TableBody({ results }: TableBodyProps) {
-  const roundCount = results[0].points.length;
+function TableBody({ results, roundCount }: TableBodyProps) {
   return (
     <>
       {results.map((playerResult, index) => (
@@ -111,6 +116,11 @@ function TableBody({ results }: TableBodyProps) {
             playerResult={playerResult}
             roundCount={roundCount}
           />
+          {new Array(roundCount - playerResult.positions.length)
+            .fill(null)
+            .map(() => (
+              <Td></Td>
+            ))}
           <PointsDataCell roundCount={roundCount} playerResult={playerResult} />
         </TableRow>
       ))}
@@ -175,8 +185,8 @@ interface PointsDataCellProps {
 }
 
 function PointsDataCell({ roundCount, playerResult }: PointsDataCellProps) {
-  if (roundCount > 1) {
-    return <Td>{playerResult.points.reduce((prev, curr) => prev + curr)}</Td>;
-  }
-  return <></>;
+  // if (roundCount > 1) {
+  return <Td>{playerResult.points.reduce((prev, curr) => prev + curr)}</Td>;
+  // }
+  // return <></>;
 }
