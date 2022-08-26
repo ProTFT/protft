@@ -13,7 +13,7 @@ const rootElement = document.getElementById("root");
 if (!rootElement) throw new Error("Failed to find the root element");
 const root = ReactDOM.createRoot(rootElement);
 const graphqlClient = createClient({
-  url: "http://localhost:3001/graphql",
+  url: `${process.env.REACT_APP_BACKEND_URL}`,
   suspense: true,
 });
 

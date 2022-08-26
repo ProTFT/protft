@@ -5,7 +5,7 @@ resource "aws_ecs_service" "main" {
   desired_count                      = 1
   deployment_minimum_healthy_percent = 50
   deployment_maximum_percent         = 200
-  # health_check_grace_period_seconds  = 60
+  health_check_grace_period_seconds  = 180
   launch_type                        = "FARGATE"
   scheduling_strategy                = "REPLICA"
 
@@ -20,11 +20,8 @@ resource "aws_ecs_service" "main" {
     container_name = "ptft_container"
     container_port = 3001
   }
-
-  # we ignore task_definition changes as the revision changes on deploy
-  # of a new version of the application
   # desired_count is ignored as it can change due to autoscaling policy
   lifecycle {
-    ignore_changes = [task_definition, desired_count]
+    ignore_changes = [desired_count]
   }
 }

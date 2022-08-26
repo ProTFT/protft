@@ -11,13 +11,22 @@ resource "aws_ecs_task_definition" "ptft_ecs_task" {
     image       = aws_ecr_repository.ptft_ecr.repository_url
     essential   = true
     environment = [
-        {name = "NODE_ENV", value = "production"}
+        {name = "NODE_ENV", value = "production"},
+        {name = "DATABASE_URL", value = var.db_url}
     ]
     portMappings = [{
       protocol      = "tcp"
       containerPort = 3001
       hostPort      = 3001
     }]
+    logConfiguration = {
+      logDriver = "awslogs"
+      options = {
+        "awslogs-group" = "awslogs-ptft-api",
+        "awslogs-region" = "us-east-1",
+        "awslogs-stream-prefix" = "awslogs-ptft-api"
+      }
+    }
   }])
 
   tags = var.common_tags

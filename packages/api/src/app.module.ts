@@ -25,11 +25,6 @@ const localDatabaseInfo: TypeOrmModuleOptions = {
 
 const prodDatabaseInfo: TypeOrmModuleOptions = {
   url: process.env.DATABASE_URL,
-  extra: {
-    ssl: {
-      rejectUnauthorized: false,
-    },
-  },
 };
 
 const isProd = (): boolean => process.env.NODE_ENV === "production";
@@ -49,7 +44,7 @@ const isProd = (): boolean => process.env.NODE_ENV === "production";
       definitions: {
         path: join(process.cwd(), "src/graphql.ts"),
       },
-      playground: !isProd(),
+      playground: true,
       introspection: true,
     }),
     SetsModule,

@@ -51,3 +51,24 @@ resource "aws_security_group" "ptft_ecs_sec_group" {
 
   tags = var.common_tags
 }
+
+resource "aws_security_group" "ptft_rds_sec_group" {
+  name = "ptft-rds-sec-group"
+  vpc_id = aws_vpc.ptft_vpc.id
+
+  ingress {
+    from_port       = 5432
+    to_port         = 5432
+    protocol        = "tcp"
+    security_groups = ["${aws_security_group.ptft_ecs_sec_group.id}"]
+  }
+
+  egress {
+    from_port   = 0
+    to_port     = 0
+    protocol    = "-1"
+    cidr_blocks = ["0.0.0.0/0"]
+  }
+
+  tags = var.common_tags
+}
