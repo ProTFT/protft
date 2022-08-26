@@ -11,7 +11,7 @@ export const Tournaments = () => {
     query: TOURNAMENTS_QUERY,
   });
   useEffect(() => {
-    document.title = "TFTourney";
+    document.title = "ProTFT";
   }, []);
   return (
     <Box textAlign="center" display="flex" px="15%" pt={3}>

@@ -64,7 +64,7 @@ export const Players = ({ countryFilter, query }: any) => {
   const borderColor = useColorModeValue("black", "white");
 
   useEffect(() => {
-    document.title = "TFTourney";
+    document.title = "ProTFT";
   }, []);
   return (
     <Box display="flex" gap={10} flexWrap="wrap">

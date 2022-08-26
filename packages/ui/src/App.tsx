@@ -57,7 +57,7 @@ export const App = () => {
           alignItems="center"
         >
           <Link to="/">
-            <Button variant="ghost">TFTourney</Button>
+            <Button variant="ghost">ProTFT</Button>
           </Link>
           <Box hidden={isSmallScreen(size)}>
             <Link to="/tournaments">
@@ -88,7 +88,7 @@ export const App = () => {
           <DrawerOverlay />
           <DrawerContent>
             <DrawerCloseButton />
-            <DrawerHeader>TFTourney</DrawerHeader>
+            <DrawerHeader>ProTFT</DrawerHeader>
             <DrawerBody>
               <VStack alignItems="start">
                 <Link to="/tournaments" onClick={onClose}>

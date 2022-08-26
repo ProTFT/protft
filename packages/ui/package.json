@@ -1,8 +1,7 @@
 {
-  "name": "tftourney_ui",
+  "name": "protft_ui",
   "version": "0.1.0",
   "private": true,
-  "proxy": "http://localhost:3001",
   "dependencies": {
     "@chakra-ui/icons": "^2.0.0",
     "@chakra-ui/react": "^2.1.2",

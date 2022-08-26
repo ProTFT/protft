@@ -65,7 +65,7 @@ export const Home = () => {
   });
 
   useEffect(() => {
-    document.title = "TFTourney";
+    document.title = "ProTFT";
   }, []);
 
   return (

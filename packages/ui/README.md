@@ -1,6 +1,6 @@
-# TFTourney UI
+# ProTFT UI
 
-The TFTourney UI runs on top of React and it's connected to the backend graphQL API running on `localhost:3001`, so be sure to run the backend app together with it.
+The ProTFT UI runs on top of React and it's connected to the backend graphQL API running on `localhost:3001`, so be sure to run the backend app together with it.
 
 ## Running the app
 

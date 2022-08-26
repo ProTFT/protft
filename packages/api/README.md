@@ -1,6 +1,6 @@
-# TFTourney API
+# ProTFT API
 
-The TFTourney API runs on top of NestJS and it relies on a Postgres database to store the data. You can run Postgres locally with Docker Compose:
+The ProTFT API runs on top of NestJS and it relies on a Postgres database to store the data. You can run Postgres locally with Docker Compose:
 
 `docker compose up`
 
