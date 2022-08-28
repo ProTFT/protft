@@ -52,7 +52,11 @@ export const ResultsWizard = () => {
     const position = Number(event.target.value);
     setPlayerResultInput((currentResult) => {
       currentResult[playerId] = currentResult[playerId] || {};
-      currentResult[playerId][roundId] = position;
+      if (position === 0) {
+        delete currentResult[playerId][roundId];
+      } else {
+        currentResult[playerId][roundId] = position;
+      }
       return currentResult;
     });
   };

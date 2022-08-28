@@ -66,11 +66,24 @@ export const App = () => {
             <Link to="/players">
               <Button variant="ghost">Players</Button>
             </Link>
-            <Link to="/addTournament">
-              <Button variant="ghost">Add Tournament</Button>
-            </Link>
+            {process.env.NODE_ENV !== "production" ? (
+              <Link to="/addTournament">
+                <Button variant="ghost">Add Tournament</Button>
+              </Link>
+            ) : (
+              <></>
+            )}
           </Box>
           <Box>
+            <a
+              href="https://docs.google.com/forms/d/e/1FAIpQLSfJbKrYGkUFTwJqwIWNuRCdzL_UsOkigeeBIy35a3Ab5JV4gQ/viewform?usp=sf_link"
+              target="_blank"
+              rel="noreferrer"
+            >
+              <Button variant="solid" colorScheme="yellow">
+                Feedback
+              </Button>
+            </a>
             <ColorModeSwitcher justifySelf="flex-end" />
             {isSmallScreen(size) && (
               <Button ref={sideMenuButtonRef} onClick={onOpen}>

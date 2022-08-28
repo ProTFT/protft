@@ -13,7 +13,9 @@ interface TournamentStageSectionProps {
   stages?: Stage[] | null;
 }
 
-export const TournamentStageSection = ({ stages }: TournamentStageSectionProps) => (
+export const TournamentStageSection = ({
+  stages,
+}: TournamentStageSectionProps) => (
   <Accordion allowMultiple allowToggle display="flex" flexDirection="column">
     {stages?.map(({ id, name, roundCount }) => (
       <AccordionItem key={id} display="flex" flexDir="column">

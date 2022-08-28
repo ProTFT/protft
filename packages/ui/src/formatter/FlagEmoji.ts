@@ -18,6 +18,15 @@ const countryToFlagEmoji: { [key: string]: string } = {
   Germany: "🇩🇪",
   Poland: "🇵🇱",
   Denmark: "🇩🇰",
+  Spain: "🇪🇸",
+  Hungary: "🇭🇺",
+  Russia: "🇷🇺",
+  "South Africa": "🇿🇦",
+  Italy: "🇮🇹",
+  Sweden: "🇸🇪",
+  Croatia: "🇭🇷",
+  Serbia: "🇷🇸",
+  Greece: "🇬🇷",
   "": "",
 };
 
