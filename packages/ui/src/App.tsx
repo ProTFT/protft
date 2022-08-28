@@ -31,6 +31,9 @@ import { LobbiesWizard } from "./pages/LobbiesWizard/LobbiesWizard";
 import { ResultsWizard } from "./pages/ResultsWizard/ResultsWizard";
 
 const theme = extendTheme({
+  config: {
+    initialColorMode: "dark",
+  },
   fonts: {
     heading: "Cal Sans, sans-serif",
     body: "Inter, sans-serif",

@@ -20,9 +20,9 @@ const graphqlClient = createClient({
 root.render(
   <React.StrictMode>
     <BrowserRouter>
-      <ColorModeScript />
       <Provider value={graphqlClient}>
         <DndProvider backend={HTML5Backend}>
+          <ColorModeScript initialColorMode="dark" />
           <App />
         </DndProvider>
       </Provider>
