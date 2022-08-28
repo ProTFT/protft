@@ -22,6 +22,6 @@ resource "aws_ecs_service" "main" {
   }
   # desired_count is ignored as it can change due to autoscaling policy
   lifecycle {
-    ignore_changes = [desired_count]
+    ignore_changes = [task_definition, desired_count]
   }
 }

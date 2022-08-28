@@ -26,3 +26,15 @@ resource "aws_route53_record" "www-a" {
     evaluate_target_health = false
   }
 }
+
+resource "aws_route53_record" "ptft-api" {
+  zone_id = aws_route53_zone.main.zone_id
+  name = "api.${var.domain_name}"
+  type = "A"
+
+  alias {
+    name = aws_lb.ptft_lb.dns_name
+    zone_id = aws_lb.ptft_lb.zone_id
+    evaluate_target_health = false
+  }
+}
