@@ -65,6 +65,15 @@ export interface PlayerStats {
     eigthCount: number;
 }
 
+export interface PlayersStats {
+    averagePosition: number;
+    totalGames: number;
+    topFourCount: number;
+    topOneCount: number;
+    eigthCount: number;
+    player: Player;
+}
+
 export interface Player {
     id: number;
     name: string;
@@ -144,11 +153,11 @@ export interface IQuery {
     stages(tournamentId: number): Stage[] | Promise<Stage[]>;
     lobbies(stageId: number): Lobby[] | Promise<Lobby[]>;
     tournamentsPlayed(playerId: number): Tournament[] | Promise<Tournament[]>;
-    players(region?: Nullable<string>, country?: Nullable<string>): Player[] | Promise<Player[]>;
+    players(region?: Nullable<string>, country?: Nullable<string>, take?: Nullable<number>, skip?: Nullable<number>): Player[] | Promise<Player[]>;
     player(id: number): Player | Promise<Player>;
     playerFilterMeta(): PlayerFilterMeta | Promise<PlayerFilterMeta>;
     resultsByStage(stageId: number): PlayerResults[] | Promise<PlayerResults[]>;
-    resultsByLobby(lobbyId: number): PlayerResults[] | Promise<PlayerResults[]>;
+    playerStats(setId?: Nullable<number>, region?: Nullable<string>, take?: Nullable<number>, skip?: Nullable<number>): PlayersStats[] | Promise<PlayersStats[]>;
 }
 
 export interface IMutation {

@@ -29,6 +29,7 @@ import { TournamentWizard } from "./pages/TournamentWizard/TournamentWizard";
 import { StageWizard } from "./pages/StageWizard/StageWizard";
 import { LobbiesWizard } from "./pages/LobbiesWizard/LobbiesWizard";
 import { ResultsWizard } from "./pages/ResultsWizard/ResultsWizard";
+import { Stats } from "./pages/Stats/Stats";
 
 const theme = extendTheme({
   config: {
@@ -68,6 +69,9 @@ export const App = () => {
             </Link>
             <Link to="/players">
               <Button variant="ghost">Players</Button>
+            </Link>
+            <Link to="/stats">
+              <Button variant="ghost">Stats</Button>
             </Link>
             {process.env.NODE_ENV !== "production" ? (
               <Link to="/addTournament">
@@ -139,6 +143,10 @@ export const App = () => {
               element={<SuspenseElement element={<Player />} />}
             />
           </Route>
+          <Route
+            path="stats"
+            element={<SuspenseElement element={<Stats />} />}
+          />
           <Route path="addTournament">
             <Route
               index

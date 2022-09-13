@@ -28,9 +28,13 @@ export class PlayersResolver extends BaseResolver {
   }
 
   @ResolveField(() => PlayerStats)
-  async playerStats(@Parent() player: Player): Promise<PlayerStats> {
+  async playerStats(
+    @Parent() player: Player,
+    @Args("setId", { type: () => Int, nullable: true }) setId?: number,
+  ): Promise<PlayerStats> {
     const rawStats = await this.roundResultsService.findStatsByPlayer(
       player.id,
+      setId,
     );
     return formatStats(rawStats);
   }
@@ -41,9 +45,9 @@ export class PlayersResolver extends BaseResolver {
   }
 
   @Query(() => [Player])
-  async players(@Args() { region, country }: GetPlayerArgs) {
+  async players(@Args() { region, country, take, skip }: GetPlayerArgs) {
     const filters = this.cleanGraphQLFilters({ region, country });
-    return this.playersService.findAll(filters);
+    return this.playersService.findAll(filters, { take, skip });
   }
 
   @Query(() => Player)

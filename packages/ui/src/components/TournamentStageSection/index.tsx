@@ -7,7 +7,7 @@ import {
 } from "@chakra-ui/react";
 import { Suspense } from "react";
 import { Stage } from "../../graphql/schema";
-import { NewStageLobbySection } from "../StageLobbySection/index-stage";
+import { StageLobbySection } from "../StageLobbySection";
 
 interface TournamentStageSectionProps {
   stages?: Stage[] | null;
@@ -31,7 +31,7 @@ export const TournamentStageSection = ({
             </h2>
             {isExpanded ? (
               <Suspense fallback={<div>Loading</div>}>
-                <NewStageLobbySection stageId={id} roundCount={roundCount} />
+                <StageLobbySection stageId={id} roundCount={roundCount} />
               </Suspense>
             ) : (
               <></>

@@ -9,10 +9,16 @@ export function formatStats({
   totalGames,
 }: PlayerStatsRaw): PlayerStats {
   return {
-    eigthCount: Number(eigthCount),
-    topFourCount: Number(topFourCount),
-    topOneCount: Number(topOneCount),
+    eigthCount: getPercentage(eigthCount, totalGames),
+    topFourCount: getPercentage(topFourCount, totalGames),
+    topOneCount: getPercentage(topOneCount, totalGames),
     totalGames: Number(totalGames),
     averagePosition: Number(parseFloat(averagePosition).toFixed(2)),
   };
+}
+
+function getPercentage(stat: string, total: string): number {
+  const statNumber = parseFloat(stat);
+  const totalNumber = parseFloat(total || "0");
+  return Number(((statNumber / totalNumber) * 100).toFixed(2));
 }

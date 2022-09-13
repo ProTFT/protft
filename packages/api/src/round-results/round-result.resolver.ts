@@ -1,22 +1,23 @@
 import { Args, Int, Mutation, Query, Resolver } from "@nestjs/graphql";
+import { PlayersStats } from "../players/dto/get-player-stats.out";
+import { formatStats } from "../players/players.adapter";
 import { StagesService } from "../stages/stages.service";
 import { CreateLobbyResultArgs } from "./dto/create-lobby-result.args";
 import { BooleanResult } from "./dto/create-lobby-result.out";
 import { PlayerResults } from "./dto/get-results.out";
 import { RoundResultsRaw } from "./dto/get-results.raw";
+import { GetStatsArgs } from "./dto/get-stats.args";
 import {
   formatResults,
   fromRawToConsolidatedRoundResults,
 } from "./round-result.adapter";
 import { RoundResult } from "./round-result.entity";
 import { sortResults } from "./round-result.logic";
-import { RoundResultsFacade } from "./round-results.facade";
 import { RoundResultsService } from "./round-results.service";
 
 @Resolver(() => RoundResult)
 export class RoundResultsResolver {
   constructor(
-    private roundResultsFacade: RoundResultsFacade,
     private roundResultsService: RoundResultsService,
     private stagesService: StagesService,
   ) {}
@@ -25,12 +26,25 @@ export class RoundResultsResolver {
   async resultsByStage(@Args("stageId", { type: () => Int }) stageId: number) {
     const { tiebreakers } = await this.stagesService.findOne(stageId);
     const results = await this.roundResultsService.findResultsByStage(stageId);
-    return this.formatAndSort(results, tiebreakers);
+    const formattedResults = fromRawToConsolidatedRoundResults(results);
+    return sortResults(formattedResults, tiebreakers);
   }
 
-  @Query(() => [PlayerResults])
-  async resultsByLobby(@Args("lobbyId", { type: () => Int }) lobbyId: number) {
-    return this.roundResultsFacade.findResultsByLobby(lobbyId);
+  @Query(() => [PlayersStats])
+  async playerStats(@Args() args: GetStatsArgs) {
+    const stats = await this.roundResultsService.findStats(args);
+    const formatted: PlayersStats[] = stats.map(
+      ({ id, name, region, country, ...stats }) => ({
+        player: {
+          id,
+          name,
+          region,
+          country,
+        },
+        ...formatStats(stats),
+      }),
+    );
+    return formatted;
   }
 
   @Mutation(() => BooleanResult)
@@ -42,13 +56,5 @@ export class RoundResultsResolver {
     } catch (error) {
       return { result: false, error: String(error) };
     }
-  }
-
-  private formatAndSort(
-    results: RoundResultsRaw[],
-    tiebreakers: number[],
-  ): PlayerResults[] {
-    const formattedResults = fromRawToConsolidatedRoundResults(results);
-    return sortResults(formattedResults, tiebreakers);
   }
 }

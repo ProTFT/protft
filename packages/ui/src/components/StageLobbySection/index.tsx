@@ -1,83 +1,77 @@
 import {
   AccordionPanel,
   Box,
-  Flex,
   Table,
   TableContainer,
   Tbody,
   Td,
-  Text,
   Th,
   Thead,
   Tr,
   useColorModeValue,
 } from "@chakra-ui/react";
-import { Lobby, Player, PlayerResults } from "../../graphql/schema";
-import groupBy from "lodash.groupby";
+import { Player, PlayerResults } from "../../graphql/schema";
 import { getFlagEmoji } from "../../formatter/FlagEmoji";
-import { useWindowSize } from "../../hooks/useWindowSize";
+import { gql, useQuery } from "urql";
+import { Link } from "react-router-dom";
 
 interface StageLobbySectionProps {
-  lobbies?: Lobby[] | null;
-  lobbyCount?: number;
-  isFinal?: boolean | null;
+  stageId: number;
+  roundCount: number;
 }
 
-export const StageLobbySection = ({
-  lobbies,
-  lobbyCount,
-  isFinal,
-}: StageLobbySectionProps) => {
-  const size = useWindowSize();
-  const groups = groupBy(lobbies, (lobby) => lobby.name.charAt(1) || 0);
-  const getStageProperties = (lobbyCount?: number) =>
-    lobbyCount && lobbyCount > 1 ? { flex: 1 } : {};
-  const getParentProperties = (lobbyCount?: number) => ({
-    justify:
-      lobbyCount && lobbyCount === 1 && size.width && size.width > 800
-        ? "center"
-        : "space-between",
-  });
+const RESULT_QUERY = gql`
+  query resultsByStage($stageId: Int!) {
+    resultsByStage(stageId: $stageId) {
+      player {
+        id
+        name
+        country
+      }
+      positions
+      points
+    }
+  }
+`;
 
+export const StageLobbySection = ({
+  stageId,
+  roundCount,
+}: StageLobbySectionProps) => {
+  const [{ data }] = useQuery<{ resultsByStage: PlayerResults[] }>({
+    query: RESULT_QUERY,
+    variables: { stageId },
+  });
   return (
-    <AccordionPanel display="flex" flexWrap="wrap" gap={10}>
-      {Object.keys(groups).map((lobbyGroup) => (
-        <Flex
-          key={lobbyGroup}
-          flexDir="row"
-          flexWrap="wrap"
-          {...getParentProperties(lobbyCount)}
-          // width="100%"
-          overflow="scroll"
-          gap={5}
-        >
-          {groups[lobbyGroup].map((lobby: Lobby) => (
-            <Box key={lobby.sequence} {...getStageProperties(lobbyCount)}>
-              <Text>Lobby {lobby?.name}</Text>
-              <TableContainer>
-                <Table variant="simple" size="sm" colorScheme="orange">
-                  <Thead>
-                    <ColumnHeaders lobby={lobby} />
-                  </Thead>
-                  <Tbody>
-                    {/* <TableBody lobby={lobby} isFinal={isFinal} /> */}
-                  </Tbody>
-                </Table>
-              </TableContainer>
-            </Box>
-          ))}
-        </Flex>
-      ))}
+    <AccordionPanel display="flex" justifyContent="center">
+      <Box>
+        {!data || data.resultsByStage.length === 0 ? (
+          <div>No data</div>
+        ) : (
+          <TableContainer>
+            <Table variant="simple" size="sm" colorScheme="orange">
+              <Thead>
+                <ColumnHeaders roundCount={roundCount} />
+              </Thead>
+              <Tbody>
+                <TableBody
+                  results={data.resultsByStage}
+                  roundCount={roundCount}
+                />
+              </Tbody>
+            </Table>
+          </TableContainer>
+        )}
+      </Box>
     </AccordionPanel>
   );
 };
 
 interface ColumnHeadersProps {
-  lobby: Lobby;
+  roundCount: number;
 }
 
-function ColumnHeaders({ lobby }: ColumnHeadersProps) {
-  const roundCount = 10; //TODO: arrumar aqui
+function ColumnHeaders({ roundCount }: ColumnHeadersProps) {
   const hasMoreThanOneRound = roundCount > 1;
 
   const roundHeaders = () => {
@@ -88,6 +82,7 @@ function ColumnHeaders({ lobby }: ColumnHeadersProps) {
 
   return (
     <Tr>
+      <Th>#</Th>
       <Th colSpan={2}>Player</Th>
       {roundHeaders()}
       {hasMoreThanOneRound && <Th>P</Th>}
@@ -96,26 +91,36 @@ function ColumnHeaders({ lobby }: ColumnHeadersProps) {
 }
 
 interface TableBodyProps {
-  playerResults: PlayerResults[];
+  results: PlayerResults[];
+  roundCount: number;
 }
 
-function TableBody({ playerResults }: TableBodyProps) {
-  const roundCount = playerResults[0].points.length;
+function TableBody({ results, roundCount }: TableBodyProps) {
   return (
     <>
-      {playerResults.map((playerResult, index) => (
+      {results.map((playerResult, index) => (
         <TableRow
           key={playerResult.player.id}
           index={index}
           player={playerResult.player}
           roundCount={roundCount}
         >
+          <Td>{index + 1}</Td>
           <Td>{getFlagEmoji(playerResult.player.country || "")}</Td>
-          <Td>{playerResult.player.name}</Td>
+          <Td>
+            <Link to={`/players/${playerResult.player.id}`}>
+              {playerResult.player.name}
+            </Link>
+          </Td>
           <PositionDataCell
             playerResult={playerResult}
             roundCount={roundCount}
           />
+          {new Array(roundCount - playerResult.positions.length)
+            .fill(null)
+            .map(() => (
+              <Td></Td>
+            ))}
           <PointsDataCell roundCount={roundCount} playerResult={playerResult} />
         </TableRow>
       ))}
@@ -180,11 +185,8 @@ interface PointsDataCellProps {
 }
 
 function PointsDataCell({ roundCount, playerResult }: PointsDataCellProps) {
-  if (roundCount > 1) {
-    return <Td>{playerResult.points.reduce((prev, curr) => prev + curr)}</Td>;
-  }
-  return <></>;
+  // if (roundCount > 1) {
+  return <Td>{playerResult.points.reduce((prev, curr) => prev + curr)}</Td>;
+  // }
+  // return <></>;
 }
-
-
-
