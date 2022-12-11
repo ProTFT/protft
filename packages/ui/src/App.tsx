@@ -1,6 +1,8 @@
 import * as React from "react";
 import "@fontsource/inter/400.css";
 import "cal-sans";
+import "typeface-roboto";
+import "./design/fonts/VTFRedzone/stylesheet.css";
 import {
   ChakraProvider,
   Box,
@@ -30,6 +32,12 @@ import { StageWizard } from "./pages/StageWizard/StageWizard";
 import { LobbiesWizard } from "./pages/LobbiesWizard/LobbiesWizard";
 import { ResultsWizard } from "./pages/ResultsWizard/ResultsWizard";
 import { Stats } from "./pages/Stats/Stats";
+import {
+  MobileNavBar,
+  DesktopNavBar,
+  NavBar,
+} from "./components/NavBar/NavBar";
+import { Footer } from "./components/Footer/Footer";
 
 const theme = extendTheme({
   config: {
@@ -53,53 +61,8 @@ export const App = () => {
   return (
     <ChakraProvider theme={theme}>
       <Box w="100%" zIndex={1}>
-        <Container
-          maxW="container.xl"
-          py={5}
-          display="flex"
-          justifyContent="space-between"
-          alignItems="center"
-        >
-          <Link to="/">
-            <Button variant="ghost">ProTFT</Button>
-          </Link>
-          <Box hidden={isSmallScreen(size)}>
-            <Link to="/tournaments">
-              <Button variant="ghost">Tournaments</Button>
-            </Link>
-            <Link to="/players">
-              <Button variant="ghost">Players</Button>
-            </Link>
-            <Link to="/stats">
-              <Button variant="ghost">Stats</Button>
-            </Link>
-            {process.env.NODE_ENV !== "production" ? (
-              <Link to="/addTournament">
-                <Button variant="ghost">Add Tournament</Button>
-              </Link>
-            ) : (
-              <></>
-            )}
-          </Box>
-          <Box>
-            <a
-              href="https://docs.google.com/forms/d/e/1FAIpQLSfJbKrYGkUFTwJqwIWNuRCdzL_UsOkigeeBIy35a3Ab5JV4gQ/viewform?usp=sf_link"
-              target="_blank"
-              rel="noreferrer"
-            >
-              <Button variant="solid" colorScheme="yellow">
-                Feedback
-              </Button>
-            </a>
-            <ColorModeSwitcher justifySelf="flex-end" />
-            {isSmallScreen(size) && (
-              <Button ref={sideMenuButtonRef} onClick={onOpen}>
-                =
-              </Button>
-            )}
-          </Box>
-        </Container>
-        <Drawer
+        <NavBar />
+        {/* <Drawer
           isOpen={isOpen}
           placement="right"
           onClose={onClose}
@@ -120,7 +83,7 @@ export const App = () => {
               </VStack>
             </DrawerBody>
           </DrawerContent>
-        </Drawer>
+        </Drawer> */}
         <Routes>
           <Route path="/" element={<SuspenseElement element={<Home />} />} />
           <Route path="tournaments">
@@ -168,6 +131,7 @@ export const App = () => {
             </Route>
           </Route>
         </Routes>
+        <Footer />
       </Box>
     </ChakraProvider>
   );
