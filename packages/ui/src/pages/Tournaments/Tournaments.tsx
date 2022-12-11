@@ -1,27 +1,57 @@
-import { Box, List } from "@chakra-ui/react";
 import { Link } from "react-router-dom";
-import { TournamentListItem } from "../../components/TournamentListItem";
-import { Tournament } from "../../graphql/schema";
-import { useQuery } from "urql";
-import { TournamentsQueryResult, TOURNAMENTS_QUERY } from "./queries";
-import { useEffect } from "react";
+import { useDocumentTitle } from "../../hooks/useDocumentTitle";
+import {
+  StyledContainer,
+  StyledDateText,
+  StyledTournamentInfoInnerContainer,
+  StyledListItem,
+  StyledRegionText,
+  StyledSearchInput,
+  StyledTournamentImage,
+  StyledTournamentInfoContainer,
+  StyledTournamentTitle,
+  StyledHorizontalContainer,
+} from "./Tournaments.styled";
 
 export const Tournaments = () => {
-  const [{ data }] = useQuery<TournamentsQueryResult>({
-    query: TOURNAMENTS_QUERY,
-  });
-  useEffect(() => {
-    document.title = "ProTFT";
-  }, []);
+  // const [{ data }] = useQuery<TournamentsQueryResult>({
+  //   query: TOURNAMENTS_QUERY,
+  // });
+  const data = {
+    tournaments: [
+      { id: 1, name: "alala", participantsNumber: 10, prizePool: 10000 },
+      { id: 2, name: "afdasfsa", participantsNumber: 10, prizePool: 10000 },
+      { id: 3, name: "fdsjaifja", participantsNumber: 10, prizePool: 10000 },
+      { id: 4, name: "fdhasiu", participantsNumber: 10, prizePool: 10000 },
+      { id: 5, name: "fdsaufha", participantsNumber: 10, prizePool: 10000 },
+    ],
+  };
+  useDocumentTitle("ProTFT");
+
   return (
-    <Box textAlign="center" display="flex" px="15%" pt={3}>
-      <List width="100%">
-        {data?.tournaments.map((tournament: Tournament) => (
-          <Link key={tournament.id} to={String(tournament.id)}>
-            <TournamentListItem tournament={tournament} />
-          </Link>
-        ))}
-      </List>
-    </Box>
+    <StyledContainer>
+      <StyledSearchInput placeholder="Search events" />
+      {data.tournaments.map((tournament) => (
+        <Link to={`${tournament.id}`}>
+          <StyledListItem>
+            <StyledTournamentImage src="./background.png" alt="" />
+            <StyledTournamentInfoContainer>
+              <StyledTournamentTitle>Terras Dracônicas</StyledTournamentTitle>
+              <br />
+              <StyledTournamentInfoInnerContainer>
+                <StyledHorizontalContainer>
+                  <img src="./brazil.png" alt="brasil" />
+                  <StyledRegionText>Brazil</StyledRegionText>
+                </StyledHorizontalContainer>
+                <StyledHorizontalContainer>
+                  <img src="./calendar.png" alt="calendar" />
+                  <StyledDateText>12/10/22 - 15/10/22</StyledDateText>
+                </StyledHorizontalContainer>
+              </StyledTournamentInfoInnerContainer>
+            </StyledTournamentInfoContainer>
+          </StyledListItem>
+        </Link>
+      ))}
+    </StyledContainer>
   );
 };

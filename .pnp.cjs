@@ -7388,42 +7388,6 @@ function $$SETUP_STATE(hydrateRuntimeState, basePath) {
           "linkType": "HARD"\
         }]\
       ]],\
-      ["@fontsource/angkor", [\
-        ["npm:4.5.7", {\
-          "packageLocation": "./.yarn/cache/@fontsource-angkor-npm-4.5.7-3c2ba12a32-9147d61f1f.zip/node_modules/@fontsource/angkor/",\
-          "packageDependencies": [\
-            ["@fontsource/angkor", "npm:4.5.7"]\
-          ],\
-          "linkType": "HARD"\
-        }]\
-      ]],\
-      ["@fontsource/inter", [\
-        ["npm:4.5.10", {\
-          "packageLocation": "./.yarn/cache/@fontsource-inter-npm-4.5.10-d75b778e71-c947c5184f.zip/node_modules/@fontsource/inter/",\
-          "packageDependencies": [\
-            ["@fontsource/inter", "npm:4.5.10"]\
-          ],\
-          "linkType": "HARD"\
-        }]\
-      ]],\
-      ["@fontsource/open-sans", [\
-        ["npm:4.5.10", {\
-          "packageLocation": "./.yarn/cache/@fontsource-open-sans-npm-4.5.10-250b757f19-32f9d5f7b4.zip/node_modules/@fontsource/open-sans/",\
-          "packageDependencies": [\
-            ["@fontsource/open-sans", "npm:4.5.10"]\
-          ],\
-          "linkType": "HARD"\
-        }]\
-      ]],\
-      ["@fontsource/raleway", [\
-        ["npm:4.5.8", {\
-          "packageLocation": "./.yarn/cache/@fontsource-raleway-npm-4.5.8-1861b3aa83-e13a889b44.zip/node_modules/@fontsource/raleway/",\
-          "packageDependencies": [\
-            ["@fontsource/raleway", "npm:4.5.8"]\
-          ],\
-          "linkType": "HARD"\
-        }]\
-      ]],\
       ["@gar/promisify", [\
         ["npm:1.1.3", {\
           "packageLocation": "./.yarn/cache/@gar-promisify-npm-1.1.3-ac1a325862-4059f790e2.zip/node_modules/@gar/promisify/",\
@@ -15699,15 +15663,6 @@ function $$SETUP_STATE(hydrateRuntimeState, basePath) {
             ["to-object-path", "npm:0.3.0"],\
             ["union-value", "npm:1.0.1"],\
             ["unset-value", "npm:1.0.0"]\
-          ],\
-          "linkType": "HARD"\
-        }]\
-      ]],\
-      ["cal-sans", [\
-        ["npm:1.0.1", {\
-          "packageLocation": "./.yarn/cache/cal-sans-npm-1.0.1-9f1e921ef5-2dc6485e7f.zip/node_modules/cal-sans/",\
-          "packageDependencies": [\
-            ["cal-sans", "npm:1.0.1"]\
           ],\
           "linkType": "HARD"\
         }]\
@@ -28388,10 +28343,6 @@ function $$SETUP_STATE(hydrateRuntimeState, basePath) {
             ["@chakra-ui/storybook-addon", "virtual:258f67bfb17ac70f76e552bac762bf306bdba6124c2f4eb9750027eafe0ae10f09ef2722b1c3b436c5e4260ebaad0c93cc4998d2525f2ce7b6d70ee4be5420b2#npm:3.0.2"],\
             ["@emotion/react", "virtual:258f67bfb17ac70f76e552bac762bf306bdba6124c2f4eb9750027eafe0ae10f09ef2722b1c3b436c5e4260ebaad0c93cc4998d2525f2ce7b6d70ee4be5420b2#npm:11.9.0"],\
             ["@emotion/styled", "virtual:258f67bfb17ac70f76e552bac762bf306bdba6124c2f4eb9750027eafe0ae10f09ef2722b1c3b436c5e4260ebaad0c93cc4998d2525f2ce7b6d70ee4be5420b2#npm:11.8.1"],\
-            ["@fontsource/angkor", "npm:4.5.7"],\
-            ["@fontsource/inter", "npm:4.5.10"],\
-            ["@fontsource/open-sans", "npm:4.5.10"],\
-            ["@fontsource/raleway", "npm:4.5.8"],\
             ["@storybook/addon-actions", "virtual:258f67bfb17ac70f76e552bac762bf306bdba6124c2f4eb9750027eafe0ae10f09ef2722b1c3b436c5e4260ebaad0c93cc4998d2525f2ce7b6d70ee4be5420b2#npm:6.5.6"],\
             ["@storybook/addon-essentials", "virtual:258f67bfb17ac70f76e552bac762bf306bdba6124c2f4eb9750027eafe0ae10f09ef2722b1c3b436c5e4260ebaad0c93cc4998d2525f2ce7b6d70ee4be5420b2#npm:6.5.6"],\
             ["@storybook/addon-interactions", "virtual:258f67bfb17ac70f76e552bac762bf306bdba6124c2f4eb9750027eafe0ae10f09ef2722b1c3b436c5e4260ebaad0c93cc4998d2525f2ce7b6d70ee4be5420b2#npm:6.5.6"],\
@@ -28413,7 +28364,6 @@ function $$SETUP_STATE(hydrateRuntimeState, basePath) {
             ["@types/react-dom", "npm:18.0.5"],\
             ["@types/styled-components", "npm:5.1.26"],\
             ["@urql/exchange-graphcache", "virtual:258f67bfb17ac70f76e552bac762bf306bdba6124c2f4eb9750027eafe0ae10f09ef2722b1c3b436c5e4260ebaad0c93cc4998d2525f2ce7b6d70ee4be5420b2#npm:5.0.0"],\
-            ["cal-sans", "npm:1.0.1"],\
             ["eslint-config-react-app", "virtual:258f67bfb17ac70f76e552bac762bf306bdba6124c2f4eb9750027eafe0ae10f09ef2722b1c3b436c5e4260ebaad0c93cc4998d2525f2ce7b6d70ee4be5420b2#npm:7.0.1"],\
             ["framer-motion", "virtual:258f67bfb17ac70f76e552bac762bf306bdba6124c2f4eb9750027eafe0ae10f09ef2722b1c3b436c5e4260ebaad0c93cc4998d2525f2ce7b6d70ee4be5420b2#npm:6.3.6"],\
             ["graphql", "npm:16.5.0"],\

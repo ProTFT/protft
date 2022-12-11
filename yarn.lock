@@ -3280,34 +3280,6 @@ __metadata:
   languageName: node
   linkType: hard
 
-"@fontsource/angkor@npm:^4.5.7":
-  version: 4.5.7
-  resolution: "@fontsource/angkor@npm:4.5.7"
-  checksum: 9147d61f1ff29fd322815daa742f47313f96cdd1d469b3bdca37710c5b5ffc50d3a4a0b634f00730b777ca2c9c9ca7633778c0357c72398a0e3adcb223affdc4
-  languageName: node
-  linkType: hard
-
-"@fontsource/inter@npm:^4.5.10":
-  version: 4.5.10
-  resolution: "@fontsource/inter@npm:4.5.10"
-  checksum: c947c5184f9ce7959fcccd716d0dde8156b5ed9c14b4ba27ee181fb2b05a136a49d99ed00c382551b64ecae010320ef7c062b1944b70260280ca0fcde93bd4f2
-  languageName: node
-  linkType: hard
-
-"@fontsource/open-sans@npm:^4.5.8":
-  version: 4.5.10
-  resolution: "@fontsource/open-sans@npm:4.5.10"
-  checksum: 32f9d5f7b4b18c1efe86aec0d3aabfbdd37821b09b4cb8bcc8d98553e057c79ef583c9646618d329ffb6e9db3152f32b8e7b5926822d499191f12f9abd86e2b2
-  languageName: node
-  linkType: hard
-
-"@fontsource/raleway@npm:^4.5.8":
-  version: 4.5.8
-  resolution: "@fontsource/raleway@npm:4.5.8"
-  checksum: e13a889b44c3983a6cde321f264daa86d283e9f6afbe5bbc7cc92ef1e466c14995a40aebd9bed0c99994a6beec35972652e3251bd505570c288c5bb9755e01b7
-  languageName: node
-  linkType: hard
-
 "@gar/promisify@npm:^1.0.1, @gar/promisify@npm:^1.1.3":
   version: 1.1.3
   resolution: "@gar/promisify@npm:1.1.3"
@@ -9237,13 +9209,6 @@ __metadata:
     union-value: ^1.0.0
     unset-value: ^1.0.0
   checksum: 9114b8654fe2366eedc390bad0bcf534e2f01b239a888894e2928cb58cdc1e6ea23a73c6f3450dcfd2058aa73a8a981e723cd1e7c670c047bf11afdc65880107
-  languageName: node
-  linkType: hard
-
-"cal-sans@npm:^1.0.1":
-  version: 1.0.1
-  resolution: "cal-sans@npm:1.0.1"
-  checksum: 2dc6485e7fc561bb3b505d3126f3e72794bb985fc2f24e6a88ab1ca7cd63aec4687d079ddebd5959b0487ca499e080278e936036628288c32ecd424af9e21d55
   languageName: node
   linkType: hard
 
@@ -19480,10 +19445,6 @@ __metadata:
     "@chakra-ui/storybook-addon": ^3.0.2
     "@emotion/react": ^11.9.0
     "@emotion/styled": ^11.8.1
-    "@fontsource/angkor": ^4.5.7
-    "@fontsource/inter": ^4.5.10
-    "@fontsource/open-sans": ^4.5.8
-    "@fontsource/raleway": ^4.5.8
     "@storybook/addon-actions": ^6.5.5
     "@storybook/addon-essentials": ^6.5.5
     "@storybook/addon-interactions": ^6.5.5
@@ -19505,7 +19466,6 @@ __metadata:
     "@types/react-dom": ^18.0.4
     "@types/styled-components": ^5.1.26
     "@urql/exchange-graphcache": ^5.0.0
-    cal-sans: ^1.0.1
     eslint-config-react-app: ^7.0.1
     framer-motion: ^6.3.4
     graphql: ^16.5.0

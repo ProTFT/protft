@@ -1,29 +1,11 @@
 import * as React from "react";
-import "@fontsource/inter/400.css";
-import "cal-sans";
 import "typeface-roboto";
 import "./design/fonts/VTFRedzone/stylesheet.css";
-import {
-  ChakraProvider,
-  Box,
-  Container,
-  Button,
-  extendTheme,
-  useDisclosure,
-  Drawer,
-  DrawerOverlay,
-  DrawerContent,
-  DrawerCloseButton,
-  DrawerHeader,
-  DrawerBody,
-  VStack,
-} from "@chakra-ui/react";
-import { ColorModeSwitcher } from "./ColorModeSwitcher";
-import { Link, Route, Routes } from "react-router-dom";
+import { ChakraProvider, Box } from "@chakra-ui/react";
+import { Route, Routes } from "react-router-dom";
 import { Home } from "./pages/Home/Home";
 import { Tournaments } from "./pages/Tournaments/Tournaments";
 import { Tournament } from "./pages/Tournament/Tournament";
-import { useWindowSize, WindowSize } from "./hooks/useWindowSize";
 import { PlayersContainer } from "./pages/Players/Players";
 import { Player } from "./pages/Player/Player";
 import { SuspenseElement } from "./components/SuspendedPage";
@@ -32,58 +14,14 @@ import { StageWizard } from "./pages/StageWizard/StageWizard";
 import { LobbiesWizard } from "./pages/LobbiesWizard/LobbiesWizard";
 import { ResultsWizard } from "./pages/ResultsWizard/ResultsWizard";
 import { Stats } from "./pages/Stats/Stats";
-import {
-  MobileNavBar,
-  DesktopNavBar,
-  NavBar,
-} from "./components/NavBar/NavBar";
+import { NavBar } from "./components/NavBar/NavBar";
 import { Footer } from "./components/Footer/Footer";
 
-const theme = extendTheme({
-  config: {
-    initialColorMode: "dark",
-  },
-  fonts: {
-    heading: "Cal Sans, sans-serif",
-    body: "Inter, sans-serif",
-  },
-});
-
-const isSmallScreen = (size?: WindowSize) => {
-  return Boolean(size?.width && size?.width < 800);
-};
-
 export const App = () => {
-  const size = useWindowSize();
-  const { isOpen, onOpen, onClose } = useDisclosure();
-  const sideMenuButtonRef: any = React.useRef();
-
   return (
-    <ChakraProvider theme={theme}>
+    <ChakraProvider>
       <Box w="100%" zIndex={1}>
         <NavBar />
-        {/* <Drawer
-          isOpen={isOpen}
-          placement="right"
-          onClose={onClose}
-          finalFocusRef={sideMenuButtonRef}
-        >
-          <DrawerOverlay />
-          <DrawerContent>
-            <DrawerCloseButton />
-            <DrawerHeader>ProTFT</DrawerHeader>
-            <DrawerBody>
-              <VStack alignItems="start">
-                <Link to="/tournaments" onClick={onClose}>
-                  <Button variant="ghost">Tournaments</Button>
-                </Link>
-                <Link to="/players" onClick={onClose}>
-                  <Button variant="ghost">Players</Button>
-                </Link>
-              </VStack>
-            </DrawerBody>
-          </DrawerContent>
-        </Drawer> */}
         <Routes>
           <Route path="/" element={<SuspenseElement element={<Home />} />} />
           <Route path="tournaments">
