@@ -1,19 +1,17 @@
-import { Box, Text } from "@chakra-ui/react";
 import styled from "styled-components";
 import { device } from "../../design/breakpoints";
 import { colors } from "../../design/colors";
 
-export const StyledContainer = styled(Box)`
-  background-color: ${colors.pitchBlack};
+export const StyledContainer = styled.div`
+  background-color: ${colors.blackBackground};
   display: flex;
   flex-direction: column;
   align-items: center;
   justify-content: center;
-  padding: 2rem 2rem 6rem 2rem;
+  padding: 1rem 2rem 6rem 2rem;
   gap: 0.5rem;
 
   @media ${device.tablet} {
-    background-color: ${colors.pitchBlack};
     display: flex;
     flex-direction: row;
     justify-content: space-between;
@@ -21,9 +19,17 @@ export const StyledContainer = styled(Box)`
   }
 `;
 
-export const StyledFooterText = styled(Text)`
-  font-weigth: "Roboto";
-  font-size: 14px;
-  line-height: 38px;
+export const StyledFooterText = styled.p`
+  font-family: Roboto;
+  font-size: 11px;
+  font-weight: 400;
+  letter-spacing: 0.15em;
+  text-align: left;
   color: ${colors.grayText};
+`;
+
+export const StyledDivider = styled.div`
+  height: 0.1rem;
+  width: 100%;
+  background-color: ${colors.dividerGray};
 `;

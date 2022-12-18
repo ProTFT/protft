@@ -1,4 +1,3 @@
-import { Box, Text } from "@chakra-ui/react";
 import { ProTFTButton } from "../../../components/Button/Button";
 import { colors } from "../../../design/colors";
 import { StyledPlayerImage } from "../HighlightedPlayer/HighlightedPlayer.styled";
@@ -9,22 +8,24 @@ export const Unknown = () => {
   return (
     <StyledContainer>
       <TopCurve />
-      <Box
-        width="100%"
-        backgroundColor={colors.purple}
-        display="flex"
-        flexDir="column"
-        padding="2rem"
-        marginTop="-0.1rem"
-        marginBottom="-0.1rem"
+      <div
+        style={{
+          width: "100%",
+          backgroundColor: colors.purple,
+          display: "flex",
+          flexDirection: "column",
+          padding: "2rem",
+          marginTop: "-0.1rem",
+          marginBottom: "-0.1rem",
+        }}
       >
-        <Text>Stats Atuais</Text>
+        <p>Stats Atuais</p>
 
-        <Text>Match # f89u2189321</Text>
+        <p>Match # f89u2189321</p>
 
         <StyledPlayerImage url="./milk.png" />
         <ProTFTButton>Stats completos</ProTFTButton>
-      </Box>
+      </div>
       <BottomCurves />
     </StyledContainer>
   );

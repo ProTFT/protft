@@ -1,4 +1,3 @@
-import { Box, Flex, Text, Input, Checkbox, Button } from "@chakra-ui/react";
 import { useState } from "react";
 import { useNavigate, useParams } from "react-router-dom";
 import { useMutation, useQuery } from "urql";
@@ -30,18 +29,19 @@ export const StageList = ({
   onSelectStage,
 }: StageListProps) => {
   return (
-    <Section>
-      <Text>Current Stages</Text>
-      {stages?.map((stage) => (
-        <Text
-          textColor={stage.id === selectedStage ? "red" : "white"}
-          key={stage.id}
-          onClick={() => onSelectStage(stage.id, stage)}
-        >
-          {stage.name}
-        </Text>
-      ))}
-    </Section>
+    <p>aa</p>
+    // <Section>
+    //   <Text>Current Stages</Text>
+    //   {stages?.map((stage) => (
+    //     <Text
+    //       textColor={stage.id === selectedStage ? "red" : "white"}
+    //       key={stage.id}
+    //       onClick={() => onSelectStage(stage.id, stage)}
+    //     >
+    //       {stage.name}
+    //     </Text>
+    //   ))}
+    // </Section>
   );
 };
 
@@ -60,17 +60,18 @@ export const LobbyList = ({
 }: LobbyListProps) => {
   return (
     <Section>
-      <Text>Current Lobbies</Text>
+      <p>Current Lobbies</p>
       {stages
         ?.find((stage) => stage.id === selectedStage)
         ?.lobbies?.map((lobby) => (
-          <Text
-            key={lobby.id}
-            textColor={lobby.id === selectedLobby ? "red" : "white"}
-            onClick={() => onSelectLobby(lobby.id)}
-          >
-            {lobby.name}
-          </Text>
+          <p>aa</p>
+          // <Text
+          //   key={lobby.id}
+          //   textColor={lobby.id === selectedLobby ? "red" : "white"}
+          //   onClick={() => onSelectLobby(lobby.id)}
+          // >
+          //   {lobby.name}
+          // </Text>
         ))}
     </Section>
   );
@@ -183,58 +184,59 @@ export const StageWizard = () => {
   };
 
   return (
-    <Box display="flex" px="15%" pt={3} flexDir="column">
-      <Flex gap={3}>
-        <StageList
-          stages={stages?.stages}
-          selectedStage={selectedStage}
-          onSelectStage={setSelectedStage}
-        />
-        <Section>
-          <Text>Current Lobbies</Text>
-          {stages?.stages
-            .find((stage) => stage.id === selectedStage)
-            ?.lobbies?.map((lobby) => (
-              <Text key={lobby.id}>{lobby.name}</Text>
-            ))}
-        </Section>
-        <Section>
-          <Text>Current Rounds</Text>
-          {stages?.stages
-            .find((stage) => stage.id === selectedStage)
-            ?.rounds?.map((round) => (
-              <Text key={round.id}>{round.sequence}</Text>
-            ))}
-        </Section>
-        <Section>
-          <Text>Add Stage</Text>
-          <Text>Name</Text>
-          <Input name="name" onChange={handleChange} />
-          <Text>Sequence</Text>
-          <Input name="sequence" onChange={handleChange} />
-          <Text>is final?</Text>
-          <Checkbox name="isFinal" onChange={handleChange}></Checkbox>
-          <Text>Point Schema Id</Text>
-          <Input name="pointSchemaId" onChange={handleChange} />
-          <Button onClick={saveStage}>Save</Button>
-          <Text>{saveStageStatus}</Text>
-        </Section>
-        <Section>
-          <Text>Add Lobby</Text>
-          <Text>Name</Text>
-          <Input name="name" onChange={handleLobbyChange} />
-          <Text>Sequence</Text>
-          <Input name="sequence" onChange={handleLobbyChange} />
-          <Button onClick={saveLobby}>Save</Button>
-        </Section>
-        <Section>
-          <Text>Add Round</Text>
-          <Text>Sequence</Text>
-          <Input name="sequence" onChange={handleRoundChange} />
-          <Button onClick={saveRound}>Save</Button>
-        </Section>
-        <Button onClick={goNext}>Next</Button>
-      </Flex>
-    </Box>
+    <p>aa</p>
+    // <Box display="flex" px="15%" pt={3} flexDir="column">
+    //   <Flex gap={3}>
+    //     <StageList
+    //       stages={stages?.stages}
+    //       selectedStage={selectedStage}
+    //       onSelectStage={setSelectedStage}
+    //     />
+    //     <Section>
+    //       <Text>Current Lobbies</Text>
+    //       {stages?.stages
+    //         .find((stage) => stage.id === selectedStage)
+    //         ?.lobbies?.map((lobby) => (
+    //           <Text key={lobby.id}>{lobby.name}</Text>
+    //         ))}
+    //     </Section>
+    //     <Section>
+    //       <Text>Current Rounds</Text>
+    //       {stages?.stages
+    //         .find((stage) => stage.id === selectedStage)
+    //         ?.rounds?.map((round) => (
+    //           <Text key={round.id}>{round.sequence}</Text>
+    //         ))}
+    //     </Section>
+    //     <Section>
+    //       <Text>Add Stage</Text>
+    //       <Text>Name</Text>
+    //       <Input name="name" onChange={handleChange} />
+    //       <Text>Sequence</Text>
+    //       <Input name="sequence" onChange={handleChange} />
+    //       <Text>is final?</Text>
+    //       <Checkbox name="isFinal" onChange={handleChange}></Checkbox>
+    //       <Text>Point Schema Id</Text>
+    //       <Input name="pointSchemaId" onChange={handleChange} />
+    //       <Button onClick={saveStage}>Save</Button>
+    //       <Text>{saveStageStatus}</Text>
+    //     </Section>
+    //     <Section>
+    //       <Text>Add Lobby</Text>
+    //       <Text>Name</Text>
+    //       <Input name="name" onChange={handleLobbyChange} />
+    //       <Text>Sequence</Text>
+    //       <Input name="sequence" onChange={handleLobbyChange} />
+    //       <Button onClick={saveLobby}>Save</Button>
+    //     </Section>
+    //     <Section>
+    //       <Text>Add Round</Text>
+    //       <Text>Sequence</Text>
+    //       <Input name="sequence" onChange={handleRoundChange} />
+    //       <Button onClick={saveRound}>Save</Button>
+    //     </Section>
+    //     <Button onClick={goNext}>Next</Button>
+    //   </Flex>
+    // </Box>
   );
 };

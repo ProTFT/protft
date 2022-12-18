@@ -1,5 +1,5 @@
-import React, { useCallback, useMemo } from "react";
-import { useLocation, useNavigate } from "react-router-dom";
+import React from "react";
+import { Link } from "react-router-dom";
 import { colors } from "../../design/colors";
 import { AboutIcon } from "../../design/icons/About";
 import { PlayersIcon } from "../../design/icons/Players";
@@ -26,40 +26,25 @@ export const NavBar = () => {
 export const DesktopNavBar = () => {
   return (
     <StyledDesktopContainer>
-      <Logo color={colors.yellow} width={67} height={38} />
+      <Link to={"/"}>
+        <Logo color={colors.yellow} width={67} height={38} />
+      </Link>
       <StyledDesktopItemsContainer>
-        <NavBarButton>Tourneys</NavBarButton>
-        <NavBarButton>Players</NavBarButton>
-        <NavBarButton>Stats</NavBarButton>
-        <NavBarButton>About</NavBarButton>
+        <Link to={"/tournaments"}>
+          <NavBarButton>Tourneys</NavBarButton>
+        </Link>
+        <Link to={"/players"}>
+          <NavBarButton>Players</NavBarButton>
+        </Link>
+        <Link to={"/stats"}>
+          <NavBarButton>Stats</NavBarButton>
+        </Link>
+        <Link to={"/about"}>
+          <NavBarButton>About</NavBarButton>
+        </Link>
       </StyledDesktopItemsContainer>
       <div />
     </StyledDesktopContainer>
-  );
-};
-
-const MobileNavBarItem = ({
-  children,
-  icon,
-  link,
-}: React.PropsWithChildren<{ icon: JSX.Element; link: string }>) => {
-  const goTo = useNavigation(link);
-
-  return (
-    <StyledMobileNavBarItemContainer onClick={goTo}>
-      {icon}
-      {children}
-    </StyledMobileNavBarItemContainer>
-  );
-};
-
-const MobileMainButton = ({ link }: { link: string }) => {
-  const goTo = useNavigation(link);
-
-  return (
-    <StyledMobileMainButton onClick={goTo}>
-      <Logo height={25} width={40} color={colors.yellow} />
-    </StyledMobileMainButton>
   );
 };
 
@@ -84,5 +69,30 @@ export const MobileNavBar = () => {
         </MobileNavBarItem>
       </StyledMobileItemsContainer>
     </StyledMobileContainer>
+  );
+};
+
+const MobileMainButton = ({ link }: { link: string }) => {
+  const goTo = useNavigation(link);
+
+  return (
+    <StyledMobileMainButton onClick={goTo}>
+      <Logo height={25} width={40} color={colors.yellow} />
+    </StyledMobileMainButton>
+  );
+};
+
+const MobileNavBarItem = ({
+  children,
+  icon,
+  link,
+}: React.PropsWithChildren<{ icon: JSX.Element; link: string }>) => {
+  const goTo = useNavigation(link);
+
+  return (
+    <StyledMobileNavBarItemContainer onClick={goTo}>
+      {icon}
+      {children}
+    </StyledMobileNavBarItemContainer>
   );
 };

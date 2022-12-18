@@ -1,7 +1,6 @@
-import { Box, Text } from "@chakra-ui/react";
 import styled from "styled-components";
 
-export const StyledContainer = styled(Box)`
+export const StyledContainer = styled.div`
   width: 100%;
   background: linear-gradient(
       0deg,
@@ -17,7 +16,7 @@ export const StyledContainer = styled(Box)`
   padding: 3rem;
 `;
 
-export const StyledTournamentTitle = styled(Text)`
+export const StyledTournamentTitle = styled.p`
   font-family: VTF Redzone Classic;
   font-weight: 400;
   font-size: 48px;

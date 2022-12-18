@@ -24,7 +24,7 @@ export const TopCurve = () => {
       <StyledTopCurve>
         <path
           d="M-3 0.55896V6.55896C-3 28.159 416.767 118.019 1065.89 116.819C1708.37 120.419 1728 28.519 1728 6.55896V0.55896H-3Z"
-          fill={colors.pitchBlack}
+          fill={colors.blackBackground}
         />
       </StyledTopCurve>
     </StyledTopCurveBackground>

@@ -1,4 +1,3 @@
-import { Box, Button, Flex, Input, Text } from "@chakra-ui/react";
 import React, { useState } from "react";
 import { useMutation, useQuery } from "urql";
 import { useNavigate } from "react-router-dom";
@@ -34,15 +33,16 @@ export const PlayerList = ({ listItemFactory }: PlayerListProps) => {
 
   const [filterQuery, setFilterQuery] = useState<string>("");
   const defaultFactory = (player: Player) => (
-    <Text key={player.id}>
-      {getFlagEmoji(player.country!)}
-      {player.name}
-    </Text>
+    // <Text key={player.id}>
+    //   {getFlagEmoji(player.country!)}
+    //   {player.name}
+    // </Text>
+    <p>aa</p>
   );
 
   return (
     <Section>
-      <Text>Player list</Text>
+      {/* <Text>Player list</Text>
       <Input
         value={filterQuery}
         onChange={(event) => {
@@ -53,7 +53,7 @@ export const PlayerList = ({ listItemFactory }: PlayerListProps) => {
             ),
           } as PlayersQueryResult | undefined);
         }}
-      />
+      /> */}
       {filteredPlayers?.players.map(listItemFactory || defaultFactory)}
     </Section>
   );
@@ -61,15 +61,16 @@ export const PlayerList = ({ listItemFactory }: PlayerListProps) => {
 
 export const Section = React.forwardRef<any, React.PropsWithChildren<{}>>(
   ({ children }, ref) => (
-    <Box
-      ref={ref}
-      padding={3}
-      borderWidth="3px"
-      borderRadius="10px"
-      borderColor="white"
-    >
-      {children}
-    </Box>
+    // <Box
+    //   ref={ref}
+    //   padding={3}
+    //   borderWidth="3px"
+    //   borderRadius="10px"
+    //   borderColor="white"
+    // >
+    //   {children}
+    // </Box>
+    <div>aa</div>
   )
 );
 
@@ -132,33 +133,34 @@ export const TournamentWizard = () => {
   };
 
   return (
-    <Box display="flex" px="15%" pt={3} flexDir="column">
-      <Flex gap={3}>
-        <PlayerList />
-        <Section>
-          <Text>Add Player</Text>
-          <Text>Name</Text>
-          <Input onChange={(event) => updateState(setName, event)}></Input>
+    <p>aa</p>
+    // <Box display="flex" px="15%" pt={3} flexDir="column">
+    //   <Flex gap={3}>
+    //     <PlayerList />
+    //     <Section>
+    //       <Text>Add Player</Text>
+    //       <Text>Name</Text>
+    //       <Input onChange={(event) => updateState(setName, event)}></Input>
 
-          <Text>Country</Text>
-          <Input onChange={(event) => updateState(setCountry, event)}></Input>
+    //       <Text>Country</Text>
+    //       <Input onChange={(event) => updateState(setCountry, event)}></Input>
 
-          <Text>Region</Text>
-          <Input onChange={(event) => updateState(setRegion, event)}></Input>
+    //       <Text>Region</Text>
+    //       <Input onChange={(event) => updateState(setRegion, event)}></Input>
 
-          <Button onClick={saveUser}>Save</Button>
-          <Text>{saveStatus}</Text>
-        </Section>
-        <Section>
-          Tournament
-          <Text>Name</Text>
-          <Input name="name" onChange={(event) => handleChange(event)}></Input>
-          <Text>Set ID</Text>
-          <Input name="setId" onChange={(event) => handleChange(event)}></Input>
-          <Text>Stages</Text>
-          <Button onClick={onCreateTournament}>Save</Button>
-        </Section>
-      </Flex>
-    </Box>
+    //       <Button onClick={saveUser}>Save</Button>
+    //       <Text>{saveStatus}</Text>
+    //     </Section>
+    //     <Section>
+    //       Tournament
+    //       <Text>Name</Text>
+    //       <Input name="name" onChange={(event) => handleChange(event)}></Input>
+    //       <Text>Set ID</Text>
+    //       <Input name="setId" onChange={(event) => handleChange(event)}></Input>
+    //       <Text>Stages</Text>
+    //       <Button onClick={onCreateTournament}>Save</Button>
+    //     </Section>
+    //   </Flex>
+    // </Box>
   );
 };

@@ -1,57 +1,31 @@
 import { Link } from "react-router-dom";
+import { useQuery } from "urql";
 import { useDocumentTitle } from "../../hooks/useDocumentTitle";
-import {
-  StyledContainer,
-  StyledDateText,
-  StyledTournamentInfoInnerContainer,
-  StyledListItem,
-  StyledRegionText,
-  StyledSearchInput,
-  StyledTournamentImage,
-  StyledTournamentInfoContainer,
-  StyledTournamentTitle,
-  StyledHorizontalContainer,
-} from "./Tournaments.styled";
+import { StyledContainer, StyledTournamentList } from "./Tournaments.styled";
+import { TournamentsQueryResult, TOURNAMENTS_QUERY } from "./queries";
+import { StyledSearchFilterBar } from "../../components/SearchFilterBar/SearchFilterBar";
+import { TournamentListItem } from "./TournamentListItem/TournamentListItem";
+
+export const formatDate = (stringDate: string) =>
+  new Date(stringDate).toLocaleDateString();
 
 export const Tournaments = () => {
-  // const [{ data }] = useQuery<TournamentsQueryResult>({
-  //   query: TOURNAMENTS_QUERY,
-  // });
-  const data = {
-    tournaments: [
-      { id: 1, name: "alala", participantsNumber: 10, prizePool: 10000 },
-      { id: 2, name: "afdasfsa", participantsNumber: 10, prizePool: 10000 },
-      { id: 3, name: "fdsjaifja", participantsNumber: 10, prizePool: 10000 },
-      { id: 4, name: "fdhasiu", participantsNumber: 10, prizePool: 10000 },
-      { id: 5, name: "fdsaufha", participantsNumber: 10, prizePool: 10000 },
-    ],
-  };
-  useDocumentTitle("ProTFT");
+  const [{ data }] = useQuery<TournamentsQueryResult>({
+    query: TOURNAMENTS_QUERY,
+  });
+
+  useDocumentTitle("Tourneys");
 
   return (
     <StyledContainer>
-      <StyledSearchInput placeholder="Search events" />
-      {data.tournaments.map((tournament) => (
-        <Link to={`${tournament.id}`}>
-          <StyledListItem>
-            <StyledTournamentImage src="./background.png" alt="" />
-            <StyledTournamentInfoContainer>
-              <StyledTournamentTitle>Terras Dracônicas</StyledTournamentTitle>
-              <br />
-              <StyledTournamentInfoInnerContainer>
-                <StyledHorizontalContainer>
-                  <img src="./brazil.png" alt="brasil" />
-                  <StyledRegionText>Brazil</StyledRegionText>
-                </StyledHorizontalContainer>
-                <StyledHorizontalContainer>
-                  <img src="./calendar.png" alt="calendar" />
-                  <StyledDateText>12/10/22 - 15/10/22</StyledDateText>
-                </StyledHorizontalContainer>
-              </StyledTournamentInfoInnerContainer>
-            </StyledTournamentInfoContainer>
-          </StyledListItem>
-        </Link>
-      ))}
+      <StyledSearchFilterBar />
+      <StyledTournamentList>
+        {data?.tournaments.map((tournament) => (
+          <Link to={`${tournament.id}`}>
+            <TournamentListItem tournament={tournament} />
+          </Link>
+        ))}
+      </StyledTournamentList>
     </StyledContainer>
   );
 };

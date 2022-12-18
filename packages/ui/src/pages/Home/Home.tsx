@@ -12,7 +12,7 @@ export const Home = () => {
     <StyledContainer>
       <HighlightedTournaments />
       <HighlightedPlayer />
-      <Unknown />
+      {/* <Unknown /> */}
       <About />
     </StyledContainer>
   );

@@ -1,4 +1,3 @@
-import { Box, Flex, Text, Button } from "@chakra-ui/react";
 import { useState } from "react";
 import { useDrag, useDrop } from "react-dnd";
 import { useNavigate, useParams } from "react-router-dom";
@@ -31,10 +30,10 @@ const DragAndDropPlayer = ({
     }),
   }));
   return (
-    <Text onClick={() => onClick(player)} ref={drag}>
+    <p onClick={() => onClick(player)} ref={drag}>
       {getFlagEmoji(player.country!)}
       {player.name}
-    </Text>
+    </p>
   );
 };
 
@@ -59,7 +58,7 @@ const TournamentPlayers = () => {
 
   return (
     <Section ref={drop}>
-      <Text>Tournament Players</Text>
+      <p>Tournament Players</p>
       {tournamentPlayers.map((player) => (
         <DragAndDropPlayer key={player.id} player={player} />
       ))}
@@ -120,10 +119,10 @@ const LobbyPlayers = ({
 
   return (
     <Section ref={drop}>
-      <Text>
+      <p>
         Stage {stageId} - Lobby - {lobbyId} - Players
-      </Text>
-      <Button onClick={clearLobby}>Clear</Button>
+      </p>
+      <button onClick={clearLobby}>Clear</button>
       {lobbyPlayers.map((player) => (
         <DragAndDropPlayer
           key={player.id}
@@ -131,10 +130,10 @@ const LobbyPlayers = ({
           onClick={removeLobbyPlayer}
         />
       ))}
-      <Button disabled={lobbyPlayers.length !== 8} onClick={saveLobbyPlayers}>
+      <button disabled={lobbyPlayers.length !== 8} onClick={saveLobbyPlayers}>
         Save
-      </Button>
-      <Text>{saveLobbyStatus}</Text>
+      </button>
+      <p>{saveLobbyStatus}</p>
     </Section>
   );
 };
@@ -159,8 +158,15 @@ export const LobbiesWizard = () => {
   };
 
   return (
-    <Box display="flex" px="15%" pt={3} flexDir="column">
-      <Flex gap={3}>
+    <div
+      style={{
+        display: "flex",
+        paddingLeft: "15%",
+        paddingTop: 3,
+        flexDirection: "column",
+      }}
+    >
+      <div style={{ display: "flex", gap: 3 }}>
         <StageList
           stages={stages?.stages}
           selectedStage={selectedStage}
@@ -175,8 +181,8 @@ export const LobbiesWizard = () => {
         <PlayerList listItemFactory={dragAndDropPlayerFactory} />
         <TournamentPlayers />
         <LobbyPlayers stageId={selectedStage} lobbyId={selectedLobby} />
-        <Button onClick={goNext}>Next</Button>
-      </Flex>
-    </Box>
+        <button onClick={goNext}>Next</button>
+      </div>
+    </div>
   );
 };

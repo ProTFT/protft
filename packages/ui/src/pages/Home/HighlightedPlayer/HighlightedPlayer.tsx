@@ -1,4 +1,3 @@
-import { Box } from "@chakra-ui/react";
 import { ProTFTButton } from "../../../components/Button/Button";
 import { colors } from "../../../design/colors";
 import {

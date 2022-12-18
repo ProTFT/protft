@@ -1,30 +1,41 @@
 import { useQuery } from "urql";
-import { Box, Flex, List, ListItem, Text } from "@chakra-ui/react";
-import { Link, useParams } from "react-router-dom";
+import { useParams } from "react-router-dom";
 import {
   PlayerQueryResult,
   PlayerTournamentQueryResult,
   PLAYER_QUERY,
   PLAYER_TOURNAMENT_QUERY,
 } from "./queries";
-import { PageTitle } from "../../components/PageTitle";
-import { getFlagEmoji } from "../../formatter/FlagEmoji";
 import { useEffect } from "react";
-
-const StatBox = ({
-  text,
-  value,
-}: {
-  text: string;
-  value?: string | number;
-}) => {
-  return (
-    <Box borderWidth={2} flexDir="column" p={5} borderRadius="lg">
-      <Text fontWeight="bold">{text}</Text>
-      <Text>{value}</Text>
-    </Box>
-  );
-};
+import { StyledBodyContainer } from "../Tournament/Tournament.styled";
+import { RegionIndicator } from "../../components/RegionIndicator/RegionIndicator";
+import { Twitter } from "../../design/icons/Twitter";
+import { colors } from "../../design/colors";
+import {
+  StyledContainer,
+  StyledHorizontalContainer,
+} from "../Tournaments/Tournaments.styled";
+import {
+  StyledHeaderContainer,
+  StyledImage,
+  StyledPlayerInfo,
+  StyledPlayerName,
+  StyledStat,
+  StyledStatsContainer,
+  StyledStatTitle,
+  StyledStatValue,
+  StyledTitle,
+  StyledTournamentInfo,
+  StyledTournamentName,
+  StyledTourneyStatsContainer,
+} from "./Player.styled";
+import { RoundedContainer } from "../../components/Containers/RoundedContainer/RoundedContainer";
+import { DateIndicator } from "../../components/DateIndicator/DateIndicator";
+import { StyledDetailsButton } from "../Players/components/PlayerCard.styled";
+import { ArrowRightIcon } from "../../design/icons/ArrowRight";
+import { TextIconHorizontalContainer } from "../../components/Layout/HorizontalContainer/TextIconHorizontalContainer.styled";
+import { StyledVerticalContainer } from "../../components/Layout/VerticalContainer/VerticalContainer.styled";
+import { StyledSearchFilterBar } from "../../components/SearchFilterBar/SearchFilterBar";
 
 export const Player = () => {
   const { playerId } = useParams();
@@ -43,56 +54,128 @@ export const Player = () => {
   }, [data?.player.name]);
 
   return (
-    <Box textAlign="center" fontSize="xl" display="flex">
-      <Flex flexDirection="column" boxSize="100%" gap={10} px="20%">
-        <PageTitle
-          text={
-            getFlagEmoji(data?.player.country || "") + " " + data?.player.name
-          }
+    <>
+      <StyledHeaderContainer>
+        <div
+          style={{ width: "40%", height: "10rem", backgroundColor: "blue" }}
         />
-        <Flex flex="50%" gap={10}>
-          <Flex gap={10} justifyContent="space-between" flexWrap="wrap">
-            <StatBox
-              text="Total games"
-              value={data?.player.playerStats?.totalGames}
-            />
-            <StatBox
-              text="Average Position"
-              value={data?.player.playerStats?.averagePosition}
-            />
-            <StatBox
-              text="Top Four %"
-              value={
-                (
-                  ((data?.player.playerStats?.topFourCount || 0) /
-                    (data?.player.playerStats?.totalGames || 1)) *
-                  100
-                ).toFixed(2) + "%"
-              }
-            />
-            <StatBox
-              text="Top One %"
-              value={
-                (
-                  ((data?.player.playerStats?.topOneCount || 0) /
-                    (data?.player.playerStats?.totalGames || 1)) *
-                  100
-                ).toFixed(2) + "%"
-              }
-            />
-          </Flex>
-          <Flex flexDir="column" alignSelf="start">
-            <Text>Played in</Text>
-            <List>
-              {tournamentData?.tournamentsPlayed.map(({ id, name }) => (
-                <Link key={id} to={`/tournaments/${id}`}>
-                  <ListItem textDecor="underline">{name}</ListItem>
-                </Link>
-              ))}
-            </List>
-          </Flex>
-        </Flex>
-      </Flex>
-    </Box>
+        <StyledPlayerInfo>
+          <StyledPlayerName>Mismatched Socks</StyledPlayerName>
+          <RegionIndicator image="/brazil.png" name="Brazil" />
+          <div style={{ alignSelf: "end" }}>
+            <Twitter color={colors.white} onClick={() => {}} size={24} />
+          </div>
+        </StyledPlayerInfo>
+      </StyledHeaderContainer>
+      <StyledContainer>
+        <StyledBodyContainer>
+          <StyledSearchFilterBar />
+        </StyledBodyContainer>
+        <StyledStatsContainer>
+          <StyledStat>
+            <StyledStatTitle>Tourneys</StyledStatTitle>
+            <StyledStatValue>13</StyledStatValue>
+          </StyledStat>
+          <StyledStat>
+            <StyledStatTitle>Matches</StyledStatTitle>
+            <StyledStatValue>145</StyledStatValue>
+          </StyledStat>
+          <StyledStat>
+            <StyledStatTitle>Avg Pos</StyledStatTitle>
+            <StyledStatValue>2.3</StyledStatValue>
+          </StyledStat>
+          <StyledStat>
+            <StyledStatTitle>Top 4 %</StyledStatTitle>
+            <StyledStatValue>59%</StyledStatValue>
+          </StyledStat>
+          <StyledStat>
+            <StyledStatTitle>Top 1 %</StyledStatTitle>
+            <StyledStatValue>2%</StyledStatValue>
+          </StyledStat>
+        </StyledStatsContainer>
+      </StyledContainer>
+      <StyledTourneyStatsContainer>
+        <StyledTitle>Tourney Stats</StyledTitle>
+        <StyledSearchFilterBar />
+        <RoundedContainer padding="2rem" gap="2rem">
+          <StyledHorizontalContainer>
+            <StyledImage />
+            <StyledVerticalContainer>
+              <StyledTournamentName>World Cup Fates</StyledTournamentName>
+              <StyledVerticalContainer>
+                <RegionIndicator name="Brazil" image="/brazil.png" />
+                <DateIndicator startDate="12/10" endDate="15/10" />
+              </StyledVerticalContainer>
+            </StyledVerticalContainer>
+          </StyledHorizontalContainer>
+          <StyledTournamentInfo>
+            <StyledStat>
+              <StyledStatTitle>Avg Pos</StyledStatTitle>
+              <StyledStatValue>3.1</StyledStatValue>
+            </StyledStat>
+            <StyledStat>
+              <StyledStatTitle>Top 4 %</StyledStatTitle>
+              <StyledStatValue>66%</StyledStatValue>
+            </StyledStat>
+            <StyledHorizontalContainer>
+              <StyledDetailsButton>Details</StyledDetailsButton>
+              <ArrowRightIcon size={20} onClick={() => {}} />
+            </StyledHorizontalContainer>
+          </StyledTournamentInfo>
+        </RoundedContainer>
+        <RoundedContainer padding="2rem" gap="2rem">
+          <StyledHorizontalContainer>
+            <StyledImage />
+            <StyledVerticalContainer>
+              <StyledTournamentName>World Cup Fates</StyledTournamentName>
+              <StyledVerticalContainer>
+                <RegionIndicator name="Brazil" image="/brazil.png" />
+                <DateIndicator startDate="12/10" endDate="15/10" />
+              </StyledVerticalContainer>
+            </StyledVerticalContainer>
+          </StyledHorizontalContainer>
+          <StyledTournamentInfo>
+            <StyledStat>
+              <StyledStatTitle>Avg Pos</StyledStatTitle>
+              <StyledStatValue>3.1</StyledStatValue>
+            </StyledStat>
+            <StyledStat>
+              <StyledStatTitle>Top 4 %</StyledStatTitle>
+              <StyledStatValue>66%</StyledStatValue>
+            </StyledStat>
+            <StyledHorizontalContainer>
+              <StyledDetailsButton>Details</StyledDetailsButton>
+              <ArrowRightIcon size={20} onClick={() => {}} />
+            </StyledHorizontalContainer>
+          </StyledTournamentInfo>
+        </RoundedContainer>
+        <RoundedContainer padding="2rem" gap="2rem">
+          <StyledHorizontalContainer>
+            <StyledImage />
+            <StyledVerticalContainer>
+              <StyledTournamentName>World Cup Fates</StyledTournamentName>
+              <StyledVerticalContainer>
+                <RegionIndicator name="Brazil" image="/brazil.png" />
+                <DateIndicator startDate="12/10" endDate="15/10" />
+              </StyledVerticalContainer>
+            </StyledVerticalContainer>
+          </StyledHorizontalContainer>
+          <StyledTournamentInfo>
+            <StyledStat>
+              <StyledStatTitle>Avg Pos</StyledStatTitle>
+              <StyledStatValue>3.1</StyledStatValue>
+            </StyledStat>
+            <StyledStat>
+              <StyledStatTitle>Top 4 %</StyledStatTitle>
+              <StyledStatValue>66%</StyledStatValue>
+            </StyledStat>
+            <StyledHorizontalContainer>
+              <StyledDetailsButton>Details</StyledDetailsButton>
+              <ArrowRightIcon size={20} onClick={() => {}} />
+            </StyledHorizontalContainer>
+          </StyledTournamentInfo>
+        </RoundedContainer>
+      </StyledTourneyStatsContainer>
+    </>
   );
 };

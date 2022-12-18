@@ -1,9 +1,8 @@
-import { Box, Text } from "@chakra-ui/react";
 import styled from "styled-components";
 import { device } from "../../../design/breakpoints";
 import { colors } from "../../../design/colors";
 
-export const StyledContainer = styled(Box)`
+export const StyledContainer = styled.div`
   width: 100%;
   display: flex;
   flex-direction: column;
@@ -13,7 +12,7 @@ export const StyledContainer = styled(Box)`
   gap: 2rem;
 `;
 
-export const StyledSectionTitle = styled(Text)`
+export const StyledSectionTitle = styled.p`
   font-family: VTF Redzone Classic;
   font-weight: 400;
   font-size: 32px;
@@ -24,7 +23,7 @@ export const StyledSectionTitle = styled(Text)`
   text-align: center;
 `;
 
-export const StyledOuterBox = styled(Box)`
+export const StyledOuterBox = styled.div`
   display: flex;
   gap: 3rem;
   padding-left: 2rem;
@@ -42,7 +41,7 @@ export const StyledOuterBox = styled(Box)`
   }
 `;
 
-export const StyledInnerBox = styled(Box)`
+export const StyledInnerBox = styled.div`
   display: flex;
   flex-direction: column;
   align-items: center;
@@ -56,7 +55,7 @@ export const StyledInnerBox = styled(Box)`
   }
 `;
 
-export const StyledPlayerName = styled(Text)`
+export const StyledPlayerName = styled.p`
   font-family: VTF Redzone Classic;
   font-weight: 400;
   font-size: 24px;
@@ -66,8 +65,15 @@ export const StyledPlayerName = styled(Text)`
   color: ${colors.yellow};
 `;
 
-export const StyledPlayerDescription = styled(Text)`
+export const StyledPlayerDescription = styled.p`
+  font-family: Roboto;
+  font-size: 14px;
+  font-weight: 400;
+  line-height: 26px;
+  letter-spacing: 0.05em;
+  text-align: left;
   flex-grow: 0;
+  color: #999999;
 `;
 
 interface PlayerImageProps {

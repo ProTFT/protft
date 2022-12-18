@@ -66,4 +66,5 @@ export const StyledMobileNavBarItemContainer = styled.div`
   letter-spacing: 0.5em;
   text-align: center;
   text-transform: uppercase;
+  color: #f2f2f2;
 `;
