@@ -34,13 +34,13 @@ jobs:
         run: yarn build
 
       - name: Deploy to S3
-        # run: npx s3-deploy@1.4.0 ./**/* --bucket ${{ secrets.S3_BUCKET }} --region ${{ secrets.S3_BUCKET_REGION }} --cwd ./build --distId ${{ secrets.CLOUDFRONT_DISTRIBUTION_ID }} --invalidate "/" --deleteRemoved --etag --gzip xml,html,htm,js,css,ttf,otf,svg,txt
-        uses: vhnam/s3-deploy@master
-        with:
-          filesToInclude: "build/**/*"
-          folder: packages/ui/
-          bucket: ${{ secrets.S3_BUCKET }}
-          bucket-region: ${{ secrets.S3_BUCKET_REGION }}
-          dist-id: ${{ secrets.CLOUDFRONT_DISTRIBUTION_ID }}
-          invalidation: "/"
-          delete-removed: true
+        run: npx s3-deploy@1.4.0 build/**/* --bucket ${{ secrets.S3_BUCKET }} --region ${{ secrets.S3_BUCKET_REGION }} --cwd ./build --distId ${{ secrets.CLOUDFRONT_DISTRIBUTION_ID }} --invalidate "/" --deleteRemoved --etag --gzip xml,html,htm,js,css,ttf,otf,svg,txt
+        # uses: vhnam/s3-deploy@master
+        # with:
+        #   filesToInclude: "build/**/*"
+        #   folder: packages/ui/
+        #   bucket: ${{ secrets.S3_BUCKET }}
+        #   bucket-region: ${{ secrets.S3_BUCKET_REGION }}
+        #   dist-id: ${{ secrets.CLOUDFRONT_DISTRIBUTION_ID }}
+        #   invalidation: "/"
+        #   delete-removed: true
