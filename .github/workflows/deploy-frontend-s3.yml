@@ -32,6 +32,7 @@ jobs:
 
       - name: Deploy to S3
         uses: reggionick/s3-deploy@v3
+        working-directory: "packages/ui"
         with:
           folder: build
           bucket: ${{ secrets.S3_BUCKET }}
