@@ -1,19 +1,22 @@
 name: deploy-frontend-s3
+
 on:
   pull_request:
     branches:
-      - "main"
+      - main
     paths:
-      - "packages/ui/**"
+      - packages/ui/**
 
 jobs:
-  build:
-    name: Build
+  run:
     runs-on: ubuntu-latest
+    env:
+      AWS_ACCESS_KEY_ID: ${{ secrets.AWS_ACCESS_KEY_ID }}
+      AWS_SECRET_ACCESS_KEY: ${{ secrets.AWS_SECRET_ACCESS_KEY }}
 
     defaults:
       run:
-        working-directory: "packages/ui"
+        working-directory: ./packages/ui
 
     steps:
       - name: Checkout
@@ -32,9 +35,8 @@ jobs:
 
       - name: Deploy to S3
         uses: reggionick/s3-deploy@v3
-        working-directory: "packages/ui"
         with:
-          folder: build
+          folder: ./build
           bucket: ${{ secrets.S3_BUCKET }}
           bucket-region: ${{ secrets.S3_BUCKET_REGION }}
           dist-id: ${{ secrets.CLOUDFRONT_DISTRIBUTION_ID }}
