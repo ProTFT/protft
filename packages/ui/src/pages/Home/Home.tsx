@@ -1,7 +1,7 @@
 import { HighlightedTournaments } from "./HighlightedTournaments/HighlightedTournaments";
 import { HighlightedPlayer } from "./HighlightedPlayer/HighlightedPlayer";
 import { About } from "./About/About";
-import { Unknown } from "./Unknown/Unknown";
+// import { Unknown } from "./Unknown/Unknown";
 import { StyledContainer } from "./Home.styled";
 import { useDocumentTitle } from "../../hooks/useDocumentTitle";
 

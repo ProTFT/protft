@@ -16,7 +16,6 @@ import {
   CREATE_PLAYER_QUERY,
   CREATE_TOURNAMENT_QUERY,
 } from "./queries";
-import { StyledVerticalContainer } from "../../../components/Layout/VerticalContainer/VerticalContainer.styled";
 import {
   StyledButton,
   StyledContainer,

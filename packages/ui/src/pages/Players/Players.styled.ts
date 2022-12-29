@@ -1,6 +1,5 @@
 import styled from "styled-components";
 import { device } from "../../design/breakpoints";
-import { colors } from "../../design/colors";
 
 export const StyledPlayersList = styled.div`
   display: flex;
