@@ -36,8 +36,7 @@ jobs:
       - name: Deploy to S3
         uses: vhnam/s3-deploy@master
         with:
-          filesToInclude: "./**/*"
-          folder: build
+          filesToInclude: "./packages/ui/build/**/*"
           bucket: ${{ secrets.S3_BUCKET }}
           bucket-region: ${{ secrets.S3_BUCKET_REGION }}
           dist-id: ${{ secrets.CLOUDFRONT_DISTRIBUTION_ID }}
