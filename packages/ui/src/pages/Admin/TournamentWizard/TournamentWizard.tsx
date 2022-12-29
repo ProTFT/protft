@@ -1,13 +1,13 @@
 import React, { useState } from "react";
 import { useMutation, useQuery } from "urql";
 import { useNavigate } from "react-router-dom";
-import { getFlagEmoji } from "../../formatter/FlagEmoji";
-import { Player, Tournament } from "../../graphql/schema";
+import { getFlagEmoji } from "../../../formatter/FlagEmoji";
+import { Player, Tournament } from "../../../graphql/schema";
 import {
   PlayersQueryResult,
   PlayersQueryVariables,
   PLAYERS_QUERY,
-} from "../Players/queries";
+} from "../../Players/queries";
 import {
   CreatePlayerResult,
   CreatePlayerVariables,
@@ -16,6 +16,15 @@ import {
   CREATE_PLAYER_QUERY,
   CREATE_TOURNAMENT_QUERY,
 } from "./queries";
+import { StyledVerticalContainer } from "../../../components/Layout/VerticalContainer/VerticalContainer.styled";
+import {
+  StyledButton,
+  StyledContainer,
+  StyledInput,
+  StyledSection,
+  StyledText,
+  StyledTitle,
+} from "./TournamentWizard.styled";
 
 interface PlayerListProps {
   listItemFactory?: (player: Player) => any;
@@ -33,17 +42,16 @@ export const PlayerList = ({ listItemFactory }: PlayerListProps) => {
 
   const [filterQuery, setFilterQuery] = useState<string>("");
   const defaultFactory = (player: Player) => (
-    // <Text key={player.id}>
-    //   {getFlagEmoji(player.country!)}
-    //   {player.name}
-    // </Text>
-    <p>aa</p>
+    <StyledText key={player.id}>
+      {getFlagEmoji(player.country!)}
+      {player.name}
+    </StyledText>
   );
 
   return (
-    <Section>
-      {/* <Text>Player list</Text>
-      <Input
+    <StyledSection>
+      <StyledTitle>Player list</StyledTitle>
+      <StyledInput
         value={filterQuery}
         onChange={(event) => {
           setFilterQuery(event.target.value);
@@ -53,24 +61,17 @@ export const PlayerList = ({ listItemFactory }: PlayerListProps) => {
             ),
           } as PlayersQueryResult | undefined);
         }}
-      /> */}
+      />
       {filteredPlayers?.players.map(listItemFactory || defaultFactory)}
-    </Section>
+    </StyledSection>
   );
 };
 
 export const Section = React.forwardRef<any, React.PropsWithChildren<{}>>(
   ({ children }, ref) => (
-    // <Box
-    //   ref={ref}
-    //   padding={3}
-    //   borderWidth="3px"
-    //   borderRadius="10px"
-    //   borderColor="white"
-    // >
-    //   {children}
-    // </Box>
-    <div>aa</div>
+    <div ref={ref} style={{ backgroundColor: "blue" }}>
+      {children}
+    </div>
   )
 );
 
@@ -133,34 +134,30 @@ export const TournamentWizard = () => {
   };
 
   return (
-    <p>aa</p>
-    // <Box display="flex" px="15%" pt={3} flexDir="column">
-    //   <Flex gap={3}>
-    //     <PlayerList />
-    //     <Section>
-    //       <Text>Add Player</Text>
-    //       <Text>Name</Text>
-    //       <Input onChange={(event) => updateState(setName, event)}></Input>
+    <StyledContainer>
+      <PlayerList />
+      <StyledSection>
+        <StyledTitle>Add Player</StyledTitle>
+        <StyledText>Name</StyledText>
+        <StyledInput onChange={(event) => updateState(setName, event)} />
 
-    //       <Text>Country</Text>
-    //       <Input onChange={(event) => updateState(setCountry, event)}></Input>
+        <StyledText>Country</StyledText>
+        <StyledInput onChange={(event) => updateState(setCountry, event)} />
 
-    //       <Text>Region</Text>
-    //       <Input onChange={(event) => updateState(setRegion, event)}></Input>
+        <StyledText>Region</StyledText>
+        <StyledInput onChange={(event) => updateState(setRegion, event)} />
 
-    //       <Button onClick={saveUser}>Save</Button>
-    //       <Text>{saveStatus}</Text>
-    //     </Section>
-    //     <Section>
-    //       Tournament
-    //       <Text>Name</Text>
-    //       <Input name="name" onChange={(event) => handleChange(event)}></Input>
-    //       <Text>Set ID</Text>
-    //       <Input name="setId" onChange={(event) => handleChange(event)}></Input>
-    //       <Text>Stages</Text>
-    //       <Button onClick={onCreateTournament}>Save</Button>
-    //     </Section>
-    //   </Flex>
-    // </Box>
+        <StyledButton onClick={saveUser}>Save</StyledButton>
+        <StyledText>{saveStatus}</StyledText>
+      </StyledSection>
+      <StyledSection>
+        <StyledTitle>Tournament</StyledTitle>
+        <StyledText>Name</StyledText>
+        <StyledInput name="name" onChange={(event) => handleChange(event)} />
+        <StyledText>Set ID</StyledText>
+        <StyledInput name="setId" onChange={(event) => handleChange(event)} />
+        <StyledButton onClick={onCreateTournament}>Save</StyledButton>
+      </StyledSection>
+    </StyledContainer>
   );
 };

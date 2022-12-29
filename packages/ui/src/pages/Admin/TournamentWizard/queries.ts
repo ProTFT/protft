@@ -1,5 +1,5 @@
 import { gql } from "urql";
-import { Player, Tournament } from "../../graphql/schema";
+import { Player, Tournament } from "../../../graphql/schema";
 
 export interface CreatePlayerResult {
   createPlayer: { id: Pick<Player, "id"> };

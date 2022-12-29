@@ -45,8 +45,10 @@ export class PlayersResolver extends BaseResolver {
   }
 
   @Query(() => [Player])
-  async players(@Args() { region, country, take, skip }: GetPlayerArgs) {
-    const filters = this.cleanGraphQLFilters({ region, country });
+  async players(
+    @Args() { region, country, take, skip, searchQuery }: GetPlayerArgs,
+  ) {
+    const filters = this.cleanGraphQLFilters({ region, country, searchQuery });
     return this.playersService.findAll(filters, { take, skip });
   }
 

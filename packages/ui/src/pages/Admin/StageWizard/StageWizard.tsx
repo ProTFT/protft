@@ -1,8 +1,15 @@
 import { useState } from "react";
 import { useNavigate, useParams } from "react-router-dom";
 import { useMutation, useQuery } from "urql";
-import { Stage } from "../../graphql/schema";
-import { Section } from "../TournamentWizard/TournamentWizard";
+import { Stage } from "../../../graphql/schema";
+import {
+  StyledButton,
+  StyledContainer,
+  StyledInput,
+  StyledSection,
+  StyledText,
+  StyledTitle,
+} from "../TournamentWizard/TournamentWizard.styled";
 import {
   CreateLobbyResult,
   CreateLobbyVariables,
@@ -29,19 +36,18 @@ export const StageList = ({
   onSelectStage,
 }: StageListProps) => {
   return (
-    <p>aa</p>
-    // <Section>
-    //   <Text>Current Stages</Text>
-    //   {stages?.map((stage) => (
-    //     <Text
-    //       textColor={stage.id === selectedStage ? "red" : "white"}
-    //       key={stage.id}
-    //       onClick={() => onSelectStage(stage.id, stage)}
-    //     >
-    //       {stage.name}
-    //     </Text>
-    //   ))}
-    // </Section>
+    <StyledSection>
+      <StyledTitle>Current Stages</StyledTitle>
+      {stages?.map((stage) => (
+        <StyledText
+          key={stage.id}
+          highlighted={stage.id === selectedStage}
+          onClick={() => onSelectStage(stage.id, stage)}
+        >
+          {stage.name}
+        </StyledText>
+      ))}
+    </StyledSection>
   );
 };
 
@@ -59,21 +65,20 @@ export const LobbyList = ({
   onSelectLobby,
 }: LobbyListProps) => {
   return (
-    <Section>
-      <p>Current Lobbies</p>
+    <StyledSection>
+      <StyledTitle>Current Lobbies</StyledTitle>
       {stages
         ?.find((stage) => stage.id === selectedStage)
         ?.lobbies?.map((lobby) => (
-          <p>aa</p>
-          // <Text
-          //   key={lobby.id}
-          //   textColor={lobby.id === selectedLobby ? "red" : "white"}
-          //   onClick={() => onSelectLobby(lobby.id)}
-          // >
-          //   {lobby.name}
-          // </Text>
+          <StyledText
+            key={lobby.id}
+            highlighted={lobby.id === selectedLobby}
+            onClick={() => onSelectLobby(lobby.id)}
+          >
+            {lobby.name}
+          </StyledText>
         ))}
-    </Section>
+    </StyledSection>
   );
 };
 
@@ -184,59 +189,56 @@ export const StageWizard = () => {
   };
 
   return (
-    <p>aa</p>
-    // <Box display="flex" px="15%" pt={3} flexDir="column">
-    //   <Flex gap={3}>
-    //     <StageList
-    //       stages={stages?.stages}
-    //       selectedStage={selectedStage}
-    //       onSelectStage={setSelectedStage}
-    //     />
-    //     <Section>
-    //       <Text>Current Lobbies</Text>
-    //       {stages?.stages
-    //         .find((stage) => stage.id === selectedStage)
-    //         ?.lobbies?.map((lobby) => (
-    //           <Text key={lobby.id}>{lobby.name}</Text>
-    //         ))}
-    //     </Section>
-    //     <Section>
-    //       <Text>Current Rounds</Text>
-    //       {stages?.stages
-    //         .find((stage) => stage.id === selectedStage)
-    //         ?.rounds?.map((round) => (
-    //           <Text key={round.id}>{round.sequence}</Text>
-    //         ))}
-    //     </Section>
-    //     <Section>
-    //       <Text>Add Stage</Text>
-    //       <Text>Name</Text>
-    //       <Input name="name" onChange={handleChange} />
-    //       <Text>Sequence</Text>
-    //       <Input name="sequence" onChange={handleChange} />
-    //       <Text>is final?</Text>
-    //       <Checkbox name="isFinal" onChange={handleChange}></Checkbox>
-    //       <Text>Point Schema Id</Text>
-    //       <Input name="pointSchemaId" onChange={handleChange} />
-    //       <Button onClick={saveStage}>Save</Button>
-    //       <Text>{saveStageStatus}</Text>
-    //     </Section>
-    //     <Section>
-    //       <Text>Add Lobby</Text>
-    //       <Text>Name</Text>
-    //       <Input name="name" onChange={handleLobbyChange} />
-    //       <Text>Sequence</Text>
-    //       <Input name="sequence" onChange={handleLobbyChange} />
-    //       <Button onClick={saveLobby}>Save</Button>
-    //     </Section>
-    //     <Section>
-    //       <Text>Add Round</Text>
-    //       <Text>Sequence</Text>
-    //       <Input name="sequence" onChange={handleRoundChange} />
-    //       <Button onClick={saveRound}>Save</Button>
-    //     </Section>
-    //     <Button onClick={goNext}>Next</Button>
-    //   </Flex>
-    // </Box>
+    <StyledContainer>
+      <StageList
+        stages={stages?.stages}
+        selectedStage={selectedStage}
+        onSelectStage={setSelectedStage}
+      />
+      <StyledSection>
+        <StyledTitle>Current Lobbies</StyledTitle>
+        {stages?.stages
+          .find((stage) => stage.id === selectedStage)
+          ?.lobbies?.map((lobby) => (
+            <StyledText key={lobby.id}>{lobby.name}</StyledText>
+          ))}
+      </StyledSection>
+      <StyledSection>
+        <StyledTitle>Current Rounds</StyledTitle>
+        {stages?.stages
+          .find((stage) => stage.id === selectedStage)
+          ?.rounds?.map((round) => (
+            <StyledText key={round.id}>{round.sequence}</StyledText>
+          ))}
+      </StyledSection>
+      <StyledSection>
+        <StyledTitle>Add Stage</StyledTitle>
+        <StyledText>Name</StyledText>
+        <StyledInput name="name" onChange={handleChange} />
+        <StyledText>Sequence</StyledText>
+        <StyledInput name="sequence" onChange={handleChange} />
+        <StyledText>is final?</StyledText>
+        <input type="checkbox" name="isFinal" onChange={handleChange} />
+        <StyledText>Point Schema Id</StyledText>
+        <StyledInput name="pointSchemaId" onChange={handleChange} />
+        <StyledButton onClick={saveStage}>Save</StyledButton>
+        <StyledText>{saveStageStatus}</StyledText>
+      </StyledSection>
+      <StyledSection>
+        <StyledTitle>Add Lobby</StyledTitle>
+        <StyledText>Name</StyledText>
+        <StyledInput name="name" onChange={handleLobbyChange} />
+        <StyledText>Sequence</StyledText>
+        <StyledInput name="sequence" onChange={handleLobbyChange} />
+        <StyledButton onClick={saveLobby}>Save</StyledButton>
+      </StyledSection>
+      <StyledSection>
+        <StyledTitle>Add Round</StyledTitle>
+        <StyledText>Sequence</StyledText>
+        <StyledInput name="sequence" onChange={handleRoundChange} />
+        <StyledButton onClick={saveRound}>Save</StyledButton>
+      </StyledSection>
+      <StyledButton onClick={goNext}>Next</StyledButton>
+    </StyledContainer>
   );
 };

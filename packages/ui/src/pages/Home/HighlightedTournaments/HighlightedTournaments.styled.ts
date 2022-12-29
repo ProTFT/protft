@@ -7,7 +7,8 @@ export const StyledContainer = styled.div`
       rgba(60, 60, 60, 0.5),
       rgba(60, 60, 60, 0.5)
     ),
-    url(./background.png);
+    url(/background.png);
+  background-size: cover;
   display: flex;
   flex-direction: column;
   align-items: center;

@@ -1,3 +1,4 @@
+import { Link } from "react-router-dom";
 import { ProTFTButton } from "../../../components/Button/Button";
 import { colors } from "../../../design/colors";
 import {
@@ -15,18 +16,23 @@ export const HighlightedPlayer = () => {
     <StyledContainer>
       <StyledSectionTitle>Highlighted Player</StyledSectionTitle>
       <StyledOuterBox>
-        <StyledPlayerImage url="./milk.png" />
+        <StyledPlayerImage url="/souless.jpeg" />
         <StyledInnerBox>
-          <StyledPlayerName>@Nickname</StyledPlayerName>
+          <StyledPlayerName>TSM Souless</StyledPlayerName>
           <StyledPlayerDescription>
-            1st Place fhdaisu fhidasu fihudas iufhdas iufhdas iuasdfh usdahf
-            aishdf fasudhi iufhdas uifdhsa fiudhsa fiudhsa fhadsiu fhdisua
-            iufhdsa ufhds aiufhdas iufhads iuhfasd iufhdsa iufh adsiufh iufdsh
-            afsdh adfsuih
+            After clutching out the first place at TFT Summit together with{" "}
+            <Link to={"/players/31"}>Kurumx</Link>, Souless puts himself in an
+            amazing position at the beginning of the set.
+            <br />
+            <br />
+            After questions raised about his flexibility, he showed several
+            different comps and boasts amazing stats for the event.
           </StyledPlayerDescription>
-          <ProTFTButton textColor={colors.white} buttonColor={colors.purple}>
-            Profile
-          </ProTFTButton>
+          <Link to={`/players/152`}>
+            <ProTFTButton textColor={colors.white} buttonColor={colors.purple}>
+              Profile
+            </ProTFTButton>
+          </Link>
         </StyledInnerBox>
       </StyledOuterBox>
     </StyledContainer>

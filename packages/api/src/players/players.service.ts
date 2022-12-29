@@ -1,7 +1,8 @@
 import { Injectable } from "@nestjs/common";
 import { InjectRepository } from "@nestjs/typeorm";
-import { Repository } from "typeorm";
+import { ILike, Repository } from "typeorm";
 import { PaginationArgs } from "../lib/dto/pagination.args";
+import { SearchQuery } from "../lib/SearchQuery";
 import { Tournament } from "../tournaments/tournament.entity";
 import { CreatePlayerArgs } from "./dto/create-player.args";
 import { BaseGetPlayerArgs, GetPlayerArgs } from "./dto/get-players.args";
@@ -20,6 +21,7 @@ export class PlayersService {
   constructor(
     @InjectRepository(Player)
     private playerRepository: Repository<Player>,
+    private searchQueryProvider: SearchQuery,
   ) {}
 
   async findOne(id: number) {
@@ -27,11 +29,16 @@ export class PlayersService {
   }
 
   async findAll(
-    filters: BaseGetPlayerArgs,
+    { searchQuery, ...filters }: BaseGetPlayerArgs,
     { take = 10, skip = 0 }: PaginationArgs,
   ): Promise<Player[]> {
+    const searchQueryFilter =
+      this.searchQueryProvider.getSearchQueryFilter(searchQuery);
     return this.playerRepository.find({
-      where: filters,
+      where: {
+        ...searchQueryFilter,
+        ...filters,
+      },
       take,
       skip,
     });

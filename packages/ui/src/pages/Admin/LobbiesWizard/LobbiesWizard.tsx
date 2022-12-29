@@ -2,11 +2,17 @@ import { useState } from "react";
 import { useDrag, useDrop } from "react-dnd";
 import { useNavigate, useParams } from "react-router-dom";
 import { useMutation, useQuery } from "urql";
-import { getFlagEmoji } from "../../formatter/FlagEmoji";
-import { Player } from "../../graphql/schema";
+import { getFlagEmoji } from "../../../formatter/FlagEmoji";
+import { Player } from "../../../graphql/schema";
 import { StagesQueryResult, STAGES_QUERY } from "../StageWizard/queries";
 import { LobbyList, StageList } from "../StageWizard/StageWizard";
 import { PlayerList, Section } from "../TournamentWizard/TournamentWizard";
+import {
+  StyledButton,
+  StyledContainer,
+  StyledText,
+  StyledTitle,
+} from "../TournamentWizard/TournamentWizard.styled";
 import {
   CreatePlayerLobbyResult,
   CreatePlayerLobbyVariables,
@@ -30,10 +36,10 @@ const DragAndDropPlayer = ({
     }),
   }));
   return (
-    <p onClick={() => onClick(player)} ref={drag}>
+    <StyledText onClick={() => onClick(player)} ref={drag}>
       {getFlagEmoji(player.country!)}
       {player.name}
-    </p>
+    </StyledText>
   );
 };
 
@@ -58,7 +64,7 @@ const TournamentPlayers = () => {
 
   return (
     <Section ref={drop}>
-      <p>Tournament Players</p>
+      <StyledTitle>Tournament Players</StyledTitle>
       {tournamentPlayers.map((player) => (
         <DragAndDropPlayer key={player.id} player={player} />
       ))}
@@ -119,10 +125,10 @@ const LobbyPlayers = ({
 
   return (
     <Section ref={drop}>
-      <p>
+      <StyledTitle>
         Stage {stageId} - Lobby - {lobbyId} - Players
-      </p>
-      <button onClick={clearLobby}>Clear</button>
+      </StyledTitle>
+      <StyledButton onClick={clearLobby}>Clear</StyledButton>
       {lobbyPlayers.map((player) => (
         <DragAndDropPlayer
           key={player.id}
@@ -130,10 +136,13 @@ const LobbyPlayers = ({
           onClick={removeLobbyPlayer}
         />
       ))}
-      <button disabled={lobbyPlayers.length !== 8} onClick={saveLobbyPlayers}>
+      <StyledButton
+        disabled={lobbyPlayers.length !== 8}
+        onClick={saveLobbyPlayers}
+      >
         Save
-      </button>
-      <p>{saveLobbyStatus}</p>
+      </StyledButton>
+      <StyledText>{saveLobbyStatus}</StyledText>
     </Section>
   );
 };
@@ -158,31 +167,22 @@ export const LobbiesWizard = () => {
   };
 
   return (
-    <div
-      style={{
-        display: "flex",
-        paddingLeft: "15%",
-        paddingTop: 3,
-        flexDirection: "column",
-      }}
-    >
-      <div style={{ display: "flex", gap: 3 }}>
-        <StageList
-          stages={stages?.stages}
-          selectedStage={selectedStage}
-          onSelectStage={setSelectedStage}
-        />
-        <LobbyList
-          stages={stages?.stages}
-          selectedStage={selectedStage}
-          selectedLobby={selectedLobby}
-          onSelectLobby={setSelectedLobby}
-        />
-        <PlayerList listItemFactory={dragAndDropPlayerFactory} />
-        <TournamentPlayers />
-        <LobbyPlayers stageId={selectedStage} lobbyId={selectedLobby} />
-        <button onClick={goNext}>Next</button>
-      </div>
-    </div>
+    <StyledContainer>
+      <StageList
+        stages={stages?.stages}
+        selectedStage={selectedStage}
+        onSelectStage={setSelectedStage}
+      />
+      <LobbyList
+        stages={stages?.stages}
+        selectedStage={selectedStage}
+        selectedLobby={selectedLobby}
+        onSelectLobby={setSelectedLobby}
+      />
+      <PlayerList listItemFactory={dragAndDropPlayerFactory} />
+      <TournamentPlayers />
+      <LobbyPlayers stageId={selectedStage} lobbyId={selectedLobby} />
+      <StyledButton onClick={goNext}>Next</StyledButton>
+    </StyledContainer>
   );
 };

@@ -1,3 +1,4 @@
+import { Link } from "react-router-dom";
 import { colors } from "../../../design/colors";
 import { StyledContainer } from "./About.styled";
 
@@ -42,21 +43,29 @@ export const About = () => {
       >
         A hub for TFT esports
       </p>
-      <button style={{ backgroundColor: colors.yellow, padding: "8px 26px" }}>
-        <p
+      <Link to="/about" style={{ cursor: "pointer" }}>
+        <button
           style={{
-            fontFamily: "Roboto",
-            fontWeight: "800",
-            fontSize: "10px",
-            lineHeight: "24px",
-            letterSpacing: "0.25em",
-            color: colors.pitchBlack,
-            textTransform: "uppercase",
+            backgroundColor: colors.yellow,
+            padding: "8px 26px",
+            cursor: "pointer",
           }}
         >
-          See our history
-        </p>
-      </button>
+          <p
+            style={{
+              fontFamily: "Roboto",
+              fontWeight: "800",
+              fontSize: "10px",
+              lineHeight: "24px",
+              letterSpacing: "0.25em",
+              color: colors.pitchBlack,
+              textTransform: "uppercase",
+            }}
+          >
+            See our history
+          </p>
+        </button>
+      </Link>
     </StyledContainer>
   );
 };

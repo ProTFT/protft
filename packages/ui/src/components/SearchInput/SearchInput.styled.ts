@@ -5,7 +5,7 @@ import { colors } from "../../design/colors";
 export const StyledSearchInput = styled.input`
   width: 100%;
   border-bottom: 2px solid ${colors.grayLine};
-  background-image: url(./search.png);
+  background-image: url(/search.png);
   background-repeat: no-repeat;
   background-position: right;
   background-color: transparent;

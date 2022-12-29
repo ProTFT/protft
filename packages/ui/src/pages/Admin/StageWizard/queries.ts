@@ -5,7 +5,7 @@ import {
   RoundInput,
   Stage,
   StageInput,
-} from "../../graphql/schema";
+} from "../../../graphql/schema";
 
 export interface StagesQueryResult {
   stages: Stage[];

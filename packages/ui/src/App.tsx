@@ -8,14 +8,15 @@ import { Tournaments } from "./pages/Tournaments/Tournaments";
 import { Tournament } from "./pages/Tournament/Tournament";
 import { Player } from "./pages/Player/Player";
 import { SuspenseElement } from "./components/SuspendedPage";
-import { TournamentWizard } from "./pages/TournamentWizard/TournamentWizard";
-import { StageWizard } from "./pages/StageWizard/StageWizard";
-import { LobbiesWizard } from "./pages/LobbiesWizard/LobbiesWizard";
-import { ResultsWizard } from "./pages/ResultsWizard/ResultsWizard";
+import { TournamentWizard } from "./pages/Admin/TournamentWizard/TournamentWizard";
+import { StageWizard } from "./pages/Admin/StageWizard/StageWizard";
+import { LobbiesWizard } from "./pages/Admin/LobbiesWizard/LobbiesWizard";
+import { ResultsWizard } from "./pages/Admin/ResultsWizard/ResultsWizard";
 import { Stats } from "./pages/Stats/Stats";
 import { NavBar } from "./components/NavBar/NavBar";
 import { Footer } from "./components/Footer/Footer";
 import { Players } from "./pages/Players/Players";
+import { About } from "./pages/About/About";
 
 export const App = () => {
   return (
@@ -41,24 +42,27 @@ export const App = () => {
           />
         </Route>
         <Route path="stats" element={<SuspenseElement element={<Stats />} />} />
-        <Route path="addTournament">
-          <Route
-            index
-            element={<SuspenseElement element={<TournamentWizard />} />}
-          />
-          <Route path=":tournamentId">
+        <Route path="about" element={<SuspenseElement element={<About />} />} />
+        <Route path="admin">
+          <Route path="addTournament">
             <Route
               index
-              element={<SuspenseElement element={<StageWizard />} />}
+              element={<SuspenseElement element={<TournamentWizard />} />}
             />
-            <Route
-              path="lobbies"
-              element={<SuspenseElement element={<LobbiesWizard />} />}
-            />
-            <Route
-              path="results"
-              element={<SuspenseElement element={<ResultsWizard />} />}
-            />
+            <Route path=":tournamentId">
+              <Route
+                index
+                element={<SuspenseElement element={<StageWizard />} />}
+              />
+              <Route
+                path="lobbies"
+                element={<SuspenseElement element={<LobbiesWizard />} />}
+              />
+              <Route
+                path="results"
+                element={<SuspenseElement element={<ResultsWizard />} />}
+              />
+            </Route>
           </Route>
         </Route>
       </Routes>

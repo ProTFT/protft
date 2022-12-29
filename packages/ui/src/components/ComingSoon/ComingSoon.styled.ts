@@ -1,8 +1,8 @@
 import styled from "styled-components";
 import { colors } from "../../design/colors";
+import { StyledHorizontalContainer } from "../Layout/HorizontalContainer/HorizontalContainer.styled";
 
-export const StyledContainer = styled.div`
-  display: flex;
+export const StyledContainer = styled(StyledHorizontalContainer)`
   padding: 5rem;
   justify-content: center;
   align-items: center;

@@ -1,10 +1,17 @@
 import { useState } from "react";
 import { useParams } from "react-router-dom";
 import { useMutation, useQuery } from "urql";
-import { BooleanResult, Lobby, Round } from "../../graphql/schema";
+import { BooleanResult, Lobby, Round } from "../../../graphql/schema";
 import { StagesQueryResult, STAGES_QUERY } from "../StageWizard/queries";
 import { LobbyList, StageList } from "../StageWizard/StageWizard";
-import { Section } from "../TournamentWizard/TournamentWizard";
+import {
+  StyledButton,
+  StyledContainer,
+  StyledInput,
+  StyledSection,
+  StyledText,
+  StyledTitle,
+} from "../TournamentWizard/TournamentWizard.styled";
 import { CreateResultVariables, CREATE_RESULT_QUERY } from "./queries";
 
 interface Lala {
@@ -90,76 +97,75 @@ export const ResultsWizard = () => {
   const [saveStatus, setSaveStatus] = useState<string>("waiting");
 
   return (
-    <div>aa</div>
-    // <Box display="flex" px="15%" pt={3} flexDir="column">
-    //   <Flex gap={3}>
-    //     <StageList
-    //       stages={stages?.stages}
-    //       selectedStage={selectedStage}
-    //       onSelectStage={(id, stage) => {
-    //         setLobbies(stage?.lobbies || []);
-    //         setRounds(stage?.rounds || []);
-    //         setSelectedStage(id);
-    //       }}
-    //     />
-    //     <LobbyList
-    //       stages={stages?.stages}
-    //       selectedStage={selectedStage}
-    //       onSelectLobby={(id) => {
-    //         setSelectedLobby(id);
-    //         setPlayerResultInput({});
-    //       }}
-    //       selectedLobby={selectedLobby}
-    //     />
-    //     <Section>
-    //       <Text>Rounds</Text>
-    //       <Flex flexDirection="column">
-    //         {stages?.stages
-    //           .find((stage) => stage.id === selectedStage)
-    //           ?.rounds?.map((round) => (
-    //             <Checkbox
-    //               key={round.id}
-    //               name={String(round.id)}
-    //               onChange={onSelectRound}
-    //             >
-    //               {round.sequence + 1}
-    //             </Checkbox>
-    //           ))}
-    //       </Flex>
-    //     </Section>
-    //     <Section>
-    //       <Text>Players</Text>
-    //       <TableContainer>
-    //         <Table>
-    //           <Tbody>
-    //             {stages?.stages
-    //               .find((stage) => stage.id === selectedStage)
-    //               ?.lobbies?.find((lobby) => lobby.id === selectedLobby)
-    //               ?.players?.map((player) => (
-    //                 <Tr key={player.id} flexDirection="row">
-    //                   <Td>{player.name}</Td>
-    //                   {rounds.map((round) => (
-    //                     <Td key={round.id}>
-    //                       <Text>{round.sequence + 1}</Text>
-    //                       <Input
-    //                         key={round.id}
-    //                         name={`${selectedLobby}-${player.id}-${round.id}`}
-    //                         onChange={onChangePosition}
-    //                         disabled={!availableRounds[round.id]}
-    //                         maxLength={1}
-    //                         width={12}
-    //                       />
-    //                     </Td>
-    //                   ))}
-    //                 </Tr>
-    //               ))}
-    //           </Tbody>
-    //         </Table>
-    //       </TableContainer>
-    //       <Button onClick={saveResults}>Save</Button>
-    //       <Text>{saveStatus}</Text>
-    //     </Section>
-    //   </Flex>
-    // </Box>
+    <StyledContainer>
+      <StageList
+        stages={stages?.stages}
+        selectedStage={selectedStage}
+        onSelectStage={(id, stage) => {
+          setLobbies(stage?.lobbies || []);
+          setRounds(stage?.rounds || []);
+          setSelectedStage(id);
+        }}
+      />
+      <LobbyList
+        stages={stages?.stages}
+        selectedStage={selectedStage}
+        onSelectLobby={(id) => {
+          setSelectedLobby(id);
+          setPlayerResultInput({});
+        }}
+        selectedLobby={selectedLobby}
+      />
+      <StyledSection>
+        <StyledTitle>Rounds</StyledTitle>
+        <StyledSection>
+          {stages?.stages
+            .find((stage) => stage.id === selectedStage)
+            ?.rounds?.map((round) => (
+              <div key={round.id}>
+                <StyledText>{round.sequence + 1}</StyledText>
+                <input
+                  key={round.id}
+                  name={String(round.id)}
+                  onChange={onSelectRound}
+                  type="checkbox"
+                />
+              </div>
+            ))}
+        </StyledSection>
+      </StyledSection>
+      <StyledSection>
+        <StyledTitle>Players</StyledTitle>
+        <table>
+          <tbody>
+            {stages?.stages
+              .find((stage) => stage.id === selectedStage)
+              ?.lobbies?.find((lobby) => lobby.id === selectedLobby)
+              ?.players?.map((player) => (
+                <tr key={player.id}>
+                  <td>
+                    <StyledText>{player.name}</StyledText>
+                  </td>
+                  {rounds.map((round) => (
+                    <td key={round.id}>
+                      <StyledText>{round.sequence + 1}</StyledText>
+                      <StyledInput
+                        key={round.id}
+                        name={`${selectedLobby}-${player.id}-${round.id}`}
+                        onChange={onChangePosition}
+                        disabled={!availableRounds[round.id]}
+                        maxLength={1}
+                        width={12}
+                      />
+                    </td>
+                  ))}
+                </tr>
+              ))}
+          </tbody>
+        </table>
+        <StyledButton onClick={saveResults}>Save</StyledButton>
+        <StyledText>{saveStatus}</StyledText>
+      </StyledSection>
+    </StyledContainer>
   );
 };

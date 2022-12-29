@@ -102,7 +102,7 @@ export class RoundResultsService {
     queryBuilder: SelectQueryBuilder<any>,
   ): SelectQueryBuilder<any> {
     return queryBuilder
-      .addSelect(`COUNT(*)`, "totalGames")
+      .select(`COUNT(*)`, "totalGames")
       .addSelect(`COALESCE(AVG(position),0)`, "averagePosition")
       .addSelect(
         `COALESCE(SUM(CASE WHEN position <= 4 THEN 1 ELSE 0 END),0)`,

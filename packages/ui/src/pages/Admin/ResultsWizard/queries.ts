@@ -1,5 +1,5 @@
 import { gql } from "urql";
-import { PlayerLobbyResultInput } from "../../graphql/schema";
+import { PlayerLobbyResultInput } from "../../../graphql/schema";
 
 export interface CreateResultVariables {
   lobbyId: number;

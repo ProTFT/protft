@@ -1,24 +1,22 @@
 import styled from "styled-components";
+import { StyledHorizontalContainer } from "../../components/Layout/HorizontalContainer/HorizontalContainer.styled";
 import { StyledVerticalContainer } from "../../components/Layout/VerticalContainer/VerticalContainer.styled";
 import { device } from "../../design/breakpoints";
 import { colors } from "../../design/colors";
 
-export const StyledContainer = styled.div`
+export const StyledContainer = styled(StyledVerticalContainer)`
   text-align: center;
-  display: flex;
-  flex-direction: column;
   padding: 1rem;
   background-color: ${colors.blackBackground};
   gap: 1rem;
-`;
 
-export const StyledHorizontalContainer = styled.div`
-  display: flex;
-  gap: 0.5rem;
-  align-items: center;
+  @media ${device.tablet} {
+    padding: 2rem 4rem 1rem 4rem;
+  }
 `;
 
 export const StyledSetFilterContainer = styled(StyledHorizontalContainer)`
+  gap: 0.5rem;
   flex: 2;
 `;
 

@@ -8,6 +8,9 @@ export class BaseGetPlayerArgs {
 
   @Field({ name: "country", nullable: true })
   country?: string;
+
+  @Field({ name: "searchQuery", nullable: true })
+  searchQuery?: string;
 }
 
 @ArgsType()

@@ -54,7 +54,9 @@ export const StyledDesktopItemsContainer = styled.div`
   gap: 5rem;
 `;
 
-export const StyledMobileNavBarItemContainer = styled.div`
+export const StyledMobileNavBarItemContainer = styled.div<{
+  selected: boolean;
+}>`
   display: flex;
   flex-direction: column;
   align-items: center;
@@ -66,5 +68,5 @@ export const StyledMobileNavBarItemContainer = styled.div`
   letter-spacing: 0.5em;
   text-align: center;
   text-transform: uppercase;
-  color: #f2f2f2;
+  color: ${({ selected }) => (selected ? colors.yellow : "#f2f2f2")};
 `;

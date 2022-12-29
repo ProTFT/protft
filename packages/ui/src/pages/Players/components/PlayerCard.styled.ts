@@ -1,16 +1,23 @@
 import styled from "styled-components";
+import { device } from "../../../design/breakpoints";
 import { colors } from "../../../design/colors";
 
 export const StyledPlayerCardHeader = styled.div`
   width: 100%;
   display: flex;
   gap: 1rem;
+  align-items: center;
+
+  @media ${device.tablet} {
+    width: 20%;
+  }
 `;
 
 export const StyledPlayerImage = styled.div`
-  background-color: blue;
-  height: 3rem;
-  width: 3rem;
+  background-image: url("/no_pic.webp");
+  background-size: cover;
+  height: 4rem;
+  width: 4rem;
   border: 3px solid ${colors.yellow};
   border-radius: 50%;
 `;
@@ -34,6 +41,15 @@ export const StyledPlayerName = styled.p`
   letter-spacing: 0.3em;
   text-align: left;
   text-transform: uppercase;
+
+  @media ${device.tablet} {
+    font-family: Roboto;
+    font-size: 20px;
+    font-weight: 700;
+    line-height: 38px;
+    letter-spacing: 0.3em;
+    text-align: left;
+  }
 `;
 
 export const StyledDetailsButton = styled.p`

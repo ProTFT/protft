@@ -16,4 +16,6 @@ export const colors = {
   deepPurple: "#5544D1",
   darkPurple: "#211E3A",
   white: "#FFFFFF",
+
+  text: "#F5F5F5",
 };

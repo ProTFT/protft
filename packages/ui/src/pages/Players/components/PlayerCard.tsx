@@ -1,7 +1,10 @@
+import React from "react";
 import { Link } from "react-router-dom";
 import { RoundedContainer } from "../../../components/Containers/RoundedContainer/RoundedContainer";
-import { RegionIndicator } from "../../../components/RegionIndicator/RegionIndicator";
+import { RegionsIndicator } from "../../../components/RegionIndicator/RegionIndicator";
 import { ArrowRightIcon } from "../../../design/icons/ArrowRight";
+import { Player } from "../../../graphql/schema";
+import { useIsMobile } from "../../../hooks/useIsMobile";
 import {
   StyledDetailsButton,
   StyledPlayerCardBottom,
@@ -11,17 +14,32 @@ import {
   StyledPlayerName,
 } from "./PlayerCard.styled";
 
-export const PlayerCard = () => {
+const PlayerCardStats = React.lazy(() =>
+  import("./PlayerStats").then((m) => ({
+    default: m.PlayerCardStats,
+  }))
+);
+
+interface Props {
+  player: Player;
+}
+
+export const PlayerCard = ({
+  player: { name, region, playerStats, id },
+}: Props) => {
+  const isMobile = useIsMobile();
+
   return (
-    <Link to={"1"}>
-      <RoundedContainer>
+    <Link to={`${id}`}>
+      <RoundedContainer padding="1.5rem">
         <StyledPlayerCardHeader>
           <StyledPlayerImage />
           <StyledPlayerInfo>
-            <StyledPlayerName>K3SOJU</StyledPlayerName>
-            <RegionIndicator image="/brazil.png" name="Brazil" />
+            <StyledPlayerName>{name}</StyledPlayerName>
+            <RegionsIndicator regionCodes={[region!]} />
           </StyledPlayerInfo>
         </StyledPlayerCardHeader>
+        {!isMobile && <PlayerCardStats playerStats={playerStats} />}
         <StyledPlayerCardBottom>
           <StyledDetailsButton>Details</StyledDetailsButton>
           <ArrowRightIcon size={20} onClick={() => {}} />

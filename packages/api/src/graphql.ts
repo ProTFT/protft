@@ -147,13 +147,13 @@ export interface PlayerFilterMeta {
 export interface IQuery {
     sets(): Set[] | Promise<Set[]>;
     set(id: number): Nullable<Set> | Promise<Nullable<Set>>;
-    tournaments(): Tournament[] | Promise<Tournament[]>;
+    tournaments(searchQuery?: Nullable<string>): Tournament[] | Promise<Tournament[]>;
     tournament(id: number): Tournament | Promise<Tournament>;
     tournamentOverview(): TournamentOverview | Promise<TournamentOverview>;
     stages(tournamentId: number): Stage[] | Promise<Stage[]>;
     lobbies(stageId: number): Lobby[] | Promise<Lobby[]>;
     tournamentsPlayed(playerId: number): Tournament[] | Promise<Tournament[]>;
-    players(region?: Nullable<string>, country?: Nullable<string>, take?: Nullable<number>, skip?: Nullable<number>): Player[] | Promise<Player[]>;
+    players(region?: Nullable<string>, country?: Nullable<string>, searchQuery?: Nullable<string>, take?: Nullable<number>, skip?: Nullable<number>): Player[] | Promise<Player[]>;
     player(id: number): Player | Promise<Player>;
     playerFilterMeta(): PlayerFilterMeta | Promise<PlayerFilterMeta>;
     resultsByStage(stageId: number): PlayerResults[] | Promise<PlayerResults[]>;

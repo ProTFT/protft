@@ -1,6 +1,7 @@
 import { Injectable } from "@nestjs/common";
 import { InjectRepository } from "@nestjs/typeorm";
 import { Raw, Repository } from "typeorm";
+import { SearchQuery } from "../lib/SearchQuery";
 import { DeepTournamentInput } from "./dto/create-deep-tournament.args";
 import { CreateTournamentArgs } from "./dto/create-tournament.args";
 import { Tournament } from "./tournament.entity";
@@ -10,10 +11,16 @@ export class TournamentsService {
   constructor(
     @InjectRepository(Tournament)
     private tournamentRepository: Repository<Tournament>,
+    private searchQueryProvider: SearchQuery,
   ) {}
 
-  findAll(): Promise<Tournament[]> {
-    return this.tournamentRepository.find({ order: { startDate: "DESC" } });
+  findAll(searchQuery?: string): Promise<Tournament[]> {
+    const searchQueryFilter =
+      this.searchQueryProvider.getSearchQueryFilter(searchQuery);
+    return this.tournamentRepository.find({
+      where: { ...searchQueryFilter },
+      order: { startDate: "DESC" },
+    });
   }
 
   findOne(id: number): Promise<Tournament> {

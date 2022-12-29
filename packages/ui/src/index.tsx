@@ -19,7 +19,8 @@ const graphqlClient = createClient({
     dedupExchange,
     cacheExchange({
       keys: {
-        PlayersStats: (data) => null,
+        PlayerStats: () => null,
+        PlayerResults: () => null,
       },
       resolvers: {
         Query: {

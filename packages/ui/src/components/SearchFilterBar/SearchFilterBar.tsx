@@ -1,5 +1,4 @@
-import { useCallback, useState } from "react";
-import { Drawer } from "../Drawer/Drawer";
+import React, { ChangeEvent, useCallback, useRef, useState } from "react";
 import { TextIconHorizontalContainer } from "../Layout/HorizontalContainer/TextIconHorizontalContainer.styled";
 import { SearchInput } from "../SearchInput/SearchInput";
 import {
@@ -10,27 +9,57 @@ import {
   StyledFilterText,
 } from "./SearchFilterBar.styled";
 
-export const StyledSearchFilterBar = () => {
+const Drawer = React.lazy(() =>
+  import("../Drawer/Drawer").then((m) => ({
+    default: m.Drawer,
+  }))
+);
+
+interface Props {
+  placeholder: string;
+  setSearchQuery?: (query: string) => void;
+}
+
+export const StyledSearchFilterBar = ({
+  placeholder,
+  setSearchQuery,
+}: Props) => {
   const [isDrawerOpen, setIsDrawerOpen] = useState(false);
+  let timeout = useRef<ReturnType<typeof setTimeout>>();
+  const isDrawerAvailable = false;
 
   const toggleDrawer = useCallback(() => {
     setIsDrawerOpen((current) => !current);
   }, []);
 
+  const onChangeSearchInput = useCallback(
+    (event: ChangeEvent<HTMLInputElement>) => {
+      if (timeout.current) {
+        clearTimeout(timeout.current);
+      }
+      timeout.current = setTimeout(() => {
+        setSearchQuery!(event.target.value);
+      }, 1000);
+    },
+    [setSearchQuery]
+  );
+
   return (
     <StyledContainer>
       <Drawer isOpen={isDrawerOpen} toggleDrawer={toggleDrawer} />
-      <SearchInput placeholder="Search events" />
-      <StyledFilterBar>
-        <TextIconHorizontalContainer onClick={toggleDrawer}>
-          <img src="./filter.png" alt="filter" />
-          <StyledFilterText>Filter</StyledFilterText>
-        </TextIconHorizontalContainer>
-        <StyledAppliedFilterContainer>
-          <StyledAppliedFilter>Brazil</StyledAppliedFilter>
-          <StyledAppliedFilter>Brazil</StyledAppliedFilter>
-        </StyledAppliedFilterContainer>
-      </StyledFilterBar>
+      <SearchInput placeholder={placeholder} onChange={onChangeSearchInput} />
+      {isDrawerAvailable ?? (
+        <StyledFilterBar>
+          <TextIconHorizontalContainer onClick={toggleDrawer}>
+            <img src="/filter.png" alt="filter" />
+            <StyledFilterText>Filter</StyledFilterText>
+          </TextIconHorizontalContainer>
+          <StyledAppliedFilterContainer>
+            <StyledAppliedFilter>Brazil</StyledAppliedFilter>
+            <StyledAppliedFilter>Brazil</StyledAppliedFilter>
+          </StyledAppliedFilterContainer>
+        </StyledFilterBar>
+      )}
     </StyledContainer>
   );
 };

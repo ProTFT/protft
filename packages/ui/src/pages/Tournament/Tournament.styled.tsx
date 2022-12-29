@@ -1,5 +1,12 @@
 import styled from "styled-components";
+import { StyledHorizontalContainer } from "../../components/Layout/HorizontalContainer/HorizontalContainer.styled";
+import { StyledVerticalContainer } from "../../components/Layout/VerticalContainer/VerticalContainer.styled";
+import { device } from "../../design/breakpoints";
 import { colors } from "../../design/colors";
+
+interface StageProps {
+  isFinal: boolean;
+}
 
 export const StyledTournamentName = styled.p`
   font-family: VTF Redzone Classic;
@@ -18,37 +25,20 @@ export const StyledHeaderContainer = styled.header`
   box-shadow: 0px 12px 9px rgba(0, 0, 0, 0.25);
 `;
 
-export const StyledTournamentInfo = styled.div`
-  display: flex;
-  flex-direction: column;
-  padding: 1rem;
-  justify-content: space-between;
-  width: 60%;
-`;
-
-export const StyledInfoBar = styled.div`
-  display: flex;
-  justify-content: space-around;
+export const StyledTournamentInfo = styled(StyledHorizontalContainer)`
+  align-items: center;
 `;
 
 export const StyledBodyContainer = styled.div`
   background-color: ${colors.blackBackground};
   height: 100%;
-`;
 
-export const StyledInfoIndicatorText = styled.p`
-  font-family: Roboto;
-  font-size: 12px;
-  font-weight: 400;
-  line-height: 38px;
-  letter-spacing: 0.3em;
-  text-align: left;
-  color: ${colors.white};
-  text-transform: uppercase;
+  @media ${device.tablet} {
+    padding: 2rem 6rem 2rem 6rem;
+  }
 `;
 
 export const StyledStagesSection = styled.div`
-  height: 200px;
   width: 100%;
   background-color: ${colors.purple};
   border-radius: 16px 16px 0px 0px;
@@ -57,6 +47,12 @@ export const StyledStagesSection = styled.div`
   display: flex;
   flex-direction: column;
   gap: 1rem;
+
+  @media ${device.tablet} {
+    flex-direction: row;
+    gap: 10rem;
+    align-items: center;
+  }
 `;
 
 export const StyledStagesBottom = styled.div`
@@ -70,17 +66,29 @@ export const StyledDaysContainer = styled.div`
   justify-content: space-between;
   overflow: scroll;
   gap: 1rem;
+
+  @media ${device.tablet} {
+    justify-content: space-around;
+  }
 `;
 
-export const StyledDay = styled.div`
-  background: #4739b2;
-  padding: 1rem;
-  box-shadow: 0px 4px 4px rgba(0, 0, 0, 0.25);
-  border-radius: 16px;
-  display: flex;
-  flex-direction: column;
-  gap: 0.5rem;
-  min-width: 8rem;
+export const StyledDay = styled.div<StageProps & { clicked?: boolean }>`
+  ${({ isFinal, clicked }) => `
+    background: ${isFinal ? "#FAAC01" : "#4739b2"};
+    padding: 1rem;
+    box-shadow: 0px 4px 4px rgba(0, 0, 0, 0.25);
+    border-radius: 16px;
+    display: flex;
+    flex-direction: column;
+    gap: 2rem;
+    min-width: 8rem;
+    justify-content: ${isFinal ? "space-between" : "auto"};
+
+    svg {
+      rotate: ${clicked ? "90deg" : "0"};
+      transition: rotate .2s ease-in-out
+    }
+`}
 `;
 
 export const StyledTitle = styled.p`
@@ -101,9 +109,13 @@ export const StyledSubsectionTitle = styled.p`
   text-align: left;
 `;
 
-export const StyledSubsectionContainer = styled.div`
-  display: flex;
+export const StyledSubsectionContainer = styled(StyledVerticalContainer)`
   justify-content: space-between;
+
+  @media ${device.tablet} {
+    gap: 10rem;
+    flex-direction: row;
+  }
 `;
 
 export const StyledStageInfoContainer = styled.div`
@@ -129,14 +141,14 @@ export const StyledBattleIcon = styled.img.attrs({
   height: 44px;
 `;
 
-export const StyledDayTitle = styled.p`
+export const StyledDayTitle = styled.p<StageProps>`
   font-family: VTF Redzone Classic;
   font-size: 36px;
   font-weight: 400;
   line-height: 24px;
   letter-spacing: 0.05em;
   text-align: center;
-  color: ${colors.yellow};
+  color: ${({ isFinal }) => (isFinal ? colors.pitchBlack : colors.yellow)};
 `;
 
 export const StyledDaySubtitle = styled.p`
@@ -151,11 +163,15 @@ export const StyledDaySubtitle = styled.p`
 export const StyledResultsContainer = styled.div<{ show: boolean }>`
   display: flex;
   flex-direction: column;
-  background-color: ${colors.blackTiles};
-  max-height: ${(props) => (props.show ? "50rem" : "0px")};
-  overflow: hidden;
+  background-color: #1e1c35;
+  ${(props) => (!props.show ? "max-height: 0px" : "max-height: fit-content")};
+  overflow: scroll;
   transition: max-height 1s ease-out;
-  padding: 1rem;
+  align-items: center;
+
+  @media ${device.tablet} {
+    padding: 1rem;
+  }
 `;
 
 export const StyledTournamentModeButton = styled.button`
@@ -167,6 +183,8 @@ export const StyledTournamentModeButton = styled.button`
   text-align: left;
   color: ${colors.yellow};
   text-transform: uppercase;
+  background-color: ${colors.blackTiles};
+  align-self: flex-end;
 `;
 
 export const StyledPlayerName = styled.p`
@@ -186,6 +204,7 @@ export const StyledTablePlayerHeader = styled.th`
   letter-spacing: 0.4em;
   text-align: left;
   text-transform: uppercase;
+  color: ${colors.white};
 `;
 
 export const StyledTableRoundHeader = styled.th`
@@ -195,27 +214,57 @@ export const StyledTableRoundHeader = styled.th`
   line-height: 38px;
   letter-spacing: 0.1em;
   text-align: left;
+  padding: 0.5rem;
+  color: ${colors.white};
 `;
 
-export const StyledTableData = styled.td`
-  font-family: Roboto;
-  font-size: 15px;
-  font-weight: 600;
-  line-height: 38px;
-  letter-spacing: 0.1em;
-  text-align: center;
+export const StyledTableData = styled.td<{
+  highlighted?: boolean;
+}>`
+  ${({ highlighted }) => `
+    font-family: Roboto;
+    font-size: 15px;
+    font-weight: 600;
+    line-height: 38px;
+    letter-spacing: 0.1em;
+    text-align: center;
+    padding: 0.5rem;
+    color: ${highlighted ? colors.yellow : colors.text};
+  `}
 `;
 
 export const StyledTable = styled.table`
   display: block;
   overflow-x: auto;
   white-space: nowrap;
-  border-spacing: 1rem;
-  margin: -1rem;
+  border-spacing: 0rem;
   border-collapse: separate;
+  width: 100%;
+
+  tr:nth-child(odd) {
+    background-color: ${colors.navBarBlack};
+  }
+
+  @media ${device.tablet} {
+    width: auto;
+  }
 `;
 
-export const StyledMeh = styled.div`
+export const StyledArrowContainer = styled.div`
   display: flex;
   justify-content: end;
+`;
+
+export const StyledTournamentImage = styled.div`
+  width: 40%;
+  height: 10rem;
+  background-color: blue;
+
+  @media ${device.tablet} {
+    width: 20%;
+  }
+`;
+
+export const StyledTablePlayerName = styled(StyledHorizontalContainer)`
+  gap: 1rem;
 `;

@@ -2,10 +2,9 @@ import styled from "styled-components";
 import { device } from "../../design/breakpoints";
 import { colors } from "../../design/colors";
 import { StyledHorizontalContainer } from "../Layout/HorizontalContainer/HorizontalContainer.styled";
+import { StyledVerticalContainer } from "../Layout/VerticalContainer/VerticalContainer.styled";
 
-export const StyledContainer = styled.div`
-  display: flex;
-  flex-direction: column;
+export const StyledContainer = styled(StyledVerticalContainer)`
   gap: 1rem;
   width: 100%;
 
@@ -18,8 +17,7 @@ export const StyledContainer = styled.div`
   }
 `;
 
-export const StyledFilterBar = styled.div`
-  display: flex;
+export const StyledFilterBar = styled(StyledHorizontalContainer)`
   justify-content: space-between;
   align-items: center;
   gap: 0.5rem;
@@ -42,8 +40,7 @@ export const StyledFilterText = styled.p`
   text-transform: uppercase;
 `;
 
-export const StyledAppliedFilter = styled.div`
-  display: flex;
+export const StyledAppliedFilter = styled(StyledHorizontalContainer)`
   background-color: ${colors.fiftyShadesOfGray};
   border-radius: 4px;
   padding: 0.5rem;
@@ -55,8 +52,7 @@ export const StyledAppliedFilter = styled.div`
   color: ${colors.white};
 `;
 
-export const StyledAppliedFilterContainer = styled.div`
-  display: flex;
+export const StyledAppliedFilterContainer = styled(StyledHorizontalContainer)`
   gap: 0.5rem;
   flex-wrap: wrap;
   justify-content: flex-end;

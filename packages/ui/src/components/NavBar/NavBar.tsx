@@ -1,5 +1,5 @@
-import React from "react";
-import { Link } from "react-router-dom";
+import React, { useMemo } from "react";
+import { Link, useLocation } from "react-router-dom";
 import { colors } from "../../design/colors";
 import { AboutIcon } from "../../design/icons/About";
 import { PlayersIcon } from "../../design/icons/Players";
@@ -18,12 +18,48 @@ import {
 } from "./NavBar.styled";
 import { NavBarButton } from "./NavBarButton";
 
-export const NavBar = () => {
-  const isMobile = useIsMobile();
-  return isMobile ? <MobileNavBar /> : <DesktopNavBar />;
+interface Props {
+  selectedMenu: MenuItems | null;
+}
+
+enum MenuItems {
+  tournament,
+  players,
+  stats,
+  about,
+}
+
+const getSelectedMenu = (url: string) => {
+  if (url.includes("tournament")) {
+    return MenuItems.tournament;
+  }
+  if (url.includes("player")) {
+    return MenuItems.players;
+  }
+  if (url.includes("stats")) {
+    return MenuItems.stats;
+  }
+  if (url.includes("about")) {
+    return MenuItems.about;
+  }
+  return null;
 };
 
-export const DesktopNavBar = () => {
+export const NavBar = () => {
+  const isMobile = useIsMobile();
+  const location = useLocation();
+  const selectedMenu = useMemo(
+    () => getSelectedMenu(location.pathname),
+    [location.pathname]
+  );
+  return isMobile ? (
+    <MobileNavBar selectedMenu={selectedMenu} />
+  ) : (
+    <DesktopNavBar selectedMenu={selectedMenu} />
+  );
+};
+
+export const DesktopNavBar = ({ selectedMenu }: Props) => {
   return (
     <StyledDesktopContainer>
       <Link to={"/"}>
@@ -31,16 +67,24 @@ export const DesktopNavBar = () => {
       </Link>
       <StyledDesktopItemsContainer>
         <Link to={"/tournaments"}>
-          <NavBarButton>Tourneys</NavBarButton>
+          <NavBarButton selected={selectedMenu === MenuItems.tournament}>
+            Tourneys
+          </NavBarButton>
         </Link>
         <Link to={"/players"}>
-          <NavBarButton>Players</NavBarButton>
+          <NavBarButton selected={selectedMenu === MenuItems.players}>
+            Players
+          </NavBarButton>
         </Link>
         <Link to={"/stats"}>
-          <NavBarButton>Stats</NavBarButton>
+          <NavBarButton selected={selectedMenu === MenuItems.stats}>
+            Stats
+          </NavBarButton>
         </Link>
         <Link to={"/about"}>
-          <NavBarButton>About</NavBarButton>
+          <NavBarButton selected={selectedMenu === MenuItems.about}>
+            About
+          </NavBarButton>
         </Link>
       </StyledDesktopItemsContainer>
       <div />
@@ -48,23 +92,65 @@ export const DesktopNavBar = () => {
   );
 };
 
-export const MobileNavBar = () => {
+export const MobileNavBar = ({ selectedMenu }: Props) => {
   return (
     <StyledMobileContainer>
       <StyledMobileItemsContainer>
-        <MobileNavBarItem link="tournaments" icon={<TourneysIcon />}>
+        <MobileNavBarItem
+          selected={selectedMenu === MenuItems.tournament}
+          link="tournaments"
+          icon={
+            <TourneysIcon
+              color={
+                selectedMenu === MenuItems.tournament
+                  ? colors.yellow
+                  : undefined
+              }
+            />
+          }
+        >
           Tourneys
         </MobileNavBarItem>
-        <MobileNavBarItem link="stats" icon={<StatsIcon />}>
+        <MobileNavBarItem
+          selected={selectedMenu === MenuItems.stats}
+          link="stats"
+          icon={
+            <StatsIcon
+              color={
+                selectedMenu === MenuItems.stats ? colors.yellow : undefined
+              }
+            />
+          }
+        >
           Stats
         </MobileNavBarItem>
       </StyledMobileItemsContainer>
       <MobileMainButton link="" />
       <StyledMobileItemsContainer>
-        <MobileNavBarItem link="players" icon={<PlayersIcon />}>
+        <MobileNavBarItem
+          selected={selectedMenu === MenuItems.players}
+          link="players"
+          icon={
+            <PlayersIcon
+              color={
+                selectedMenu === MenuItems.players ? colors.yellow : undefined
+              }
+            />
+          }
+        >
           Players
         </MobileNavBarItem>
-        <MobileNavBarItem link="about" icon={<AboutIcon />}>
+        <MobileNavBarItem
+          selected={selectedMenu === MenuItems.about}
+          link="about"
+          icon={
+            <AboutIcon
+              color={
+                selectedMenu === MenuItems.about ? colors.yellow : undefined
+              }
+            />
+          }
+        >
           About
         </MobileNavBarItem>
       </StyledMobileItemsContainer>
@@ -86,11 +172,16 @@ const MobileNavBarItem = ({
   children,
   icon,
   link,
-}: React.PropsWithChildren<{ icon: JSX.Element; link: string }>) => {
+  selected,
+}: React.PropsWithChildren<{
+  icon: JSX.Element;
+  link: string;
+  selected: boolean;
+}>) => {
   const goTo = useNavigation(link);
 
   return (
-    <StyledMobileNavBarItemContainer onClick={goTo}>
+    <StyledMobileNavBarItemContainer selected={selected} onClick={goTo}>
       {icon}
       {children}
     </StyledMobileNavBarItemContainer>

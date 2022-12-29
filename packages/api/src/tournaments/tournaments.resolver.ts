@@ -24,8 +24,10 @@ export class TournamentsResolver {
   ) {}
 
   @Query(() => [Tournament])
-  async tournaments() {
-    return this.tournamentsService.findAll();
+  async tournaments(
+    @Args("searchQuery", { nullable: true }) searchQuery?: string,
+  ) {
+    return this.tournamentsService.findAll(searchQuery);
   }
 
   @Query(() => Tournament)

@@ -1,5 +1,5 @@
 import { gql } from "urql";
-import { Lobby } from "../../graphql/schema";
+import { Lobby } from "../../../graphql/schema";
 
 export interface CreatePlayerLobbyResult {
   createPlayerLobby: { id: Pick<Lobby, "id"> };

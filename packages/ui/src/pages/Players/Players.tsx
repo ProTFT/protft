@@ -1,32 +1,21 @@
-import { useQuery } from "urql";
+import { useState } from "react";
 import { StyledSearchFilterBar } from "../../components/SearchFilterBar/SearchFilterBar";
-import { SearchInput } from "../../components/SearchInput/SearchInput";
 import { useDocumentTitle } from "../../hooks/useDocumentTitle";
 import { StyledContainer } from "../Tournaments/Tournaments.styled";
-import { PlayerCard } from "./components/PlayerCard";
-import { StyledPlayersList } from "./Players.styled";
-import {
-  PlayersQueryResult,
-  PlayersQueryVariables,
-  PLAYERS_QUERY,
-} from "./queries";
+import { PlayersList } from "./PlayersList/PlayersList";
 
-export const Players = ({ countryFilter, query }: any) => {
-  const [{ data: playersData }] = useQuery<
-    PlayersQueryResult,
-    PlayersQueryVariables
-  >({ query: PLAYERS_QUERY, variables: { country: countryFilter } });
-  useDocumentTitle("ProTFT");
+export const Players = () => {
+  const [searchQuery, setSearchQuery] = useState("");
+
+  useDocumentTitle("Players");
 
   return (
     <StyledContainer>
-      <StyledSearchFilterBar />
-      <StyledPlayersList>
-        <PlayerCard />
-        <PlayerCard />
-        <PlayerCard />
-        <PlayerCard />
-      </StyledPlayersList>
+      <StyledSearchFilterBar
+        placeholder="Search players"
+        setSearchQuery={setSearchQuery}
+      />
+      <PlayersList searchQuery={searchQuery} />
     </StyledContainer>
   );
 };

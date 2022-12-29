@@ -6,6 +6,7 @@ type StyledButtonProps = Pick<ButtonProps, "buttonColor" | "variant" | "width">;
 export const StyledButton = styled.button<StyledButtonProps>`
   background-color: ${(props) => props.buttonColor};
   padding: 8px 26px;
+  cursor: pointer;
 
   width: ${(props) => props.width};
 

@@ -1,5 +1,5 @@
 import { gql } from "urql";
-import { Tournament } from "../../graphql/schema";
+import { Player, Tournament } from "../../graphql/schema";
 
 export interface TournamentQueryResponse {
   tournament: Tournament;
@@ -27,6 +27,30 @@ export const TOURNAMENT_QUERY = gql`
         isFinal
         roundCount
       }
+    }
+  }
+`;
+
+export interface Results {
+  player: Player;
+  positions: number[];
+  points: number[];
+}
+
+export interface ResultsQueryResponse {
+  resultsByStage: Results[];
+}
+
+export const RESULTS_QUERY = gql`
+  query ($stageId: Int!) {
+    resultsByStage(stageId: $stageId) {
+      player {
+        id
+        name
+        region
+      }
+      positions
+      points
     }
   }
 `;

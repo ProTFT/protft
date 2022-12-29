@@ -1,31 +1,23 @@
-import { Link } from "react-router-dom";
-import { useQuery } from "urql";
 import { useDocumentTitle } from "../../hooks/useDocumentTitle";
-import { StyledContainer, StyledTournamentList } from "./Tournaments.styled";
-import { TournamentsQueryResult, TOURNAMENTS_QUERY } from "./queries";
+import { StyledContainer } from "./Tournaments.styled";
 import { StyledSearchFilterBar } from "../../components/SearchFilterBar/SearchFilterBar";
-import { TournamentListItem } from "./TournamentListItem/TournamentListItem";
-
-export const formatDate = (stringDate: string) =>
-  new Date(stringDate).toLocaleDateString();
+import { Suspense, useState } from "react";
+import { TournamentList } from "./TournamentList/TournamentList";
 
 export const Tournaments = () => {
-  const [{ data }] = useQuery<TournamentsQueryResult>({
-    query: TOURNAMENTS_QUERY,
-  });
+  const [searchQuery, setSearchQuery] = useState("");
 
   useDocumentTitle("Tourneys");
 
   return (
     <StyledContainer>
-      <StyledSearchFilterBar />
-      <StyledTournamentList>
-        {data?.tournaments.map((tournament) => (
-          <Link to={`${tournament.id}`}>
-            <TournamentListItem tournament={tournament} />
-          </Link>
-        ))}
-      </StyledTournamentList>
+      <StyledSearchFilterBar
+        placeholder="Search events"
+        setSearchQuery={setSearchQuery}
+      />
+      <Suspense fallback={null}>
+        <TournamentList searchQuery={searchQuery} />
+      </Suspense>
     </StyledContainer>
   );
 };
