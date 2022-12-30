@@ -36,7 +36,7 @@ jobs:
       - name: Deploy to S3
         uses: clowdhaus/aws-github-actions/s3_sync@main
         with:
-          local-path: build/
+          local-path: packages/ui/build/
           bucket-name: ${{ secrets.S3_BUCKET }}
           args: --delete
         #   filesToInclude: "build/**/*"
