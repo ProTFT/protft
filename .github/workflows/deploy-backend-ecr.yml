@@ -10,10 +10,6 @@ on:
 jobs:
   run:
     runs-on: ubuntu-latest
-    env:
-      AWS_ACCESS_KEY_ID: ${{ secrets.AWS_ACCESS_KEY }}
-      AWS_SECRET_ACCESS_KEY: ${{ secrets.AWS_SECRET_ACCESS_KEY }}
-      AWS_DEFAULT_REGION: ${{ secrets.S3_BUCKET_REGION }}
 
     steps:
       - name: Checkout
@@ -26,5 +22,8 @@ jobs:
         id: ecr
         uses: jwalton/gh-ecr-push@v1
         with:
-          local-image: ${{ secrets.ECR_REPO }}:latest
-          image: ${{ secrets.ECR_REPO }}:latest
+          access-key-id: ${{ secrets.AWS_ACCESS_KEY }}
+          secret-access-key: ${{ secrets.AWS_SECRET_ACCESS_KEY }}
+          region: ${{ secrets.S3_BUCKET_REGION }}
+          local-image: ${{ secrets.ECR_REPO }}
+          image: ${{ secrets.ECR_REPO }}
