@@ -40,10 +40,10 @@ jobs:
           local-path: packages/ui/build/
           bucket-name: ${{ secrets.S3_BUCKET }}
           args: --delete
-        #   filesToInclude: "build/**/*"
-        #   folder: packages/ui/
-        #   bucket: ${{ secrets.S3_BUCKET }}
-        #   bucket-region: ${{ secrets.S3_BUCKET_REGION }}
-        #   dist-id: ${{ secrets.CLOUDFRONT_DISTRIBUTION_ID }}
-        #   invalidation: "/"
-        #   delete-removed: true
+
+      - name: Invalidate CloudFront
+        uses: chetan/invalidate-cloudfront-action@v2
+        env:
+          DISTRIBUTION: ${{ secrets.CLOUDFRONT_DISTRIBUTION_ID }}
+          PATHS: "/"
+          AWS_REGION: "us-east-1"
