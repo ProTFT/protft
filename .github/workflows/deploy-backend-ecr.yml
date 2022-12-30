@@ -20,14 +20,12 @@ jobs:
         uses: actions/checkout@v3
 
       - name: Build the Docker image
-        run: docker build . --file Dockerfile --tag protft
+        run: docker build . --file Dockerfile --tag ${{ secrets.ECR_REPO }}
 
       - name: Push to ECR
-        id: ecr
-        uses: jwalton/gh-ecr-push@v1
-        with:
-          access-key-id: ${{ secrets.AWS_ACCESS_KEY }}
-          secret-access-key: ${{ secrets.AWS_SECRET_ACCESS_KEY }}
-          region: ${{ secrets.S3_BUCKET_REGION }}
-          local-image: protft
-          image: ${{ secrets.ECR_REPO }}
+        run: |
+          aws ecr get-login-password --region ${{ secrets.S3_BUCKET_REGION }} | docker login --username AWS --password-stdin ${{ secrets.ECR_REPO }}
+          docker push ${{ secrets.ECR_REPO }}
+
+      - name: Update task definition
+        run: aws ecs update-service --cluster ${{ secrets.ECS_CLUSTER }} --service ${{ secrets.ECS_SERVICE }} --force-new-deployment
