@@ -17,10 +17,3 @@ $ yarn install
 ```
 
  You should not need to install dependencies as they are already bundled at `.yarn/cache` thanks to [yarn zero-installs](https://yarnpkg.com/features/zero-installs), but some linking is still necessary. Then, on each package there are instructions on how to run them.
-
- ## What is still missing?
-
- This is a hobby project, so time is a big constraint, there are still at least a few things needed:
-
- - Create deploy pipelines (probably with GH Actions, not started)
- - Finish UI design (current WIP)
