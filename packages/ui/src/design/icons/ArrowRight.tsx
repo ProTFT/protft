@@ -1,8 +1,9 @@
 import { IconStyled } from "./Icon.styled";
-import { ClickableIconProps } from "./types";
+import { IconProps } from "./types";
 
-interface Props extends ClickableIconProps {
+interface Props extends IconProps {
   size?: number;
+  onClick?: () => void;
 }
 
 export const ArrowRightIcon = ({

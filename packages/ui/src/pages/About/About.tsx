@@ -52,8 +52,8 @@ export const About = () => {
           Pro TFT is just a hobby for now and I pay for all the infrastructure
           myself. Honestly maybe it will just flop or maybe it will get big, but
           if you want to show your support I have a{" "}
-          <StyledLink href="https://paypal.me/protft" target={"_blank"}>
-            Paypal link.
+          <StyledLink href="https://ko-fi.com/protft" target={"_blank"}>
+            Ko-fi.
           </StyledLink>
         </StyledText>
       </StyledTextSection>
@@ -74,6 +74,31 @@ export const About = () => {
             give any feedback
           </StyledLink>{" "}
           if you see something wrong.
+        </StyledText>
+      </StyledTextSection>
+
+      <StyledTextSection>
+        <a id="WhyNotAdded" href="#WhyNotAdded">
+          <StyledSubtitle>
+            Why isn't tournament/stage X added/updated?
+          </StyledSubtitle>
+        </a>
+        <StyledText>
+          As stated before, this website is still a one person show, so there's
+          very limited resources. If a tournament stage has more than 64
+          players, it takes a lot of time to input all data, so these ones are
+          not priorities and will only be added on the future.
+          <br />
+          For tournaments, the focus are the ones that are part of "Road to
+          Worlds", being regional qualifiers or others that can take someone to
+          the highest stage. I have a ongoing list of tournaments I plan to add{" "}
+          <StyledLink
+            href="https://github.com/ProTFT/protft/issues/2"
+            target={"_blank"}
+          >
+            here
+          </StyledLink>
+          .
         </StyledText>
       </StyledTextSection>
 

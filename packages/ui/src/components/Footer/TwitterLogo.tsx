@@ -22,6 +22,38 @@ export const TwitterLogo = () => {
   );
 };
 
+export const KofiLogo = () => {
+  const goTo = useExternalNavigation("https://ko-fi.com/protft", "_blank");
+  return (
+    <svg
+      xmlns="http://www.w3.org/2000/svg"
+      width="31"
+      height="25"
+      viewBox="0 0 64 64"
+      stroke="none"
+      stroke-linecap="round"
+      stroke-linejoin="round"
+      fill="#fff"
+      fill-rule="nonzero"
+      onClick={goTo}
+      style={{ cursor: "pointer" }}
+    >
+      <path
+        d="M0 32C0 14.272 14.272 0 32 0s32 14.272 32 32-14.272 32-32 32S0 49.728 0 32z"
+        fill="#faac01"
+      />
+      <path
+        d="M43.7502 17.2973h3.1599c6.0949 0 11.0358 4.9409 11.0358 11.0358v.6487c0 6.0949-4.9409 11.0357-11.0358 11.0357h-3.1599v3.3215c0 2.813-2.2804 5.0934-5.0934 5.0934H14.6069c-2.813 0-5.0934-2.2804-5.0934-5.0934V19.844c0-1.4065 1.1402-2.5467 2.5467-2.5467zm0 5.8904v10.9394h2.8808c3.0208 0 5.4696-2.4489 5.4696-5.4697s-2.4488-5.4697-5.4696-5.4697z"
+        fill="#000"
+      />
+      <path
+        d="M25.946 27.6695c.7868-2.3022 2.6515-3.4533 5.594-3.4533 4.4137 0 6.05 5.4912 3.7364 9.0811-1.5423 2.3932-4.6525 5.4203-9.3304 9.0811-4.6779-3.6608-7.7881-6.6879-9.3305-9.0811-2.3136-3.5899-.6772-9.0811 3.7365-9.0811 2.9425 0 4.8071 1.1511 5.594 3.4533z"
+        fill="#faac01"
+      />
+    </svg>
+  );
+};
+
 export const DiscordLogo = () => {
   const goTo = useExternalNavigation("https://discord.gg/Ry5Fp54k3q", "_blank");
 

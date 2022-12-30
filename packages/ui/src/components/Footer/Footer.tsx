@@ -4,7 +4,7 @@ import {
   StyledDivider,
   StyledFooterText,
 } from "./Footer.styled";
-import { DiscordLogo, TwitterLogo } from "./TwitterLogo";
+import { DiscordLogo, KofiLogo, TwitterLogo } from "./TwitterLogo";
 
 export const Footer = () => {
   return (
@@ -24,6 +24,7 @@ export const Footer = () => {
         <div style={{ display: "flex", gap: "2rem" }}>
           <TwitterLogo />
           <DiscordLogo />
+          <KofiLogo />
         </div>
       </StyledContainer>
     </>

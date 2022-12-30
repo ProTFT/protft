@@ -64,7 +64,7 @@ export const StyledStagesBottom = styled.div`
 export const StyledDaysContainer = styled.div`
   display: flex;
   justify-content: space-between;
-  overflow: scroll;
+  overflow: auto;
   gap: 1rem;
 
   @media ${device.tablet} {
@@ -83,6 +83,7 @@ export const StyledDay = styled.div<StageProps & { clicked?: boolean }>`
     gap: 2rem;
     min-width: 8rem;
     justify-content: ${isFinal ? "space-between" : "auto"};
+    cursor: pointer;
 
     svg {
       rotate: ${clicked ? "90deg" : "0"};
@@ -165,7 +166,7 @@ export const StyledResultsContainer = styled.div<{ show: boolean }>`
   flex-direction: column;
   background-color: #1e1c35;
   ${(props) => (!props.show ? "max-height: 0px" : "max-height: fit-content")};
-  overflow: scroll;
+  overflow: auto;
   transition: max-height 1s ease-out;
   align-items: center;
 

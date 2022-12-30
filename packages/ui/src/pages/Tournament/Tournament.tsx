@@ -10,6 +10,7 @@ import { Stage } from "../../graphql/schema";
 import { useDocumentTitle } from "../../hooks/useDocumentTitle";
 import { useIsMobile } from "../../hooks/useIsMobile";
 import { InfoBar } from "./InfoBar/InfoBar";
+import { NoDataAdded } from "./NoDataAdded/NoDataAdded";
 import {
   ResultsQueryResponse,
   RESULTS_QUERY,
@@ -93,6 +94,14 @@ export const Tournament = () => {
                 key={stage.id}
                 isFinal={stage.isFinal}
                 clicked={openStage?.id === stage.id}
+                onClick={() => {
+                  setOpen((isOpen) =>
+                    isOpen && openStage?.id !== stage.id ? isOpen : !isOpen
+                  );
+                  setOpenStage((openStage) =>
+                    open && openStage?.id === stage.id ? null : stage
+                  );
+                }}
               >
                 <StyledDayTitle isFinal={stage.isFinal}>
                   {stage.name}
@@ -103,10 +112,6 @@ export const Tournament = () => {
                 <StyledArrowContainer>
                   <ArrowRightIcon
                     color={stage.isFinal ? colors.pitchBlack : colors.yellow}
-                    onClick={() => {
-                      setOpen((v) => !v);
-                      setOpenStage((open) => (open ? null : stage));
-                    }}
                   />
                 </StyledArrowContainer>
               </StyledDay>
@@ -132,6 +137,16 @@ export const Results = ({
     variables: { stageId: selectedStage?.id },
     pause: !selectedStage,
   });
+
+  console.log(data?.resultsByStage);
+
+  if (data?.resultsByStage.length === 0 && open) {
+    return (
+      <StyledResultsContainer show={open}>
+        <NoDataAdded />
+      </StyledResultsContainer>
+    );
+  }
 
   return (
     <StyledResultsContainer show={open}>
