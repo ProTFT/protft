@@ -1,5 +1,4 @@
 import { useQuery } from "urql";
-import { Box, Flex, List, ListItem, Text } from "@chakra-ui/react";
 import { Link, useParams } from "react-router-dom";
 import {
   PlayerQueryResult,
@@ -7,24 +6,31 @@ import {
   PLAYER_QUERY,
   PLAYER_TOURNAMENT_QUERY,
 } from "./queries";
-import { PageTitle } from "../../components/PageTitle";
-import { getFlagEmoji } from "../../formatter/FlagEmoji";
 import { useEffect } from "react";
-
-const StatBox = ({
-  text,
-  value,
-}: {
-  text: string;
-  value?: string | number;
-}) => {
-  return (
-    <Box borderWidth={2} flexDir="column" p={5} borderRadius="lg">
-      <Text fontWeight="bold">{text}</Text>
-      <Text>{value}</Text>
-    </Box>
-  );
-};
+import { RegionsIndicator } from "../../components/RegionIndicator/RegionIndicator";
+import { Twitter } from "../../design/icons/Twitter";
+import { colors } from "../../design/colors";
+import {
+  StyledDetailsButtonContainer,
+  StyledHeaderContainer,
+  StyledImage,
+  StyledPageContainer,
+  StyledPlayerImage,
+  StyledPlayerInfo,
+  StyledPlayerName,
+  StyledStatsContainer,
+  StyledTitle,
+  StyledTournamentBasicInfo,
+  StyledTournamentName,
+  StyledTourneyStatsContainer,
+} from "./Player.styled";
+import { RoundedContainer } from "../../components/Containers/RoundedContainer/RoundedContainer";
+import { DateIndicator } from "../../components/DateIndicator/DateIndicator";
+import { ArrowRightIcon } from "../../design/icons/ArrowRight";
+import { StyledVerticalContainer } from "../../components/Layout/VerticalContainer/VerticalContainer.styled";
+import { StyledSearchFilterBar } from "../../components/SearchFilterBar/SearchFilterBar";
+import { Stat } from "../../components/Stat/Stat";
+import { StyledDetailsButton } from "../Players/components/PlayerCard.styled";
 
 export const Player = () => {
   const { playerId } = useParams();
@@ -42,57 +48,64 @@ export const Player = () => {
     document.title = `${data?.player.name}`;
   }, [data?.player.name]);
 
+  if (!data) {
+    return <></>;
+  }
+
   return (
-    <Box textAlign="center" fontSize="xl" display="flex">
-      <Flex flexDirection="column" boxSize="100%" gap={10} px="20%">
-        <PageTitle
-          text={
-            getFlagEmoji(data?.player.country || "") + " " + data?.player.name
-          }
+    <StyledPageContainer>
+      <StyledHeaderContainer>
+        <StyledPlayerImage />
+        <StyledPlayerInfo>
+          <StyledPlayerName>{data?.player.name}</StyledPlayerName>
+          <RegionsIndicator regionCodes={[data?.player.region!]} />
+          <div style={{ alignSelf: "end" }}>
+            <Twitter color={colors.white} onClick={() => {}} size={24} />
+          </div>
+        </StyledPlayerInfo>
+      </StyledHeaderContainer>
+      <StyledStatsContainer>
+        <Stat title="Matches" value={data?.player.playerStats?.totalGames} />
+        <Stat
+          title="Avg Pos"
+          value={data?.player.playerStats?.averagePosition}
         />
-        <Flex flex="50%" gap={10}>
-          <Flex gap={10} justifyContent="space-between" flexWrap="wrap">
-            <StatBox
-              text="Total games"
-              value={data?.player.playerStats?.totalGames}
-            />
-            <StatBox
-              text="Average Position"
-              value={data?.player.playerStats?.averagePosition}
-            />
-            <StatBox
-              text="Top Four %"
-              value={
-                (
-                  ((data?.player.playerStats?.topFourCount || 0) /
-                    (data?.player.playerStats?.totalGames || 1)) *
-                  100
-                ).toFixed(2) + "%"
-              }
-            />
-            <StatBox
-              text="Top One %"
-              value={
-                (
-                  ((data?.player.playerStats?.topOneCount || 0) /
-                    (data?.player.playerStats?.totalGames || 1)) *
-                  100
-                ).toFixed(2) + "%"
-              }
-            />
-          </Flex>
-          <Flex flexDir="column" alignSelf="start">
-            <Text>Played in</Text>
-            <List>
-              {tournamentData?.tournamentsPlayed.map(({ id, name }) => (
-                <Link key={id} to={`/tournaments/${id}`}>
-                  <ListItem textDecor="underline">{name}</ListItem>
-                </Link>
-              ))}
-            </List>
-          </Flex>
-        </Flex>
-      </Flex>
-    </Box>
+        <Stat title="Top 4 %" value={data?.player.playerStats?.topFourCount} />
+        <Stat title="Top 1 %" value={data?.player.playerStats?.topOneCount} />
+      </StyledStatsContainer>
+      <StyledTourneyStatsContainer>
+        <StyledTitle>Tourney Stats</StyledTitle>
+        <StyledSearchFilterBar placeholder="Search tourneys" />
+        {tournamentData?.tournamentsPlayed.map((tournament) => (
+          <Link to={`/tournaments/${tournament.id}`} key={tournament.id}>
+            <RoundedContainer padding="2rem" gap="2rem">
+              <StyledTournamentBasicInfo>
+                <StyledImage src={`/sets/${tournament.set.id}.webp`} />
+                <StyledVerticalContainer>
+                  <StyledTournamentName>{tournament.name}</StyledTournamentName>
+                  <StyledVerticalContainer>
+                    <RegionsIndicator regionCodes={tournament.region!} />
+                    <DateIndicator
+                      startDate={tournament.startDate}
+                      endDate={tournament.endDate}
+                    />
+                  </StyledVerticalContainer>
+                </StyledVerticalContainer>
+              </StyledTournamentBasicInfo>
+              {/* <StyledTournamentInfo>
+                <Stat title="Matches" value="145" />
+                <Stat title="Avg Pos" value="2.3" />
+                <Stat title="Top 4 %" value="59%" />
+                <Stat title="Top 1 %" value="2%" />
+              </StyledTournamentInfo> */}
+              <StyledDetailsButtonContainer>
+                <StyledDetailsButton>Details</StyledDetailsButton>
+                <ArrowRightIcon size={20} onClick={() => {}} />
+              </StyledDetailsButtonContainer>
+            </RoundedContainer>
+          </Link>
+        ))}
+      </StyledTourneyStatsContainer>
+    </StyledPageContainer>
   );
 };

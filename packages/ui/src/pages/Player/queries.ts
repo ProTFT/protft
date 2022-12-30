@@ -10,6 +10,12 @@ export const PLAYER_TOURNAMENT_QUERY = gql`
     tournamentsPlayed(playerId: $playerId) {
       id
       name
+      region
+      set {
+        id
+      }
+      startDate
+      endDate
     }
   }
 `;

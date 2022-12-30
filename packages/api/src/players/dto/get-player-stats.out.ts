@@ -1,4 +1,5 @@
 import { Field, Float, Int, ObjectType } from "@nestjs/graphql";
+import { Player } from "../player.entity";
 
 @ObjectType()
 export class PlayerStats {
@@ -8,12 +9,18 @@ export class PlayerStats {
   @Field(() => Int)
   totalGames: number;
 
-  @Field(() => Int)
+  @Field(() => Float)
   topFourCount: number;
 
-  @Field(() => Int)
+  @Field(() => Float)
   topOneCount: number;
 
-  @Field(() => Int)
+  @Field(() => Float)
   eigthCount: number;
+}
+
+@ObjectType()
+export class PlayersStats extends PlayerStats {
+  @Field(() => Player)
+  player: Player;
 }

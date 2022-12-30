@@ -1,0 +1,49 @@
+name: deploy-frontend-s3
+
+on:
+  push:
+    branches:
+      - main
+    paths:
+      - packages/ui/**
+
+jobs:
+  run:
+    runs-on: ubuntu-latest
+    env:
+      AWS_ACCESS_KEY_ID: ${{ secrets.AWS_ACCESS_KEY }}
+      AWS_SECRET_ACCESS_KEY: ${{ secrets.AWS_SECRET_ACCESS_KEY }}
+      AWS_DEFAULT_REGION: ${{ secrets.S3_BUCKET_REGION }}
+
+    defaults:
+      run:
+        working-directory: ./packages/ui
+
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v3
+
+      - name: Setup Node.js
+        uses: actions/setup-node@v3
+        with:
+          node-version: 16.17
+
+      - name: Install
+        run: yarn install
+
+      - name: Build
+        run: yarn build
+
+      - name: Deploy to S3
+        uses: clowdhaus/aws-github-actions/s3_sync@main
+        with:
+          local-path: packages/ui/build/
+          bucket-name: ${{ secrets.S3_BUCKET }}
+          args: --delete
+
+      - name: Invalidate CloudFront
+        uses: chetan/invalidate-cloudfront-action@v2
+        env:
+          DISTRIBUTION: ${{ secrets.CLOUDFRONT_DISTRIBUTION_ID }}
+          PATHS: "/"
+          AWS_REGION: ${{ secrets.S3_BUCKET_REGION }}

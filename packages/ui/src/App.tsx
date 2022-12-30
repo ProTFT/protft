@@ -1,144 +1,49 @@
 import * as React from "react";
-import "@fontsource/inter/400.css";
-import "cal-sans";
-import {
-  ChakraProvider,
-  Box,
-  Container,
-  Button,
-  extendTheme,
-  useDisclosure,
-  Drawer,
-  DrawerOverlay,
-  DrawerContent,
-  DrawerCloseButton,
-  DrawerHeader,
-  DrawerBody,
-  VStack,
-} from "@chakra-ui/react";
-import { ColorModeSwitcher } from "./ColorModeSwitcher";
-import { Link, Route, Routes } from "react-router-dom";
+import "./App.css";
+import "typeface-roboto";
+import "./design/fonts/VTFRedzone/stylesheet.css";
+import { Route, Routes } from "react-router-dom";
 import { Home } from "./pages/Home/Home";
 import { Tournaments } from "./pages/Tournaments/Tournaments";
 import { Tournament } from "./pages/Tournament/Tournament";
-import { useWindowSize, WindowSize } from "./hooks/useWindowSize";
-import { PlayersContainer } from "./pages/Players/Players";
 import { Player } from "./pages/Player/Player";
 import { SuspenseElement } from "./components/SuspendedPage";
-import { TournamentWizard } from "./pages/TournamentWizard/TournamentWizard";
-import { StageWizard } from "./pages/StageWizard/StageWizard";
-import { LobbiesWizard } from "./pages/LobbiesWizard/LobbiesWizard";
-import { ResultsWizard } from "./pages/ResultsWizard/ResultsWizard";
-
-const theme = extendTheme({
-  config: {
-    initialColorMode: "dark",
-  },
-  fonts: {
-    heading: "Cal Sans, sans-serif",
-    body: "Inter, sans-serif",
-  },
-});
-
-const isSmallScreen = (size?: WindowSize) => {
-  return Boolean(size?.width && size?.width < 800);
-};
+import { TournamentWizard } from "./pages/Admin/TournamentWizard/TournamentWizard";
+import { StageWizard } from "./pages/Admin/StageWizard/StageWizard";
+import { LobbiesWizard } from "./pages/Admin/LobbiesWizard/LobbiesWizard";
+import { ResultsWizard } from "./pages/Admin/ResultsWizard/ResultsWizard";
+import { Stats } from "./pages/Stats/Stats";
+import { NavBar } from "./components/NavBar/NavBar";
+import { Footer } from "./components/Footer/Footer";
+import { Players } from "./pages/Players/Players";
+import { About } from "./pages/About/About";
 
 export const App = () => {
-  const size = useWindowSize();
-  const { isOpen, onOpen, onClose } = useDisclosure();
-  const sideMenuButtonRef: any = React.useRef();
-
   return (
-    <ChakraProvider theme={theme}>
-      <Box w="100%" zIndex={1}>
-        <Container
-          maxW="container.xl"
-          py={5}
-          display="flex"
-          justifyContent="space-between"
-          alignItems="center"
-        >
-          <Link to="/">
-            <Button variant="ghost">ProTFT</Button>
-          </Link>
-          <Box hidden={isSmallScreen(size)}>
-            <Link to="/tournaments">
-              <Button variant="ghost">Tournaments</Button>
-            </Link>
-            <Link to="/players">
-              <Button variant="ghost">Players</Button>
-            </Link>
-            {process.env.NODE_ENV !== "production" ? (
-              <Link to="/addTournament">
-                <Button variant="ghost">Add Tournament</Button>
-              </Link>
-            ) : (
-              <></>
-            )}
-          </Box>
-          <Box>
-            <a
-              href="https://docs.google.com/forms/d/e/1FAIpQLSfJbKrYGkUFTwJqwIWNuRCdzL_UsOkigeeBIy35a3Ab5JV4gQ/viewform?usp=sf_link"
-              target="_blank"
-              rel="noreferrer"
-            >
-              <Button variant="solid" colorScheme="yellow">
-                Feedback
-              </Button>
-            </a>
-            <ColorModeSwitcher justifySelf="flex-end" />
-            {isSmallScreen(size) && (
-              <Button ref={sideMenuButtonRef} onClick={onOpen}>
-                =
-              </Button>
-            )}
-          </Box>
-        </Container>
-        <Drawer
-          isOpen={isOpen}
-          placement="right"
-          onClose={onClose}
-          finalFocusRef={sideMenuButtonRef}
-        >
-          <DrawerOverlay />
-          <DrawerContent>
-            <DrawerCloseButton />
-            <DrawerHeader>ProTFT</DrawerHeader>
-            <DrawerBody>
-              <VStack alignItems="start">
-                <Link to="/tournaments" onClick={onClose}>
-                  <Button variant="ghost">Tournaments</Button>
-                </Link>
-                <Link to="/players" onClick={onClose}>
-                  <Button variant="ghost">Players</Button>
-                </Link>
-              </VStack>
-            </DrawerBody>
-          </DrawerContent>
-        </Drawer>
-        <Routes>
-          <Route path="/" element={<SuspenseElement element={<Home />} />} />
-          <Route path="tournaments">
-            <Route
-              index
-              element={<SuspenseElement element={<Tournaments />} />}
-            />
-            <Route
-              path=":tournamentId"
-              element={<SuspenseElement element={<Tournament />} />}
-            />
-          </Route>
-          <Route path="players">
-            <Route
-              index
-              element={<SuspenseElement element={<PlayersContainer />} />}
-            />
-            <Route
-              path=":playerId"
-              element={<SuspenseElement element={<Player />} />}
-            />
-          </Route>
+    <div style={{ width: "100%" }}>
+      <NavBar />
+      <Routes>
+        <Route path="/" element={<SuspenseElement element={<Home />} />} />
+        <Route path="tournaments">
+          <Route
+            index
+            element={<SuspenseElement element={<Tournaments />} />}
+          />
+          <Route
+            path=":tournamentId"
+            element={<SuspenseElement element={<Tournament />} />}
+          />
+        </Route>
+        <Route path="players">
+          <Route index element={<SuspenseElement element={<Players />} />} />
+          <Route
+            path=":playerId"
+            element={<SuspenseElement element={<Player />} />}
+          />
+        </Route>
+        <Route path="stats" element={<SuspenseElement element={<Stats />} />} />
+        <Route path="about" element={<SuspenseElement element={<About />} />} />
+        <Route path="admin">
           <Route path="addTournament">
             <Route
               index
@@ -159,8 +64,9 @@ export const App = () => {
               />
             </Route>
           </Route>
-        </Routes>
-      </Box>
-    </ChakraProvider>
+        </Route>
+      </Routes>
+      <Footer />
+    </div>
   );
 };

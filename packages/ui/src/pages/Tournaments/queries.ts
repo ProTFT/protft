@@ -6,12 +6,19 @@ export interface TournamentsQueryResult {
 }
 
 export const TOURNAMENTS_QUERY = gql`
-  query tournaments {
-    tournaments {
+  query tournaments($searchQuery: String) {
+    tournaments(searchQuery: $searchQuery) {
       id
       name
       participantsNumber
       prizePool
+      region
+      startDate
+      endDate
+      set {
+        id
+        name
+      }
     }
   }
 `;

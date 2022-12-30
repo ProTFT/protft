@@ -1,10 +1,11 @@
-import { ColorModeScript } from "@chakra-ui/react";
 import * as React from "react";
 import { DndProvider } from "react-dnd";
 import { HTML5Backend } from "react-dnd-html5-backend";
 import * as ReactDOM from "react-dom/client";
 import { BrowserRouter } from "react-router-dom";
-import { createClient, Provider } from "urql";
+import { createClient, dedupExchange, fetchExchange, Provider } from "urql";
+import { cacheExchange } from "@urql/exchange-graphcache";
+import { simplePagination } from "@urql/exchange-graphcache/extras";
 import { App } from "./App";
 import reportWebVitals from "./reportWebVitals";
 import * as serviceWorker from "./serviceWorker";
@@ -14,6 +15,23 @@ if (!rootElement) throw new Error("Failed to find the root element");
 const root = ReactDOM.createRoot(rootElement);
 const graphqlClient = createClient({
   url: `${process.env.REACT_APP_BACKEND_URL}`,
+  exchanges: [
+    dedupExchange,
+    cacheExchange({
+      keys: {
+        PlayerStats: () => null,
+        PlayerResults: () => null,
+      },
+      resolvers: {
+        Query: {
+          playerStats: simplePagination({
+            limitArgument: "take",
+          }),
+        },
+      },
+    }),
+    fetchExchange,
+  ],
   suspense: true,
 });
 
@@ -22,7 +40,6 @@ root.render(
     <BrowserRouter>
       <Provider value={graphqlClient}>
         <DndProvider backend={HTML5Backend}>
-          <ColorModeScript initialColorMode="dark" />
           <App />
         </DndProvider>
       </Provider>

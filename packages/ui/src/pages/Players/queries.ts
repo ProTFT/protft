@@ -8,15 +8,21 @@ export interface PlayersQueryResult {
 export interface PlayersQueryVariables {
   region?: string;
   country?: string;
+  searchQuery?: string;
 }
 
 export const PLAYERS_QUERY = gql`
-  query players($region: String, $country: String) {
-    players(region: $region, country: $country) {
+  query players($region: String, $country: String, $searchQuery: String) {
+    players(region: $region, country: $country, searchQuery: $searchQuery) {
       id
       name
       country
       region
+      playerStats {
+        totalGames
+        averagePosition
+        topFourCount
+      }
     }
   }
 `;

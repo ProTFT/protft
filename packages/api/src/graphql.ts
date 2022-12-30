@@ -65,6 +65,15 @@ export interface PlayerStats {
     eigthCount: number;
 }
 
+export interface PlayersStats {
+    averagePosition: number;
+    totalGames: number;
+    topFourCount: number;
+    topOneCount: number;
+    eigthCount: number;
+    player: Player;
+}
+
 export interface Player {
     id: number;
     name: string;
@@ -138,17 +147,17 @@ export interface PlayerFilterMeta {
 export interface IQuery {
     sets(): Set[] | Promise<Set[]>;
     set(id: number): Nullable<Set> | Promise<Nullable<Set>>;
-    tournaments(): Tournament[] | Promise<Tournament[]>;
+    tournaments(searchQuery?: Nullable<string>): Tournament[] | Promise<Tournament[]>;
     tournament(id: number): Tournament | Promise<Tournament>;
     tournamentOverview(): TournamentOverview | Promise<TournamentOverview>;
     stages(tournamentId: number): Stage[] | Promise<Stage[]>;
     lobbies(stageId: number): Lobby[] | Promise<Lobby[]>;
     tournamentsPlayed(playerId: number): Tournament[] | Promise<Tournament[]>;
-    players(region?: Nullable<string>, country?: Nullable<string>): Player[] | Promise<Player[]>;
+    players(region?: Nullable<string>, country?: Nullable<string>, searchQuery?: Nullable<string>, take?: Nullable<number>, skip?: Nullable<number>): Player[] | Promise<Player[]>;
     player(id: number): Player | Promise<Player>;
     playerFilterMeta(): PlayerFilterMeta | Promise<PlayerFilterMeta>;
     resultsByStage(stageId: number): PlayerResults[] | Promise<PlayerResults[]>;
-    resultsByLobby(lobbyId: number): PlayerResults[] | Promise<PlayerResults[]>;
+    playerStats(setId?: Nullable<number>, region?: Nullable<string>, take?: Nullable<number>, skip?: Nullable<number>): PlayersStats[] | Promise<PlayersStats[]>;
 }
 
 export interface IMutation {

@@ -1,34 +1,46 @@
-import { Box, Flex, List, ListItem, useColorModeValue } from "@chakra-ui/react";
-import { useEffect } from "react";
-import { useParams } from "react-router-dom";
+import { Suspense, useState } from "react";
+import { Link, useParams } from "react-router-dom";
 import { useQuery } from "urql";
-import { PageTitle } from "../../components/PageTitle";
-import { SectionTitle } from "../../components/SectionTitle";
-import { TournamentStageSection } from "../../components/TournamentStageSection";
-import { TournamentQueryResponse, TOURNAMENT_QUERY } from "./queries";
-
-const TournamentInfoRow = ({
-  info,
-  title,
-}: {
-  title: string;
-  info: string;
-}) => {
-  const borderColor = useColorModeValue(
-    "rgba(0, 0, 0, 50%)",
-    "rgba(255, 255, 255, 50%)"
-  );
-  return (
-    <ListItem borderTop="1px" borderColor={borderColor} display="flex">
-      <Box width="50%" textAlign="start">
-        {title}
-      </Box>
-      <Box width="50%" textAlign="start">
-        {info}
-      </Box>
-    </ListItem>
-  );
-};
+import { StyledHorizontalContainer } from "../../components/Layout/HorizontalContainer/HorizontalContainer.styled";
+import { RegionsIndicator } from "../../components/RegionIndicator/RegionIndicator";
+import { TournamentContent } from "../../components/TournamentContent/TournamentContent";
+import { colors } from "../../design/colors";
+import { ArrowRightIcon } from "../../design/icons/ArrowRight";
+import { Stage } from "../../graphql/schema";
+import { useDocumentTitle } from "../../hooks/useDocumentTitle";
+import { useIsMobile } from "../../hooks/useIsMobile";
+import { InfoBar } from "./InfoBar/InfoBar";
+import {
+  ResultsQueryResponse,
+  RESULTS_QUERY,
+  TournamentQueryResponse,
+  TOURNAMENT_QUERY,
+} from "./queries";
+import {
+  StyledBodyContainer,
+  StyledDay,
+  StyledDaysContainer,
+  StyledHeaderContainer,
+  StyledStagesBottom,
+  StyledStagesSection,
+  StyledTitle,
+  StyledSubsectionTitle,
+  StyledSubsectionContainer,
+  StyledStageInfoContainer,
+  StyledStageInfoValue,
+  StyledBattleIcon,
+  StyledDayTitle,
+  StyledDaySubtitle,
+  StyledResultsContainer,
+  StyledTournamentModeButton,
+  StyledPlayerName,
+  StyledTablePlayerHeader,
+  StyledTableRoundHeader,
+  StyledTableData,
+  StyledTable,
+  StyledArrowContainer,
+  StyledTablePlayerName,
+} from "./Tournament.styled";
 
 export const Tournament = () => {
   const { tournamentId } = useParams();
@@ -36,53 +48,136 @@ export const Tournament = () => {
     query: TOURNAMENT_QUERY,
     variables: { id: Number(tournamentId) },
   });
-  useEffect(() => {
-    document.title = `${data?.tournament.name}`;
-  }, [data?.tournament.name]);
+
+  useDocumentTitle(`${data?.tournament.name}`);
+
+  const [open, setOpen] = useState(false);
+  const [openStage, setOpenStage] = useState<Stage | null>(null);
+
+  const isMobile = useIsMobile();
 
   return (
-    <Box textAlign="center" fontSize="xl" display="flex">
-      <Flex
-        flex={10}
-        flexGrow={0}
-        flexDirection="column"
-        boxSize="100%"
-        position="initial"
-        gap={10}
-        scrollBehavior="auto"
-        paddingLeft="20%"
-        paddingRight="20%"
-      >
-        <PageTitle text={data?.tournament.name} />
-        <List width="80%" alignSelf="center">
-          <TournamentInfoRow
-            title="Set"
-            info={`${data?.tournament.set.id} - ${data?.tournament.set.name}`}
+    <div>
+      <StyledHeaderContainer>
+        <TournamentContent tournament={data!.tournament} />
+      </StyledHeaderContainer>
+      <StyledBodyContainer>
+        {isMobile && (
+          <InfoBar
+            participantsNumber={data?.tournament.participantsNumber}
+            prizePool={data?.tournament.prizePool}
           />
-          <TournamentInfoRow
-            title="Region"
-            info={`${data?.tournament.region}`}
-          />
-          <TournamentInfoRow title="Host" info={`${data?.tournament.host}`} />
-          <TournamentInfoRow
-            title="Participants"
-            info={`${data?.tournament.participantsNumber}`}
-          />
-          <TournamentInfoRow
-            title="Prize pool"
-            info={`$${data?.tournament.prizePool}`}
-          />
-          <TournamentInfoRow
-            title="Date"
-            info={`${new Date(
-              data?.tournament.startDate
-            ).toLocaleDateString()} -${" "}
-            ${new Date(data?.tournament.endDate).toLocaleDateString()}`}
-          />
-        </List>
-        <SectionTitle text="Stages" />
-        <TournamentStageSection stages={data?.tournament.stages} />
-      </Flex>
-    </Box>
+        )}
+        <StyledStagesSection>
+          <StyledHorizontalContainer>
+            <StyledBattleIcon />
+            <StyledTitle>Stages</StyledTitle>
+          </StyledHorizontalContainer>
+          <StyledSubsectionContainer>
+            <StyledStageInfoContainer>
+              <StyledSubsectionTitle>HOST</StyledSubsectionTitle>
+              <StyledStageInfoValue>
+                {data?.tournament.host}
+              </StyledStageInfoValue>
+            </StyledStageInfoContainer>
+            <StyledStageInfoContainer>
+              <StyledSubsectionTitle>SET</StyledSubsectionTitle>
+              <StyledStageInfoValue>{`${data?.tournament.set.id} - ${data?.tournament.set.name}`}</StyledStageInfoValue>
+            </StyledStageInfoContainer>
+          </StyledSubsectionContainer>
+        </StyledStagesSection>
+        <StyledStagesBottom>
+          <StyledDaysContainer>
+            {data?.tournament.stages?.map((stage) => (
+              <StyledDay
+                key={stage.id}
+                isFinal={stage.isFinal}
+                clicked={openStage?.id === stage.id}
+              >
+                <StyledDayTitle isFinal={stage.isFinal}>
+                  {stage.name}
+                </StyledDayTitle>
+                {!stage.isFinal && false && (
+                  <StyledDaySubtitle>{stage.name}</StyledDaySubtitle>
+                )}
+                <StyledArrowContainer>
+                  <ArrowRightIcon
+                    color={stage.isFinal ? colors.pitchBlack : colors.yellow}
+                    onClick={() => {
+                      setOpen((v) => !v);
+                      setOpenStage((open) => (open ? null : stage));
+                    }}
+                  />
+                </StyledArrowContainer>
+              </StyledDay>
+            ))}
+          </StyledDaysContainer>
+        </StyledStagesBottom>
+        <Suspense fallback={null}>
+          <Results open={open} selectedStage={openStage} />
+        </Suspense>
+      </StyledBodyContainer>
+    </div>
+  );
+};
+export const Results = ({
+  open,
+  selectedStage,
+}: {
+  open: boolean;
+  selectedStage: Stage | null;
+}) => {
+  const [{ data }] = useQuery<ResultsQueryResponse>({
+    query: RESULTS_QUERY,
+    variables: { stageId: selectedStage?.id },
+    pause: !selectedStage,
+  });
+
+  return (
+    <StyledResultsContainer show={open}>
+      {false && (
+        <StyledTournamentModeButton>Lobbies</StyledTournamentModeButton>
+      )}
+      <StyledTable>
+        <thead>
+          <tr>
+            <StyledTableRoundHeader>#</StyledTableRoundHeader>
+            <StyledTablePlayerHeader>Player</StyledTablePlayerHeader>
+            <StyledTableRoundHeader>P</StyledTableRoundHeader>
+            {new Array(selectedStage?.roundCount).fill(0).map((_, index) => (
+              <StyledTableRoundHeader key={index}>{`R${
+                index + 1
+              }`}</StyledTableRoundHeader>
+            ))}
+          </tr>
+        </thead>
+        <tbody>
+          {data?.resultsByStage.map(({ player, points, positions }, index) => (
+            <tr key={player.id}>
+              <StyledTableData>{index + 1}</StyledTableData>
+              <td>
+                <Link to={`/players/${player.id}`}>
+                  <StyledTablePlayerName>
+                    <RegionsIndicator
+                      regionCodes={[player.region!]}
+                      showName={false}
+                    />
+                    <StyledPlayerName>{player.name}</StyledPlayerName>
+                  </StyledTablePlayerName>
+                </Link>
+              </td>
+              <StyledTableData>
+                {points.reduce((prev, cur) => prev + cur, 0)}
+              </StyledTableData>
+              {positions.map((position, index) => (
+                <StyledTableData key={index} highlighted={position <= 4}>
+                  {position}
+                </StyledTableData>
+              ))}
+            </tr>
+          ))}
+        </tbody>
+      </StyledTable>
+    </StyledResultsContainer>
   );
 };

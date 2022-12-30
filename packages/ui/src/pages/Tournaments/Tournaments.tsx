@@ -1,27 +1,23 @@
-import { Box, List } from "@chakra-ui/react";
-import { Link } from "react-router-dom";
-import { TournamentListItem } from "../../components/TournamentListItem";
-import { Tournament } from "../../graphql/schema";
-import { useQuery } from "urql";
-import { TournamentsQueryResult, TOURNAMENTS_QUERY } from "./queries";
-import { useEffect } from "react";
+import { useDocumentTitle } from "../../hooks/useDocumentTitle";
+import { StyledContainer } from "./Tournaments.styled";
+import { StyledSearchFilterBar } from "../../components/SearchFilterBar/SearchFilterBar";
+import { Suspense, useState } from "react";
+import { TournamentList } from "./TournamentList/TournamentList";
 
 export const Tournaments = () => {
-  const [{ data }] = useQuery<TournamentsQueryResult>({
-    query: TOURNAMENTS_QUERY,
-  });
-  useEffect(() => {
-    document.title = "ProTFT";
-  }, []);
+  const [searchQuery, setSearchQuery] = useState("");
+
+  useDocumentTitle("Tourneys");
+
   return (
-    <Box textAlign="center" display="flex" px="15%" pt={3}>
-      <List width="100%">
-        {data?.tournaments.map((tournament: Tournament) => (
-          <Link key={tournament.id} to={String(tournament.id)}>
-            <TournamentListItem tournament={tournament} />
-          </Link>
-        ))}
-      </List>
-    </Box>
+    <StyledContainer>
+      <StyledSearchFilterBar
+        placeholder="Search events"
+        setSearchQuery={setSearchQuery}
+      />
+      <Suspense fallback={null}>
+        <TournamentList searchQuery={searchQuery} />
+      </Suspense>
+    </StyledContainer>
   );
 };

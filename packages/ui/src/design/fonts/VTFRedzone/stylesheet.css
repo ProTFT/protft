@@ -1,0 +1,24 @@
+@font-face {
+    font-family: 'VTF Redzone Classic Oblique';
+    src: url('VTFRedzone-ClassicOblique.eot');
+    src: local('VTF Redzone Classic Oblique'), local('VTFRedzone-ClassicOblique'),
+        url('VTFRedzone-ClassicOblique.eot?#iefix') format('embedded-opentype'),
+        url('VTFRedzone-ClassicOblique.woff2') format('woff2'),
+        url('VTFRedzone-ClassicOblique.woff') format('woff'),
+        url('VTFRedzone-ClassicOblique.ttf') format('truetype');
+    font-weight: normal;
+    font-style: italic;
+}
+
+@font-face {
+    font-family: 'VTF Redzone Classic';
+    src: url('VTFRedzone-Classic.eot');
+    src: local('VTF Redzone Classic'), local('VTFRedzone-Classic'),
+        url('VTFRedzone-Classic.eot?#iefix') format('embedded-opentype'),
+        url('VTFRedzone-Classic.woff2') format('woff2'),
+        url('VTFRedzone-Classic.woff') format('woff'),
+        url('VTFRedzone-Classic.ttf') format('truetype');
+    font-weight: normal;
+    font-style: normal;
+}
+
