@@ -1,0 +1,34 @@
+name: deploy-backend-ecr
+
+on:
+  pull_request:
+    branches:
+      - main
+    paths:
+      - packages/api/**
+
+jobs:
+  run:
+    runs-on: ubuntu-latest
+    env:
+      AWS_ACCESS_KEY_ID: ${{ secrets.AWS_ACCESS_KEY }}
+      AWS_SECRET_ACCESS_KEY: ${{ secrets.AWS_SECRET_ACCESS_KEY }}
+      AWS_DEFAULT_REGION: ${{ secrets.S3_BUCKET_REGION }}
+
+    defaults:
+      run:
+        working-directory: ./packages/api
+
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v3
+
+      - name: Build the Docker image
+        run: docker build . --file Dockerfile --tag ${{ secrets.ECR_REPO }}
+
+      - name: Push to ECR
+        id: ecr
+        uses: jwalton/gh-ecr-push@v1
+        with:
+          local-image: ${{ secrets.ECR_REPO }}:latest
+          image: ${{ secrets.ECR_REPO }}:latest
