@@ -141,14 +141,16 @@ export const ResultsWizard = () => {
             {stages?.stages
               .find((stage) => stage.id === selectedStage)
               ?.lobbies?.find((lobby) => lobby.id === selectedLobby)
-              ?.players?.map((player) => (
+              ?.players?.map((player, index) => (
                 <tr key={player.id}>
-                  <td>
+                  <td style={{ verticalAlign: "bottom" }}>
                     <StyledText>{player.name}</StyledText>
                   </td>
                   {rounds.map((round) => (
                     <td key={round.id}>
-                      <StyledText>{round.sequence + 1}</StyledText>
+                      {index === 0 && (
+                        <StyledText>{round.sequence + 1}</StyledText>
+                      )}
                       <StyledInput
                         key={round.id}
                         name={`${selectedLobby}-${player.id}-${round.id}`}

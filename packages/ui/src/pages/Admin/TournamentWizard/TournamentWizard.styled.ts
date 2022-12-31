@@ -29,6 +29,7 @@ export const StyledTitle = styled(StyledText)`
 
 export const StyledInput = styled.input`
   height: 1.5rem;
+  width: 2rem;
 `;
 
 export const StyledButton = styled.button`
