@@ -14,6 +14,8 @@ import { join } from "path";
 import { RoundsModule } from "./rounds/rounds.module";
 import { RoundResultsModule } from "./round-results/round-results.module";
 import { StagePlayerInfosModule } from "./stage-player-infos/stage-player-infos.module";
+import { AuthModule } from "./auth/auth.module";
+import { UsersModule } from "./users/users.module";
 
 const localDatabaseInfo: TypeOrmModuleOptions = {
   host: "localhost",
@@ -27,7 +29,7 @@ const prodDatabaseInfo: TypeOrmModuleOptions = {
   url: process.env.DATABASE_URL,
 };
 
-const isProd = (): boolean => process.env.NODE_ENV === "production";
+export const isProd = (): boolean => process.env.NODE_ENV === "production";
 
 @Module({
   imports: [
@@ -46,6 +48,10 @@ const isProd = (): boolean => process.env.NODE_ENV === "production";
       },
       playground: true,
       introspection: true,
+      cors: {
+        origin: "http://protft.com:3000",
+        credentials: true,
+      },
     }),
     SetsModule,
     TournamentsModule,
@@ -56,6 +62,8 @@ const isProd = (): boolean => process.env.NODE_ENV === "production";
     RoundsModule,
     RoundResultsModule,
     StagePlayerInfosModule,
+    AuthModule,
+    UsersModule,
   ],
   controllers: [AppController],
   providers: [AppService],

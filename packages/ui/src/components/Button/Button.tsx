@@ -12,6 +12,7 @@ export interface ButtonProps {
   textColor?: string;
   variant?: ButtonVariant;
   width?: string;
+  onClick?: (...parameters: any) => Promise<void> | void;
 }
 
 export const ProTFTButton = ({
@@ -19,10 +20,16 @@ export const ProTFTButton = ({
   textColor = colors.pitchBlack,
   variant = ButtonVariant.Primary,
   width = "auto",
+  onClick,
   children,
 }: React.PropsWithChildren<ButtonProps>) => {
   return (
-    <StyledButton variant={variant} buttonColor={buttonColor} width={width}>
+    <StyledButton
+      onClick={onClick}
+      variant={variant}
+      buttonColor={buttonColor}
+      width={width}
+    >
       <StyledButtonText textColor={textColor}>{children}</StyledButtonText>
     </StyledButton>
   );

@@ -1,11 +1,5 @@
 import { gql } from "urql";
-import {
-  Lobby,
-  LobbyInput,
-  RoundInput,
-  Stage,
-  StageInput,
-} from "../../../graphql/schema";
+import { Lobby, Stage } from "../../../graphql/schema";
 
 export interface StagesQueryResult {
   stages: Stage[];
@@ -45,7 +39,7 @@ export interface CreateStageResult {
   createStage: { id: Pick<Stage, "id"> };
 }
 
-export type CreateStageVariables = Omit<StageInput, "lobbies"> & {
+export type CreateStageVariables = any & {
   tournamentId: number;
 };
 
@@ -82,10 +76,7 @@ export interface CreateLobbyResult {
   createLobby: { id: Pick<Lobby, "id"> };
 }
 
-export type CreateLobbyVariables = Omit<
-  LobbyInput,
-  "roundCount" | "rounds" | "players"
-> & {
+export type CreateLobbyVariables = any & {
   stageId: number;
 };
 
@@ -101,7 +92,7 @@ export interface CreateRoundResult {
   createRound: { id: number };
 }
 
-export type CreateRoundVariables = RoundInput & {
+export type CreateRoundVariables = any & {
   stageId: number;
 };
 

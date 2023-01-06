@@ -2,7 +2,7 @@ import * as React from "react";
 import "./App.css";
 import "typeface-roboto";
 import "./design/fonts/VTFRedzone/stylesheet.css";
-import { Route, Routes } from "react-router-dom";
+import { Navigate, Outlet, Route, Routes, useLocation } from "react-router-dom";
 import { Home } from "./pages/Home/Home";
 import { Tournaments } from "./pages/Tournaments/Tournaments";
 import { Tournament } from "./pages/Tournament/Tournament";
@@ -17,6 +17,21 @@ import { NavBar } from "./components/NavBar/NavBar";
 import { Footer } from "./components/Footer/Footer";
 import { Players } from "./pages/Players/Players";
 import { About } from "./pages/About/About";
+import { useAuth } from "./hooks/useAuth";
+import { AdminHome } from "./pages/Admin/Home/AdminHome";
+import { Login } from "./pages/Auth/Login/Login";
+import { AdminTournament } from "./pages/Admin/Tournament/AdminTournament";
+
+const ProtectedRoutes = (props: any) => {
+  const location = useLocation();
+  const auth = useAuth();
+
+  return auth.user ? (
+    <Outlet />
+  ) : (
+    <Navigate to="/login" state={{ redirect: location.pathname }} />
+  );
+};
 
 export const App = () => {
   return (
@@ -43,7 +58,13 @@ export const App = () => {
         </Route>
         <Route path="stats" element={<SuspenseElement element={<Stats />} />} />
         <Route path="about" element={<SuspenseElement element={<About />} />} />
-        <Route path="admin">
+        <Route path="login" element={<Login />} />
+        <Route path="admin" element={<ProtectedRoutes />}>
+          <Route index element={<SuspenseElement element={<AdminHome />} />} />
+          <Route
+            path="tournaments/:id"
+            element={<SuspenseElement element={<AdminTournament />} />}
+          />
           <Route path="addTournament">
             <Route
               index

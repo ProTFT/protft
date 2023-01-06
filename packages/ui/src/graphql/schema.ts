@@ -6,41 +6,6 @@
 
 /* tslint:disable */
 /* eslint-disable */
-export interface DeepTournamentInput {
-  name: string;
-  region?: Nullable<string[]>;
-  host?: Nullable<string>;
-  participantsNumber?: Nullable<number>;
-  prizePool?: Nullable<number>;
-  startDate?: Nullable<DateTime>;
-  endDate?: Nullable<DateTime>;
-  setId: number;
-  stages: StageInput[];
-}
-
-export interface StageInput {
-  name: string;
-  sequence: number;
-  isFinal: boolean;
-  pointSchemaId: number;
-  lobbies: LobbyInput[];
-}
-
-export interface LobbyInput {
-  name: string;
-  sequence: number;
-  rounds: RoundInput[];
-  players: PlayerInput[];
-}
-
-export interface RoundInput {
-  sequence: number;
-}
-
-export interface PlayerInput {
-  id: number;
-}
-
 export interface PlayerLobbyResultInput {
   playerId: number;
   positions: PositionResultInput[];
@@ -88,6 +53,7 @@ export interface Tournament {
   host?: Nullable<string>;
   participantsNumber?: Nullable<number>;
   prizePool?: Nullable<number>;
+  currency?: Nullable<string>;
   startDate?: Nullable<DateTime>;
   endDate?: Nullable<DateTime>;
   setId: number;
@@ -127,6 +93,10 @@ export interface TournamentOverview {
   upcomingTournaments: Tournament[];
 }
 
+export interface DeleteResponse {
+  id: number;
+}
+
 export interface BooleanResult {
   result: boolean;
   error?: Nullable<string>;
@@ -146,7 +116,9 @@ export interface PlayerFilterMeta {
 export interface IQuery {
   sets(): Set[] | Promise<Set[]>;
   set(id: number): Nullable<Set> | Promise<Nullable<Set>>;
-  tournaments(): Tournament[] | Promise<Tournament[]>;
+  tournaments(
+    searchQuery?: Nullable<string>
+  ): Tournament[] | Promise<Tournament[]>;
   tournament(id: number): Tournament | Promise<Tournament>;
   tournamentOverview(): TournamentOverview | Promise<TournamentOverview>;
   stages(tournamentId: number): Stage[] | Promise<Stage[]>;
@@ -155,6 +127,7 @@ export interface IQuery {
   players(
     region?: Nullable<string>,
     country?: Nullable<string>,
+    searchQuery?: Nullable<string>,
     take?: Nullable<number>,
     skip?: Nullable<number>
   ): Player[] | Promise<Player[]>;
@@ -177,11 +150,22 @@ export interface IMutation {
     host?: Nullable<string>,
     participantsNumber?: Nullable<number>,
     prizePool?: Nullable<number>,
+    currency?: Nullable<string>,
     startDate?: Nullable<DateTime>,
     endDate?: Nullable<DateTime>
   ): Tournament | Promise<Tournament>;
-  createDeepTournament(
-    tournament: DeepTournamentInput
+  deleteTournament(id: number): DeleteResponse | Promise<DeleteResponse>;
+  updateTournament(
+    id: number,
+    name?: Nullable<string>,
+    setId?: Nullable<number>,
+    region?: Nullable<string[]>,
+    host?: Nullable<string>,
+    participantsNumber?: Nullable<number>,
+    prizePool?: Nullable<number>,
+    currency?: Nullable<string>,
+    startDate?: Nullable<DateTime>,
+    endDate?: Nullable<DateTime>
   ): Tournament | Promise<Tournament>;
   createStage(
     tournamentId: number,

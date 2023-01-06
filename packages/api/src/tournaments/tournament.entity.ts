@@ -43,6 +43,10 @@ export class Tournament {
   @Column({ nullable: true })
   prizePool?: number;
 
+  @Field({ nullable: true })
+  @Column({ nullable: true })
+  currency?: string;
+
   @Field(() => GraphQLISODateTime, { nullable: true })
   @Column({ nullable: true })
   startDate?: Date;

@@ -128,7 +128,9 @@ export const TournamentWizard = () => {
         setId: Number(setId),
       };
       const result = await createTournament(payload);
-      navigate(`${result.data?.createTournament.id}`);
+      if (!result.error) {
+        navigate(`${result.data?.createTournament.id}`);
+      }
     }
   };
 

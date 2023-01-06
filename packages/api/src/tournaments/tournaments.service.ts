@@ -1,9 +1,11 @@
-import { Injectable } from "@nestjs/common";
+import { Injectable, NotFoundException } from "@nestjs/common";
 import { InjectRepository } from "@nestjs/typeorm";
 import { Raw, Repository } from "typeorm";
+import { DeleteResponse } from "../lib/dto/delete-return";
 import { SearchQuery } from "../lib/SearchQuery";
 import { DeepTournamentInput } from "./dto/create-deep-tournament.args";
 import { CreateTournamentArgs } from "./dto/create-tournament.args";
+import { UpdateTournamentArgs } from "./dto/update-tournament.args";
 import { Tournament } from "./tournament.entity";
 
 @Injectable()
@@ -59,7 +61,21 @@ export class TournamentsService {
     return this.tournamentRepository.save(payload);
   }
 
+  async updateOne({ id, ...rest }: UpdateTournamentArgs): Promise<Tournament> {
+    const tournament = await this.tournamentRepository.findOne(id);
+    if (!tournament) {
+      throw new NotFoundException();
+    }
+    await this.tournamentRepository.update({ id }, rest);
+    return this.tournamentRepository.findOne(id);
+  }
+
   createDeepOne(tournament: DeepTournamentInput): Promise<Tournament> {
     return this.tournamentRepository.save(tournament);
+  }
+
+  async deleteOne(id: number): Promise<DeleteResponse> {
+    await this.tournamentRepository.delete({ id });
+    return new DeleteResponse(id);
   }
 }

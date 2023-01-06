@@ -32,6 +32,7 @@ export const TournamentContent = ({
     participantsNumber,
     prizePool,
     region,
+    currency,
   },
 }: Props) => {
   const isMobile = useIsMobile();
@@ -41,8 +42,8 @@ export const TournamentContent = ({
   );
   const formattedEndDate = useMemo(() => formatDateFromDB(endDate), [endDate]);
   const formattedPrizePool = useMemo(
-    () => formatMoney("USD", prizePool),
-    [prizePool]
+    () => formatMoney(currency, prizePool),
+    [currency, prizePool]
   );
 
   return (

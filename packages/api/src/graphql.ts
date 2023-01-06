@@ -7,41 +7,6 @@
 
 /* tslint:disable */
 /* eslint-disable */
-export interface DeepTournamentInput {
-    name: string;
-    region?: Nullable<string[]>;
-    host?: Nullable<string>;
-    participantsNumber?: Nullable<number>;
-    prizePool?: Nullable<number>;
-    startDate?: Nullable<DateTime>;
-    endDate?: Nullable<DateTime>;
-    setId: number;
-    stages: StageInput[];
-}
-
-export interface StageInput {
-    name: string;
-    sequence: number;
-    isFinal: boolean;
-    pointSchemaId: number;
-    lobbies: LobbyInput[];
-}
-
-export interface LobbyInput {
-    name: string;
-    sequence: number;
-    rounds: RoundInput[];
-    players: PlayerInput[];
-}
-
-export interface RoundInput {
-    sequence: number;
-}
-
-export interface PlayerInput {
-    id: number;
-}
-
 export interface PlayerLobbyResultInput {
     playerId: number;
     positions: PositionResultInput[];
@@ -89,6 +54,7 @@ export interface Tournament {
     host?: Nullable<string>;
     participantsNumber?: Nullable<number>;
     prizePool?: Nullable<number>;
+    currency?: Nullable<string>;
     startDate?: Nullable<DateTime>;
     endDate?: Nullable<DateTime>;
     setId: number;
@@ -128,6 +94,10 @@ export interface TournamentOverview {
     upcomingTournaments: Tournament[];
 }
 
+export interface DeleteResponse {
+    id: number;
+}
+
 export interface BooleanResult {
     result: boolean;
     error?: Nullable<string>;
@@ -161,8 +131,9 @@ export interface IQuery {
 }
 
 export interface IMutation {
-    createTournament(name: string, setId: number, region?: Nullable<string[]>, host?: Nullable<string>, participantsNumber?: Nullable<number>, prizePool?: Nullable<number>, startDate?: Nullable<DateTime>, endDate?: Nullable<DateTime>): Tournament | Promise<Tournament>;
-    createDeepTournament(tournament: DeepTournamentInput): Tournament | Promise<Tournament>;
+    createTournament(name: string, setId: number, region?: Nullable<string[]>, host?: Nullable<string>, participantsNumber?: Nullable<number>, prizePool?: Nullable<number>, currency?: Nullable<string>, startDate?: Nullable<DateTime>, endDate?: Nullable<DateTime>): Tournament | Promise<Tournament>;
+    deleteTournament(id: number): DeleteResponse | Promise<DeleteResponse>;
+    updateTournament(id: number, name?: Nullable<string>, setId?: Nullable<number>, region?: Nullable<string[]>, host?: Nullable<string>, participantsNumber?: Nullable<number>, prizePool?: Nullable<number>, currency?: Nullable<string>, startDate?: Nullable<DateTime>, endDate?: Nullable<DateTime>): Tournament | Promise<Tournament>;
     createStage(tournamentId: number, pointSchemaId: number, name: string, sequence: number, isFinal: boolean): Stage | Promise<Stage>;
     createLobby(stageId: number, name: string, sequence: number): Lobby | Promise<Lobby>;
     createRound(stageId: number, sequence: number): Round | Promise<Round>;

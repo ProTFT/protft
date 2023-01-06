@@ -26,3 +26,8 @@ variable "db_url" {
   type = string
   description = "DB URL"
 }
+
+variable "signin_key" {
+  type = string
+  description = "Key to create users"
+}

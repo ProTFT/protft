@@ -20,6 +20,9 @@ export class CreateTournamentArgs {
   @Field(() => Float, { name: "prizePool", nullable: true })
   prizePool?: number;
 
+  @Field({ name: "currency", nullable: true })
+  currency?: string;
+
   @Field({ name: "startDate", nullable: true })
   startDate?: Date;
 

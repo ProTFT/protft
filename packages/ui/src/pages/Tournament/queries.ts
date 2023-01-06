@@ -14,8 +14,10 @@ export const TOURNAMENT_QUERY = gql`
       host
       participantsNumber
       prizePool
+      currency
       startDate
       endDate
+      setId
       set {
         id
         name

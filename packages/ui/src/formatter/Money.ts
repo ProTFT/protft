@@ -5,8 +5,11 @@ const numberFormatter = (currency: string) =>
     minimumFractionDigits: 2,
   });
 
-export const formatMoney = (currency: string, value?: number | null) => {
-  if (!value) {
+export const formatMoney = (
+  currency?: string | null,
+  value?: number | null
+) => {
+  if (!value || !currency) {
     return "?";
   }
   return numberFormatter(currency).format(value);
