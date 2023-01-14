@@ -17,6 +17,8 @@ import { formatStats } from "./players.adapter";
 import { Player } from "./player.entity";
 import { PlayersService } from "./players.service";
 import { Tournament } from "../tournaments/tournament.entity";
+import { UseGuards } from "@nestjs/common";
+import { GqlJwtAuthGuard } from "../auth/jwt-auth.guard";
 
 @Resolver(() => Player)
 export class PlayersResolver extends BaseResolver {
@@ -69,6 +71,7 @@ export class PlayersResolver extends BaseResolver {
     };
   }
 
+  @UseGuards(GqlJwtAuthGuard)
   @Mutation(() => Player)
   async createPlayer(@Args() { name, country, region }: CreatePlayerArgs) {
     const payload = { name, country, region };

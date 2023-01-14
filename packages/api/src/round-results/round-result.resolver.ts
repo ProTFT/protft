@@ -64,6 +64,7 @@ export class RoundResultsResolver {
     return formatted;
   }
 
+  @UseGuards(GqlJwtAuthGuard)
   @Mutation(() => BooleanResult)
   async createLobbyGroupResult(
     @Args() { lobbyGroupId, results }: CreateLobbyGroupResultArgs,
@@ -85,6 +86,7 @@ export class RoundResultsResolver {
     }
   }
 
+  @UseGuards(GqlJwtAuthGuard)
   @Mutation(() => BooleanResult)
   async createLobbyResult(@Args() args: CreateLobbyResultArgs) {
     const positionInputs = formatResults(args);

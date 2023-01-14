@@ -41,6 +41,7 @@ export class LobbiesResolver {
     return this.lobbiesService.findAllByLobbyGroup(id);
   }
 
+  @UseGuards(GqlJwtAuthGuard)
   @Mutation(() => Lobby)
   async createLobby(
     @Args() { stageId, name, sequence, lobbyGroupId }: CreateLobbyArgs,
@@ -49,6 +50,7 @@ export class LobbiesResolver {
     return this.lobbiesService.createOne(payload);
   }
 
+  @UseGuards(GqlJwtAuthGuard)
   @Mutation(() => Lobby)
   async updateLobby(@Args() payload: UpdateLobbyArgs) {
     return this.lobbiesService.updateOne(payload);
@@ -60,12 +62,14 @@ export class LobbiesResolver {
     return this.lobbiesService.deleteOne(id);
   }
 
+  @UseGuards(GqlJwtAuthGuard)
   @Mutation(() => Round)
   async createRound(@Args() { sequence, stageId }: CreateRoundArgs) {
     const payload = { sequence, stageId };
     return this.roundsService.createOne(payload);
   }
 
+  @UseGuards(GqlJwtAuthGuard)
   @Mutation(() => [LobbyPlayerInfo])
   async createPlayerLobbyGroup(@Args() payload: CreatePlayerLobbyGroupArgs) {
     return this.lobbiesService.createPlayerLobbyGroup(payload);

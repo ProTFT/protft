@@ -86,11 +86,13 @@ export class StagesResolver {
     return this.stagePlayerInfosService.findAllByStage(id);
   }
 
+  @UseGuards(GqlJwtAuthGuard)
   @Mutation(() => Stage)
   async createStage(@Args() payload: CreateStageArgs) {
     return this.stagesService.createOne(payload);
   }
 
+  @UseGuards(GqlJwtAuthGuard)
   @Mutation(() => Stage)
   async updateStage(@Args() payload: UpdateStageArgs) {
     return this.stagesService.updateOne(payload);
@@ -111,7 +113,7 @@ export class StagesResolver {
     return this.stagePlayerInfosService.createStagePlayer(payload);
   }
 
-  // @UseGuards(GqlJwtAuthGuard)
+  @UseGuards(GqlJwtAuthGuard)
   @Mutation(() => CreateLobbiesResponse)
   async generateLobbies(
     @Args()
