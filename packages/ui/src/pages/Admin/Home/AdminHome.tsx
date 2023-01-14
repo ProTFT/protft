@@ -7,13 +7,14 @@ import { TournamentListItem } from "../../Tournaments/TournamentListItem/Tournam
 import { StyledTournamentList } from "../../Tournaments/Tournaments.styled";
 import { StyledAdminBar } from "../Components/AdminBar/AdminBar.styled";
 import { TournamentDialog } from "../Components/TournamentDialog/TournamentDialog";
+import { StyledButton, StyledContainer } from "./AdminHome.styled";
 import {
   CreateTournamentResult,
   CreateTournamentVariables,
   CREATE_TOURNAMENT_QUERY,
-} from "../TournamentWizard/queries";
-import { StyledButton, StyledContainer } from "./AdminHome.styled";
-import { TournamentsQueryResult, TOURNAMENTS_QUERY } from "./queries";
+  TournamentsQueryResult,
+  TOURNAMENTS_QUERY,
+} from "./queries";
 
 export const AdminHome = () => {
   const { signout } = useAuth();

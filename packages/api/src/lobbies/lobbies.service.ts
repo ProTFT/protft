@@ -1,6 +1,5 @@
 import { Injectable, NotFoundException } from "@nestjs/common";
 import { InjectRepository } from "@nestjs/typeorm";
-import { request } from "http";
 import { Repository } from "typeorm";
 import { DeleteResponse } from "../lib/dto/delete-return";
 import { LobbyPlayerInfo } from "../lobby-player-infos/lobby-player-info.entity";
@@ -70,16 +69,6 @@ export class LobbiesService {
     const responses = await Promise.all(requests);
     return responses.flatMap((a) => a);
   }
-
-  // async createPlayerLobby(payload: CreatePlayerLobbyArgs): Promise<any> {
-  //   const { lobbyId, playerIds } = payload;
-  //   const lobby = await this.lobbiesRepository.findOne(lobbyId);
-  //   const playerObjects = playerIds.map((id: number) => ({
-  //     id,
-  //   }));
-  //   lobby.players = playerObjects as Player[];
-  //   return this.lobbiesRepository.save(lobby);
-  // }
 
   async updateOne({ id, ...rest }: UpdateLobbyArgs): Promise<Lobby> {
     const lobby = await this.lobbiesRepository.findOne(id);

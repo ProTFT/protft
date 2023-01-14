@@ -31,13 +31,3 @@ export const StageDialog = ({ dialogRef, formRef, onSubmit, stage }: Props) => {
     </DialogForm>
   );
 };
-
-// id: number;
-//   name: string;
-//   sequence: number;
-//   isFinal: boolean;
-//   tournamentId: number;
-//   pointSchemaId: number;
-//   roundCount: number;
-//   lobbies?: Nullable<Lobby[]>;
-//   rounds?: Nullable<Round[]>;

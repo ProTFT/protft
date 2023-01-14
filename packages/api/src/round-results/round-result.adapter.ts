@@ -104,40 +104,4 @@ export function formatLobbyGroupResults(
   );
 
   return result;
-
-  // roundId: number;
-
-  // @PrimaryColumn()
-  // lobbyPlayerId: number;
-
-  // @Column()
-  // position: number;
-
-  // @ManyToOne(() => LobbyPlayerInfo, {
-  //   onDelete: "CASCADE",
-  // })
-  // @JoinColumn({ name: "lobbyPlayerId" })
-  // lobbyPlayerInfo: LobbyPlayerInfo;
-
-  // @ManyToOne(() => Round, {
-  //   onDelete: "CASCADE",
-  // })
-  // @JoinColumn({ name: "roundId" })
-  // round: Round;
-  // return players.reduce((prev, { playerId, positions }) => {
-  //   return [
-  //     ...prev,
-  //     ...positions.reduce((prev, { roundId, position }) => {
-  //       return [
-  //         ...prev,
-  //         {
-  //           lobbyId,
-  //           playerId,
-  //           position,
-  //           roundId,
-  //         },
-  //       ];
-  //     }, []),
-  //   ];
-  // }, []);
 }

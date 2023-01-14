@@ -36,20 +36,15 @@ export class RoundResultsResolver {
     return sortResults(formattedResults, tiebreakers);
   }
 
-  // @UseGuards(GqlJwtAuthGuard)
+  @UseGuards(GqlJwtAuthGuard)
   @Query(() => [PlayerResults])
   async resultsByLobbyGroup(
     @Args("lobbyGroupId", { type: () => Int }) lobbyGroupId: number,
   ) {
-    // const { stageId } = await this.lobbiesService.findOneLobbyGroup(
-    //   lobbyGroupId,
-    // );
-    // const { tiebreakers } = await this.stagesService.findOne(stageId);
     const results = await this.roundResultsService.findResultsByLobbyGroup(
       lobbyGroupId,
     );
     return fromRawToConsolidatedRoundResults(results);
-    // return sortResults(formattedResults, tiebreakers);
   }
 
   @Query(() => [PlayersStats])
@@ -82,7 +77,6 @@ export class RoundResultsResolver {
       sequence,
       rounds,
     );
-    // console.log(positionInputs);
     try {
       await this.roundResultsService.createResults(positionInputs);
       return { result: true };

@@ -111,7 +111,7 @@ const DroppableContainer = ({
 
 export const StagePlayers = () => {
   const { id: tournamentId, stageId } = useParams();
-  const [searchQuery, setSearchQuery] = useState("");
+  const [, setSearchQuery] = useState("");
   let timeout = useRef<ReturnType<typeof setTimeout>>();
 
   const [{ data }] = useQuery<TournamentPlayersResponse>({

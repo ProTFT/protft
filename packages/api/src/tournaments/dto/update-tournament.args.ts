@@ -31,7 +31,3 @@ export class UpdateTournamentArgs {
   @Field({ name: "endDate", nullable: true })
   endDate?: Date;
 }
-// export class UpdateTournamentArgs extends IntersectionType(
-//   IdArg,
-//   CreateTournamentArgs,
-// ) {}

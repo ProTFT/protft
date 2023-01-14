@@ -1,7 +1,7 @@
 import styled from "styled-components";
 import { StyledHorizontalContainer } from "../../../../components/Layout/HorizontalContainer/HorizontalContainer.styled";
 import { colors } from "../../../../design/colors";
-import { StyledButton } from "../../TournamentWizard/TournamentWizard.styled";
+import { StyledButton } from "../../Home/AdminHome.styled";
 
 export const StyledAddTournamentDialog = styled.dialog`
   background-color: ${colors.darkPurple};

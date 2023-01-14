@@ -51,12 +51,7 @@ export class StagesService {
     return stage;
   }
 
-  async updateOne({
-    id,
-    roundCount,
-    ...rest
-  }: UpdateStageArgs): Promise<Stage> {
-    // this.updateRounds(id, rest.roundCount);
+  async updateOne({ id, ...rest }: UpdateStageArgs): Promise<Stage> {
     const stage = await this.stageRepository.findOne(id);
     if (!stage) {
       throw new NotFoundException();

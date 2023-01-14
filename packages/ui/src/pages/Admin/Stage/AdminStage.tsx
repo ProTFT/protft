@@ -11,16 +11,8 @@ import {
   TOURNAMENT_QUERY,
 } from "./queries";
 import { useQuery } from "urql";
-import {
-  Link,
-  Navigate,
-  Route,
-  Routes,
-  useLocation,
-  useParams,
-} from "react-router-dom";
+import { Link, Route, Routes, useLocation, useParams } from "react-router-dom";
 import { StyledHeaderContainer } from "./AdminStage.styled";
-import { StyledAdminBar } from "../Components/AdminBar/AdminBar.styled";
 import {
   StyledTabButton,
   StyledTabContainer,
@@ -42,7 +34,7 @@ export const AdminStage = () => {
     (path: string) => location.pathname.includes(path),
     [location.pathname]
   );
-  const [{ data }, refetch] = useQuery<StageQueryResponse>({
+  const [{ data }] = useQuery<StageQueryResponse>({
     query: STAGE_QUERY,
     variables: { id: Number(stageId) },
   });

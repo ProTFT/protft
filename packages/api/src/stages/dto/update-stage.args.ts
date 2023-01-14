@@ -29,4 +29,3 @@ export class UpdateStageArgs {
   @Field({ name: "description", nullable: true })
   description?: string;
 }
-// export class UpdateStageArgs extends IntersectionType(IdArg, CreateStageArgs) {}

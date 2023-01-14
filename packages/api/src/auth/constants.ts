@@ -1,5 +1,5 @@
 export const jwtConstants = {
-  secret: "secretKey",
+  secret: process.env.JWT_SECRET,
 };
 
-export const cookieSecret = "secretKey";
+export const cookieSecret = process.env.COOKIE_SECRET;

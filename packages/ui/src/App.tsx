@@ -8,10 +8,6 @@ import { Tournaments } from "./pages/Tournaments/Tournaments";
 import { Tournament } from "./pages/Tournament/Tournament";
 import { Player } from "./pages/Player/Player";
 import { SuspenseElement } from "./components/SuspendedPage";
-import { TournamentWizard } from "./pages/Admin/TournamentWizard/TournamentWizard";
-import { StageWizard } from "./pages/Admin/StageWizard/StageWizard";
-import { LobbiesWizard } from "./pages/Admin/LobbiesWizard/LobbiesWizard";
-import { ResultsWizard } from "./pages/Admin/ResultsWizard/ResultsWizard";
 import { Stats } from "./pages/Stats/Stats";
 import { NavBar } from "./components/NavBar/NavBar";
 import { Footer } from "./components/Footer/Footer";
@@ -70,26 +66,6 @@ export const App = () => {
             path="tournaments/:id/*"
             element={<SuspenseElement element={<AdminTournament />} />}
           />
-          <Route path="addTournament">
-            <Route
-              index
-              element={<SuspenseElement element={<TournamentWizard />} />}
-            />
-            <Route path=":tournamentId">
-              <Route
-                index
-                element={<SuspenseElement element={<StageWizard />} />}
-              />
-              <Route
-                path="lobbies"
-                element={<SuspenseElement element={<LobbiesWizard />} />}
-              />
-              <Route
-                path="results"
-                element={<SuspenseElement element={<ResultsWizard />} />}
-              />
-            </Route>
-          </Route>
         </Route>
       </Routes>
       <Footer />

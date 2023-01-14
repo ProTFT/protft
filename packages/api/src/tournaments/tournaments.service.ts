@@ -4,7 +4,6 @@ import { Raw, Repository } from "typeorm";
 import { DeleteResponse } from "../lib/dto/delete-return";
 import { SearchQuery } from "../lib/SearchQuery";
 import { Player } from "../players/player.entity";
-// import { DeepTournamentInput } from "./dto/create-deep-tournament.args";
 import { CreateTournamentPlayerArgs } from "./dto/create-tournament-player.args";
 import { CreateTournamentArgs } from "./dto/create-tournament.args";
 import { UpdateTournamentArgs } from "./dto/update-tournament.args";
@@ -71,10 +70,6 @@ export class TournamentsService {
     await this.tournamentRepository.update({ id }, rest);
     return this.tournamentRepository.findOne(id);
   }
-
-  // createDeepOne(tournament: DeepTournamentInput): Promise<Tournament> {
-  //   return this.tournamentRepository.save(tournament);
-  // }
 
   async deleteOne(id: number): Promise<DeleteResponse> {
     await this.tournamentRepository.delete({ id });

@@ -66,14 +66,6 @@ export class LobbiesResolver {
     return this.roundsService.createOne(payload);
   }
 
-  // @Mutation(() => Round)
-  // async createPlayerLobby(
-  //   @Args() { lobbyId, playerIds }: CreatePlayerLobbyArgs,
-  // ) {
-  //   const payload = { lobbyId, playerIds };
-  //   return this.lobbiesService.createPlayerLobby(payload);
-  // }
-
   @Mutation(() => [LobbyPlayerInfo])
   async createPlayerLobbyGroup(@Args() payload: CreatePlayerLobbyGroupArgs) {
     return this.lobbiesService.createPlayerLobbyGroup(payload);

@@ -23,3 +23,38 @@ export const TOURNAMENTS_QUERY = gql`
     }
   }
 `;
+
+export interface CreateTournamentResult {
+  createTournament: { id: Pick<Tournament, "id"> };
+}
+
+export type CreateTournamentVariables = Pick<
+  Tournament,
+  "name" | "region" | "setId"
+>;
+
+export const CREATE_TOURNAMENT_QUERY = gql`
+  mutation createTournament(
+    $name: String!
+    $region: [String!]
+    $host: String
+    $participantsNumber: Int
+    $prizePool: Float
+    $startDate: DateTime
+    $endDate: DateTime
+    $setId: Int!
+  ) {
+    createTournament(
+      name: $name
+      region: $region
+      host: $host
+      participantsNumber: $participantsNumber
+      prizePool: $prizePool
+      startDate: $startDate
+      endDate: $endDate
+      setId: $setId
+    ) {
+      id
+    }
+  }
+`;

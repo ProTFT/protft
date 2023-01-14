@@ -10,45 +10,6 @@ export interface Props {
   tournament?: Tournament;
 }
 
-const regionOptions = [
-  {
-    name: "World",
-    value: "WO",
-  },
-  {
-    name: "NA",
-    value: "NA",
-  },
-  {
-    name: "LATAM",
-    value: "LA",
-  },
-  {
-    name: "Brazil",
-    value: "BR",
-  },
-  {
-    name: "Oceania",
-    value: "OCE",
-  },
-  {
-    name: "EMEA",
-    value: "EMEA",
-  },
-  {
-    name: "Japan",
-    value: "JP",
-  },
-  {
-    name: "Korea",
-    value: "KR",
-  },
-  {
-    name: "China",
-    value: "CN",
-  },
-];
-
 export const TournamentDialog = ({
   dialogRef,
   formRef,

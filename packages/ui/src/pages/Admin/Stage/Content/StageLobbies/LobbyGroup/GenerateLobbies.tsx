@@ -12,7 +12,7 @@ interface Props {
 }
 
 export const GenerateLobbies = ({ stageId }: Props) => {
-  const [roundsPerLobby, setRoundsPerLobby] = useState<number>();
+  const [roundsPerLobby, setRoundsPerLobby] = useState<number>(0);
   const [, generateLobbies] = useMutation<
     GenerateLobbiesResult,
     GenerateLobbiesVariables
@@ -21,12 +21,12 @@ export const GenerateLobbies = ({ stageId }: Props) => {
   const onGenerateLobbies = useCallback(async () => {
     const result = await generateLobbies({
       stageId: Number(stageId!),
-      roundsPerLobbyGroup: 1,
+      roundsPerLobbyGroup: roundsPerLobby,
     });
     if (result.error) {
       alert(result.error);
     }
-  }, [generateLobbies, stageId]);
+  }, [generateLobbies, roundsPerLobby, stageId]);
 
   return (
     <>

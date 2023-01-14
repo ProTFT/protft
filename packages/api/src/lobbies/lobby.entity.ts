@@ -9,7 +9,6 @@ import {
   OneToMany,
   PrimaryGeneratedColumn,
 } from "typeorm";
-// import { RoundResult } from "../round-results/round-result.entity";
 import { LobbyPlayerInfo } from "../lobby-player-infos/lobby-player-info.entity";
 import { LobbyGroup } from "./lobby-group.entity";
 
@@ -49,7 +48,4 @@ export class Lobby {
     onDelete: "CASCADE",
   })
   lobbyGroup: LobbyGroup;
-
-  // @OneToMany(() => RoundResult, (roundResult) => roundResult.lobbyId)
-  // roundResults?: RoundResult[];
 }

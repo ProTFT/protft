@@ -31,3 +31,13 @@ variable "signin_key" {
   type = string
   description = "Key to create users"
 }
+
+variable "jwt_secret" {
+  type = string
+  description = "JWT encryption"
+}
+
+variable "cookie_secret" {
+  type = string
+  description = "Cookie encryption"
+}
