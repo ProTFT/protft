@@ -12,5 +12,9 @@ export const formatMoney = (
   if (!value || !currency) {
     return "?";
   }
-  return numberFormatter(currency).format(value);
+  try {
+    return numberFormatter(currency).format(value);
+  } catch (error) {
+    return "Error parsing currency";
+  }
 };

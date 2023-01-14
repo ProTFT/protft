@@ -5,18 +5,17 @@ import {
   Column,
   Entity,
   Index,
-  JoinTable,
-  ManyToMany,
   ManyToOne,
   OneToMany,
   PrimaryGeneratedColumn,
 } from "typeorm";
-import { RoundResult } from "../round-results/round-result.entity";
-import { PlayerResults } from "../round-results/dto/get-results.out";
+// import { RoundResult } from "../round-results/round-result.entity";
+import { LobbyPlayerInfo } from "../lobby-player-infos/lobby-player-info.entity";
+import { LobbyGroup } from "./lobby-group.entity";
 
 @ObjectType()
 @Entity()
-@Index(["stageId", "sequence"], { unique: true })
+@Index(["lobbyGroupId", "sequence"], { unique: true })
 export class Lobby {
   @Field(() => Int)
   @PrimaryGeneratedColumn()
@@ -26,6 +25,9 @@ export class Lobby {
   @Column()
   stageId: number;
 
+  @Column({ nullable: true })
+  lobbyGroupId: number;
+
   @Field()
   @Column()
   name: string;
@@ -34,14 +36,20 @@ export class Lobby {
   @Column()
   sequence: number;
 
-  @Field(() => [Player], { nullable: true })
-  @ManyToMany(() => Player, { cascade: true })
-  @JoinTable()
-  players?: Player[];
+  @Field(() => [Player])
+  @OneToMany(() => LobbyPlayerInfo, (lobbyPlayer) => lobbyPlayer.lobby)
+  players: LobbyPlayerInfo[];
 
-  @ManyToOne(() => Stage, (stage) => stage.id)
+  @ManyToOne(() => Stage, (stage) => stage.id, {
+    onDelete: "CASCADE",
+  })
   stage: Stage;
 
-  @OneToMany(() => RoundResult, (roundResult) => roundResult.lobbyId)
-  roundResults?: RoundResult[];
+  @ManyToOne(() => LobbyGroup, (lobbyGroup) => lobbyGroup.id, {
+    onDelete: "CASCADE",
+  })
+  lobbyGroup: LobbyGroup;
+
+  // @OneToMany(() => RoundResult, (roundResult) => roundResult.lobbyId)
+  // roundResults?: RoundResult[];
 }

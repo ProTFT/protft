@@ -6,5 +6,6 @@ import { StagePlayerInfosService } from "./stage-player-infos.service";
 @Module({
   imports: [TypeOrmModule.forFeature([StagePlayerInfo])],
   providers: [StagePlayerInfosService],
+  exports: [StagePlayerInfosService],
 })
 export class StagePlayerInfosModule {}

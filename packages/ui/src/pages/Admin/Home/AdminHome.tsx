@@ -5,17 +5,14 @@ import { Tournament } from "../../../graphql/schema";
 import { useAuth } from "../../../hooks/useAuth";
 import { TournamentListItem } from "../../Tournaments/TournamentListItem/TournamentListItem";
 import { StyledTournamentList } from "../../Tournaments/Tournaments.styled";
+import { StyledAdminBar } from "../Components/AdminBar/AdminBar.styled";
 import { TournamentDialog } from "../Components/TournamentDialog/TournamentDialog";
 import {
   CreateTournamentResult,
   CreateTournamentVariables,
   CREATE_TOURNAMENT_QUERY,
 } from "../TournamentWizard/queries";
-import {
-  StyledAdminBar,
-  StyledButton,
-  StyledContainer,
-} from "./AdminHome.styled";
+import { StyledButton, StyledContainer } from "./AdminHome.styled";
 import { TournamentsQueryResult, TOURNAMENTS_QUERY } from "./queries";
 
 export const AdminHome = () => {

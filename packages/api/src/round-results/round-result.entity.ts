@@ -1,41 +1,27 @@
-import { Player } from "../players/player.entity";
-import {
-  Column,
-  Entity,
-  Index,
-  JoinColumn,
-  ManyToOne,
-  PrimaryColumn,
-} from "typeorm";
+import { Column, Entity, JoinColumn, ManyToOne, PrimaryColumn } from "typeorm";
 import { Round } from "../rounds/round.entity";
-import { Lobby } from "../lobbies/lobby.entity";
+import { LobbyPlayerInfo } from "../lobby-player-infos/lobby-player-info.entity";
 
 @Entity()
-@Index(["lobbyId", "roundId", "position"], {
-  unique: true,
-})
 export class RoundResult {
   @PrimaryColumn()
   roundId: number;
 
   @PrimaryColumn()
-  lobbyId: number;
+  lobbyPlayerId: number;
 
   @Column()
-  playerId: number;
-
-  @PrimaryColumn()
   position: number;
 
-  @ManyToOne(() => Lobby)
-  @JoinColumn({ name: "lobbyId" })
-  lobby: Lobby;
+  @ManyToOne(() => LobbyPlayerInfo, {
+    onDelete: "CASCADE",
+  })
+  @JoinColumn({ name: "lobbyPlayerId" })
+  lobbyPlayerInfo: LobbyPlayerInfo;
 
-  @ManyToOne(() => Round)
+  @ManyToOne(() => Round, {
+    onDelete: "CASCADE",
+  })
   @JoinColumn({ name: "roundId" })
   round: Round;
-
-  @ManyToOne(() => Player, {})
-  @JoinColumn({ name: "playerId" })
-  player: Player;
 }

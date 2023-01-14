@@ -2,14 +2,13 @@ import { ArgsType, Field, Float, Int } from "@nestjs/graphql";
 
 @ArgsType()
 export class UpdateTournamentArgs {
-  @Field({ name: "id" })
+  @Field(() => Int, { name: "id" })
   id: number;
+  @Field({ name: "name" })
+  name: string;
 
-  @Field({ name: "name", nullable: true })
-  name?: string;
-
-  @Field(() => Int, { name: "setId", nullable: true })
-  setId?: number;
+  @Field(() => Int, { name: "setId" })
+  setId: number;
 
   @Field(() => [String], { name: "region", nullable: true })
   region?: string[];
@@ -32,3 +31,7 @@ export class UpdateTournamentArgs {
   @Field({ name: "endDate", nullable: true })
   endDate?: Date;
 }
+// export class UpdateTournamentArgs extends IntersectionType(
+//   IdArg,
+//   CreateTournamentArgs,
+// ) {}

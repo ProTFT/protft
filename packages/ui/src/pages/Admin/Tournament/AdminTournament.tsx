@@ -3,21 +3,20 @@ import { useNavigate, useParams } from "react-router-dom";
 import { useMutation, useQuery } from "urql";
 import { TournamentContent } from "../../../components/TournamentContent/TournamentContent";
 import { Tournament } from "../../../graphql/schema";
-import {
-  TournamentQueryResponse,
-  TOURNAMENT_QUERY,
-} from "../../Tournament/queries";
 import { StyledHeaderContainer } from "../../Tournament/Tournament.styled";
 import { TournamentDialog } from "../Components/TournamentDialog/TournamentDialog";
 import {
   StyledActionButton,
   StyledActionsContainer,
 } from "./AdminTournament.styled";
+import { AdminTournamentContent } from "./Content/Content";
 import {
   DELETE_TOURNAMENT_MUTATION,
+  TournamentQueryResponse,
   TournamentsDeleteResult,
   TournamentsUpdateResult,
   TournamentUpdateVariables,
+  TOURNAMENT_QUERY,
   UPDATE_TOURNAMENT_MUTATION,
 } from "./queries";
 
@@ -87,6 +86,7 @@ export const AdminTournament = () => {
       <StyledHeaderContainer>
         <TournamentContent tournament={data!.tournament} />
       </StyledHeaderContainer>
+      <AdminTournamentContent />
     </div>
   );
 };

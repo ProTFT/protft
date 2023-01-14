@@ -17,3 +17,21 @@ export const StyledInput = styled.input`
   height: 1.5rem;
   padding: 1rem;
 `;
+
+export const StyledSelect = styled.select`
+  border: 2px solid black;
+  border-radius: 4px;
+  height: 1.5rem;
+`;
+
+export const StyledCheckboxGroup = styled.div`
+  display: flex;
+  flex-direction: column;
+  gap: 1rem;
+  border: none;
+  flex-wrap: wrap;
+`;
+
+export const StyledOptionContainer = styled(StyledHorizontalContainer)`
+  gap: 0.5rem;
+`;

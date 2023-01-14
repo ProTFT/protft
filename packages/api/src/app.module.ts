@@ -16,6 +16,7 @@ import { RoundResultsModule } from "./round-results/round-results.module";
 import { StagePlayerInfosModule } from "./stage-player-infos/stage-player-infos.module";
 import { AuthModule } from "./auth/auth.module";
 import { UsersModule } from "./users/users.module";
+import { LobbyPlayerInfosModule } from "./lobby-player-infos/lobby-player-infos.module";
 
 const localDatabaseInfo: TypeOrmModuleOptions = {
   host: "localhost",
@@ -64,6 +65,7 @@ export const isProd = (): boolean => process.env.NODE_ENV === "production";
     StagePlayerInfosModule,
     AuthModule,
     UsersModule,
+    LobbyPlayerInfosModule,
   ],
   controllers: [AppController],
   providers: [AppService],

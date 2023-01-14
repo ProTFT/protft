@@ -12,6 +12,8 @@ import { Lobby } from "../lobbies/lobby.entity";
 import { Round } from "../rounds/round.entity";
 import { PointSchema } from "../points/point.entity";
 import { Tournament } from "../tournaments/tournament.entity";
+import { StagePlayerInfo } from "../stage-player-infos/stage-player-info.entity";
+import { LobbyGroup } from "../lobbies/lobby-group.entity";
 
 @ObjectType()
 @Entity()
@@ -24,6 +26,10 @@ export class Stage {
   @Field()
   @Column()
   name: string;
+
+  @Field()
+  @Column({ default: "" })
+  description: string;
 
   @Field(() => Int)
   @Column()
@@ -41,11 +47,15 @@ export class Stage {
   @Column()
   pointSchemaId: number;
 
+  @Field(() => [Int])
   @Column("int", { nullable: true, array: true })
   tiebreakers?: number[];
 
   @Field(() => Int)
   roundCount: number;
+
+  @Field(() => [StagePlayerInfo])
+  players: StagePlayerInfo[];
 
   @Field(() => [Lobby], { nullable: true })
   @OneToMany(() => Lobby, (lobby) => lobby.stage, {
@@ -53,15 +63,24 @@ export class Stage {
   })
   lobbies?: Lobby[];
 
+  @Field(() => [LobbyGroup])
+  @OneToMany(() => LobbyGroup, (lobbyGroup) => lobbyGroup.stage, {
+    cascade: true,
+  })
+  lobbyGroups: LobbyGroup[];
+
   @Field(() => [Round], { nullable: true })
   @OneToMany(() => Round, (round) => round.stage, {
     cascade: true,
   })
   rounds?: Round[];
 
-  @ManyToOne(() => Tournament, (tournament) => tournament.id)
+  @ManyToOne(() => Tournament, (tournament) => tournament.id, {
+    onDelete: "CASCADE",
+  })
   tournament: Tournament;
 
+  @Field(() => PointSchema)
   @JoinColumn({ name: "pointSchemaId" })
   pointSchema: PointSchema;
 }

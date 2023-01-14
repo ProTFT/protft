@@ -21,6 +21,7 @@ import { useAuth } from "./hooks/useAuth";
 import { AdminHome } from "./pages/Admin/Home/AdminHome";
 import { Login } from "./pages/Auth/Login/Login";
 import { AdminTournament } from "./pages/Admin/Tournament/AdminTournament";
+import { AdminStage } from "./pages/Admin/Stage/AdminStage";
 
 const ProtectedRoutes = (props: any) => {
   const location = useLocation();
@@ -62,7 +63,11 @@ export const App = () => {
         <Route path="admin" element={<ProtectedRoutes />}>
           <Route index element={<SuspenseElement element={<AdminHome />} />} />
           <Route
-            path="tournaments/:id"
+            path="tournaments/:id/stages/:stageId/*"
+            element={<SuspenseElement element={<AdminStage />} />}
+          />
+          <Route
+            path="tournaments/:id/*"
             element={<SuspenseElement element={<AdminTournament />} />}
           />
           <Route path="addTournament">

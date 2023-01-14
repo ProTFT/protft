@@ -1,5 +1,5 @@
 import { gql } from "urql";
-import { Tournament } from "../../../graphql/schema";
+import { Player, Tournament } from "../../../graphql/schema";
 
 export interface DeleteResult {
   id: number;
@@ -36,9 +36,9 @@ export interface TournamentUpdateVariables {
 
 export const UPDATE_TOURNAMENT_MUTATION = gql`
   mutation updateTournament(
-    $id: Float!
-    $name: String
-    $setId: Int
+    $id: Int!
+    $name: String!
+    $setId: Int!
     $region: [String!]
     $host: String
     $participantsNumber: Int
@@ -60,6 +60,55 @@ export const UPDATE_TOURNAMENT_MUTATION = gql`
       endDate: $endDate
     ) {
       id
+    }
+  }
+`;
+
+export interface TournamentQueryResponse {
+  tournament: Tournament;
+}
+
+export const TOURNAMENT_QUERY = gql`
+  query tournament($id: Int!) {
+    tournament(id: $id) {
+      id
+      name
+      region
+      host
+      participantsNumber
+      prizePool
+      currency
+      startDate
+      endDate
+      setId
+      set {
+        id
+        name
+      }
+    }
+  }
+`;
+
+export interface Results {
+  player: Player;
+  positions: number[];
+  points: number[];
+}
+
+export interface ResultsQueryResponse {
+  resultsByStage: Results[];
+}
+
+export const RESULTS_QUERY = gql`
+  query ($stageId: Int!) {
+    resultsByStage(stageId: $stageId) {
+      player {
+        id
+        name
+        region
+      }
+      positions
+      points
     }
   }
 `;

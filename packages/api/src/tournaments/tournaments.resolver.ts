@@ -17,6 +17,8 @@ import { Tournament } from "./tournament.entity";
 import { TournamentsService } from "./tournaments.service";
 import { DeleteResponse } from "../lib/dto/delete-return";
 import { UpdateTournamentArgs } from "./dto/update-tournament.args";
+import { CreateTournamentPlayerArgs } from "./dto/create-tournament-player.args";
+import { Player } from "../players/player.entity";
 
 @Resolver(() => Tournament)
 export class TournamentsResolver {
@@ -65,10 +67,23 @@ export class TournamentsResolver {
     return this.stagesService.findAllByTournament(id);
   }
 
+  @ResolveField()
+  async players(@Parent() tournament: Tournament): Promise<Player[]> {
+    const tournamentWithPlayers =
+      await this.tournamentsService.findOneWithPlayers(tournament.id);
+    return tournamentWithPlayers.players;
+  }
+
   @UseGuards(GqlJwtAuthGuard)
   @Mutation(() => Tournament)
   async createTournament(@Args() payload: CreateTournamentArgs) {
     return this.tournamentsService.createOne(payload);
+  }
+
+  @UseGuards(GqlJwtAuthGuard)
+  @Mutation(() => Tournament)
+  async updateTournament(@Args() payload: UpdateTournamentArgs) {
+    return this.tournamentsService.updateOne(payload);
   }
 
   @UseGuards(GqlJwtAuthGuard)
@@ -79,10 +94,10 @@ export class TournamentsResolver {
 
   @UseGuards(GqlJwtAuthGuard)
   @Mutation(() => Tournament)
-  async updateTournament(
-    @Args({ nullable: true })
-    payload: UpdateTournamentArgs,
+  async createTournamentPlayers(
+    @Args() { tournamentId, playerIds }: CreateTournamentPlayerArgs,
   ) {
-    return this.tournamentsService.updateOne(payload);
+    const payload = { tournamentId, playerIds };
+    return this.tournamentsService.createTournamentPlayer(payload);
   }
 }

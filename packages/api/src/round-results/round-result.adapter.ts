@@ -1,3 +1,8 @@
+import { Round } from "../rounds/round.entity";
+import {
+  CreateLobbyGroupResultArgs,
+  CreateLobbyGroupResults,
+} from "./dto/create-lobby-group-result.args";
 import { CreateLobbyResultArgs } from "./dto/create-lobby-result.args";
 import { PlayerResults } from "./dto/get-results.out";
 import { RoundResultsRaw } from "./dto/get-results.raw";
@@ -7,7 +12,6 @@ export function fromRawToConsolidatedRoundResults(
   rawResults: RoundResultsRaw[],
 ): PlayerResults[] {
   const consolidatedResults: { [key: number]: PlayerResults } = {};
-
   rawResults.forEach(
     ({
       position,
@@ -18,6 +22,7 @@ export function fromRawToConsolidatedRoundResults(
       points,
       extraPoints,
       tiebreakerRanking,
+      id,
     }) => {
       if (!consolidatedResults[playerId]) {
         consolidatedResults[playerId] = {
@@ -30,6 +35,7 @@ export function fromRawToConsolidatedRoundResults(
           tiebreakerRanking,
           positions: [],
           points: [extraPoints],
+          lobbyPlayerId: id,
         };
       }
       if (position && points) {
@@ -62,4 +68,76 @@ export function formatResults({
       }, []),
     ];
   }, []);
+}
+
+export function formatLobbyGroupResults(
+  results: CreateLobbyGroupResults[],
+  roundsPlayed: number,
+  sequence: number,
+  rounds: Round[],
+): RoundResult[] {
+  const roundInitialIndex = sequence * roundsPlayed - (roundsPlayed - 1) - 1;
+  console.log(roundInitialIndex);
+  const allRoundIds = rounds.map((r) => r.id);
+  const roundsIds = allRoundIds.slice(
+    roundInitialIndex,
+    roundInitialIndex + roundsPlayed,
+  );
+  console.log(roundsIds);
+
+  const result: RoundResult[] = results.reduce(
+    (prev, { lobbyPlayerId, positions }) => [
+      ...prev,
+      ...positions.reduce(
+        (prev, curr, index) => [
+          ...prev,
+          {
+            lobbyPlayerId,
+            position: curr,
+            roundId: roundsIds[index],
+          },
+        ],
+        [],
+      ),
+    ],
+    [],
+  );
+
+  return result;
+
+  // roundId: number;
+
+  // @PrimaryColumn()
+  // lobbyPlayerId: number;
+
+  // @Column()
+  // position: number;
+
+  // @ManyToOne(() => LobbyPlayerInfo, {
+  //   onDelete: "CASCADE",
+  // })
+  // @JoinColumn({ name: "lobbyPlayerId" })
+  // lobbyPlayerInfo: LobbyPlayerInfo;
+
+  // @ManyToOne(() => Round, {
+  //   onDelete: "CASCADE",
+  // })
+  // @JoinColumn({ name: "roundId" })
+  // round: Round;
+  // return players.reduce((prev, { playerId, positions }) => {
+  //   return [
+  //     ...prev,
+  //     ...positions.reduce((prev, { roundId, position }) => {
+  //       return [
+  //         ...prev,
+  //         {
+  //           lobbyId,
+  //           playerId,
+  //           position,
+  //           roundId,
+  //         },
+  //       ];
+  //     }, []),
+  //   ];
+  // }, []);
 }

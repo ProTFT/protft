@@ -3,7 +3,9 @@ import { InjectRepository } from "@nestjs/typeorm";
 import { Raw, Repository } from "typeorm";
 import { DeleteResponse } from "../lib/dto/delete-return";
 import { SearchQuery } from "../lib/SearchQuery";
-import { DeepTournamentInput } from "./dto/create-deep-tournament.args";
+import { Player } from "../players/player.entity";
+// import { DeepTournamentInput } from "./dto/create-deep-tournament.args";
+import { CreateTournamentPlayerArgs } from "./dto/create-tournament-player.args";
 import { CreateTournamentArgs } from "./dto/create-tournament.args";
 import { UpdateTournamentArgs } from "./dto/update-tournament.args";
 import { Tournament } from "./tournament.entity";
@@ -70,12 +72,30 @@ export class TournamentsService {
     return this.tournamentRepository.findOne(id);
   }
 
-  createDeepOne(tournament: DeepTournamentInput): Promise<Tournament> {
-    return this.tournamentRepository.save(tournament);
-  }
+  // createDeepOne(tournament: DeepTournamentInput): Promise<Tournament> {
+  //   return this.tournamentRepository.save(tournament);
+  // }
 
   async deleteOne(id: number): Promise<DeleteResponse> {
     await this.tournamentRepository.delete({ id });
     return new DeleteResponse(id);
+  }
+
+  findOneWithPlayers(tournamentId: number): Promise<Tournament> {
+    return this.tournamentRepository.findOne(tournamentId, {
+      relations: ["players"],
+    });
+  }
+
+  async createTournamentPlayer({
+    tournamentId,
+    playerIds,
+  }: CreateTournamentPlayerArgs): Promise<Tournament> {
+    const tournament = await this.tournamentRepository.findOne(tournamentId);
+    const playerObjects = playerIds.map((id: number) => ({
+      id,
+    }));
+    tournament.players = playerObjects as Player[];
+    return this.tournamentRepository.save(tournament);
   }
 }
