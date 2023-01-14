@@ -12,6 +12,7 @@ export const TOURNAMENTS_QUERY = gql`
       name
       participantsNumber
       prizePool
+      currency
       region
       startDate
       endDate

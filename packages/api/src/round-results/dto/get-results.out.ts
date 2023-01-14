@@ -13,4 +13,7 @@ export class PlayerResults {
   points: number[];
 
   tiebreakerRanking: number;
+
+  @Field(() => Int)
+  lobbyPlayerId: number;
 }

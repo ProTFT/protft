@@ -29,6 +29,6 @@ export class Round {
   @OneToMany(() => RoundResult, (roundResult) => roundResult.roundId)
   roundResults?: RoundResult[];
 
-  @ManyToOne(() => Stage, (stage) => stage.id)
+  @ManyToOne(() => Stage, (stage) => stage.id, { onDelete: "CASCADE" })
   stage: Stage;
 }

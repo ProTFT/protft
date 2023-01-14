@@ -10,4 +10,7 @@ export class CreateLobbyArgs {
 
   @Field(() => Int, { name: "sequence" })
   sequence: number;
+
+  @Field(() => Int, { name: "lobbyGroupId" })
+  lobbyGroupId: number;
 }

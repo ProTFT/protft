@@ -31,10 +31,10 @@ export const KofiLogo = () => {
       height="25"
       viewBox="0 0 64 64"
       stroke="none"
-      stroke-linecap="round"
-      stroke-linejoin="round"
+      strokeLinecap="round"
+      strokeLinejoin="round"
       fill="#fff"
-      fill-rule="nonzero"
+      fillRule="nonzero"
       onClick={goTo}
       style={{ cursor: "pointer" }}
     >

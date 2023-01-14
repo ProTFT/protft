@@ -16,4 +16,13 @@ export class CreateStageArgs {
 
   @Field({ name: "isFinal" })
   isFinal: boolean;
+
+  @Field(() => Int, { name: "roundCount" })
+  roundCount: number;
+
+  @Field(() => [Int], { name: "tiebreakers", nullable: true })
+  tiebreakers: number[];
+
+  @Field({ name: "description", nullable: true })
+  description?: string;
 }

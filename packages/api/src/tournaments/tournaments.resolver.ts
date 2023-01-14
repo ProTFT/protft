@@ -1,3 +1,4 @@
+import { UseGuards } from "@nestjs/common";
 import {
   Args,
   Int,
@@ -7,13 +8,17 @@ import {
   ResolveField,
   Resolver,
 } from "@nestjs/graphql";
+import { GqlJwtAuthGuard } from "../auth/jwt-auth.guard";
 import { SetsService } from "../sets/sets.service";
 import { StagesService } from "../stages/stages.service";
-import { DeepTournamentInput } from "./dto/create-deep-tournament.args";
 import { CreateTournamentArgs } from "./dto/create-tournament.args";
 import { TournamentOverview } from "./dto/get-tournament-overview.out";
 import { Tournament } from "./tournament.entity";
 import { TournamentsService } from "./tournaments.service";
+import { DeleteResponse } from "../lib/dto/delete-return";
+import { UpdateTournamentArgs } from "./dto/update-tournament.args";
+import { CreateTournamentPlayerArgs } from "./dto/create-tournament-player.args";
+import { Player } from "../players/player.entity";
 
 @Resolver(() => Tournament)
 export class TournamentsResolver {
@@ -62,38 +67,37 @@ export class TournamentsResolver {
     return this.stagesService.findAllByTournament(id);
   }
 
+  @ResolveField()
+  async players(@Parent() tournament: Tournament): Promise<Player[]> {
+    const tournamentWithPlayers =
+      await this.tournamentsService.findOneWithPlayers(tournament.id);
+    return tournamentWithPlayers.players;
+  }
+
+  @UseGuards(GqlJwtAuthGuard)
   @Mutation(() => Tournament)
-  async createTournament(
-    @Args()
-    {
-      name,
-      region,
-      host,
-      participantsNumber,
-      prizePool,
-      startDate,
-      endDate,
-      setId,
-    }: CreateTournamentArgs,
-  ) {
-    const payload = {
-      name,
-      region,
-      host,
-      participantsNumber,
-      prizePool,
-      startDate,
-      endDate,
-      setId,
-    };
+  async createTournament(@Args() payload: CreateTournamentArgs) {
     return this.tournamentsService.createOne(payload);
   }
 
+  @UseGuards(GqlJwtAuthGuard)
   @Mutation(() => Tournament)
-  async createDeepTournament(
-    @Args({ name: "tournament", type: () => DeepTournamentInput })
-    tournament: DeepTournamentInput,
+  async updateTournament(@Args() payload: UpdateTournamentArgs) {
+    return this.tournamentsService.updateOne(payload);
+  }
+
+  @UseGuards(GqlJwtAuthGuard)
+  @Mutation(() => DeleteResponse)
+  async deleteTournament(@Args({ name: "id", type: () => Int }) id: number) {
+    return this.tournamentsService.deleteOne(id);
+  }
+
+  @UseGuards(GqlJwtAuthGuard)
+  @Mutation(() => Tournament)
+  async createTournamentPlayers(
+    @Args() { tournamentId, playerIds }: CreateTournamentPlayerArgs,
   ) {
-    return this.tournamentsService.createDeepOne(tournament);
+    const payload = { tournamentId, playerIds };
+    return this.tournamentsService.createTournamentPlayer(payload);
   }
 }

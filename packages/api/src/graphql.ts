@@ -7,39 +7,14 @@
 
 /* tslint:disable */
 /* eslint-disable */
-export interface DeepTournamentInput {
-    name: string;
-    region?: Nullable<string[]>;
-    host?: Nullable<string>;
-    participantsNumber?: Nullable<number>;
-    prizePool?: Nullable<number>;
-    startDate?: Nullable<DateTime>;
-    endDate?: Nullable<DateTime>;
-    setId: number;
-    stages: StageInput[];
+export interface CreatePlayerLobbyArgs {
+    lobbyId: number;
+    playerIds: number[];
 }
 
-export interface StageInput {
-    name: string;
-    sequence: number;
-    isFinal: boolean;
-    pointSchemaId: number;
-    lobbies: LobbyInput[];
-}
-
-export interface LobbyInput {
-    name: string;
-    sequence: number;
-    rounds: RoundInput[];
-    players: PlayerInput[];
-}
-
-export interface RoundInput {
-    sequence: number;
-}
-
-export interface PlayerInput {
-    id: number;
+export interface CreateLobbyGroupResults {
+    lobbyPlayerId: number;
+    positions: number[];
 }
 
 export interface PlayerLobbyResultInput {
@@ -82,6 +57,17 @@ export interface Player {
     country?: Nullable<string>;
 }
 
+export interface Round {
+    id: number;
+    stageId: number;
+    sequence: number;
+}
+
+export interface PointSchema {
+    id: number;
+    name: string;
+}
+
 export interface Tournament {
     id: number;
     name: string;
@@ -89,23 +75,45 @@ export interface Tournament {
     host?: Nullable<string>;
     participantsNumber?: Nullable<number>;
     prizePool?: Nullable<number>;
+    currency?: Nullable<string>;
     startDate?: Nullable<DateTime>;
     endDate?: Nullable<DateTime>;
     setId: number;
     set: Set;
     stages?: Nullable<Stage[]>;
+    players?: Nullable<Player[]>;
+}
+
+export interface StagePlayerInfo {
+    stageId: number;
+    playerId: number;
+    extraPoints: number;
+    tiebreakerRanking: number;
+    player: Player;
+}
+
+export interface LobbyGroup {
+    id: number;
+    stageId: number;
+    sequence: number;
+    roundsPlayed: number;
 }
 
 export interface Stage {
     id: number;
     name: string;
+    description: string;
     sequence: number;
     isFinal: boolean;
     tournamentId: number;
     pointSchemaId: number;
+    tiebreakers: number[];
     roundCount: number;
+    players: StagePlayerInfo[];
     lobbies?: Nullable<Lobby[]>;
+    lobbyGroups: LobbyGroup[];
     rounds?: Nullable<Round[]>;
+    pointSchema: PointSchema;
 }
 
 export interface Lobby {
@@ -113,13 +121,22 @@ export interface Lobby {
     stageId: number;
     name: string;
     sequence: number;
-    players?: Nullable<Player[]>;
+    players: Player[];
 }
 
-export interface Round {
+export interface LobbyPlayerInfo {
     id: number;
-    stageId: number;
-    sequence: number;
+    lobbyId: number;
+    playerId: number;
+}
+
+export interface DeleteResponse {
+    id: number;
+}
+
+export interface CreateLobbiesResponse {
+    createdLobbyGroups: number;
+    createdLobbies: number;
 }
 
 export interface TournamentOverview {
@@ -137,6 +154,7 @@ export interface PlayerResults {
     player: Player;
     positions: number[];
     points: number[];
+    lobbyPlayerId: number;
 }
 
 export interface PlayerFilterMeta {
@@ -151,23 +169,37 @@ export interface IQuery {
     tournament(id: number): Tournament | Promise<Tournament>;
     tournamentOverview(): TournamentOverview | Promise<TournamentOverview>;
     stages(tournamentId: number): Stage[] | Promise<Stage[]>;
-    lobbies(stageId: number): Lobby[] | Promise<Lobby[]>;
+    stage(id: number): Stage | Promise<Stage>;
+    playersFromPreviousStage(id: number): StagePlayerInfo[] | Promise<StagePlayerInfo[]>;
+    lobbies(lobbyGroupId: number): Lobby[] | Promise<Lobby[]>;
+    pointSchemas(): PointSchema[] | Promise<PointSchema[]>;
+    pointSchema(id: number): Nullable<PointSchema> | Promise<Nullable<PointSchema>>;
     tournamentsPlayed(playerId: number): Tournament[] | Promise<Tournament[]>;
     players(region?: Nullable<string>, country?: Nullable<string>, searchQuery?: Nullable<string>, take?: Nullable<number>, skip?: Nullable<number>): Player[] | Promise<Player[]>;
     player(id: number): Player | Promise<Player>;
     playerFilterMeta(): PlayerFilterMeta | Promise<PlayerFilterMeta>;
     resultsByStage(stageId: number): PlayerResults[] | Promise<PlayerResults[]>;
+    resultsByLobbyGroup(lobbyGroupId: number): PlayerResults[] | Promise<PlayerResults[]>;
     playerStats(setId?: Nullable<number>, region?: Nullable<string>, take?: Nullable<number>, skip?: Nullable<number>): PlayersStats[] | Promise<PlayersStats[]>;
 }
 
 export interface IMutation {
-    createTournament(name: string, setId: number, region?: Nullable<string[]>, host?: Nullable<string>, participantsNumber?: Nullable<number>, prizePool?: Nullable<number>, startDate?: Nullable<DateTime>, endDate?: Nullable<DateTime>): Tournament | Promise<Tournament>;
-    createDeepTournament(tournament: DeepTournamentInput): Tournament | Promise<Tournament>;
-    createStage(tournamentId: number, pointSchemaId: number, name: string, sequence: number, isFinal: boolean): Stage | Promise<Stage>;
-    createLobby(stageId: number, name: string, sequence: number): Lobby | Promise<Lobby>;
+    createTournament(name: string, setId: number, region?: Nullable<string[]>, host?: Nullable<string>, participantsNumber?: Nullable<number>, prizePool?: Nullable<number>, currency?: Nullable<string>, startDate?: Nullable<DateTime>, endDate?: Nullable<DateTime>): Tournament | Promise<Tournament>;
+    updateTournament(id: number, name: string, setId: number, region?: Nullable<string[]>, host?: Nullable<string>, participantsNumber?: Nullable<number>, prizePool?: Nullable<number>, currency?: Nullable<string>, startDate?: Nullable<DateTime>, endDate?: Nullable<DateTime>): Tournament | Promise<Tournament>;
+    deleteTournament(id: number): DeleteResponse | Promise<DeleteResponse>;
+    createTournamentPlayers(tournamentId: number, playerIds: number[]): Tournament | Promise<Tournament>;
+    createStage(tournamentId: number, pointSchemaId: number, name: string, sequence: number, isFinal: boolean, roundCount: number, tiebreakers?: Nullable<number[]>, description?: Nullable<string>): Stage | Promise<Stage>;
+    updateStage(id: number, tournamentId: number, pointSchemaId: number, name: string, sequence: number, isFinal: boolean, roundCount: number, tiebreakers?: Nullable<number[]>, description?: Nullable<string>): Stage | Promise<Stage>;
+    deleteStage(id: number): DeleteResponse | Promise<DeleteResponse>;
+    createStagePlayers(stageId: number, playerIds: number[]): StagePlayerInfo[] | Promise<StagePlayerInfo[]>;
+    generateLobbies(stageId: number, roundsPerLobbyGroup: number): CreateLobbiesResponse | Promise<CreateLobbiesResponse>;
+    createLobby(stageId: number, name: string, sequence: number, lobbyGroupId: number): Lobby | Promise<Lobby>;
+    updateLobby(id: number, stageId: number, name: string, sequence: number, lobbyGroupId: number): Lobby | Promise<Lobby>;
+    deleteLobby(id: number): DeleteResponse | Promise<DeleteResponse>;
     createRound(stageId: number, sequence: number): Round | Promise<Round>;
-    createPlayerLobby(lobbyId: number, playerIds: number[]): Round | Promise<Round>;
+    createPlayerLobbyGroup(lobbyGroupId: number, players: CreatePlayerLobbyArgs[]): LobbyPlayerInfo[] | Promise<LobbyPlayerInfo[]>;
     createPlayer(name: string, country: string, region: string): Player | Promise<Player>;
+    createLobbyGroupResult(lobbyGroupId: number, results: CreateLobbyGroupResults[]): BooleanResult | Promise<BooleanResult>;
     createLobbyResult(lobbyId: number, players: PlayerLobbyResultInput[]): BooleanResult | Promise<BooleanResult>;
 }
 

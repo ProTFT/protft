@@ -1,4 +1,4 @@
-import { Injectable } from "@nestjs/common";
+import { BadRequestException, Injectable } from "@nestjs/common";
 import { InjectRepository } from "@nestjs/typeorm";
 import { ILike, Repository } from "typeorm";
 import { PaginationArgs } from "../lib/dto/pagination.args";
@@ -49,6 +49,9 @@ export class PlayersService {
     country,
     region,
   }: CreatePlayerArgs): Promise<Player> {
+    if (!name || !region) {
+      throw new BadRequestException("Name and Region are mandatory");
+    }
     return this.playerRepository.save({ name, country, region });
   }
 
@@ -77,8 +80,8 @@ export class PlayersService {
       .createQueryBuilder()
       .select("t.*")
       .distinct()
-      .from("lobby_players_player", "p")
-      .innerJoin("lobby", "l", "l.id = p.lobbyId")
+      .from("lobby_player_info", "lpi")
+      .innerJoin("lobby", "l", "l.id = lpi.lobbyId")
       .innerJoin("stage", "s", "s.id = l.stageId")
       .innerJoin("tournament", "t", "t.id = s.tournamentId")
       .where({ playerId: id })

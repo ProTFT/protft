@@ -15,4 +15,5 @@ export const IconStyled = styled.svg.attrs(({ viewPort = 24 }: Props) => ({
     height: ${size}px;
   `}
   fill: none;
+  ${({ onClick }) => onClick && `cursor: pointer;`}
 `;

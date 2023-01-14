@@ -21,24 +21,20 @@ export class RoundResultsService {
     return this.roundResultsRepository.manager
       .createQueryBuilder()
       .select(
-        "result.roundId, result.position, lpp.playerId, round.sequence, player.name, player.region, player.country, points.points",
+        "result.roundId, result.position, lpi.id, lpi.playerId, round.sequence, player.name, player.region, player.country, points.points",
       )
-      .from("lobby_players_player", "lpp")
-      .innerJoin("lobby", "lobby", "lobby.id = lpp.lobbyId")
+      .from("lobby_player_info", "lpi")
+      .innerJoin("lobby", "lobby", "lobby.id = lpi.lobbyId")
       .innerJoin("stage", "stage", "stage.id = lobby.stageId")
-      .innerJoin("player", "player", "player.id = lpp.playerId")
-      .leftJoin(
-        "round_result",
-        "result",
-        "lpp.lobbyId = result.lobbyId and lpp.playerId = result.playerId",
-      )
+      .innerJoin("player", "player", "player.id = lpi.playerId")
+      .leftJoin("round_result", "result", "lpi.id = result.lobbyPlayerId")
       .leftJoin(
         "points",
         "points",
         "points.pointSchemaId = stage.pointSchemaId and points.position = result.position",
       )
       .leftJoin("round", "round", "round.id = result.roundId")
-      .orderBy("lpp.playerId, round.sequence")
+      .orderBy("lpi.id, round.sequence")
       .leftJoin(
         "stage_player_info",
         "spi",
@@ -47,6 +43,37 @@ export class RoundResultsService {
       .addSelect("COALESCE(spi.extraPoints, 0)", "extraPoints")
       .addSelect("COALESCE(spi.tiebreakerRanking, 0)", "tiebreakerRanking")
       .where("stage.id = :stageId", { stageId })
+      .getRawMany();
+  }
+
+  public findResultsByLobbyGroup(
+    lobbyGroupId: number,
+  ): Promise<RoundResultsRaw[]> {
+    return this.roundResultsRepository.manager
+      .createQueryBuilder()
+      .select(
+        "result.roundId, result.position, lpi.id, lpi.playerId, round.sequence, player.name, player.region, player.country, points.points",
+      )
+      .from("lobby_player_info", "lpi")
+      .innerJoin("lobby", "lobby", "lobby.id = lpi.lobbyId")
+      .innerJoin("stage", "stage", "stage.id = lobby.stageId")
+      .innerJoin("player", "player", "player.id = lpi.playerId")
+      .leftJoin("round_result", "result", "lpi.id = result.lobbyPlayerId")
+      .leftJoin(
+        "points",
+        "points",
+        "points.pointSchemaId = stage.pointSchemaId and points.position = result.position",
+      )
+      .leftJoin("round", "round", "round.id = result.roundId")
+      .orderBy("lpi.id, round.sequence")
+      .leftJoin(
+        "stage_player_info",
+        "spi",
+        "spi.stageId = stage.id and spi.playerId = player.id",
+      )
+      .addSelect("COALESCE(spi.extraPoints, 0)", "extraPoints")
+      .addSelect("COALESCE(spi.tiebreakerRanking, 0)", "tiebreakerRanking")
+      .where("lobby.lobbyGroupId = :lobbyGroupId", { lobbyGroupId })
       .getRawMany();
   }
 
@@ -64,7 +91,12 @@ export class RoundResultsService {
         let query = baseQuery
           .addSelect("player.*")
           .from("round_result", "result")
-          .innerJoin("player", "player", "player.id = result.playerId")
+          .innerJoin(
+            "lobby_player_info",
+            "lpi",
+            "lpi.id = result.lobbyPlayerId",
+          )
+          .innerJoin("player", "player", "player.id = lpi.playerId")
           .groupBy("player.id");
 
         if (region) {
@@ -90,7 +122,9 @@ export class RoundResultsService {
     const queryBuilder =
       this.roundResultsRepository.createQueryBuilder("result");
 
-    const query = this.getBaseStatsQuery(queryBuilder).where({ playerId });
+    const query = this.getBaseStatsQuery(queryBuilder)
+      .innerJoin("lobby_player_info", "lpi", "lpi.id = result.lobbyPlayerId")
+      .where("lpi.playerId = :playerId", { playerId });
 
     if (setId) {
       return this.filterBySet(queryBuilder, setId).getRawOne();

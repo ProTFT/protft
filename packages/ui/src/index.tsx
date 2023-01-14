@@ -9,11 +9,15 @@ import { simplePagination } from "@urql/exchange-graphcache/extras";
 import { App } from "./App";
 import reportWebVitals from "./reportWebVitals";
 import * as serviceWorker from "./serviceWorker";
+import { ProvideAuth } from "./hooks/useAuth";
 
 const rootElement = document.getElementById("root");
 if (!rootElement) throw new Error("Failed to find the root element");
 const root = ReactDOM.createRoot(rootElement);
 const graphqlClient = createClient({
+  fetchOptions: {
+    credentials: "include",
+  },
   url: `${process.env.REACT_APP_BACKEND_URL}`,
   exchanges: [
     dedupExchange,
@@ -40,7 +44,9 @@ root.render(
     <BrowserRouter>
       <Provider value={graphqlClient}>
         <DndProvider backend={HTML5Backend}>
-          <App />
+          <ProvideAuth>
+            <App />
+          </ProvideAuth>
         </DndProvider>
       </Provider>
     </BrowserRouter>

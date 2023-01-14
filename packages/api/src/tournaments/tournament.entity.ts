@@ -12,9 +12,12 @@ import {
   JoinColumn,
   ManyToOne,
   OneToMany,
+  ManyToMany,
+  JoinTable,
 } from "typeorm";
 import { Stage } from "../stages/stage.entity";
 import { Set } from "../sets/set.entity";
+import { Player } from "../players/player.entity";
 
 @ObjectType()
 @Entity()
@@ -43,6 +46,10 @@ export class Tournament {
   @Column({ nullable: true })
   prizePool?: number;
 
+  @Field({ nullable: true })
+  @Column({ nullable: true })
+  currency?: string;
+
   @Field(() => GraphQLISODateTime, { nullable: true })
   @Column({ nullable: true })
   startDate?: Date;
@@ -61,8 +68,11 @@ export class Tournament {
   set: Set;
 
   @Field(() => [Stage], { nullable: true })
-  @OneToMany(() => Stage, (stage) => stage.tournament, {
-    cascade: true,
-  })
+  @OneToMany(() => Stage, (stage) => stage.tournament)
   stages?: Stage[];
+
+  @Field(() => [Player], { nullable: true })
+  @ManyToMany(() => Player, { cascade: true })
+  @JoinTable()
+  players?: Player[];
 }
