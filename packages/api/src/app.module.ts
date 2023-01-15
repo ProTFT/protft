@@ -50,7 +50,7 @@ export const isProd = (): boolean => process.env.NODE_ENV === "production";
       playground: true,
       introspection: true,
       cors: {
-        origin: isProd() ? "https://protft.com" : "http://protft.com:3000",
+        origin: "https://protft.com",
         credentials: true,
       },
     }),
