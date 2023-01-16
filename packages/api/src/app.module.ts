@@ -38,8 +38,11 @@ export const isProd = (): boolean => process.env.NODE_ENV === "production";
       type: "postgres",
       ...(isProd() ? prodDatabaseInfo : localDatabaseInfo),
       autoLoadEntities: true,
-      synchronize: !isProd(),
+      synchronize: false,
       logging: !isProd(),
+      entities: ["dist/**/*.entity.js"],
+      migrations: ["dist/db/migrations/*.js"],
+      migrationsRun: true,
     }),
     GraphQLModule.forRoot<ApolloDriverConfig>({
       driver: ApolloDriver,
