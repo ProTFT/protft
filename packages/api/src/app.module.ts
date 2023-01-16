@@ -31,7 +31,7 @@ const prodDatabaseInfo: TypeOrmModuleOptions = {
 };
 
 export const isProd = (): boolean => process.env.NODE_ENV === "production";
-
+// dummy change
 @Module({
   imports: [
     TypeOrmModule.forRoot({
