@@ -7,13 +7,13 @@ import { TextIconHorizontalContainer } from "../../../../../components/Layout/Ho
 import { RegionsIndicator } from "../../../../../components/RegionIndicator/RegionIndicator";
 import { SearchInput } from "../../../../../components/SearchInput/SearchInput";
 import { Player } from "../../../../../graphql/schema";
+import { useToast } from "../../../Components/Toast/Toast";
 import {
   StyledLeftSide,
   StyledRightSide,
   StyledTitle,
 } from "../../../Tournament/Content/Content.styled";
 import {
-  StyledBar,
   StyledContainer,
   StyledDeleteButton,
   StyledPlayerContentContainer,
@@ -30,7 +30,7 @@ import {
   TournamentPlayersResponse,
   TOURNAMENT_PLAYERS_QUERY,
 } from "./queries";
-import { StyledButtonContainer } from "./StagePlayers.styled";
+import { StyledBar, StyledButtonContainer } from "./StagePlayers.styled";
 
 interface DragAndDropPlayerProps {
   player: Player;
@@ -158,15 +158,18 @@ export const StagePlayers = () => {
     });
   }, []);
 
+  const { show } = useToast();
+
   const onSave = useCallback(async () => {
     const result = await createStagePlayers({
       stageId: Number(stageId!),
       playerIds: stagePlayers.map((p) => p.id),
     });
     if (result.error) {
-      alert(result.error);
+      return alert(result.error);
     }
-  }, [createStagePlayers, stageId, stagePlayers]);
+    show();
+  }, [createStagePlayers, stageId, stagePlayers, show]);
 
   const onAddAll = useCallback(async () => {
     setStagePlayers((players) => {

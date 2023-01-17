@@ -17,6 +17,7 @@ import {
   StyledStagesContainer,
 } from "./TournamentStages.styled";
 import { StageCard } from "./StageCard/StageCard";
+import { useToast } from "../../../Components/Toast/Toast";
 
 export const TournamentStages = () => {
   const { id: tournamentId } = useParams();
@@ -24,10 +25,7 @@ export const TournamentStages = () => {
     query: TOURNAMENT_STAGES_QUERY,
     variables: { id: Number(tournamentId) },
   });
-  const networkRefetch = useCallback(
-    () => refetch({ requestPolicy: "network-only" }),
-    [refetch]
-  );
+  const networkRefetch = useCallback(() => refetch(), [refetch]);
 
   const [, createStage] = useMutation<CreateStageResult, CreateStageVariables>(
     CREATE_STAGE_MUTATION
@@ -35,6 +33,8 @@ export const TournamentStages = () => {
 
   const dialogRef = useRef<HTMLDialogElement>(null);
   const formRef = useRef<HTMLFormElement>(null);
+
+  const { show } = useToast();
 
   const onSubmit = async (stage: Omit<Stage, "id" | "rounds" | "lobbies">) => {
     const result = await createStage({
@@ -45,6 +45,7 @@ export const TournamentStages = () => {
     if (result.error) {
       return alert(result.error);
     }
+    show();
     formRef.current?.reset();
     dialogRef.current?.close();
     networkRefetch();
@@ -70,12 +71,7 @@ export const TournamentStages = () => {
         {data?.tournament.stages?.map((stage) => {
           return (
             <Link key={stage.id} to={`${stage.id}`}>
-              <StageCard
-                key={stage.id}
-                stage={stage}
-                tournamentId={Number(tournamentId)}
-                refetch={networkRefetch}
-              />
+              <StageCard key={stage.id} stage={stage} />
             </Link>
           );
         })}

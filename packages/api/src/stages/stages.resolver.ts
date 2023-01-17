@@ -20,8 +20,10 @@ import { CreateStagePlayerArgs } from "./dto/create-stage-player.args";
 import { CreateStageArgs } from "./dto/create-stage.args";
 import { GenerateLobbiesArgs } from "./dto/generate-lobbies.args";
 import { UpdateStageArgs } from "./dto/update-stage.args";
+import { UpdateTiebreakersArgs } from "./dto/update-tiebreakers.args";
 import { Stage } from "./stage.entity";
 import { StagesService } from "./stages.service";
+import { Tiebreaker } from "./tiebreaker";
 
 @Resolver(() => Stage)
 export class StagesResolver {
@@ -86,6 +88,11 @@ export class StagesResolver {
     return this.stagePlayerInfosService.findAllByStage(id);
   }
 
+  @Query(() => [Tiebreaker])
+  async tiebreakers() {
+    return this.stagesService.findTiebreakers();
+  }
+
   @UseGuards(GqlJwtAuthGuard)
   @Mutation(() => Stage)
   async createStage(@Args() payload: CreateStageArgs) {
@@ -96,6 +103,12 @@ export class StagesResolver {
   @Mutation(() => Stage)
   async updateStage(@Args() payload: UpdateStageArgs) {
     return this.stagesService.updateOne(payload);
+  }
+
+  @UseGuards(GqlJwtAuthGuard)
+  @Mutation(() => Stage)
+  async updateTiebreakers(@Args() payload: UpdateTiebreakersArgs) {
+    return this.stagesService.updateTiebreakers(payload);
   }
 
   @UseGuards(GqlJwtAuthGuard)

@@ -2,10 +2,10 @@ import React, { useRef } from "react";
 import { Link } from "react-router-dom";
 import { useMutation, useQuery } from "urql";
 import { Tournament } from "../../../graphql/schema";
-import { useAuth } from "../../../hooks/useAuth";
 import { TournamentListItem } from "../../Tournaments/TournamentListItem/TournamentListItem";
 import { StyledTournamentList } from "../../Tournaments/Tournaments.styled";
 import { StyledAdminBar } from "../Components/AdminBar/AdminBar.styled";
+import { useToast } from "../Components/Toast/Toast";
 import { TournamentDialog } from "../Components/TournamentDialog/TournamentDialog";
 import { StyledButton, StyledContainer } from "./AdminHome.styled";
 import {
@@ -17,14 +17,12 @@ import {
 } from "./queries";
 
 export const AdminHome = () => {
-  const { signout } = useAuth();
   const searchQuery = "";
   const [{ data }, refetch] = useQuery<TournamentsQueryResult>({
     query: TOURNAMENTS_QUERY,
     variables: {
       searchQuery,
     },
-    requestPolicy: "network-only",
   });
 
   const [, createTournament] = useMutation<
@@ -34,12 +32,14 @@ export const AdminHome = () => {
 
   const dialogRef = useRef<HTMLDialogElement>(null);
   const formRef = useRef<HTMLFormElement>(null);
+  const { show } = useToast();
 
   const onSubmit = async (tournament: Omit<Tournament, "id" | "set">) => {
     const result = await createTournament(tournament);
     if (result.error) {
       return alert(result.error);
     }
+    show();
     formRef.current?.reset();
     dialogRef.current?.close();
     refetch();
@@ -53,20 +53,13 @@ export const AdminHome = () => {
         onSubmit={onSubmit}
       />
       <StyledAdminBar>
-        <button
-          onClick={() => {
-            signout();
-          }}
-        >
-          Logout
-        </button>
         <StyledButton onClick={() => dialogRef.current?.showModal()}>
           Add Tournament
         </StyledButton>
       </StyledAdminBar>
       <StyledTournamentList>
         {data?.tournaments.map((tournament) => (
-          <Link key={tournament.id} to={`tournaments/${tournament.id}`}>
+          <Link key={tournament.id} to={`${tournament.id}`}>
             <TournamentListItem tournament={tournament} />
           </Link>
         ))}

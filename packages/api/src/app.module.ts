@@ -1,7 +1,8 @@
 import { ApolloDriver, ApolloDriverConfig } from "@nestjs/apollo";
 import { Module } from "@nestjs/common";
+import { ConfigModule, ConfigService } from "@nestjs/config";
 import { GraphQLModule } from "@nestjs/graphql";
-import { TypeOrmModule, TypeOrmModuleOptions } from "@nestjs/typeorm";
+import { TypeOrmModule } from "@nestjs/typeorm";
 import { AppController } from "./app.controller";
 import { AppService } from "./app.service";
 import { SetsModule } from "./sets/sets.module";
@@ -17,44 +18,50 @@ import { StagePlayerInfosModule } from "./stage-player-infos/stage-player-infos.
 import { AuthModule } from "./auth/auth.module";
 import { UsersModule } from "./users/users.module";
 import { LobbyPlayerInfosModule } from "./lobby-player-infos/lobby-player-infos.module";
+import { isProd } from "./config/environment";
+import { getDatabaseInfo } from "./config/dbConfig";
+import { getOrigin } from "./config/cors";
 
-const localDatabaseInfo: TypeOrmModuleOptions = {
-  host: "localhost",
-  port: 5432,
-  username: "root",
-  password: "changeme",
-  database: "mydb",
-};
-
-const prodDatabaseInfo: TypeOrmModuleOptions = {
-  url: process.env.DATABASE_URL,
-};
-
-export const isProd = (): boolean => process.env.NODE_ENV === "production";
-// dummy change
 @Module({
   imports: [
-    TypeOrmModule.forRoot({
-      type: "postgres",
-      ...(isProd() ? prodDatabaseInfo : localDatabaseInfo),
-      autoLoadEntities: true,
-      synchronize: false,
-      logging: !isProd(),
-      entities: ["dist/**/*.entity.js"],
-      migrations: ["dist/db/migrations/*.js"],
-      migrationsRun: true,
+    ConfigModule.forRoot({
+      ...(!isProd(process.env.NODE_ENV) && { envFilePath: ".development.env" }),
+      isGlobal: true,
     }),
-    GraphQLModule.forRoot<ApolloDriverConfig>({
-      driver: ApolloDriver,
-      autoSchemaFile: true,
-      definitions: {
-        path: join(process.cwd(), "src/graphql.ts"),
+    TypeOrmModule.forRootAsync({
+      imports: [ConfigModule],
+      inject: [ConfigService],
+      useFactory: (configService: ConfigService) => {
+        const environment = configService.get<string>("NODE_ENV");
+        return {
+          type: "postgres",
+          ...getDatabaseInfo(environment),
+          autoLoadEntities: true,
+          synchronize: false,
+          entities: ["dist/**/*.entity.js"],
+          migrations: ["dist/db/migrations/*.js"],
+          migrationsRun: true,
+        };
       },
-      playground: true,
-      introspection: true,
-      cors: {
-        origin: isProd() ? "https://www.protft.com" : "http://protft.com:3000",
-        credentials: true,
+    }),
+    GraphQLModule.forRootAsync<ApolloDriverConfig>({
+      driver: ApolloDriver,
+      imports: [ConfigModule],
+      inject: [ConfigService],
+      useFactory: (configService: ConfigService) => {
+        const environment = configService.get<string>("NODE_ENV");
+        return {
+          autoSchemaFile: true,
+          definitions: {
+            path: join(process.cwd(), "src/graphql.ts"),
+          },
+          playground: true,
+          introspection: true,
+          cors: {
+            origin: getOrigin(environment),
+            credentials: true,
+          },
+        };
       },
     }),
     SetsModule,

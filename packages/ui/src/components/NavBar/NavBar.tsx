@@ -5,6 +5,7 @@ import { AboutIcon } from "../../design/icons/About";
 import { PlayersIcon } from "../../design/icons/Players";
 import { StatsIcon } from "../../design/icons/Stats";
 import { TourneysIcon } from "../../design/icons/Tourneys";
+import { useAuth } from "../../hooks/useAuth";
 import { useIsMobile } from "../../hooks/useIsMobile";
 import { useNavigation } from "../../hooks/useNavigation";
 import { Logo } from "../Logo/Logo";
@@ -60,33 +61,60 @@ export const NavBar = () => {
 };
 
 export const DesktopNavBar = ({ selectedMenu }: Props) => {
+  const { user } = useAuth();
   return (
     <StyledDesktopContainer>
-      <Link to={"/"}>
-        <Logo color={colors.yellow} width={67} height={38} />
-      </Link>
-      <StyledDesktopItemsContainer>
-        <Link to={"/tournaments"}>
-          <NavBarButton selected={selectedMenu === MenuItems.tournament}>
-            Tourneys
-          </NavBarButton>
-        </Link>
-        <Link to={"/players"}>
-          <NavBarButton selected={selectedMenu === MenuItems.players}>
-            Players
-          </NavBarButton>
-        </Link>
-        <Link to={"/stats"}>
-          <NavBarButton selected={selectedMenu === MenuItems.stats}>
-            Stats
-          </NavBarButton>
-        </Link>
-        <Link to={"/about"}>
-          <NavBarButton selected={selectedMenu === MenuItems.about}>
-            About
-          </NavBarButton>
-        </Link>
-      </StyledDesktopItemsContainer>
+      {!user && (
+        <>
+          <Link to={"/"}>
+            <Logo color={colors.yellow} width={67} height={38} />
+          </Link>
+          <StyledDesktopItemsContainer>
+            <Link to={"/tournaments"}>
+              <NavBarButton selected={selectedMenu === MenuItems.tournament}>
+                Tourneys
+              </NavBarButton>
+            </Link>
+            <Link to={"/players"}>
+              <NavBarButton selected={selectedMenu === MenuItems.players}>
+                Players
+              </NavBarButton>
+            </Link>
+            <Link to={"/stats"}>
+              <NavBarButton selected={selectedMenu === MenuItems.stats}>
+                Stats
+              </NavBarButton>
+            </Link>
+            <Link to={"/about"}>
+              <NavBarButton selected={selectedMenu === MenuItems.about}>
+                About
+              </NavBarButton>
+            </Link>
+            {user && (
+              <Link to={"/logout"}>
+                <NavBarButton selected={false}>Logout</NavBarButton>
+              </Link>
+            )}
+          </StyledDesktopItemsContainer>
+        </>
+      )}
+      {user && (
+        <>
+          <Link to={"/admin/tournaments"}>
+            <Logo color={colors.yellow} width={67} height={38} />
+          </Link>
+          <StyledDesktopItemsContainer>
+            <Link to={"/admin/tournaments"}>
+              <NavBarButton selected={selectedMenu === MenuItems.tournament}>
+                Tourneys
+              </NavBarButton>
+            </Link>
+            <Link to={"/logout"}>
+              <NavBarButton selected={false}>Logout</NavBarButton>
+            </Link>
+          </StyledDesktopItemsContainer>
+        </>
+      )}
       <div />
     </StyledDesktopContainer>
   );

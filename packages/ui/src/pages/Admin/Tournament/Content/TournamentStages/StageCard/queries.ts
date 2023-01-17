@@ -34,7 +34,6 @@ export const UPDATE_STAGE_MUTATION = gql`
     $sequence: Int!
     $isFinal: Boolean!
     $roundCount: Int!
-    $tiebreakers: [Int!]
     $description: String
   ) {
     updateStage(
@@ -46,7 +45,6 @@ export const UPDATE_STAGE_MUTATION = gql`
       isFinal: $isFinal
       description: $description
       roundCount: $roundCount
-      tiebreakers: $tiebreakers
     ) {
       id
     }

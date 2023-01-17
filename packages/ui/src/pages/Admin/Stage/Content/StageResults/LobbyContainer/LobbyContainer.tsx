@@ -36,6 +36,9 @@ export const LobbyContainer = ({
       },
     [onChangeResult]
   );
+  if (!results) {
+    return <div>Add lobbies first!</div>;
+  }
   return (
     <StyledTournamentPlayerListSmaller>
       <StyledLobbyName>{`Lobby ${name}`}</StyledLobbyName>

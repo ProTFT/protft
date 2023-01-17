@@ -10,17 +10,38 @@ import {
   TournamentQueryResponse,
   TOURNAMENT_QUERY,
 } from "./queries";
-import { useQuery } from "urql";
-import { Link, Route, Routes, useLocation, useParams } from "react-router-dom";
+import { useMutation, useQuery } from "urql";
+import {
+  Link,
+  Route,
+  Routes,
+  useLocation,
+  useNavigate,
+  useParams,
+} from "react-router-dom";
 import { StyledHeaderContainer } from "./AdminStage.styled";
 import {
   StyledTabButton,
   StyledTabContainer,
 } from "../Tournament/Content/Content.styled";
-import { useCallback } from "react";
+import { useCallback, useRef } from "react";
 import { StagePlayers } from "./Content/StagePlayers/StagePlayers";
 import { StageLobbies } from "./Content/StageLobbies/StageLobbies";
 import { StageResults } from "./Content/StageResults/StageResults";
+import {
+  StyledActionButton,
+  StyledActionsContainer,
+} from "../Tournament/AdminTournament.styled";
+import { StageDialog } from "../Components/StageDialog/StageDialog";
+import {
+  StageDeleteResult,
+  DELETE_STAGE_MUTATION,
+  UpdateStageResult,
+  UpdateStageVariables,
+  UPDATE_STAGE_MUTATION,
+} from "../Tournament/Content/TournamentStages/StageCard/queries";
+import { useToast } from "../Components/Toast/Toast";
+import { StageTiebreakers } from "./Content/StageTiebreakers/StageTiebreakers";
 
 interface Props {
   tournament?: Tournament;
@@ -39,13 +60,75 @@ export const AdminStage = () => {
     variables: { id: Number(stageId) },
   });
 
-  const [{ data: tournamentData }] = useQuery<TournamentQueryResponse>({
-    query: TOURNAMENT_QUERY,
-    variables: { id: Number(id) },
-  });
+  const [, deleteStage] = useMutation<StageDeleteResult, { id: number }>(
+    DELETE_STAGE_MUTATION
+  );
+
+  const [, updateStage] = useMutation<UpdateStageResult, UpdateStageVariables>(
+    UPDATE_STAGE_MUTATION
+  );
+
+  const [{ data: tournamentData }, refetch] = useQuery<TournamentQueryResponse>(
+    {
+      query: TOURNAMENT_QUERY,
+      variables: { id: Number(id) },
+    }
+  );
+
+  const handleUpdateStage = useCallback(() => {
+    dialogRef.current?.showModal();
+  }, []);
+
+  const { show } = useToast();
+
+  const navigate = useNavigate();
+
+  const handleDeleteStage = useCallback(async () => {
+    const deleteResult = await deleteStage({ id: Number(stageId) });
+    if (deleteResult.error) {
+      return alert(deleteResult.error);
+    }
+    show();
+    navigate("..");
+  }, [deleteStage, stageId, show, navigate]);
+
+  const dialogRef = useRef<HTMLDialogElement>(null);
+  const formRef = useRef<HTMLFormElement>(null);
+
+  const onSubmit = async (
+    formStage: Omit<Stage, "id" | "rounds" | "lobbies">
+  ) => {
+    const result = await updateStage({
+      ...formStage,
+      id: Number(stageId),
+      tournamentId: Number(id),
+      isFinal: false,
+    });
+    if (result.error) {
+      return alert(result.error);
+    }
+    show();
+    formRef.current?.reset();
+    dialogRef.current?.close();
+    refetch();
+  };
 
   return (
     <>
+      <StageDialog
+        dialogRef={dialogRef}
+        formRef={formRef}
+        onSubmit={onSubmit}
+        stage={data?.stage}
+      />
+      <StyledActionsContainer>
+        <StyledActionButton onClick={handleUpdateStage}>
+          Update
+        </StyledActionButton>
+        <StyledActionButton onClick={handleDeleteStage}>
+          Delete
+        </StyledActionButton>
+      </StyledActionsContainer>
       <StageContent
         stage={data?.stage}
         tournament={tournamentData?.tournament}
@@ -75,7 +158,7 @@ export const AdminStage = () => {
       <Routes>
         <Route index element={<StagePlayers />} />
         <Route path={`players`} element={<StagePlayers />} />
-        <Route path={`tiebreakers`} element={<div>tiebreakers</div>} />
+        <Route path={`tiebreakers`} element={<StageTiebreakers />} />
         <Route path={`lobbies`} element={<StageLobbies />} />
         <Route path={`results`} element={<StageResults />} />
       </Routes>

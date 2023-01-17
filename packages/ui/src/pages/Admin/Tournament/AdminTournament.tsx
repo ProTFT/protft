@@ -4,6 +4,7 @@ import { useMutation, useQuery } from "urql";
 import { TournamentContent } from "../../../components/TournamentContent/TournamentContent";
 import { Tournament } from "../../../graphql/schema";
 import { StyledHeaderContainer } from "../../Tournament/Tournament.styled";
+import { useToast } from "../Components/Toast/Toast";
 import { TournamentDialog } from "../Components/TournamentDialog/TournamentDialog";
 import {
   StyledActionButton,
@@ -43,11 +44,13 @@ export const AdminTournament = () => {
     if (deleteResult.error) {
       return alert(deleteResult.error);
     }
-    navigate("/admin");
+    navigate("/admin/tournaments");
   }, [deleteTournament, tournamentId, navigate]);
 
   const dialogRef = useRef<HTMLDialogElement>(null);
   const formRef = useRef<HTMLFormElement>(null);
+
+  const { show } = useToast();
 
   const onSubmit = async (tournament: Omit<Tournament, "id" | "set">) => {
     const result = await updateTournament({
@@ -58,9 +61,10 @@ export const AdminTournament = () => {
     if (result.error) {
       return alert(result.error);
     }
+    show();
     formRef.current?.reset();
     dialogRef.current?.close();
-    refetch({ requestPolicy: "network-only" });
+    refetch();
   };
 
   const handleUpdateTournament = () => {

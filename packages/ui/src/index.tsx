@@ -10,6 +10,7 @@ import { App } from "./App";
 import reportWebVitals from "./reportWebVitals";
 import * as serviceWorker from "./serviceWorker";
 import { ProvideAuth } from "./hooks/useAuth";
+import { ProvideToast } from "./pages/Admin/Components/Toast/Toast";
 
 const rootElement = document.getElementById("root");
 if (!rootElement) throw new Error("Failed to find the root element");
@@ -19,6 +20,7 @@ const graphqlClient = createClient({
     credentials: "include",
   },
   url: `${process.env.REACT_APP_BACKEND_URL}`,
+  requestPolicy: "cache-and-network",
   exchanges: [
     dedupExchange,
     cacheExchange({
@@ -45,7 +47,9 @@ root.render(
       <Provider value={graphqlClient}>
         <DndProvider backend={HTML5Backend}>
           <ProvideAuth>
-            <App />
+            <ProvideToast>
+              <App />
+            </ProvideToast>
           </ProvideAuth>
         </DndProvider>
       </Provider>

@@ -24,6 +24,7 @@ import {
   CreatePlayerLobbyGroupVariables,
   CREATE_PLAYER_LOBBY_GROUP,
 } from "./queries";
+import { useToast } from "../../../../Components/Toast/Toast";
 
 interface Props {
   hasLobbieGroups: boolean;
@@ -91,6 +92,8 @@ export const LobbyGroup = ({
     onChangeSelectedPlayers(playerIds);
   }, [allLobbiesWithPlayers, onChangeSelectedPlayers]);
 
+  const { show } = useToast();
+
   const onSave = useCallback(async () => {
     const result = await createPlayerLobbyGroup({
       lobbyGroupId: selectedLobbyGroup!,
@@ -100,9 +103,10 @@ export const LobbyGroup = ({
       })),
     });
     if (result.error) {
-      alert(result.error);
+      return alert(result.error);
     }
-  }, [allLobbiesWithPlayers, createPlayerLobbyGroup, selectedLobbyGroup]);
+    show();
+  }, [allLobbiesWithPlayers, createPlayerLobbyGroup, selectedLobbyGroup, show]);
 
   const onAdd = useCallback(
     ({ lobbyId, name: lobbyName }: AllLobbyPlayers) =>

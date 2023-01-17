@@ -139,6 +139,11 @@ export interface CreateLobbiesResponse {
     createdLobbies: number;
 }
 
+export interface Tiebreaker {
+    id: number;
+    description: string;
+}
+
 export interface TournamentOverview {
     pastTournaments: Tournament[];
     liveTournaments: Tournament[];
@@ -171,6 +176,7 @@ export interface IQuery {
     stages(tournamentId: number): Stage[] | Promise<Stage[]>;
     stage(id: number): Stage | Promise<Stage>;
     playersFromPreviousStage(id: number): StagePlayerInfo[] | Promise<StagePlayerInfo[]>;
+    tiebreakers(): Tiebreaker[] | Promise<Tiebreaker[]>;
     lobbies(lobbyGroupId: number): Lobby[] | Promise<Lobby[]>;
     pointSchemas(): PointSchema[] | Promise<PointSchema[]>;
     pointSchema(id: number): Nullable<PointSchema> | Promise<Nullable<PointSchema>>;
@@ -190,6 +196,7 @@ export interface IMutation {
     createTournamentPlayers(tournamentId: number, playerIds: number[]): Tournament | Promise<Tournament>;
     createStage(tournamentId: number, pointSchemaId: number, name: string, sequence: number, isFinal: boolean, roundCount: number, tiebreakers?: Nullable<number[]>, description?: Nullable<string>): Stage | Promise<Stage>;
     updateStage(id: number, tournamentId: number, pointSchemaId: number, name: string, sequence: number, isFinal: boolean, roundCount: number, tiebreakers?: Nullable<number[]>, description?: Nullable<string>): Stage | Promise<Stage>;
+    updateTiebreakers(id: number, tiebreakers: number[]): Stage | Promise<Stage>;
     deleteStage(id: number): DeleteResponse | Promise<DeleteResponse>;
     createStagePlayers(stageId: number, playerIds: number[]): StagePlayerInfo[] | Promise<StagePlayerInfo[]>;
     generateLobbies(stageId: number, roundsPerLobbyGroup: number): CreateLobbiesResponse | Promise<CreateLobbiesResponse>;

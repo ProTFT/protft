@@ -8,6 +8,7 @@ import { RegionsIndicator } from "../../../../../components/RegionIndicator/Regi
 import { SearchInput } from "../../../../../components/SearchInput/SearchInput";
 import { Player } from "../../../../../graphql/schema";
 import { PlayerDialog } from "../../../Components/PlayerDialog/PlayerDialog";
+import { useToast } from "../../../Components/Toast/Toast";
 import {
   StyledLeftSide,
   StyledRightSide,
@@ -166,6 +167,7 @@ export const TournamentPlayers = () => {
         .sort((a, b) => a.name.localeCompare(b.name));
     });
   }, []);
+  const { show } = useToast();
 
   const onSave = useCallback(async () => {
     const result = await createTournamentPlayers({
@@ -173,9 +175,10 @@ export const TournamentPlayers = () => {
       playerIds: tournamentPlayers.map((p) => p.id),
     });
     if (result.error) {
-      alert(result.error);
+      return alert(result.error);
     }
-  }, [createTournamentPlayers, tournamentId, tournamentPlayers]);
+    show();
+  }, [createTournamentPlayers, tournamentId, tournamentPlayers, show]);
 
   const [, createPlayer] = useMutation<
     CreatePlayerResult,
@@ -190,6 +193,7 @@ export const TournamentPlayers = () => {
     if (result.error) {
       return alert(result.error);
     }
+    show();
     formRef.current?.reset();
     dialogRef.current?.close();
     refetch();

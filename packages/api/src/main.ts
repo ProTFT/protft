@@ -1,13 +1,16 @@
 import { NestFactory } from "@nestjs/core";
-import { AppModule, isProd } from "./app.module";
+import { AppModule } from "./app.module";
 import cookieParser = require("cookie-parser");
-import { cookieSecret } from "./auth/constants";
+import { ConfigService } from "@nestjs/config";
+import { getOrigin } from "./config/cors";
 
 async function bootstrap() {
   const app = await NestFactory.create(AppModule);
-  app.use(cookieParser(cookieSecret));
+  const configService = app.get(ConfigService);
+  const environment = configService.get<string>("NODE_ENV");
+  app.use(cookieParser(configService.get<string>("COOKIE_SECRET")));
   app.enableCors({
-    origin: isProd() ? "https://www.protft.com" : "http://protft.com:3000",
+    origin: getOrigin(environment),
     methods: ["GET, POST", "OPTIONS"],
     credentials: true,
   });

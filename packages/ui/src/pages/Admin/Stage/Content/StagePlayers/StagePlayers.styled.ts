@@ -11,3 +11,7 @@ export const StyledTournamentPlayersSection = styled(StyledVerticalContainer)``;
 export const StyledButtonContainer = styled(StyledHorizontalContainer)`
   gap: 1rem;
 `;
+
+export const StyledBar = styled(StyledHorizontalContainer)`
+  justify-content: space-between;
+`;

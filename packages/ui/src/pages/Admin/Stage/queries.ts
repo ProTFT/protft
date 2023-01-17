@@ -12,6 +12,8 @@ export const STAGE_QUERY = gql`
       name
       description
       sequence
+      pointSchemaId
+      roundCount
     }
   }
 `;

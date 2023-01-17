@@ -17,7 +17,6 @@ export const TOURNAMENT_STAGES_QUERY = gql`
         isFinal
         roundCount
         pointSchemaId
-        tiebreakers
         pointSchema {
           id
           name
@@ -43,7 +42,6 @@ export const CREATE_STAGE_MUTATION = gql`
     $sequence: Int!
     $isFinal: Boolean!
     $roundCount: Int!
-    $tiebreakers: [Int!]
     $description: String
   ) {
     createStage(
@@ -54,7 +52,6 @@ export const CREATE_STAGE_MUTATION = gql`
       isFinal: $isFinal
       description: $description
       roundCount: $roundCount
-      tiebreakers: $tiebreakers
     ) {
       id
     }

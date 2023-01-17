@@ -21,13 +21,16 @@ export const StageDialog = ({ dialogRef, formRef, onSubmit, stage }: Props) => {
       <FormField label="Name" name="name" />
       <FormField label="Description" name="description" />
       <FormField label="Order" name="sequence" type="number" />
-      <FormField label="Point Schema" name="pointSchemaId" type="number" />
-      <FormField label="Round Count" name="roundCount" type="number" />
       <FormField
-        label="Tiebreakers"
-        name="tiebreakers"
-        specialType="numberArray"
-      />
+        label="Point Schema"
+        type="select"
+        name="pointSchemaId"
+        specialType="number"
+      >
+        <option value="2">8 - 1</option>
+        <option value="1">10 - 8 - 6 - 1</option>
+      </FormField>
+      <FormField label="Round Count" name="roundCount" type="number" />
     </DialogForm>
   );
 };

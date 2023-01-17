@@ -1,11 +1,17 @@
 import { useCallback, useState } from "react";
 import { useMutation } from "urql";
 import { ProTFTButton } from "../../../../../../components/Button/Button";
+import { useToast } from "../../../../Components/Toast/Toast";
 import {
   GenerateLobbiesResult,
   GenerateLobbiesVariables,
   GENERATE_LOBBIES_MUTATION,
 } from "../queries";
+import {
+  StyledContainer,
+  StyledInput,
+  StyledText,
+} from "./GenerateLobbies.styled";
 
 interface Props {
   stageId: number;
@@ -18,19 +24,23 @@ export const GenerateLobbies = ({ stageId }: Props) => {
     GenerateLobbiesVariables
   >(GENERATE_LOBBIES_MUTATION);
 
+  const { show } = useToast();
+
   const onGenerateLobbies = useCallback(async () => {
     const result = await generateLobbies({
       stageId: Number(stageId!),
       roundsPerLobbyGroup: roundsPerLobby,
     });
     if (result.error) {
-      alert(result.error);
+      return alert(result.error);
     }
-  }, [generateLobbies, roundsPerLobby, stageId]);
+    show();
+  }, [generateLobbies, roundsPerLobby, stageId, show]);
 
   return (
-    <>
-      <input
+    <StyledContainer>
+      <StyledText>How many rounds until lobby swap?</StyledText>
+      <StyledInput
         type="number"
         value={roundsPerLobby}
         onChange={(event) =>
@@ -38,6 +48,6 @@ export const GenerateLobbies = ({ stageId }: Props) => {
         }
       />
       <ProTFTButton onClick={onGenerateLobbies}>Generate Lobbies</ProTFTButton>
-    </>
+    </StyledContainer>
   );
 };

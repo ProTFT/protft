@@ -4,12 +4,14 @@ import { Repository } from "typeorm";
 import { DeleteResponse } from "../lib/dto/delete-return";
 import { CreateLobbyArgs } from "../lobbies/dto/create-lobby.args";
 import { LobbiesService } from "../lobbies/lobbies.service";
-import { Lobby } from "../lobbies/lobby.entity";
 import { RoundsService } from "../rounds/rounds.service";
 import { CreateLobbiesResponse } from "./dto/create-lobbies.result";
 import { CreateStageArgs } from "./dto/create-stage.args";
 import { UpdateStageArgs } from "./dto/update-stage.args";
+import { UpdateTiebreakersArgs } from "./dto/update-tiebreakers.args";
 import { Stage } from "./stage.entity";
+import { Tiebreaker } from "./tiebreaker";
+import { getAll } from "./tiebreaker.logic";
 
 const PLAYERS_IN_TFT_LOBBY = 8;
 
@@ -56,6 +58,21 @@ export class StagesService {
     if (!stage) {
       throw new NotFoundException();
     }
+    // eslint-disable-next-line @typescript-eslint/no-unused-vars
+    const { roundCount, ...updatePayload } = rest;
+    await this.stageRepository.update({ id }, updatePayload);
+    return this.stageRepository.findOne(id);
+  }
+
+  async updateTiebreakers({
+    id,
+    ...rest
+  }: UpdateTiebreakersArgs): Promise<Stage> {
+    const stage = await this.stageRepository.findOne(id);
+    if (!stage) {
+      throw new NotFoundException();
+    }
+
     await this.stageRepository.update({ id }, rest);
     return this.stageRepository.findOne(id);
   }
@@ -99,6 +116,10 @@ export class StagesService {
   async deleteOne(id: number): Promise<DeleteResponse> {
     await this.stageRepository.delete({ id });
     return new DeleteResponse(id);
+  }
+
+  findTiebreakers(): Tiebreaker[] {
+    return getAll();
   }
 
   private async createRounds(stageId: number, roundCount: number) {

@@ -138,6 +138,11 @@ export interface CreateLobbiesResponse {
   createdLobbies: number;
 }
 
+export interface Tiebreaker {
+  id: number;
+  description: string;
+}
+
 export interface TournamentOverview {
   pastTournaments: Tournament[];
   liveTournaments: Tournament[];
@@ -174,6 +179,7 @@ export interface IQuery {
   playersFromPreviousStage(
     id: number
   ): StagePlayerInfo[] | Promise<StagePlayerInfo[]>;
+  tiebreakers(): Tiebreaker[] | Promise<Tiebreaker[]>;
   lobbies(lobbyGroupId: number): Lobby[] | Promise<Lobby[]>;
   pointSchemas(): PointSchema[] | Promise<PointSchema[]>;
   pointSchema(

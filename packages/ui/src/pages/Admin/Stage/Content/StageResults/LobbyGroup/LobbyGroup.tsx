@@ -8,6 +8,7 @@ import {
   LobbyGroup as GqlLobbyGroup,
   Player,
 } from "../../../../../../graphql/schema";
+import { useToast } from "../../../../Components/Toast/Toast";
 import { StyledTitle } from "../../../../Tournament/Content/Content.styled";
 import { LobbyContainer } from "../LobbyContainer/LobbyContainer";
 import {
@@ -127,15 +128,18 @@ export const LobbyGroup = ({
     );
   }, [selectedLobbyGroup, lobbyPlayersData?.lobbies]);
 
+  const { show } = useToast();
+
   const onSave = useCallback(async () => {
     const result = await createLobbyGroupResults({
       lobbyGroupId: selectedLobbyGroup!.id,
       results: Object.values(lobbyGroupResults),
     });
     if (result.error) {
-      alert(result.error);
+      return alert(result.error);
     }
-  }, [createLobbyGroupResults, lobbyGroupResults, selectedLobbyGroup]);
+    show();
+  }, [createLobbyGroupResults, lobbyGroupResults, selectedLobbyGroup, show]);
 
   const onGoToNextLobbyGroup = useCallback(() => {
     onChangeLobbyGroup(1);

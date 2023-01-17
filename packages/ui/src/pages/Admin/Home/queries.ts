@@ -30,7 +30,15 @@ export interface CreateTournamentResult {
 
 export type CreateTournamentVariables = Pick<
   Tournament,
-  "name" | "region" | "setId"
+  | "name"
+  | "region"
+  | "host"
+  | "participantsNumber"
+  | "prizePool"
+  | "startDate"
+  | "endDate"
+  | "setId"
+  | "currency"
 >;
 
 export const CREATE_TOURNAMENT_QUERY = gql`
@@ -43,6 +51,7 @@ export const CREATE_TOURNAMENT_QUERY = gql`
     $startDate: DateTime
     $endDate: DateTime
     $setId: Int!
+    $currency: String
   ) {
     createTournament(
       name: $name
@@ -53,6 +62,7 @@ export const CREATE_TOURNAMENT_QUERY = gql`
       startDate: $startDate
       endDate: $endDate
       setId: $setId
+      currency: $currency
     ) {
       id
     }

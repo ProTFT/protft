@@ -18,7 +18,7 @@ export const Login = () => {
   const { signin, user } = useAuth();
   const location = useLocation();
   const navigate = useNavigate();
-  const redirect = (location?.state as any)?.redirect || "/admin";
+  const redirect = (location?.state as any)?.redirect || "/admin/tournaments";
   const [payload, setPayload] = useState<UserInfoPayload>({
     username: "",
     password: "",

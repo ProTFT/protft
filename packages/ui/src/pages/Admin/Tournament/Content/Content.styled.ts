@@ -34,7 +34,7 @@ export const StyledLeftSide = styled.div`
   top: 0px;
   gap: 0.5rem;
   justify-content: flex-start;
-  min-width: 20%;
+  min-width: 25%;
   min-height: 50rem;
   padding-top: 2rem;
   padding-left: 2rem;

@@ -18,6 +18,8 @@ import { AdminHome } from "./pages/Admin/Home/AdminHome";
 import { Login } from "./pages/Auth/Login/Login";
 import { AdminTournament } from "./pages/Admin/Tournament/AdminTournament";
 import { AdminStage } from "./pages/Admin/Stage/AdminStage";
+import { Logout } from "./pages/Auth/Logout/Logout";
+import { useToast } from "./pages/Admin/Components/Toast/Toast";
 
 const ProtectedRoutes = (props: any) => {
   const location = useLocation();
@@ -31,9 +33,11 @@ const ProtectedRoutes = (props: any) => {
 };
 
 export const App = () => {
+  const { toast } = useToast();
   return (
     <div style={{ width: "100%" }}>
       <NavBar />
+      {toast}
       <Routes>
         <Route path="/" element={<SuspenseElement element={<Home />} />} />
         <Route path="tournaments">
@@ -56,14 +60,15 @@ export const App = () => {
         <Route path="stats" element={<SuspenseElement element={<Stats />} />} />
         <Route path="about" element={<SuspenseElement element={<About />} />} />
         <Route path="login" element={<Login />} />
-        <Route path="admin" element={<ProtectedRoutes />}>
+        <Route path="logout" element={<Logout />} />
+        <Route path="admin/tournaments" element={<ProtectedRoutes />}>
           <Route index element={<SuspenseElement element={<AdminHome />} />} />
           <Route
-            path="tournaments/:id/stages/:stageId/*"
+            path=":id/stages/:stageId/*"
             element={<SuspenseElement element={<AdminStage />} />}
           />
           <Route
-            path="tournaments/:id/*"
+            path=":id/*"
             element={<SuspenseElement element={<AdminTournament />} />}
           />
         </Route>
