@@ -1,6 +1,7 @@
 name: deploy-backend-ecr
 
 on:
+  worflow_dispatch:
   push:
     branches:
       - main

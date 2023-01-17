@@ -1,6 +1,7 @@
 name: deploy-frontend-s3
 
 on:
+  worflow_dispatch:
   push:
     branches:
       - main
