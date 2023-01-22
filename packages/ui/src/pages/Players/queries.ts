@@ -18,6 +18,7 @@ export const PLAYERS_QUERY = gql`
       name
       country
       region
+      slug
       playerStats {
         totalGames
         averagePosition

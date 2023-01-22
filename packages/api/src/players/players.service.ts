@@ -1,11 +1,12 @@
 import { BadRequestException, Injectable } from "@nestjs/common";
 import { InjectRepository } from "@nestjs/typeorm";
-import { ILike, Repository } from "typeorm";
+import slugify from "slugify";
+import { Repository, UpdateResult } from "typeorm";
 import { PaginationArgs } from "../lib/dto/pagination.args";
 import { SearchQuery } from "../lib/SearchQuery";
 import { Tournament } from "../tournaments/tournament.entity";
 import { CreatePlayerArgs } from "./dto/create-player.args";
-import { BaseGetPlayerArgs, GetPlayerArgs } from "./dto/get-players.args";
+import { BaseGetPlayerArgs } from "./dto/get-players.args";
 import { Player } from "./player.entity";
 
 interface PlayerCountry {
@@ -26,6 +27,10 @@ export class PlayersService {
 
   async findOne(id: number) {
     return this.playerRepository.findOne(id);
+  }
+
+  async findOneBySlug(slug: string) {
+    return this.playerRepository.findOne({ slug });
   }
 
   async findAll(
@@ -52,7 +57,16 @@ export class PlayersService {
     if (!name || !region) {
       throw new BadRequestException("Name and Region are mandatory");
     }
-    return this.playerRepository.save({ name, country, region });
+    const savedPlayer = await this.playerRepository.save({
+      name,
+      country,
+      region,
+    });
+    await this.playerRepository.update(
+      { id: savedPlayer.id },
+      { slug: this.createSlug(savedPlayer) },
+    );
+    return savedPlayer;
   }
 
   async findUniqueCountries(): Promise<string[]> {
@@ -91,5 +105,25 @@ export class PlayersService {
 
   unpackBy<T>(result: T[], property: keyof T) {
     return result.map((entry) => entry[property]);
+  }
+
+  async createSlugs(): Promise<UpdateResult[]> {
+    const allTournaments = await this.playerRepository.find();
+    const payloads = allTournaments.map(async (player) =>
+      this.playerRepository.update(
+        { id: player.id },
+        {
+          slug: await this.createSlug(player),
+        },
+      ),
+    );
+    return Promise.all(payloads);
+  }
+
+  private createSlug(player: Pick<Player, "id" | "name" | "region">): string {
+    return slugify(`${player.id}-${player.name}`, {
+      lower: true,
+      strict: true,
+    });
   }
 }

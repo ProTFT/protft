@@ -1,9 +1,10 @@
 import { gql } from "urql";
-import { PlayersStats } from "../../graphql/schema";
+import { Player, PlayersStats } from "../../graphql/schema";
 
 export interface PlayersQueryWithStatsArgs {
   region?: string;
   setId?: number;
+  tournamentId?: number;
   skip?: number;
   take?: number;
 }
@@ -24,6 +25,69 @@ export const PLAYERS_QUERY_WITH_STATS = gql`
       topOneCount
       eigthCount
       topFourCount
+    }
+  }
+`;
+
+export interface PlayerQueryResult {
+  players: Player[];
+}
+
+export enum SortColumn {
+  AVERAGE_POSITION = "averagePosition",
+  TOP_1 = "topOnePercent",
+  TOP_4 = "topFourPercent",
+  TOTAL_GAMES = "totalGames",
+}
+
+export interface SortOption {
+  column: string;
+  asc: boolean;
+}
+
+export interface PlayersStatsQueryResult {
+  playerStats: PlayersStats[];
+}
+
+export interface PlayerStatsQueryVariables {
+  setId?: number;
+  region?: string;
+  take?: number;
+  skip?: number;
+  tournamentId?: number;
+  sort?: SortOption;
+  searchQuery?: string;
+}
+// region, country, take, skip, searchQuery
+export const PLAYER_STATS_QUERY = gql`
+  query stats(
+    $setId: Int
+    $region: String
+    $take: Int
+    $skip: Int
+    $tournamentId: Int
+    $sort: SortOption
+    $searchQuery: String
+  ) {
+    playerStats(
+      setId: $setId
+      region: $region
+      take: $take
+      skip: $skip
+      tournamentId: $tournamentId
+      sort: $sort
+      searchQuery: $searchQuery
+    ) {
+      player {
+        id
+        name
+        region
+      }
+      averagePosition
+      topFourCount
+      topOneCount
+      eigthCount
+      totalGames
     }
   }
 `;

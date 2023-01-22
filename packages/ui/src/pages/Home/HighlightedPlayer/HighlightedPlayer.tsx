@@ -21,14 +21,14 @@ export const HighlightedPlayer = () => {
           <StyledPlayerName>TSM Souless</StyledPlayerName>
           <StyledPlayerDescription>
             After clutching out the first place at TFT Summit together with{" "}
-            <Link to={"/players/31"}>Kurumx</Link>, Souless puts himself in an
-            amazing position at the beginning of the set.
+            <Link to={"/players/31-kurumx"}>Kurumx</Link>, Souless puts himself
+            in an amazing position at the beginning of the set.
             <br />
             <br />
             After questions raised about his flexibility, he showed several
             different comps and boasts amazing stats for the event.
           </StyledPlayerDescription>
-          <Link to={`/players/152`}>
+          <Link to={`/players/152-tsm-souless`}>
             <ProTFTButton textColor={colors.white} buttonColor={colors.purple}>
               Profile
             </ProTFTButton>

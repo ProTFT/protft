@@ -8,6 +8,6 @@ import { RoundResult } from "../round-result.entity";
 export type RoundResultsRaw = Pick<RoundResult, "roundId" | "position"> &
   Pick<LobbyPlayerInfo, "id" | "playerId"> &
   Pick<Round, "sequence"> &
-  Pick<Player, "name" | "region" | "country"> &
+  Pick<Player, "name" | "region" | "country" | "slug"> &
   Pick<Points, "points"> &
   Pick<StagePlayerInfo, "extraPoints" | "tiebreakerRanking">;

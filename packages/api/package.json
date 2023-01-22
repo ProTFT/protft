@@ -41,6 +41,7 @@
     "reflect-metadata": "^0.1.13",
     "rimraf": "^3.0.2",
     "rxjs": "^7.2.0",
+    "slugify": "^1.6.5",
     "ts-morph": "^14.0.0",
     "typeorm": "^0.2.45",
     "webpack": "^5.72.1"

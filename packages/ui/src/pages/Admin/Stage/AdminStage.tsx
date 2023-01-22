@@ -19,7 +19,7 @@ import {
   useNavigate,
   useParams,
 } from "react-router-dom";
-import { StyledHeaderContainer } from "./AdminStage.styled";
+import { StyledBar, StyledHeaderContainer } from "./AdminStage.styled";
 import {
   StyledTabButton,
   StyledTabContainer,
@@ -42,6 +42,7 @@ import {
 } from "../Tournament/Content/TournamentStages/StageCard/queries";
 import { useToast } from "../Components/Toast/Toast";
 import { StageTiebreakers } from "./Content/StageTiebreakers/StageTiebreakers";
+import { SuspenseElement } from "../../../components/SuspendedPage";
 
 interface Props {
   tournament?: Tournament;
@@ -92,6 +93,10 @@ export const AdminStage = () => {
     navigate("..");
   }, [deleteStage, stageId, show, navigate]);
 
+  const handleBackToTournament = useCallback(() => {
+    navigate(`/admin/tournaments/${id}`);
+  }, [navigate, id]);
+
   const dialogRef = useRef<HTMLDialogElement>(null);
   const formRef = useRef<HTMLFormElement>(null);
 
@@ -121,14 +126,21 @@ export const AdminStage = () => {
         onSubmit={onSubmit}
         stage={data?.stage}
       />
-      <StyledActionsContainer>
-        <StyledActionButton onClick={handleUpdateStage}>
-          Update
-        </StyledActionButton>
-        <StyledActionButton onClick={handleDeleteStage}>
-          Delete
-        </StyledActionButton>
-      </StyledActionsContainer>
+      <StyledBar>
+        <StyledActionsContainer>
+          <StyledActionButton onClick={handleBackToTournament}>
+            Back to Tournament
+          </StyledActionButton>
+        </StyledActionsContainer>
+        <StyledActionsContainer>
+          <StyledActionButton onClick={handleUpdateStage}>
+            Update
+          </StyledActionButton>
+          <StyledActionButton onClick={handleDeleteStage}>
+            Delete
+          </StyledActionButton>
+        </StyledActionsContainer>
+      </StyledBar>
       <StageContent
         stage={data?.stage}
         tournament={tournamentData?.tournament}
@@ -156,11 +168,23 @@ export const AdminStage = () => {
         </Link>
       </StyledTabContainer>
       <Routes>
-        <Route index element={<StagePlayers />} />
-        <Route path={`players`} element={<StagePlayers />} />
-        <Route path={`tiebreakers`} element={<StageTiebreakers />} />
-        <Route path={`lobbies`} element={<StageLobbies />} />
-        <Route path={`results`} element={<StageResults />} />
+        <Route index element={<SuspenseElement element={<StagePlayers />} />} />
+        <Route
+          path={`players`}
+          element={<SuspenseElement element={<StagePlayers />} />}
+        />
+        <Route
+          path={`tiebreakers`}
+          element={<SuspenseElement element={<StageTiebreakers />} />}
+        />
+        <Route
+          path={`lobbies`}
+          element={<SuspenseElement element={<StageLobbies />} />}
+        />
+        <Route
+          path={`results`}
+          element={<SuspenseElement element={<StageResults />} />}
+        />
       </Routes>
     </>
   );

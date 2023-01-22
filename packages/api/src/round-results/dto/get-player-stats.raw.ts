@@ -1,9 +1,9 @@
 export interface PlayerStatsRaw {
   averagePosition: string;
   totalGames: string;
-  topFourCount: string;
-  topOneCount: string;
-  eigthCount: string;
+  topFourPercent: string;
+  topOnePercent: string;
+  eigthPercent: string;
 }
 
 export interface PlayersStatsRaw extends PlayerStatsRaw {

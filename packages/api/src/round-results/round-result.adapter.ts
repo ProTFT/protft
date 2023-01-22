@@ -23,6 +23,7 @@ export function fromRawToConsolidatedRoundResults(
       extraPoints,
       tiebreakerRanking,
       id,
+      slug,
     }) => {
       if (!consolidatedResults[playerId]) {
         consolidatedResults[playerId] = {
@@ -31,6 +32,7 @@ export function fromRawToConsolidatedRoundResults(
             name,
             region,
             country,
+            slug,
           },
           tiebreakerRanking,
           positions: [],
@@ -44,7 +46,6 @@ export function fromRawToConsolidatedRoundResults(
       }
     },
   );
-  // console.log(consolidatedResults);
   return Object.values(consolidatedResults);
 }
 
@@ -77,13 +78,11 @@ export function formatLobbyGroupResults(
   rounds: Round[],
 ): RoundResult[] {
   const roundInitialIndex = sequence * roundsPlayed - (roundsPlayed - 1) - 1;
-  console.log(roundInitialIndex);
   const allRoundIds = rounds.map((r) => r.id);
   const roundsIds = allRoundIds.slice(
     roundInitialIndex,
     roundInitialIndex + roundsPlayed,
   );
-  console.log(roundsIds);
 
   const result: RoundResult[] = results.reduce(
     (prev, { lobbyPlayerId, positions }) => [

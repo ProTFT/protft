@@ -8,8 +8,8 @@ export const StyledPlayerCardHeader = styled.div`
   gap: 1rem;
   align-items: center;
 
-  @media ${device.tablet} {
-    width: 20%;
+  @media ${device.desktop} {
+    width: 30%;
   }
 `;
 
@@ -59,4 +59,9 @@ export const StyledDetailsButton = styled.p`
   letter-spacing: 0.3em;
   text-align: left;
   text-transform: uppercase;
+`;
+
+export const StyledSkeletonRectangle = styled.div`
+  background-color: blue;
+  width: 100%;
 `;

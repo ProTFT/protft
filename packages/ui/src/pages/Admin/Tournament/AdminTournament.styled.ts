@@ -11,3 +11,8 @@ export const StyledActionsContainer = styled(StyledHorizontalContainer)`
 `;
 
 export const StyledActionButton = styled(StyledButton)``;
+
+export const StyledBar = styled(StyledHorizontalContainer)`
+  justify-content: space-between;
+  background-color: ${colors.pitchBlack};
+`;

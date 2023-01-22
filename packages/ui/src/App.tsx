@@ -1,4 +1,3 @@
-import * as React from "react";
 import "./App.css";
 import "typeface-roboto";
 import "./design/fonts/VTFRedzone/stylesheet.css";
@@ -41,19 +40,16 @@ export const App = () => {
       <Routes>
         <Route path="/" element={<SuspenseElement element={<Home />} />} />
         <Route path="tournaments">
+          <Route index element={<Tournaments />} />
           <Route
-            index
-            element={<SuspenseElement element={<Tournaments />} />}
-          />
-          <Route
-            path=":tournamentId"
+            path=":tournamentSlug"
             element={<SuspenseElement element={<Tournament />} />}
           />
         </Route>
         <Route path="players">
-          <Route index element={<SuspenseElement element={<Players />} />} />
+          <Route index element={<Players />} />
           <Route
-            path=":playerId"
+            path=":playerSlug"
             element={<SuspenseElement element={<Player />} />}
           />
         </Route>

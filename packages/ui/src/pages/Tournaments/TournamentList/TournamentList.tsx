@@ -19,7 +19,7 @@ export const TournamentList = ({ searchQuery }: Props) => {
   return (
     <StyledTournamentList>
       {data?.tournaments.map((tournament) => (
-        <Link key={tournament.id} to={`${tournament.id}`}>
+        <Link key={tournament.id} to={`${tournament.slug}`}>
           <TournamentListItem tournament={tournament} />
         </Link>
       ))}

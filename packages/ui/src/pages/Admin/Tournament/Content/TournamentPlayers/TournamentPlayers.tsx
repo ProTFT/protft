@@ -157,9 +157,9 @@ export const TournamentPlayers = () => {
     [tournamentPlayers]
   );
 
-  const onAdd = useCallback(({ id, name, region }: Player) => {
+  const onAdd = useCallback(({ id, name, region, slug }: Player) => {
     setTournamentPlayers((players) => {
-      const allPlayers = [...players, { id, name, region }];
+      const allPlayers = [...players, { id, name, region, slug }];
       const allPlayerIds = allPlayers.map((i) => i.id);
       const uniqueIds = new Set(allPlayerIds);
       return Array.from(uniqueIds)

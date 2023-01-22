@@ -68,3 +68,23 @@ export const CREATE_TOURNAMENT_QUERY = gql`
     }
   }
 `;
+
+export const CREATE_PLAYER_SLUGS_MUTATION = gql`
+  mutation setSlug {
+    createPlayerSlugs {
+      id
+      name
+      slug
+    }
+  }
+`;
+
+export const CREATE_TOURNAMENT_SLUGS_MUTATION = gql`
+  mutation setSlug {
+    createTournamentSlugs {
+      id
+      name
+      slug
+    }
+  }
+`;

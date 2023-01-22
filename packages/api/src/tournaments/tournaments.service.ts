@@ -1,13 +1,15 @@
 import { Injectable, NotFoundException } from "@nestjs/common";
 import { InjectRepository } from "@nestjs/typeorm";
-import { Raw, Repository } from "typeorm";
+import { Raw, Repository, UpdateResult } from "typeorm";
 import { DeleteResponse } from "../lib/dto/delete-return";
 import { SearchQuery } from "../lib/SearchQuery";
 import { Player } from "../players/player.entity";
+import { SetsService } from "../sets/sets.service";
 import { CreateTournamentPlayerArgs } from "./dto/create-tournament-player.args";
 import { CreateTournamentArgs } from "./dto/create-tournament.args";
 import { UpdateTournamentArgs } from "./dto/update-tournament.args";
 import { Tournament } from "./tournament.entity";
+import slugify from "slugify";
 
 @Injectable()
 export class TournamentsService {
@@ -15,6 +17,7 @@ export class TournamentsService {
     @InjectRepository(Tournament)
     private tournamentRepository: Repository<Tournament>,
     private searchQueryProvider: SearchQuery,
+    private setsService: SetsService,
   ) {}
 
   findAll(searchQuery?: string): Promise<Tournament[]> {
@@ -28,6 +31,10 @@ export class TournamentsService {
 
   findOne(id: number): Promise<Tournament> {
     return this.tournamentRepository.findOne(id);
+  }
+
+  findOneBySlug(slug: string): Promise<Tournament> {
+    return this.tournamentRepository.findOne({ slug });
   }
 
   findPast(): Promise<Tournament[]> {
@@ -58,8 +65,12 @@ export class TournamentsService {
     });
   }
 
-  createOne(payload: CreateTournamentArgs): Promise<Tournament> {
-    return this.tournamentRepository.save(payload);
+  async createOne(payload: CreateTournamentArgs): Promise<Tournament> {
+    const payloadWithSlug = {
+      ...payload,
+      slug: await this.createSlug(payload),
+    };
+    return this.tournamentRepository.save(payloadWithSlug);
   }
 
   async updateOne({ id, ...rest }: UpdateTournamentArgs): Promise<Tournament> {
@@ -92,5 +103,35 @@ export class TournamentsService {
     }));
     tournament.players = playerObjects as Player[];
     return this.tournamentRepository.save(tournament);
+  }
+
+  async createSlugs(): Promise<UpdateResult[]> {
+    const allTournaments = await this.tournamentRepository.find({
+      relations: ["set"],
+    });
+    const payloads = allTournaments.map(async (tournament) =>
+      this.tournamentRepository.update(
+        { id: tournament.id },
+        {
+          slug: await this.createSlug(tournament),
+        },
+      ),
+    );
+    return Promise.all(payloads);
+  }
+
+  private async createSlug(
+    tournament: Pick<Tournament, "name" | "setId" | "region"> &
+      Partial<Pick<Tournament, "set">>,
+  ): Promise<string> {
+    let setName = tournament.set?.name;
+    if (!setName) {
+      const { name } = await this.setsService.findOne(tournament.setId);
+      setName = name;
+    }
+    return slugify(`${setName}-${tournament.region}-${tournament.name}`, {
+      lower: true,
+      strict: true,
+    });
   }
 }

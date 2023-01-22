@@ -5,6 +5,38 @@ export interface TournamentQueryResponse {
   tournament: Tournament;
 }
 
+export interface TournamentBySlugQueryResponse {
+  tournamentBySlug: Tournament;
+}
+
+export const TOURNAMENT_BY_SLUG_QUERY = gql`
+  query tournament($slug: String!) {
+    tournamentBySlug(slug: $slug) {
+      id
+      name
+      region
+      host
+      participantsNumber
+      prizePool
+      currency
+      startDate
+      endDate
+      setId
+      set {
+        id
+        name
+      }
+      stages {
+        id
+        name
+        sequence
+        isFinal
+        roundCount
+      }
+    }
+  }
+`;
+
 export const TOURNAMENT_QUERY = gql`
   query tournament($id: Int!) {
     tournament(id: $id) {
@@ -50,6 +82,7 @@ export const RESULTS_QUERY = gql`
         id
         name
         region
+        slug
       }
       positions
       points

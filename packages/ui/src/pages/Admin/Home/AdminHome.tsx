@@ -1,4 +1,4 @@
-import React, { useRef } from "react";
+import React, { useCallback, useRef } from "react";
 import { Link } from "react-router-dom";
 import { useMutation, useQuery } from "urql";
 import { Tournament } from "../../../graphql/schema";
@@ -11,7 +11,9 @@ import { StyledButton, StyledContainer } from "./AdminHome.styled";
 import {
   CreateTournamentResult,
   CreateTournamentVariables,
+  CREATE_PLAYER_SLUGS_MUTATION,
   CREATE_TOURNAMENT_QUERY,
+  CREATE_TOURNAMENT_SLUGS_MUTATION,
   TournamentsQueryResult,
   TOURNAMENTS_QUERY,
 } from "./queries";
@@ -30,6 +32,12 @@ export const AdminHome = () => {
     CreateTournamentVariables
   >(CREATE_TOURNAMENT_QUERY);
 
+  const [, createTournamentSlugs] = useMutation(
+    CREATE_TOURNAMENT_SLUGS_MUTATION
+  );
+
+  const [, createPlayerSlugs] = useMutation(CREATE_PLAYER_SLUGS_MUTATION);
+
   const dialogRef = useRef<HTMLDialogElement>(null);
   const formRef = useRef<HTMLFormElement>(null);
   const { show } = useToast();
@@ -45,6 +53,20 @@ export const AdminHome = () => {
     refetch();
   };
 
+  const onCreateTournamentSlugs = useCallback(async () => {
+    const result = await createTournamentSlugs({});
+    if (result.error) {
+      return alert(result.error);
+    }
+  }, [createTournamentSlugs]);
+
+  const onCreatePlayerSlugs = useCallback(async () => {
+    const result = await createPlayerSlugs({});
+    if (result.error) {
+      return alert(result.error);
+    }
+  }, [createPlayerSlugs]);
+
   return (
     <StyledContainer>
       <TournamentDialog
@@ -53,6 +75,12 @@ export const AdminHome = () => {
         onSubmit={onSubmit}
       />
       <StyledAdminBar>
+        <StyledButton onClick={onCreateTournamentSlugs}>
+          Create Tournament Slugs
+        </StyledButton>
+        <StyledButton onClick={onCreatePlayerSlugs}>
+          Create Player Slugs
+        </StyledButton>
         <StyledButton onClick={() => dialogRef.current?.showModal()}>
           Add Tournament
         </StyledButton>

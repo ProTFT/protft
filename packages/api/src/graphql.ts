@@ -7,6 +7,11 @@
 
 /* tslint:disable */
 /* eslint-disable */
+export interface SortOption {
+    column: string;
+    asc: boolean;
+}
+
 export interface CreatePlayerLobbyArgs {
     lobbyId: number;
     playerIds: number[];
@@ -55,6 +60,7 @@ export interface Player {
     playerStats?: Nullable<PlayerStats>;
     region?: Nullable<string>;
     country?: Nullable<string>;
+    slug: string;
 }
 
 export interface Round {
@@ -79,6 +85,7 @@ export interface Tournament {
     startDate?: Nullable<DateTime>;
     endDate?: Nullable<DateTime>;
     setId: number;
+    slug: string;
     set: Set;
     stages?: Nullable<Stage[]>;
     players?: Nullable<Player[]>;
@@ -172,6 +179,7 @@ export interface IQuery {
     set(id: number): Nullable<Set> | Promise<Nullable<Set>>;
     tournaments(searchQuery?: Nullable<string>): Tournament[] | Promise<Tournament[]>;
     tournament(id: number): Tournament | Promise<Tournament>;
+    tournamentBySlug(slug: string): Tournament | Promise<Tournament>;
     tournamentOverview(): TournamentOverview | Promise<TournamentOverview>;
     stages(tournamentId: number): Stage[] | Promise<Stage[]>;
     stage(id: number): Stage | Promise<Stage>;
@@ -183,10 +191,11 @@ export interface IQuery {
     tournamentsPlayed(playerId: number): Tournament[] | Promise<Tournament[]>;
     players(region?: Nullable<string>, country?: Nullable<string>, searchQuery?: Nullable<string>, take?: Nullable<number>, skip?: Nullable<number>): Player[] | Promise<Player[]>;
     player(id: number): Player | Promise<Player>;
+    playerBySlug(slug: string): Player | Promise<Player>;
     playerFilterMeta(): PlayerFilterMeta | Promise<PlayerFilterMeta>;
     resultsByStage(stageId: number): PlayerResults[] | Promise<PlayerResults[]>;
     resultsByLobbyGroup(lobbyGroupId: number): PlayerResults[] | Promise<PlayerResults[]>;
-    playerStats(setId?: Nullable<number>, region?: Nullable<string>, take?: Nullable<number>, skip?: Nullable<number>): PlayersStats[] | Promise<PlayersStats[]>;
+    playerStats(setId?: Nullable<number>, tournamentId?: Nullable<number>, region?: Nullable<string>, sort?: Nullable<SortOption>, searchQuery?: Nullable<string>, take?: Nullable<number>, skip?: Nullable<number>): PlayersStats[] | Promise<PlayersStats[]>;
 }
 
 export interface IMutation {
@@ -194,6 +203,7 @@ export interface IMutation {
     updateTournament(id: number, name: string, setId: number, region?: Nullable<string[]>, host?: Nullable<string>, participantsNumber?: Nullable<number>, prizePool?: Nullable<number>, currency?: Nullable<string>, startDate?: Nullable<DateTime>, endDate?: Nullable<DateTime>): Tournament | Promise<Tournament>;
     deleteTournament(id: number): DeleteResponse | Promise<DeleteResponse>;
     createTournamentPlayers(tournamentId: number, playerIds: number[]): Tournament | Promise<Tournament>;
+    createTournamentSlugs(): Tournament[] | Promise<Tournament[]>;
     createStage(tournamentId: number, pointSchemaId: number, name: string, sequence: number, isFinal: boolean, roundCount: number, tiebreakers?: Nullable<number[]>, description?: Nullable<string>): Stage | Promise<Stage>;
     updateStage(id: number, tournamentId: number, pointSchemaId: number, name: string, sequence: number, isFinal: boolean, roundCount: number, tiebreakers?: Nullable<number[]>, description?: Nullable<string>): Stage | Promise<Stage>;
     updateTiebreakers(id: number, tiebreakers: number[]): Stage | Promise<Stage>;
@@ -206,6 +216,7 @@ export interface IMutation {
     createRound(stageId: number, sequence: number): Round | Promise<Round>;
     createPlayerLobbyGroup(lobbyGroupId: number, players: CreatePlayerLobbyArgs[]): LobbyPlayerInfo[] | Promise<LobbyPlayerInfo[]>;
     createPlayer(name: string, country: string, region: string): Player | Promise<Player>;
+    createPlayerSlugs(): Player[] | Promise<Player[]>;
     createLobbyGroupResult(lobbyGroupId: number, results: CreateLobbyGroupResults[]): BooleanResult | Promise<BooleanResult>;
     createLobbyResult(lobbyId: number, players: PlayerLobbyResultInput[]): BooleanResult | Promise<BooleanResult>;
 }

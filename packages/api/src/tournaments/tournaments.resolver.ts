@@ -40,6 +40,11 @@ export class TournamentsResolver {
     return this.tournamentsService.findOne(id);
   }
 
+  @Query(() => Tournament)
+  async tournamentBySlug(@Args("slug") slug: string) {
+    return this.tournamentsService.findOneBySlug(slug);
+  }
+
   @Query(() => TournamentOverview)
   async tournamentOverview() {
     const [pastTournaments, liveTournaments, upcomingTournaments] =
@@ -99,5 +104,11 @@ export class TournamentsResolver {
   ) {
     const payload = { tournamentId, playerIds };
     return this.tournamentsService.createTournamentPlayer(payload);
+  }
+
+  @UseGuards(GqlJwtAuthGuard)
+  @Mutation(() => [Tournament])
+  async createTournamentSlugs() {
+    return this.tournamentsService.createSlugs();
   }
 }

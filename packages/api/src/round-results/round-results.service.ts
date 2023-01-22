@@ -21,7 +21,7 @@ export class RoundResultsService {
     return this.roundResultsRepository.manager
       .createQueryBuilder()
       .select(
-        "result.roundId, result.position, lpi.id, lpi.playerId, round.sequence, player.name, player.region, player.country, points.points",
+        "result.roundId, result.position, lpi.id, lpi.playerId, round.sequence, player.name, player.region, player.country, player.slug, points.points",
       )
       .from("lobby_player_info", "lpi")
       .innerJoin("lobby", "lobby", "lobby.id = lpi.lobbyId")
@@ -82,34 +82,60 @@ export class RoundResultsService {
     skip,
     take = 10,
     region,
+    tournamentId,
+    sort,
   }: Partial<GetStatsArgs>): Promise<PlayersStatsRaw[]> {
     return this.roundResultsRepository.manager
       .createQueryBuilder()
       .select("*")
       .from((subquery) => {
-        const baseQuery = this.getBaseStatsQuery(subquery);
-        let query = baseQuery
-          .addSelect("player.*")
-          .from("round_result", "result")
-          .innerJoin(
-            "lobby_player_info",
-            "lpi",
-            "lpi.id = result.lobbyPlayerId",
-          )
-          .innerJoin("player", "player", "player.id = lpi.playerId")
-          .groupBy("player.id");
+        return subquery
+          .select('"totalGames"')
+          .addSelect('"averagePosition"')
+          .addSelect('"topFourCount" / "totalGames"', "topFourPercent")
+          .addSelect('"topOneCount" / "totalGames"', "topOnePercent")
+          .addSelect('"eigthCount" / "totalGames"', "eigthPercent")
+          .addSelect("id")
+          .addSelect("name")
+          .addSelect("region")
+          .addSelect("country")
+          .from((rawSubquery) => {
+            const baseQuery = this.getBaseStatsQuery(rawSubquery);
+            let query = baseQuery
+              .addSelect("player.*")
+              .from("round_result", "result")
+              .innerJoin(
+                "lobby_player_info",
+                "lpi",
+                "lpi.id = result.lobbyPlayerId",
+              )
+              .innerJoin("player", "player", "player.id = lpi.playerId")
+              .innerJoin("lobby", "l", "l.id = lpi.lobbyId")
+              .innerJoin("stage", "s", "s.id = l.stageId")
+              .innerJoin("tournament", "t", "t.id = s.tournamentId")
+              .groupBy("player.id");
 
-        if (region) {
-          query = query.andWhere("player.region = :region", { region });
-        }
+            if (region) {
+              query = query.andWhere("player.region = :region", { region });
+            }
 
-        if (setId) {
-          return this.filterBySet(query, setId);
-        }
-        return query;
+            if (setId) {
+              query = query.andWhere("t.setId = :setId", { setId });
+            }
+
+            if (tournamentId) {
+              query = query.andWhere("t.id = :tournamentId", { tournamentId });
+            }
+
+            return query;
+          }, "rawStats");
       }, "stats")
       .where('stats."totalGames" > 0')
-      .orderBy('"averagePosition"', "ASC")
+      .orderBy(
+        sort
+          ? { [`stats.\"${sort.column}\"`]: sort.asc ? "ASC" : "DESC" }
+          : { [`stats.\"averagePosition\"`]: "ASC" },
+      )
       .take(take)
       .skip(skip)
       .getRawMany<PlayersStatsRaw>();
@@ -118,52 +144,76 @@ export class RoundResultsService {
   public findStatsByPlayer(
     playerId: number,
     setId?: number,
+    tournamentId?: number,
   ): Promise<PlayerStatsRaw> {
     const queryBuilder =
-      this.roundResultsRepository.createQueryBuilder("result");
+      this.roundResultsRepository.manager.createQueryBuilder();
+    // add subquery here to get the / total games values
+    return queryBuilder
+      .select('"totalGames"')
+      .addSelect('"averagePosition"')
+      .addSelect('"topFourCount" / "totalGames"', "topFourPercent")
+      .addSelect('"topOneCount" / "totalGames"', "topOnePercent")
+      .addSelect('"eigthCount" / "totalGames"', "eigthPercent")
+      .addSelect("id")
+      .addSelect("name")
+      .addSelect("region")
+      .addSelect("country")
+      .from((qb) => {
+        let query = this.getBaseStatsQuery(qb)
+          .addSelect("player.*")
+          .from("round_result", "result")
+          .innerJoin(
+            "lobby_player_info",
+            "lpi",
+            "lpi.id = result.lobbyPlayerId",
+          )
+          .innerJoin("player", "player", "player.id = lpi.playerId")
+          .innerJoin("lobby", "lobby", "lobby.id = lpi.lobbyId")
+          .innerJoin("stage", "stage", "stage.id = lobby.stageId")
+          .innerJoin(
+            "tournament",
+            "tournament",
+            "tournament.id = stage.tournamentId",
+          )
+          .groupBy("player.id")
+          .where("lpi.playerId = :playerId", { playerId });
 
-    const query = this.getBaseStatsQuery(queryBuilder)
-      .innerJoin("lobby_player_info", "lpi", "lpi.id = result.lobbyPlayerId")
-      .where("lpi.playerId = :playerId", { playerId });
+        if (setId) {
+          query = query.andWhere("tournament.setId = :setId", { setId });
+        }
 
-    if (setId) {
-      return this.filterBySet(queryBuilder, setId).getRawOne();
-    }
-    return query.getRawOne();
+        if (tournamentId) {
+          query = query.andWhere("tournament.id = :tournamentId", {
+            tournamentId,
+          });
+        }
+
+        return query;
+      }, "rawStats")
+      .getRawOne();
   }
 
   private getBaseStatsQuery(
     queryBuilder: SelectQueryBuilder<any>,
   ): SelectQueryBuilder<any> {
     return queryBuilder
-      .select(`COUNT(*)`, "totalGames")
-      .addSelect(`COALESCE(AVG(position),0)`, "averagePosition")
+      .select(`CAST(COUNT(*) as decimal)`, "totalGames")
       .addSelect(
-        `COALESCE(SUM(CASE WHEN position <= 4 THEN 1 ELSE 0 END),0)`,
+        `CAST(COALESCE(AVG(position),0) as decimal)`,
+        "averagePosition",
+      )
+      .addSelect(
+        `CAST(COALESCE(SUM(CASE WHEN position <= 4 THEN 1 ELSE 0 END),0) as decimal)`,
         "topFourCount",
       )
       .addSelect(
-        `COALESCE(SUM(CASE WHEN position = 1 THEN 1 ELSE 0 END),0)`,
+        `CAST(COALESCE(SUM(CASE WHEN position = 1 THEN 1 ELSE 0 END),0) as decimal)`,
         "topOneCount",
       )
       .addSelect(
-        `COALESCE(SUM(CASE WHEN position = 8 THEN 1 ELSE 0 END),0)`,
+        `CAST(COALESCE(SUM(CASE WHEN position = 8 THEN 1 ELSE 0 END),0) as decimal)`,
         "eigthCount",
       );
-  }
-
-  private filterBySet(
-    queryBuilder: SelectQueryBuilder<any>,
-    setId: number,
-  ): SelectQueryBuilder<any> {
-    return queryBuilder
-      .innerJoin("lobby", "lobby", "lobby.id = result.lobbyId")
-      .innerJoin("stage", "stage", "stage.id = lobby.stageId")
-      .innerJoin(
-        "tournament",
-        "tournament",
-        "tournament.id = stage.tournamentId",
-      )
-      .andWhere("tournament.setId = :setId", { setId });
   }
 }

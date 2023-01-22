@@ -4,7 +4,7 @@ import { RoundedContainer } from "../../../components/Containers/RoundedContaine
 import { RegionsIndicator } from "../../../components/RegionIndicator/RegionIndicator";
 import { ArrowRightIcon } from "../../../design/icons/ArrowRight";
 import { Player } from "../../../graphql/schema";
-import { useIsMobile } from "../../../hooks/useIsMobile";
+import { useIsDesktop } from "../../../hooks/useIsDesktop";
 import {
   StyledDetailsButton,
   StyledPlayerCardBottom,
@@ -25,12 +25,12 @@ interface Props {
 }
 
 export const PlayerCard = ({
-  player: { name, region, playerStats, id },
+  player: { name, region, playerStats, slug },
 }: Props) => {
-  const isMobile = useIsMobile();
+  const isDesktop = useIsDesktop();
 
   return (
-    <Link to={`${id}`}>
+    <Link to={`${slug}`}>
       <RoundedContainer padding="1.5rem">
         <StyledPlayerCardHeader>
           <StyledPlayerImage />
@@ -39,7 +39,7 @@ export const PlayerCard = ({
             <RegionsIndicator regionCodes={[region!]} />
           </StyledPlayerInfo>
         </StyledPlayerCardHeader>
-        {!isMobile && <PlayerCardStats playerStats={playerStats} />}
+        {isDesktop && <PlayerCardStats playerStats={playerStats} />}
         <StyledPlayerCardBottom>
           <StyledDetailsButton>Details</StyledDetailsButton>
           <ArrowRightIcon size={20} onClick={() => {}} />

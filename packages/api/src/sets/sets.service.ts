@@ -8,7 +8,11 @@ export class SetsService {
   constructor(@InjectRepository(Set) private setRepository: Repository<Set>) {}
 
   findAll(): Promise<Set[]> {
-    return this.setRepository.find();
+    return this.setRepository.find({
+      order: {
+        id: "ASC",
+      },
+    });
   }
 
   findOne(id: number): Promise<Set> {

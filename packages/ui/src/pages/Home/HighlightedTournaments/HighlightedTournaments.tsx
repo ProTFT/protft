@@ -13,7 +13,7 @@ export const HighlightedTournaments = () => {
     <StyledContainer>
       <Logo width={150} height={83} />
       <StyledTournamentTitle>Jade Cup</StyledTournamentTitle>
-      <Link to={"/tournaments/54"}>
+      <Link to={"/tournaments/dragonlands-na-jade-cup"}>
         <ProTFTButton textColor={colors.otherBlack}>Check out</ProTFTButton>
       </Link>
     </StyledContainer>

@@ -6,6 +6,11 @@
 
 /* tslint:disable */
 /* eslint-disable */
+export interface SortOption {
+  column: string;
+  asc: boolean;
+}
+
 export interface CreatePlayerLobbyArgs {
   lobbyId: number;
   playerIds: number[];
@@ -54,6 +59,7 @@ export interface Player {
   playerStats?: Nullable<PlayerStats>;
   region?: Nullable<string>;
   country?: Nullable<string>;
+  slug: string;
 }
 
 export interface Round {
@@ -78,6 +84,7 @@ export interface Tournament {
   startDate?: Nullable<DateTime>;
   endDate?: Nullable<DateTime>;
   setId: number;
+  slug: string;
   set: Set;
   stages?: Nullable<Stage[]>;
   players?: Nullable<Player[]>;
@@ -201,7 +208,10 @@ export interface IQuery {
   ): PlayerResults[] | Promise<PlayerResults[]>;
   playerStats(
     setId?: Nullable<number>,
+    tournamentId?: Nullable<number>,
     region?: Nullable<string>,
+    sort?: Nullable<SortOption>,
+    searchQuery?: Nullable<string>,
     take?: Nullable<number>,
     skip?: Nullable<number>
   ): PlayersStats[] | Promise<PlayersStats[]>;
@@ -236,6 +246,7 @@ export interface IMutation {
     tournamentId: number,
     playerIds: number[]
   ): Tournament | Promise<Tournament>;
+  createTournamentSlugs(): Tournament[] | Promise<Tournament[]>;
   createStage(
     tournamentId: number,
     pointSchemaId: number,
@@ -257,6 +268,7 @@ export interface IMutation {
     tiebreakers?: Nullable<number[]>,
     description?: Nullable<string>
   ): Stage | Promise<Stage>;
+  updateTiebreakers(id: number, tiebreakers: number[]): Stage | Promise<Stage>;
   deleteStage(id: number): DeleteResponse | Promise<DeleteResponse>;
   createStagePlayers(
     stageId: number,
@@ -290,6 +302,7 @@ export interface IMutation {
     country: string,
     region: string
   ): Player | Promise<Player>;
+  createPlayerSlugs(): Player[] | Promise<Player[]>;
   createLobbyGroupResult(
     lobbyGroupId: number,
     results: CreateLobbyGroupResults[]

@@ -1,9 +1,9 @@
 import { useQuery } from "urql";
 import { Link, useParams } from "react-router-dom";
 import {
-  PlayerQueryResult,
+  PlayerBySlugQueryResult,
   PlayerTournamentQueryResult,
-  PLAYER_QUERY,
+  PLAYER_BY_SLUG_QUERY,
   PLAYER_TOURNAMENT_QUERY,
 } from "./queries";
 import { useEffect } from "react";
@@ -33,20 +33,20 @@ import { Stat } from "../../components/Stat/Stat";
 import { StyledDetailsButton } from "../Players/components/PlayerCard.styled";
 
 export const Player = () => {
-  const { playerId } = useParams();
-  const [{ data }] = useQuery<PlayerQueryResult>({
-    query: PLAYER_QUERY,
-    variables: { id: Number(playerId) },
+  const { playerSlug } = useParams();
+  const [{ data }] = useQuery<PlayerBySlugQueryResult>({
+    query: PLAYER_BY_SLUG_QUERY,
+    variables: { slug: playerSlug },
   });
 
   const [{ data: tournamentData }] = useQuery<PlayerTournamentQueryResult>({
     query: PLAYER_TOURNAMENT_QUERY,
-    variables: { playerId: Number(playerId) },
+    variables: { playerId: Number(playerSlug?.split("-")[0]) },
   });
 
   useEffect(() => {
-    document.title = `${data?.player.name}`;
-  }, [data?.player.name]);
+    document.title = `${data?.playerBySlug.name}`;
+  }, [data?.playerBySlug.name]);
 
   if (!data) {
     return <></>;
@@ -57,27 +57,36 @@ export const Player = () => {
       <StyledHeaderContainer>
         <StyledPlayerImage />
         <StyledPlayerInfo>
-          <StyledPlayerName>{data?.player.name}</StyledPlayerName>
-          <RegionsIndicator regionCodes={[data?.player.region!]} />
+          <StyledPlayerName>{data?.playerBySlug.name}</StyledPlayerName>
+          <RegionsIndicator regionCodes={[data?.playerBySlug.region!]} />
           <div style={{ alignSelf: "end" }}>
             <Twitter color={colors.white} onClick={() => {}} size={24} />
           </div>
         </StyledPlayerInfo>
       </StyledHeaderContainer>
       <StyledStatsContainer>
-        <Stat title="Matches" value={data?.player.playerStats?.totalGames} />
+        <Stat
+          title="Matches"
+          value={data?.playerBySlug.playerStats?.totalGames}
+        />
         <Stat
           title="Avg Pos"
-          value={data?.player.playerStats?.averagePosition}
+          value={data?.playerBySlug.playerStats?.averagePosition}
         />
-        <Stat title="Top 4 %" value={data?.player.playerStats?.topFourCount} />
-        <Stat title="Top 1 %" value={data?.player.playerStats?.topOneCount} />
+        <Stat
+          title="Top 4 %"
+          value={data?.playerBySlug.playerStats?.topFourCount}
+        />
+        <Stat
+          title="Top 1 %"
+          value={data?.playerBySlug.playerStats?.topOneCount}
+        />
       </StyledStatsContainer>
       <StyledTourneyStatsContainer>
         <StyledTitle>Tourney Stats</StyledTitle>
         <StyledSearchFilterBar placeholder="Search tourneys" />
         {tournamentData?.tournamentsPlayed.map((tournament) => (
-          <Link to={`/tournaments/${tournament.id}`} key={tournament.id}>
+          <Link to={`/tournaments/${tournament.slug}`} key={tournament.id}>
             <RoundedContainer padding="2rem" gap="2rem">
               <StyledTournamentBasicInfo>
                 <StyledImage src={`/sets/${tournament.set.id}.webp`} />

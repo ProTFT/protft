@@ -110,12 +110,15 @@ export const LobbyGroup = ({
 
   const onAdd = useCallback(
     ({ lobbyId, name: lobbyName }: AllLobbyPlayers) =>
-      ({ id, name, region }: Player) => {
+      ({ id, name, region, slug }: Player) => {
         setAllLobbiesWithPlayers((curr) => {
           const currentLobbyPlayers = curr.find(
             (l) => l.lobbyId === lobbyId
           )!.players;
-          const allPlayers = [...currentLobbyPlayers, { id, name, region }];
+          const allPlayers = [
+            ...currentLobbyPlayers,
+            { id, name, region, slug },
+          ];
           const allPlayerIds = allPlayers.map((i) => i.id);
           const uniqueIds = new Set(allPlayerIds);
           const newLobbyPlayers = Array.from(uniqueIds)

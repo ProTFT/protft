@@ -19,6 +19,7 @@ import { PlayersService } from "./players.service";
 import { Tournament } from "../tournaments/tournament.entity";
 import { UseGuards } from "@nestjs/common";
 import { GqlJwtAuthGuard } from "../auth/jwt-auth.guard";
+import { GetPlayerStatsArgs } from "./dto/get-player-stats.args";
 
 @Resolver(() => Player)
 export class PlayersResolver extends BaseResolver {
@@ -32,11 +33,12 @@ export class PlayersResolver extends BaseResolver {
   @ResolveField(() => PlayerStats)
   async playerStats(
     @Parent() player: Player,
-    @Args("setId", { type: () => Int, nullable: true }) setId?: number,
+    @Args() { setId, tournamentId }: GetPlayerStatsArgs,
   ): Promise<PlayerStats> {
     const rawStats = await this.roundResultsService.findStatsByPlayer(
       player.id,
       setId,
+      tournamentId,
     );
     return formatStats(rawStats);
   }
@@ -59,6 +61,11 @@ export class PlayersResolver extends BaseResolver {
     return this.playersService.findOne(id);
   }
 
+  @Query(() => Player)
+  async playerBySlug(@Args("slug") slug: string) {
+    return this.playersService.findOneBySlug(slug);
+  }
+
   @Query(() => PlayerFilterMeta)
   async playerFilterMeta(): Promise<PlayerFilterMeta> {
     const [possibleCountries, possibleRegions] = await Promise.all([
@@ -76,5 +83,11 @@ export class PlayersResolver extends BaseResolver {
   async createPlayer(@Args() { name, country, region }: CreatePlayerArgs) {
     const payload = { name, country, region };
     return this.playersService.createOne(payload);
+  }
+
+  @UseGuards(GqlJwtAuthGuard)
+  @Mutation(() => [Player])
+  async createPlayerSlugs() {
+    return this.playersService.createSlugs();
   }
 }

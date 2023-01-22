@@ -147,9 +147,9 @@ export const StagePlayers = () => {
   });
   const playersCount = useMemo(() => stagePlayers.length, [stagePlayers]);
 
-  const onAdd = useCallback(({ id, name, region }: Player) => {
+  const onAdd = useCallback(({ id, name, region, slug }: Player) => {
     setStagePlayers((players) => {
-      const allPlayers = [...players, { id, name, region }];
+      const allPlayers = [...players, { id, name, region, slug }];
       const allPlayerIds = allPlayers.map((i) => i.id);
       const uniqueIds = new Set(allPlayerIds);
       return Array.from(uniqueIds)

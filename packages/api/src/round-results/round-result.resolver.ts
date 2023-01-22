@@ -9,7 +9,6 @@ import { CreateLobbyGroupResultArgs } from "./dto/create-lobby-group-result.args
 import { CreateLobbyResultArgs } from "./dto/create-lobby-result.args";
 import { BooleanResult } from "./dto/create-lobby-result.out";
 import { PlayerResults } from "./dto/get-results.out";
-import { RoundResultsRaw } from "./dto/get-results.raw";
 import { GetStatsArgs } from "./dto/get-stats.args";
 import {
   formatLobbyGroupResults,

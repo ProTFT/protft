@@ -14,6 +14,7 @@ import {
   OneToMany,
   ManyToMany,
   JoinTable,
+  Index,
 } from "typeorm";
 import { Stage } from "../stages/stage.entity";
 import { Set } from "../sets/set.entity";
@@ -21,6 +22,7 @@ import { Player } from "../players/player.entity";
 
 @ObjectType()
 @Entity()
+@Index(["slug"], { unique: true })
 export class Tournament {
   @Field(() => Int)
   @PrimaryGeneratedColumn()
@@ -61,6 +63,10 @@ export class Tournament {
   @Field()
   @Column()
   setId: number;
+
+  @Field()
+  @Column({ default: "" })
+  slug: string;
 
   @Field(() => Set)
   @ManyToOne(() => Set)

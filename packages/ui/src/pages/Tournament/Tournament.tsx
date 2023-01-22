@@ -14,8 +14,8 @@ import { NoDataAdded } from "./NoDataAdded/NoDataAdded";
 import {
   ResultsQueryResponse,
   RESULTS_QUERY,
-  TournamentQueryResponse,
-  TOURNAMENT_QUERY,
+  TournamentBySlugQueryResponse,
+  TOURNAMENT_BY_SLUG_QUERY,
 } from "./queries";
 import {
   StyledBodyContainer,
@@ -44,13 +44,13 @@ import {
 } from "./Tournament.styled";
 
 export const Tournament = () => {
-  const { tournamentId } = useParams();
-  const [{ data }] = useQuery<TournamentQueryResponse>({
-    query: TOURNAMENT_QUERY,
-    variables: { id: Number(tournamentId) },
+  const { tournamentSlug } = useParams();
+  const [{ data }] = useQuery<TournamentBySlugQueryResponse>({
+    query: TOURNAMENT_BY_SLUG_QUERY,
+    variables: { slug: tournamentSlug },
   });
 
-  useDocumentTitle(`${data?.tournament.name}`);
+  useDocumentTitle(`${data?.tournamentBySlug.name}`);
 
   const [open, setOpen] = useState(false);
   const [openStage, setOpenStage] = useState<Stage | null>(null);
@@ -60,13 +60,13 @@ export const Tournament = () => {
   return (
     <div>
       <StyledHeaderContainer>
-        <TournamentContent tournament={data!.tournament} />
+        <TournamentContent tournament={data!.tournamentBySlug} />
       </StyledHeaderContainer>
       <StyledBodyContainer>
         {isMobile && (
           <InfoBar
-            participantsNumber={data?.tournament.participantsNumber}
-            prizePool={data?.tournament.prizePool}
+            participantsNumber={data?.tournamentBySlug.participantsNumber}
+            prizePool={data?.tournamentBySlug.prizePool}
           />
         )}
         <StyledStagesSection>
@@ -78,18 +78,18 @@ export const Tournament = () => {
             <StyledStageInfoContainer>
               <StyledSubsectionTitle>HOST</StyledSubsectionTitle>
               <StyledStageInfoValue>
-                {data?.tournament.host}
+                {data?.tournamentBySlug.host}
               </StyledStageInfoValue>
             </StyledStageInfoContainer>
             <StyledStageInfoContainer>
               <StyledSubsectionTitle>SET</StyledSubsectionTitle>
-              <StyledStageInfoValue>{`${data?.tournament.set.id} - ${data?.tournament.set.name}`}</StyledStageInfoValue>
+              <StyledStageInfoValue>{`${data?.tournamentBySlug.set.id} - ${data?.tournamentBySlug.set.name}`}</StyledStageInfoValue>
             </StyledStageInfoContainer>
           </StyledSubsectionContainer>
         </StyledStagesSection>
         <StyledStagesBottom>
           <StyledDaysContainer>
-            {data?.tournament.stages?.map((stage) => (
+            {data?.tournamentBySlug.stages?.map((stage) => (
               <StyledDay
                 key={stage.id}
                 isFinal={stage.isFinal}
@@ -138,8 +138,6 @@ export const Results = ({
     pause: !selectedStage,
   });
 
-  console.log(data?.resultsByStage);
-
   if (data?.resultsByStage.length === 0 && open) {
     return (
       <StyledResultsContainer show={open}>
@@ -171,7 +169,7 @@ export const Results = ({
             <tr key={player.id}>
               <StyledTableData>{index + 1}</StyledTableData>
               <td>
-                <Link to={`/players/${player.id}`}>
+                <Link to={`/players/${player.slug}`}>
                   <StyledTablePlayerName>
                     <RegionsIndicator
                       regionCodes={[player.region!]}

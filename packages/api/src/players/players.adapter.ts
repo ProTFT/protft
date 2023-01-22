@@ -3,22 +3,22 @@ import { PlayerStats } from "./dto/get-player-stats.out";
 
 export function formatStats({
   averagePosition,
-  eigthCount,
-  topFourCount,
-  topOneCount,
+  eigthPercent,
+  topFourPercent,
+  topOnePercent,
   totalGames,
 }: PlayerStatsRaw): PlayerStats {
+  debugger;
   return {
-    eigthCount: getPercentage(eigthCount, totalGames),
-    topFourCount: getPercentage(topFourCount, totalGames),
-    topOneCount: getPercentage(topOneCount, totalGames),
+    eigthCount: getPercentage(eigthPercent),
+    topFourCount: getPercentage(topFourPercent),
+    topOneCount: getPercentage(topOnePercent),
     totalGames: Number(totalGames),
     averagePosition: Number(parseFloat(averagePosition).toFixed(2)),
   };
 }
 
-function getPercentage(stat: string, total: string): number {
+function getPercentage(stat: string): number {
   const statNumber = parseFloat(stat);
-  const totalNumber = parseFloat(total || "0");
-  return Number(((statNumber / totalNumber) * 100).toFixed(2));
+  return Number((statNumber * 100).toFixed(2)) || 0;
 }

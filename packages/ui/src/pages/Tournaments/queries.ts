@@ -16,6 +16,7 @@ export const TOURNAMENTS_QUERY = gql`
       region
       startDate
       endDate
+      slug
       set {
         id
         name

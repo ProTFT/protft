@@ -5,9 +5,9 @@ describe("Players adapter", () => {
   describe("format stats", () => {
     it("should convert string stats to number", () => {
       const input: PlayerStatsRaw = {
-        eigthCount: "1",
-        topFourCount: "2",
-        topOneCount: "3",
+        eigthPercent: "1",
+        topFourPercent: "2",
+        topOnePercent: "3",
         totalGames: "24",
         averagePosition: "2.1111111",
       };

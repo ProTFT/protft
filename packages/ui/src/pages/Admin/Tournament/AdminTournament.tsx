@@ -9,6 +9,7 @@ import { TournamentDialog } from "../Components/TournamentDialog/TournamentDialo
 import {
   StyledActionButton,
   StyledActionsContainer,
+  StyledBar,
 } from "./AdminTournament.styled";
 import { AdminTournamentContent } from "./Content/Content";
 import {
@@ -71,6 +72,10 @@ export const AdminTournament = () => {
     dialogRef.current?.showModal();
   };
 
+  const handleBackToList = useCallback(() => {
+    navigate("/admin/tournaments");
+  }, [navigate]);
+
   return (
     <div>
       <TournamentDialog
@@ -79,14 +84,21 @@ export const AdminTournament = () => {
         onSubmit={onSubmit}
         tournament={data?.tournament}
       />
-      <StyledActionsContainer>
-        <StyledActionButton onClick={handleUpdateTournament}>
-          Update
-        </StyledActionButton>
-        <StyledActionButton onClick={handleDeleteTournament}>
-          Delete
-        </StyledActionButton>
-      </StyledActionsContainer>
+      <StyledBar>
+        <StyledActionsContainer>
+          <StyledActionButton onClick={handleBackToList}>
+            Back to list
+          </StyledActionButton>
+        </StyledActionsContainer>
+        <StyledActionsContainer>
+          <StyledActionButton onClick={handleUpdateTournament}>
+            Update
+          </StyledActionButton>
+          <StyledActionButton onClick={handleDeleteTournament}>
+            Delete
+          </StyledActionButton>
+        </StyledActionsContainer>
+      </StyledBar>
       <StyledHeaderContainer>
         <TournamentContent tournament={data!.tournament} />
       </StyledHeaderContainer>
