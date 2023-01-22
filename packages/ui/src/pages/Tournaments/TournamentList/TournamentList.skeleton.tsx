@@ -5,7 +5,7 @@ export const TournamentListSkeleton = () => {
   return (
     <StyledTournamentList>
       {new Array(20).fill(1).map((_, index) => (
-        <TournamentListItemSkeleton />
+        <TournamentListItemSkeleton key={index} />
       ))}
     </StyledTournamentList>
   );

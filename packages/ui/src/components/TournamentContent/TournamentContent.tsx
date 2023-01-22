@@ -2,7 +2,6 @@ import React, { useMemo } from "react";
 import { colors } from "../../design/colors";
 import { PlayersIcon } from "../../design/icons/Players";
 import { TourneysIcon } from "../../design/icons/Tourneys";
-import { formatDateFromDB } from "../../formatter/Date";
 import { formatMoney } from "../../formatter/Money";
 import { Tournament } from "../../graphql/schema";
 import { useIsMobile } from "../../hooks/useIsMobile";
@@ -36,11 +35,6 @@ export const TournamentContent = ({
   },
 }: Props) => {
   const isMobile = useIsMobile();
-  const formattedStartDate = useMemo(
-    () => formatDateFromDB(startDate),
-    [startDate]
-  );
-  const formattedEndDate = useMemo(() => formatDateFromDB(endDate), [endDate]);
   const formattedPrizePool = useMemo(
     () => formatMoney(currency, prizePool),
     [currency, prizePool]
@@ -56,10 +50,7 @@ export const TournamentContent = ({
         <StyledTournamentInfoInnerContainer>
           <RegionsIndicator regionCodes={region!} />
           <StyledTournamentExtraInfo>
-            <DateIndicator
-              startDate={formattedStartDate}
-              endDate={formattedEndDate}
-            />
+            <DateIndicator startDate={startDate} endDate={endDate} />
             {!isMobile && (
               <>
                 <TextIconHorizontalContainer>
