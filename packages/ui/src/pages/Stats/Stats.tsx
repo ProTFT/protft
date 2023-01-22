@@ -82,6 +82,7 @@ const StatsRows = ({
 };
 
 export const Stats = () => {
+  // eslint-disable-next-line @typescript-eslint/no-unused-vars
   const [page, setPage] = useState(0);
   const paginationArgs = useMemo(
     () => ({
