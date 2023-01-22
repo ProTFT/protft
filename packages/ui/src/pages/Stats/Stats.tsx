@@ -1,5 +1,6 @@
 import { Suspense, useCallback, useMemo, useState } from "react";
 import { useQuery } from "urql";
+import { ProTFTButton } from "../../components/Button/Button";
 import { TextIconHorizontalContainer } from "../../components/Layout/HorizontalContainer/TextIconHorizontalContainer.styled";
 import { RegionsIndicator } from "../../components/RegionIndicator/RegionIndicator";
 import {
@@ -12,6 +13,7 @@ import {
 import { RegionSelect } from "./RegionSelect/RegionSelect";
 import { SetSelect } from "./SetSelect/SetSelect";
 import {
+  StyledButtonContainer,
   StyledContainer,
   StyledPlayerRowData,
   StyledPlayerTable,
@@ -125,6 +127,10 @@ export const Stats = () => {
     []
   );
 
+  const onLoadMore = useCallback(() => {
+    setPage((curr) => curr + 1);
+  }, []);
+
   // let timeout = useRef<ReturnType<typeof setTimeout>>();
   // const onChangeSearchInput = useCallback(
   //   (event: ChangeEvent<HTMLInputElement>) => {
@@ -193,6 +199,9 @@ export const Stats = () => {
             </Suspense>
           </tbody>
         </StyledPlayerTable>
+        <StyledButtonContainer>
+          <ProTFTButton onClick={onLoadMore}>Load more</ProTFTButton>
+        </StyledButtonContainer>
       </StyledPlayerTableContainer>
     </StyledContainer>
   );

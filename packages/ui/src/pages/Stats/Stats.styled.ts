@@ -73,5 +73,7 @@ export const StyledStatsFilters = styled(StyledVerticalContainer)`
 `;
 
 export const StyledButtonContainer = styled(StyledHorizontalContainer)`
-  justify-content: end;
+  width: 100%;
+  padding: 2rem;
+  justify-content: center;
 `;
