@@ -30,6 +30,7 @@ export const TOURNAMENT_BY_SLUG_QUERY = gql`
         id
         name
         sequence
+        description
         isFinal
         roundCount
       }

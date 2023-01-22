@@ -106,9 +106,7 @@ export const Tournament = () => {
                 <StyledDayTitle isFinal={stage.isFinal}>
                   {stage.name}
                 </StyledDayTitle>
-                {!stage.isFinal && false && (
-                  <StyledDaySubtitle>{stage.name}</StyledDaySubtitle>
-                )}
+                <StyledDaySubtitle>{stage.description}</StyledDaySubtitle>
                 <StyledArrowContainer>
                   <ArrowRightIcon
                     color={stage.isFinal ? colors.pitchBlack : colors.yellow}

@@ -40,14 +40,17 @@ export const App = () => {
       <Routes>
         <Route path="/" element={<SuspenseElement element={<Home />} />} />
         <Route path="tournaments">
-          <Route index element={<Tournaments />} />
+          <Route
+            index
+            element={<SuspenseElement element={<Tournaments />} />}
+          />
           <Route
             path=":tournamentSlug"
             element={<SuspenseElement element={<Tournament />} />}
           />
         </Route>
         <Route path="players">
-          <Route index element={<Players />} />
+          <Route index element={<SuspenseElement element={<Players />} />} />
           <Route
             path=":playerSlug"
             element={<SuspenseElement element={<Player />} />}

@@ -75,14 +75,14 @@ export const StyledDaysContainer = styled.div`
 export const StyledDay = styled.div<StageProps & { clicked?: boolean }>`
   ${({ isFinal, clicked }) => `
     background: ${isFinal ? "#FAAC01" : "#4739b2"};
-    padding: 1rem;
+    padding: 1rem 2rem 1rem 2rem;
     box-shadow: 0px 4px 4px rgba(0, 0, 0, 0.25);
     border-radius: 16px;
     display: flex;
     flex-direction: column;
-    gap: 2rem;
+    gap: 0.5rem;
     min-width: 8rem;
-    justify-content: ${isFinal ? "space-between" : "auto"};
+    justify-content: space-between;
     cursor: pointer;
 
     svg {
@@ -159,6 +159,8 @@ export const StyledDaySubtitle = styled.p`
   line-height: 24px;
   letter-spacing: 0.05em;
   text-align: center;
+  margin-top: 0.5rem;
+  margin-bottom: 0.5rem;
 `;
 
 export const StyledResultsContainer = styled.div<{ show: boolean }>`
