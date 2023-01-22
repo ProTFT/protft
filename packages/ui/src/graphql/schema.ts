@@ -85,6 +85,7 @@ export interface Tournament {
   endDate?: Nullable<DateTime>;
   setId: number;
   slug: string;
+  visibility: boolean;
   set: Set;
   stages?: Nullable<Stage[]>;
   players?: Nullable<Player[]>;
@@ -179,7 +180,11 @@ export interface IQuery {
   tournaments(
     searchQuery?: Nullable<string>
   ): Tournament[] | Promise<Tournament[]>;
+  adminTournaments(
+    searchQuery?: Nullable<string>
+  ): Tournament[] | Promise<Tournament[]>;
   tournament(id: number): Tournament | Promise<Tournament>;
+  tournamentBySlug(slug: string): Tournament | Promise<Tournament>;
   tournamentOverview(): TournamentOverview | Promise<TournamentOverview>;
   stages(tournamentId: number): Stage[] | Promise<Stage[]>;
   stage(id: number): Stage | Promise<Stage>;
@@ -201,6 +206,7 @@ export interface IQuery {
     skip?: Nullable<number>
   ): Player[] | Promise<Player[]>;
   player(id: number): Player | Promise<Player>;
+  playerBySlug(slug: string): Player | Promise<Player>;
   playerFilterMeta(): PlayerFilterMeta | Promise<PlayerFilterMeta>;
   resultsByStage(stageId: number): PlayerResults[] | Promise<PlayerResults[]>;
   resultsByLobbyGroup(
@@ -208,7 +214,7 @@ export interface IQuery {
   ): PlayerResults[] | Promise<PlayerResults[]>;
   playerStats(
     setId?: Nullable<number>,
-    tournamentId?: Nullable<number>,
+    tournamentIds?: Nullable<number>,
     region?: Nullable<string>,
     sort?: Nullable<SortOption>,
     searchQuery?: Nullable<string>,
@@ -231,15 +237,16 @@ export interface IMutation {
   ): Tournament | Promise<Tournament>;
   updateTournament(
     id: number,
-    name: string,
-    setId: number,
+    name?: Nullable<string>,
+    setId?: Nullable<number>,
     region?: Nullable<string[]>,
     host?: Nullable<string>,
     participantsNumber?: Nullable<number>,
     prizePool?: Nullable<number>,
     currency?: Nullable<string>,
     startDate?: Nullable<DateTime>,
-    endDate?: Nullable<DateTime>
+    endDate?: Nullable<DateTime>,
+    visibility?: Nullable<boolean>
   ): Tournament | Promise<Tournament>;
   deleteTournament(id: number): DeleteResponse | Promise<DeleteResponse>;
   createTournamentPlayers(

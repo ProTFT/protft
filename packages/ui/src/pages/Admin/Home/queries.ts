@@ -2,12 +2,12 @@ import { gql } from "urql";
 import { Tournament } from "../../../graphql/schema";
 
 export interface TournamentsQueryResult {
-  tournaments: Tournament[];
+  adminTournaments: Tournament[];
 }
 
 export const TOURNAMENTS_QUERY = gql`
   query tournaments($searchQuery: String) {
-    tournaments(searchQuery: $searchQuery) {
+    adminTournaments(searchQuery: $searchQuery) {
       id
       name
       participantsNumber

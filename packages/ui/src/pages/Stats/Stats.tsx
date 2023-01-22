@@ -25,7 +25,7 @@ import { TournamentSelect } from "./TournamentSelect/TournamentSelect";
 interface Props {
   regionFilter: string;
   setFilter: number;
-  tournamentFilter: number;
+  tournamentFilter: number[];
   paginationArgs: object;
   sort: SortOption;
 }
@@ -45,7 +45,7 @@ const StatsRows = ({
     variables: {
       region: regionFilter,
       setId: Number(setFilter),
-      tournamentId: Number(tournamentFilter),
+      tournamentIds: tournamentFilter,
       sort,
       ...paginationArgs,
     },
@@ -95,7 +95,7 @@ export const Stats = () => {
   // const [searchQuery, setSearchQuery] = useState("");
   const [regionFilter, setRegionFilter] = useState("");
   const [setFilter, setSetFilter] = useState<number>(0);
-  const [tournamentFilter, setTournamentFilter] = useState<number>(0);
+  const [tournamentFilter, setTournamentFilter] = useState<number[]>([]);
   const [sorting, setSorting] = useState<SortOption>({
     column: SortColumn.AVERAGE_POSITION,
     asc: true,
@@ -144,7 +144,7 @@ export const Stats = () => {
       <StyledStatsFilters>
         <TournamentSelect
           value={tournamentFilter}
-          onValueChange={onValueChange<number>(setTournamentFilter, 0)}
+          onValueChange={onValueChange<number[]>(setTournamentFilter, [])}
         />
         <SetSelect
           value={setFilter}

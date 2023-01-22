@@ -12,6 +12,7 @@ export const DataSelect = <T, K extends Record<keyof K, T | string | any>>({
   isLoading,
   placeholder,
   prefix,
+  isMulti = false,
 }: {
   value: T;
   onValueChange: (newValue: T | undefined) => void;
@@ -21,6 +22,7 @@ export const DataSelect = <T, K extends Record<keyof K, T | string | any>>({
   isLoading: boolean;
   placeholder?: string;
   prefix?: (data: K) => string;
+  isMulti?: boolean;
 }) => {
   const options = useMemo(() => {
     return data?.map((t) => ({
@@ -40,7 +42,16 @@ export const DataSelect = <T, K extends Record<keyof K, T | string | any>>({
       options={options}
       value={selectedValue}
       controlShouldRenderValue
-      onChange={(newValue) => onValueChange(newValue?.value)}
+      onChange={(newValue) => {
+        if (Array.isArray(newValue)) {
+          const newValues = newValue.map((v) => v.value);
+          return onValueChange(newValues as any);
+        }
+        onValueChange(newValue?.value);
+      }}
+      isClearable={true}
+      backspaceRemovesValue={true}
+      isMulti={Boolean(isMulti) as any}
     />
   );
 };

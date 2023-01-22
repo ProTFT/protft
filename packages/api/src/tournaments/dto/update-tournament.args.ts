@@ -4,11 +4,12 @@ import { ArgsType, Field, Float, Int } from "@nestjs/graphql";
 export class UpdateTournamentArgs {
   @Field(() => Int, { name: "id" })
   id: number;
-  @Field({ name: "name" })
-  name: string;
 
-  @Field(() => Int, { name: "setId" })
-  setId: number;
+  @Field({ name: "name", nullable: true })
+  name?: string;
+
+  @Field(() => Int, { name: "setId", nullable: true })
+  setId?: number;
 
   @Field(() => [String], { name: "region", nullable: true })
   region?: string[];
@@ -30,4 +31,7 @@ export class UpdateTournamentArgs {
 
   @Field({ name: "endDate", nullable: true })
   endDate?: Date;
+
+  @Field({ name: "visibility", nullable: true })
+  visibility?: boolean;
 }

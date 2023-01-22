@@ -82,7 +82,7 @@ export class RoundResultsService {
     skip,
     take = 10,
     region,
-    tournamentId,
+    tournamentIds,
     sort,
   }: Partial<GetStatsArgs>): Promise<PlayersStatsRaw[]> {
     return this.roundResultsRepository.manager
@@ -123,8 +123,10 @@ export class RoundResultsService {
               query = query.andWhere("t.setId = :setId", { setId });
             }
 
-            if (tournamentId) {
-              query = query.andWhere("t.id = :tournamentId", { tournamentId });
+            if (tournamentIds && tournamentIds.length) {
+              query = query.andWhere("t.id IN (:...tournamentIds)", {
+                tournamentIds,
+              });
             }
 
             return query;

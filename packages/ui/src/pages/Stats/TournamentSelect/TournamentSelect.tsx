@@ -8,8 +8,8 @@ import {
 } from "../DataSelect/queries";
 
 interface Props {
-  value: number;
-  onValueChange: (newValue: number | undefined) => void;
+  value: number[];
+  onValueChange: (newValue: number[] | undefined) => void;
 }
 
 type SelectTournament = Pick<Tournament, "id" | "name" | "set">;
@@ -19,10 +19,12 @@ export const TournamentSelect = ({ value, onValueChange }: Props) => {
     query: TOURNAMENTS_QUERY,
   });
 
+  console.log(value);
+
   const getPrefix = useCallback((data: SelectTournament) => data.set.name, []);
 
   return (
-    <DataSelect<number, SelectTournament>
+    <DataSelect<number[], SelectTournament>
       data={data?.tournaments}
       valueKey="id"
       labelKey="name"
@@ -31,6 +33,7 @@ export const TournamentSelect = ({ value, onValueChange }: Props) => {
       isLoading={fetching}
       prefix={getPrefix}
       placeholder="Tournament filter"
+      isMulti
     />
   );
 };

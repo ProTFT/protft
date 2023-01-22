@@ -24,6 +24,15 @@ export class TournamentsService {
     const searchQueryFilter =
       this.searchQueryProvider.getSearchQueryFilter(searchQuery);
     return this.tournamentRepository.find({
+      where: { ...searchQueryFilter, visibility: true },
+      order: { startDate: "DESC" },
+    });
+  }
+
+  findAdminAll(searchQuery?: string): Promise<Tournament[]> {
+    const searchQueryFilter =
+      this.searchQueryProvider.getSearchQueryFilter(searchQuery);
+    return this.tournamentRepository.find({
       where: { ...searchQueryFilter },
       order: { startDate: "DESC" },
     });
@@ -66,9 +75,10 @@ export class TournamentsService {
   }
 
   async createOne(payload: CreateTournamentArgs): Promise<Tournament> {
-    const payloadWithSlug = {
+    const payloadWithSlug: Partial<Tournament> = {
       ...payload,
       slug: await this.createSlug(payload),
+      visibility: false,
     };
     return this.tournamentRepository.save(payloadWithSlug);
   }

@@ -68,6 +68,10 @@ export class Tournament {
   @Column({ default: "" })
   slug: string;
 
+  @Field()
+  @Column({ default: true })
+  visibility: boolean;
+
   @Field(() => Set)
   @ManyToOne(() => Set)
   @JoinColumn({ name: "setId" })

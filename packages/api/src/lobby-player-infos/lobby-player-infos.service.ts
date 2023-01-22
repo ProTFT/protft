@@ -1,7 +1,7 @@
 import { Injectable } from "@nestjs/common";
 import { InjectRepository } from "@nestjs/typeorm";
 import { Repository } from "typeorm";
-import { CreatePlayerLobbyArgs } from "../graphql";
+import { CreatePlayerLobbyArgs } from "./dto/create-lobby-player-info.args";
 import { LobbyPlayerInfo } from "./lobby-player-info.entity";
 
 @Injectable()

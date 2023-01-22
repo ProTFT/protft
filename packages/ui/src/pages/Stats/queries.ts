@@ -54,7 +54,7 @@ export interface PlayerStatsQueryVariables {
   region?: string;
   take?: number;
   skip?: number;
-  tournamentId?: number;
+  tournamentIds?: number[];
   sort?: SortOption;
   searchQuery?: string;
 }
@@ -65,7 +65,7 @@ export const PLAYER_STATS_QUERY = gql`
     $region: String
     $take: Int
     $skip: Int
-    $tournamentId: Int
+    $tournamentIds: [Int!]
     $sort: SortOption
     $searchQuery: String
   ) {
@@ -74,7 +74,7 @@ export const PLAYER_STATS_QUERY = gql`
       region: $region
       take: $take
       skip: $skip
-      tournamentId: $tournamentId
+      tournamentIds: $tournamentIds
       sort: $sort
       searchQuery: $searchQuery
     ) {

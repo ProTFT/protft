@@ -35,6 +35,14 @@ export class TournamentsResolver {
     return this.tournamentsService.findAll(searchQuery);
   }
 
+  @UseGuards(GqlJwtAuthGuard)
+  @Query(() => [Tournament])
+  async adminTournaments(
+    @Args("searchQuery", { nullable: true }) searchQuery?: string,
+  ) {
+    return this.tournamentsService.findAdminAll(searchQuery);
+  }
+
   @Query(() => Tournament)
   async tournament(@Args("id", { type: () => Int }) id: number) {
     return this.tournamentsService.findOne(id);

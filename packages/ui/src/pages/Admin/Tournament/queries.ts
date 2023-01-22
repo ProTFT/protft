@@ -32,13 +32,14 @@ export interface TournamentUpdateVariables {
   currency?: string | null;
   startDate?: Date | null;
   endDate?: Date | null;
+  visibility?: boolean | null;
 }
 
 export const UPDATE_TOURNAMENT_MUTATION = gql`
   mutation updateTournament(
     $id: Int!
-    $name: String!
-    $setId: Int!
+    $name: String
+    $setId: Int
     $region: [String!]
     $host: String
     $participantsNumber: Int
@@ -46,6 +47,7 @@ export const UPDATE_TOURNAMENT_MUTATION = gql`
     $currency: String
     $startDate: DateTime
     $endDate: DateTime
+    $visibility: Boolean
   ) {
     updateTournament(
       id: $id
@@ -58,6 +60,7 @@ export const UPDATE_TOURNAMENT_MUTATION = gql`
       currency: $currency
       startDate: $startDate
       endDate: $endDate
+      visibility: $visibility
     ) {
       id
     }
@@ -81,6 +84,7 @@ export const TOURNAMENT_QUERY = gql`
       startDate
       endDate
       setId
+      visibility
       set {
         id
         name

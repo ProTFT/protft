@@ -1,4 +1,5 @@
 import styled from "styled-components";
+import { StyledHorizontalContainer } from "../../components/Layout/HorizontalContainer/HorizontalContainer.styled";
 import { StyledVerticalContainer } from "../../components/Layout/VerticalContainer/VerticalContainer.styled";
 import { device } from "../../design/breakpoints";
 import { colors } from "../../design/colors";
@@ -69,4 +70,8 @@ export const StyledStatsFilters = styled(StyledVerticalContainer)`
   @media ${device.tablet} {
     width: 60%;
   }
+`;
+
+export const StyledButtonContainer = styled(StyledHorizontalContainer)`
+  justify-content: end;
 `;

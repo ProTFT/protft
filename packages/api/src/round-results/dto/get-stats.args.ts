@@ -1,11 +1,4 @@
-import {
-  ArgsType,
-  Field,
-  InputType,
-  Int,
-  IntersectionType,
-} from "@nestjs/graphql";
-import { PaginationArgs } from "../../lib/dto/pagination.args";
+import { ArgsType, Field, InputType, Int } from "@nestjs/graphql";
 
 @InputType()
 export class SortOption {
@@ -21,8 +14,8 @@ export class BaseGetStatsArgs {
   @Field(() => Int, { name: "setId", nullable: true })
   setId?: number;
 
-  @Field(() => Int, { name: "tournamentId", nullable: true })
-  tournamentId?: number;
+  @Field(() => [String], { name: "tournamentIds", nullable: true })
+  tournamentIds?: number[];
 
   @Field({ name: "region", nullable: true })
   region?: string;
@@ -34,8 +27,27 @@ export class BaseGetStatsArgs {
   searchQuery?: string;
 }
 
+// TODO: review this in the future, cant use intersection with arrays
 @ArgsType()
-export class GetStatsArgs extends IntersectionType(
-  BaseGetStatsArgs,
-  PaginationArgs,
-) {}
+export class GetStatsArgs {
+  @Field(() => Int, { name: "setId", nullable: true })
+  setId?: number;
+
+  @Field(() => [Int], { name: "tournamentIds", nullable: true })
+  tournamentIds?: number[];
+
+  @Field({ name: "region", nullable: true })
+  region?: string;
+
+  @Field(() => SortOption, { name: "sort", nullable: true })
+  sort?: SortOption;
+
+  @Field({ name: "searchQuery", nullable: true })
+  searchQuery?: string;
+
+  @Field(() => Int, { name: "take", nullable: true })
+  take?: number;
+
+  @Field(() => Int, { name: "skip", nullable: true })
+  skip?: number;
+}

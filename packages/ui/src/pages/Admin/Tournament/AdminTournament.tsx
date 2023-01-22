@@ -72,6 +72,18 @@ export const AdminTournament = () => {
     dialogRef.current?.showModal();
   };
 
+  const handleToggleVisibility = useCallback(async () => {
+    const result = await updateTournament({
+      id: Number(tournamentId),
+      visibility: !Boolean(data?.tournament.visibility),
+    });
+
+    if (result.error) {
+      return alert(result.error);
+    }
+    refetch();
+  }, [data?.tournament.visibility, tournamentId, updateTournament, refetch]);
+
   const handleBackToList = useCallback(() => {
     navigate("/admin/tournaments");
   }, [navigate]);
@@ -91,6 +103,9 @@ export const AdminTournament = () => {
           </StyledActionButton>
         </StyledActionsContainer>
         <StyledActionsContainer>
+          <StyledActionButton onClick={handleToggleVisibility}>
+            Make {data?.tournament.visibility ? "invisible" : "visible"}
+          </StyledActionButton>
           <StyledActionButton onClick={handleUpdateTournament}>
             Update
           </StyledActionButton>
