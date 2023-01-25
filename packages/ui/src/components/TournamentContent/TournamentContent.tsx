@@ -4,12 +4,15 @@ import { PlayersIcon } from "../../design/icons/Players";
 import { TourneysIcon } from "../../design/icons/Tourneys";
 import { formatMoney } from "../../formatter/Money";
 import { Tournament } from "../../graphql/schema";
+import { useIsDesktop } from "../../hooks/useIsDesktop";
 import { useIsMobile } from "../../hooks/useIsMobile";
 import { DateIndicator } from "../DateIndicator/DateIndicator";
 import { TextIconHorizontalContainer } from "../Layout/HorizontalContainer/TextIconHorizontalContainer.styled";
 import { RegionsIndicator } from "../RegionIndicator/RegionIndicator";
 import {
   StyledExtraInfo,
+  StyledRegionDateContainer,
+  StyledTitleContainer,
   StyledTournamentExtraInfo,
   StyledTournamentImage,
   StyledTournamentInfoContainer,
@@ -34,7 +37,7 @@ export const TournamentContent = ({
     currency,
   },
 }: Props) => {
-  const isMobile = useIsMobile();
+  const isDesktop = useIsDesktop();
   const formattedPrizePool = useMemo(
     () => formatMoney(currency, prizePool),
     [currency, prizePool]
@@ -44,27 +47,27 @@ export const TournamentContent = ({
     <>
       <StyledTournamentImage src={`/sets/${set.id}.webp`} alt={set.name} />
       <StyledTournamentInfoContainer>
-        <StyledTournamentSet>{set.name}</StyledTournamentSet>
-        <StyledTournamentTitle>{name}</StyledTournamentTitle>
+        <StyledTitleContainer>
+          <StyledTournamentSet>{set.name}</StyledTournamentSet>
+          <StyledTournamentTitle>{name}</StyledTournamentTitle>
+        </StyledTitleContainer>
         <StyledTournamentInfoInnerContainer>
-          <RegionsIndicator regionCodes={region!} />
-          <StyledTournamentExtraInfo>
+          <StyledRegionDateContainer>
+            <RegionsIndicator regionCodes={region!} />
             <DateIndicator startDate={startDate} endDate={endDate} />
-            {!isMobile && (
-              <>
-                <TextIconHorizontalContainer>
-                  <PlayersIcon color={colors.purple} />
-                  <StyledExtraInfo>
-                    {participantsNumber} players
-                  </StyledExtraInfo>
-                </TextIconHorizontalContainer>
-                <TextIconHorizontalContainer>
-                  <TourneysIcon color={colors.purple} />
-                  <StyledExtraInfo>{formattedPrizePool}</StyledExtraInfo>
-                </TextIconHorizontalContainer>
-              </>
-            )}
-          </StyledTournamentExtraInfo>
+          </StyledRegionDateContainer>
+          {isDesktop && (
+            <StyledRegionDateContainer>
+              <TextIconHorizontalContainer>
+                <PlayersIcon color={colors.purple} />
+                <StyledExtraInfo>{participantsNumber} players</StyledExtraInfo>
+              </TextIconHorizontalContainer>
+              <TextIconHorizontalContainer>
+                <TourneysIcon color={colors.purple} />
+                <StyledExtraInfo>{formattedPrizePool}</StyledExtraInfo>
+              </TextIconHorizontalContainer>
+            </StyledRegionDateContainer>
+          )}
         </StyledTournamentInfoInnerContainer>
       </StyledTournamentInfoContainer>
     </>

@@ -10,7 +10,7 @@ export const StyledContainer = styled(StyledVerticalContainer)`
   background-color: ${colors.blackBackground};
   gap: 1rem;
 
-  @media ${device.tablet} {
+  @media ${device.desktop} {
     padding: 2rem 4rem 1rem 4rem;
   }
 `;
