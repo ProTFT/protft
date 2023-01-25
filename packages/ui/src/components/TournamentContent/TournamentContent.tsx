@@ -46,7 +46,6 @@ export const TournamentContent = ({
       <StyledTournamentInfoContainer>
         <StyledTournamentSet>{set.name}</StyledTournamentSet>
         <StyledTournamentTitle>{name}</StyledTournamentTitle>
-        <br />
         <StyledTournamentInfoInnerContainer>
           <RegionsIndicator regionCodes={region!} />
           <StyledTournamentExtraInfo>

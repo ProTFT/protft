@@ -21,7 +21,7 @@ export const StyledSetFilterContainer = styled(StyledHorizontalContainer)`
 `;
 
 export const StyledTournamentList = styled(StyledVerticalContainer)`
-  gap: 2rem;
+  gap: 1rem;
 
   @media ${device.tablet} {
     padding: 2rem;

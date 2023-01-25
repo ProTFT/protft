@@ -11,7 +11,7 @@ export const StyledTournamentImage = styled.img`
 `;
 
 export const StyledTournamentInfoContainer = styled(StyledVerticalContainer)`
-  padding: 1rem;
+  padding: 0.5rem 1rem 0.5rem 1rem;
   align-items: start;
   justify-content: space-between;
   width: 100%;
@@ -24,7 +24,7 @@ export const StyledTournamentInfoContainer = styled(StyledVerticalContainer)`
 export const StyledTournamentTitle = styled.p`
   color: ${colors.yellow};
   font-family: VTF Redzone Classic;
-  font-size: 16px;
+  font-size: 20px;
   font-weight: 400;
   line-height: 24px;
   letter-spacing: 0.25em;
@@ -53,7 +53,7 @@ export const StyledExtraInfo = styled.p`
 
 export const StyledTournamentSet = styled.p`
   font-family: VTF Redzone Classic;
-  font-size: 20px;
+  font-size: 14px;
   font-weight: 400;
   line-height: 20px;
   text-align: left;
@@ -65,6 +65,5 @@ export const StyledTournamentInfoInnerContainer = styled.div`
   display: flex;
   flex-direction: column;
   align-items: start;
-  gap: 0.5rem;
   width: 100%;
 `;
