@@ -5,7 +5,6 @@ import { TourneysIcon } from "../../design/icons/Tourneys";
 import { formatMoney } from "../../formatter/Money";
 import { Tournament } from "../../graphql/schema";
 import { useIsDesktop } from "../../hooks/useIsDesktop";
-import { useIsMobile } from "../../hooks/useIsMobile";
 import { DateIndicator } from "../DateIndicator/DateIndicator";
 import { TextIconHorizontalContainer } from "../Layout/HorizontalContainer/TextIconHorizontalContainer.styled";
 import { RegionsIndicator } from "../RegionIndicator/RegionIndicator";
@@ -13,7 +12,6 @@ import {
   StyledExtraInfo,
   StyledRegionDateContainer,
   StyledTitleContainer,
-  StyledTournamentExtraInfo,
   StyledTournamentImage,
   StyledTournamentInfoContainer,
   StyledTournamentInfoInnerContainer,
