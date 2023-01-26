@@ -1,4 +1,3 @@
-import { StyledTournamentImage } from "../../components/TournamentContent/TournamentContent.styled";
 import { useIsMobile } from "../../hooks/useIsMobile";
 import {
   StyledContainer,
@@ -9,6 +8,7 @@ import {
   StyledText,
   StyledTextSection,
   StyledTitle,
+  StyledTournamentImage,
 } from "./About.styled";
 
 export const About = () => {

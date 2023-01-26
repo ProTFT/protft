@@ -63,3 +63,9 @@ export const StyledSubtitle = styled.p`
 export const StyledLink = styled.a`
   text-decoration: underline ${colors.yellow};
 `;
+
+export const StyledTournamentImage = styled.img`
+  width: 30%;
+  border-radius: 8px 0 0 8px;
+  object-fit: cover;
+`;
