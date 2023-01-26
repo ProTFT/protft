@@ -12,7 +12,6 @@ import { GqlJwtAuthGuard } from "../auth/jwt-auth.guard";
 import { SetsService } from "../sets/sets.service";
 import { StagesService } from "../stages/stages.service";
 import { CreateTournamentArgs } from "./dto/create-tournament.args";
-import { TournamentOverview } from "./dto/get-tournament-overview.out";
 import { Tournament } from "./tournament.entity";
 import { TournamentsService } from "./tournaments.service";
 import { DeleteResponse } from "../lib/dto/delete-return";
@@ -53,19 +52,23 @@ export class TournamentsResolver {
     return this.tournamentsService.findOneBySlug(slug);
   }
 
-  @Query(() => TournamentOverview)
-  async tournamentOverview() {
-    const [pastTournaments, liveTournaments, upcomingTournaments] =
-      await Promise.all([
-        this.tournamentsService.findPast(),
-        this.tournamentsService.findLive(),
-        this.tournamentsService.findUpcoming(),
-      ]);
-    return {
-      pastTournaments,
-      liveTournaments,
-      upcomingTournaments,
-    };
+  @Query(() => [Tournament])
+  async ongoingTournaments() {
+    return this.tournamentsService.findOngoing();
+  }
+
+  @Query(() => [Tournament])
+  async upcomingTournaments(
+    @Args("searchQuery", { nullable: true }) searchQuery?: string,
+  ) {
+    return this.tournamentsService.findUpcoming(searchQuery);
+  }
+
+  @Query(() => [Tournament])
+  async pastTournaments(
+    @Args("searchQuery", { nullable: true }) searchQuery?: string,
+  ) {
+    return this.tournamentsService.findPast(searchQuery);
   }
 
   @ResolveField()

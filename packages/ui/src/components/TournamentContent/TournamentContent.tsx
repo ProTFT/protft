@@ -10,6 +10,7 @@ import { TextIconHorizontalContainer } from "../Layout/HorizontalContainer/TextI
 import { RegionsIndicator } from "../RegionIndicator/RegionIndicator";
 import {
   StyledExtraInfo,
+  StyledLiveContainer,
   StyledRegionDateContainer,
   StyledTitleContainer,
   StyledTournamentImage,
@@ -21,6 +22,7 @@ import {
 
 interface Props {
   tournament: Tournament;
+  isLive?: boolean;
 }
 
 export const TournamentContent = ({
@@ -34,6 +36,7 @@ export const TournamentContent = ({
     region,
     currency,
   },
+  isLive = false,
 }: Props) => {
   const isDesktop = useIsDesktop();
   const formattedPrizePool = useMemo(
@@ -49,6 +52,7 @@ export const TournamentContent = ({
           <StyledTournamentSet>{set.name}</StyledTournamentSet>
           <StyledTournamentTitle>{name}</StyledTournamentTitle>
         </StyledTitleContainer>
+        {isLive && <StyledLiveContainer>LIVE</StyledLiveContainer>}
         <StyledTournamentInfoInnerContainer>
           <StyledRegionDateContainer>
             <RegionsIndicator regionCodes={region!} />

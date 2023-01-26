@@ -4,12 +4,18 @@ import { TournamentContent } from "../../../components/TournamentContent/Tournam
 
 interface Props {
   tournament: Tournament;
+  color?: string;
+  isLive?: boolean;
 }
 
-export const TournamentListItem = ({ tournament }: Props) => {
+export const TournamentListItem = ({
+  tournament,
+  color,
+  isLive = false,
+}: Props) => {
   return (
-    <StyledListItem>
-      <TournamentContent tournament={tournament} />
+    <StyledListItem bgColor={color}>
+      <TournamentContent tournament={tournament} isLive={isLive} />
     </StyledListItem>
   );
 };

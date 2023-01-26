@@ -46,15 +46,19 @@ export class TournamentsService {
     return this.tournamentRepository.findOne({ slug });
   }
 
-  findPast(): Promise<Tournament[]> {
+  findPast(searchQuery?: string): Promise<Tournament[]> {
+    const searchQueryFilter =
+      this.searchQueryProvider.getSearchQueryFilter(searchQuery);
     return this.tournamentRepository.find({
-      where: { endDate: Raw((alias) => `${alias} < CURRENT_DATE`) },
-      take: 10,
+      where: {
+        endDate: Raw((alias) => `${alias} < CURRENT_DATE`),
+        ...searchQueryFilter,
+      },
       order: { startDate: "DESC" },
     });
   }
 
-  findLive(): Promise<Tournament[]> {
+  findOngoing(): Promise<Tournament[]> {
     return this.tournamentRepository.find({
       where: {
         startDate: Raw((alias) => `${alias} <= CURRENT_DATE`),
@@ -64,12 +68,14 @@ export class TournamentsService {
     });
   }
 
-  findUpcoming(): Promise<Tournament[]> {
+  findUpcoming(searchQuery?: string): Promise<Tournament[]> {
+    const searchQueryFilter =
+      this.searchQueryProvider.getSearchQueryFilter(searchQuery);
     return this.tournamentRepository.find({
       where: {
         startDate: Raw((alias) => `${alias} > CURRENT_DATE`),
+        ...searchQueryFilter,
       },
-      take: 10,
       order: { startDate: "ASC" },
     });
   }

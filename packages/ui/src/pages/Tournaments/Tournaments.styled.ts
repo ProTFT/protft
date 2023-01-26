@@ -8,7 +8,7 @@ export const StyledContainer = styled(StyledVerticalContainer)`
   text-align: center;
   padding: 1rem;
   background-color: ${colors.blackBackground};
-  gap: 1rem;
+  gap: 2rem;
 
   @media ${device.desktop} {
     padding: 2rem 4rem 1rem 4rem;
@@ -25,5 +25,25 @@ export const StyledTournamentList = styled(StyledVerticalContainer)`
 
   @media ${device.tablet} {
     padding: 2rem;
+  }
+`;
+
+export const StyledBar = styled(StyledVerticalContainer)`
+  gap: 2rem;
+  align-items: center;
+
+  @media ${device.tablet} {
+    padding-right: 2rem;
+    flex-direction: row;
+    justify-content: space-between;
+  }
+`;
+
+export const StyledButtonContainer = styled(StyledHorizontalContainer)`
+  width: 100%;
+  justify-content: end;
+
+  @media ${device.tablet} {
+    width: auto;
   }
 `;

@@ -152,12 +152,6 @@ export interface Tiebreaker {
     description: string;
 }
 
-export interface TournamentOverview {
-    pastTournaments: Tournament[];
-    liveTournaments: Tournament[];
-    upcomingTournaments: Tournament[];
-}
-
 export interface BooleanResult {
     result: boolean;
     error?: Nullable<string>;
@@ -182,7 +176,9 @@ export interface IQuery {
     adminTournaments(searchQuery?: Nullable<string>): Tournament[] | Promise<Tournament[]>;
     tournament(id: number): Tournament | Promise<Tournament>;
     tournamentBySlug(slug: string): Tournament | Promise<Tournament>;
-    tournamentOverview(): TournamentOverview | Promise<TournamentOverview>;
+    ongoingTournaments(): Tournament[] | Promise<Tournament[]>;
+    upcomingTournaments(searchQuery?: Nullable<string>): Tournament[] | Promise<Tournament[]>;
+    pastTournaments(searchQuery?: Nullable<string>): Tournament[] | Promise<Tournament[]>;
     stages(tournamentId: number): Stage[] | Promise<Stage[]>;
     stage(id: number): Stage | Promise<Stage>;
     playersFromPreviousStage(id: number): StagePlayerInfo[] | Promise<StagePlayerInfo[]>;
