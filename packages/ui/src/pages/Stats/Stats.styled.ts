@@ -32,9 +32,12 @@ export const StyledPlayerTableHeader = styled.thead`
   padding: 0.5rem;
 `;
 
-export const StyledPlayerTableHeaderData = styled.th`
-  padding: 0.5rem;
-  text-align: center;
+export const StyledPlayerTableHeaderData = styled.th<{ onClick?: () => void }>`
+  ${({ onClick }) => `
+    padding: 0.5rem;
+    text-align: center;
+    ${onClick && "cursor: pointer;"}
+  `}
 `;
 
 export const StyledPlayerTable = styled.table`
@@ -75,5 +78,9 @@ export const StyledStatsFilters = styled(StyledVerticalContainer)`
 export const StyledButtonContainer = styled(StyledHorizontalContainer)`
   width: 100%;
   padding: 2rem;
+  justify-content: center;
+`;
+
+export const StyledTitleContainer = styled(StyledHorizontalContainer)`
   justify-content: center;
 `;

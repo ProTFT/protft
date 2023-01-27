@@ -32,7 +32,7 @@ export const DataSelect = <T, K extends Record<keyof K, T | string | any>>({
   }, [data, labelKey, valueKey, prefix]);
 
   const selectedValue = useMemo(() => {
-    return options.find((o) => o.value === value);
+    return options?.find((o) => o.value === value);
   }, [options, value]);
 
   return (

@@ -40,6 +40,11 @@ export enum SortColumn {
   TOTAL_GAMES = "totalGames",
 }
 
+export const SortDirection = {
+  ASC: true,
+  DESC: false,
+};
+
 export interface SortOption {
   column: string;
   asc: boolean;

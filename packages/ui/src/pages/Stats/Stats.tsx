@@ -1,13 +1,23 @@
-import { Suspense, useCallback, useMemo, useState } from "react";
+import {
+  Suspense,
+  useCallback,
+  useDeferredValue,
+  useMemo,
+  useState,
+} from "react";
 import { useQuery } from "urql";
 import { ProTFTButton } from "../../components/Button/Button";
 import { TextIconHorizontalContainer } from "../../components/Layout/HorizontalContainer/TextIconHorizontalContainer.styled";
 import { RegionsIndicator } from "../../components/RegionIndicator/RegionIndicator";
+import { colors } from "../../design/colors";
+import { ArrowRightSimpleIcon } from "../../design/icons/ArrowRightSimple";
+import { useDocumentTitle } from "../../hooks/useDocumentTitle";
 import {
   PlayersStatsQueryResult,
   PlayerStatsQueryVariables,
   PLAYER_STATS_QUERY,
   SortColumn,
+  SortDirection,
   SortOption,
 } from "./queries";
 import { RegionSelect } from "./RegionSelect/RegionSelect";
@@ -21,6 +31,7 @@ import {
   StyledPlayerTableHeader,
   StyledPlayerTableHeaderData,
   StyledStatsFilters,
+  StyledTitleContainer,
 } from "./Stats.styled";
 import { TournamentSelect } from "./TournamentSelect/TournamentSelect";
 
@@ -52,6 +63,7 @@ const StatsRows = ({
       ...paginationArgs,
     },
   });
+
   return (
     <>
       {stats?.playerStats.map(
@@ -83,8 +95,14 @@ const StatsRows = ({
   );
 };
 
+const defaultSorting: { [key in SortColumn]: boolean } = {
+  [SortColumn.AVERAGE_POSITION]: SortDirection.ASC,
+  [SortColumn.TOP_1]: SortDirection.DESC,
+  [SortColumn.TOP_4]: SortDirection.DESC,
+  [SortColumn.TOTAL_GAMES]: SortDirection.DESC,
+};
+
 export const Stats = () => {
-  // eslint-disable-next-line @typescript-eslint/no-unused-vars
   const [page, setPage] = useState(0);
   const paginationArgs = useMemo(
     () => ({
@@ -94,13 +112,12 @@ export const Stats = () => {
     [page]
   );
 
-  // const [searchQuery, setSearchQuery] = useState("");
   const [regionFilter, setRegionFilter] = useState("");
   const [setFilter, setSetFilter] = useState<number>(0);
   const [tournamentFilter, setTournamentFilter] = useState<number[]>([]);
   const [sorting, setSorting] = useState<SortOption>({
     column: SortColumn.AVERAGE_POSITION,
-    asc: true,
+    asc: SortDirection.ASC,
   });
 
   const onValueChange = useCallback(
@@ -120,7 +137,9 @@ export const Stats = () => {
         const isAlreadySelected = column === curr.column;
         return {
           column,
-          asc: isAlreadySelected ? !curr.asc : true,
+          asc: isAlreadySelected
+            ? !curr.asc
+            : defaultSorting[column as SortColumn],
         };
       });
     },
@@ -131,22 +150,12 @@ export const Stats = () => {
     setPage((curr) => curr + 1);
   }, []);
 
-  // let timeout = useRef<ReturnType<typeof setTimeout>>();
-  // const onChangeSearchInput = useCallback(
-  //   (event: ChangeEvent<HTMLInputElement>) => {
-  //     if (timeout.current) {
-  //       clearTimeout(timeout.current);
-  //     }
-  //     timeout.current = setTimeout(() => {
-  //       setSearchQuery!(event.target.value);
-  //     }, 1000);
-  //   },
-  //   [setSearchQuery]
-  // );
+  const deferredPagination = useDeferredValue(paginationArgs);
+
+  useDocumentTitle("Stats");
 
   return (
     <StyledContainer>
-      {/* <SearchInput placeholder="Search player" onChange={onChangeSearchInput} /> */}
       <StyledStatsFilters>
         <TournamentSelect
           value={tournamentFilter}
@@ -168,32 +177,59 @@ export const Stats = () => {
             <StyledPlayerTableHeaderData
               onClick={changeSorting(SortColumn.AVERAGE_POSITION)}
             >
-              Average Position
+              <StyledTitleContainer>
+                Average Position
+                <ArrowRightSimpleIcon
+                  color={colors.blackBackground}
+                  visible={sorting.column === SortColumn.AVERAGE_POSITION}
+                  inverted={sorting.asc}
+                />
+              </StyledTitleContainer>
             </StyledPlayerTableHeaderData>
             <StyledPlayerTableHeaderData
               onClick={changeSorting(SortColumn.TOP_1)}
             >
-              Top 1
+              <StyledTitleContainer>
+                Top 1
+                <ArrowRightSimpleIcon
+                  color={colors.blackBackground}
+                  visible={sorting.column === SortColumn.TOP_1}
+                  inverted={sorting.asc}
+                />
+              </StyledTitleContainer>
             </StyledPlayerTableHeaderData>
             <StyledPlayerTableHeaderData
               onClick={changeSorting(SortColumn.TOP_4)}
             >
-              Top 4
+              <StyledTitleContainer>
+                Top 4
+                <ArrowRightSimpleIcon
+                  color={colors.blackBackground}
+                  visible={sorting.column === SortColumn.TOP_4}
+                  inverted={sorting.asc}
+                />
+              </StyledTitleContainer>
             </StyledPlayerTableHeaderData>
             <StyledPlayerTableHeaderData
               onClick={changeSorting(SortColumn.TOTAL_GAMES)}
             >
-              Total Games
+              <StyledTitleContainer>
+                Total Games
+                <ArrowRightSimpleIcon
+                  color={colors.blackBackground}
+                  visible={sorting.column === SortColumn.TOTAL_GAMES}
+                  inverted={sorting.asc}
+                />
+              </StyledTitleContainer>
             </StyledPlayerTableHeaderData>
           </StyledPlayerTableHeader>
           <tbody>
             <Suspense fallback={null}>
               <StatsRows
                 tournamentFilter={tournamentFilter}
-                paginationArgs={paginationArgs}
+                paginationArgs={deferredPagination}
                 regionFilter={regionFilter}
                 setFilter={setFilter}
-                // playerFilter={searchQuery}
                 sort={sorting}
               />
             </Suspense>
@@ -205,6 +241,4 @@ export const Stats = () => {
       </StyledPlayerTableContainer>
     </StyledContainer>
   );
-
-  // return <ComingSoon />;
 };

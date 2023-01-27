@@ -1,3 +1,4 @@
+import { useDocumentTitle } from "../../hooks/useDocumentTitle";
 import { useIsMobile } from "../../hooks/useIsMobile";
 import {
   StyledContainer,
@@ -13,6 +14,9 @@ import {
 
 export const About = () => {
   const isMobile = useIsMobile();
+
+  useDocumentTitle("About");
+
   return (
     <StyledContainer>
       <StyledHeader>
