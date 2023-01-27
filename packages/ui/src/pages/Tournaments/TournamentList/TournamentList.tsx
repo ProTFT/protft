@@ -23,9 +23,13 @@ export const OngoingTournamentList = () => {
     query: ONGOING_TOURNAMENTS_QUERY,
   });
 
+  if (!data?.ongoingTournaments.length) {
+    return null;
+  }
+
   return (
     <StyledTournamentList>
-      {data?.ongoingTournaments.map((tournament) => (
+      {data.ongoingTournaments.map((tournament) => (
         <Link key={tournament.id} to={`${tournament.slug}`}>
           <TournamentListItem
             tournament={tournament}
