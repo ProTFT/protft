@@ -6,6 +6,7 @@ export enum RegionCode {
   JP = "JP",
   KR = "KR",
   OCE = "OCE",
+  LA = "LA",
   WO = "WO",
 }
 
@@ -17,6 +18,7 @@ const regionCodeMap: { [key in RegionCode]: string } = {
   [RegionCode.JP]: "Japan",
   [RegionCode.KR]: "South Korea",
   [RegionCode.OCE]: "Oceania",
+  [RegionCode.LA]: "LATAM",
   [RegionCode.WO]: "World",
 };
 

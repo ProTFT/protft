@@ -127,6 +127,7 @@ export const Stats = () => {
       ) =>
       (newValue?: T) => {
         changeFunction(newValue || defaultValue);
+        setPage(0);
       },
     []
   );
