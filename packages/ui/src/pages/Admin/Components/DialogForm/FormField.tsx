@@ -87,6 +87,10 @@ export const FormField = (props: React.PropsWithChildren<Props>) => {
     if (props.type === "multiselect") {
       return <MultiSelectFormContent {...props} />;
     }
+    if (props.type === "file") {
+      return <input {...props} />;
+    }
+
     return <InputFormContent {...props} />;
   }, [props]);
 

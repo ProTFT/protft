@@ -7,6 +7,7 @@ export const StyledButton = styled.button<StyledButtonProps>`
   background-color: ${(props) => props.buttonColor};
   padding: 8px 26px;
   cursor: pointer;
+  white-space: nowrap;
 
   width: ${(props) => props.width};
 

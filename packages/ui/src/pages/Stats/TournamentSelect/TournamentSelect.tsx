@@ -19,8 +19,6 @@ export const TournamentSelect = ({ value, onValueChange }: Props) => {
     query: TOURNAMENTS_QUERY,
   });
 
-  console.log(value);
-
   const getPrefix = useCallback((data: SelectTournament) => data.set.name, []);
 
   return (

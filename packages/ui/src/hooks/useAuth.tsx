@@ -8,8 +8,9 @@ interface AuthContext {
 }
 
 const authContext = createContext<AuthContext>({} as AuthContext);
-const client = axios.create({
+export const client = axios.create({
   baseURL: `${process.env.REACT_APP_BACKEND_URL}`.replace("graphql", ""),
+  withCredentials: true,
 });
 
 export function ProvideAuth({ children }: React.PropsWithChildren<{}>) {

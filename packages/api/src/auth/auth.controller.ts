@@ -8,7 +8,10 @@ import {
   UnauthorizedException,
   UseGuards,
 } from "@nestjs/common";
-import { Response as ExpressResponse } from "express";
+import {
+  Response as ExpressResponse,
+  Request as ExpressRequest,
+} from "express";
 import { AuthService } from "./auth.service";
 import { JwtAuthGuard } from "./jwt-auth.guard";
 import { LocalAuthGuard } from "./local-auth.guard";
@@ -26,7 +29,7 @@ export class AuthController {
   @UseGuards(LocalAuthGuard)
   @Post("login")
   async login(
-    @Request() req: Request & { user: any },
+    @Request() req: ExpressRequest & { user: any },
     @Response() res: ExpressResponse,
   ) {
     const response = await this.authService.login(req.user, res);

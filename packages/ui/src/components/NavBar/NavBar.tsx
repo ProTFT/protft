@@ -30,20 +30,21 @@ enum MenuItems {
   about,
 }
 
+const selectedMenuMap: { [urlText: string]: MenuItems } = {
+  tournament: MenuItems.tournament,
+  player: MenuItems.players,
+  stats: MenuItems.stats,
+  about: MenuItems.about,
+};
+
 const getSelectedMenu = (url: string) => {
-  if (url.includes("tournament")) {
-    return MenuItems.tournament;
+  const selectedMenu = Object.keys(selectedMenuMap).find((urlPath) =>
+    url.includes(urlPath)
+  );
+  if (!selectedMenu) {
+    return null;
   }
-  if (url.includes("player")) {
-    return MenuItems.players;
-  }
-  if (url.includes("stats")) {
-    return MenuItems.stats;
-  }
-  if (url.includes("about")) {
-    return MenuItems.about;
-  }
-  return null;
+  return selectedMenuMap[selectedMenu];
 };
 
 export const NavBar = () => {
@@ -107,6 +108,11 @@ export const DesktopNavBar = ({ selectedMenu }: Props) => {
             <Link to={"/admin/tournaments"}>
               <NavBarButton selected={selectedMenu === MenuItems.tournament}>
                 Tourneys
+              </NavBarButton>
+            </Link>
+            <Link to={"/admin/players"}>
+              <NavBarButton selected={selectedMenu === MenuItems.players}>
+                Players
               </NavBarButton>
             </Link>
             <Link to={"/logout"}>

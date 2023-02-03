@@ -19,9 +19,21 @@ export interface Props<T, K> {
   entity?: T;
 }
 
-const formValueToAPI = ({ type, value, dataset }: HTMLInputElement) => {
+const formValueToAPI = ({
+  type,
+  value,
+  dataset,
+  files,
+  checked,
+}: HTMLInputElement) => {
   if (type === "number" || dataset.sptype === "number") {
     return Number(value);
+  }
+  if (type === "file") {
+    return files;
+  }
+  if (type === "checkbox") {
+    return checked;
   }
   if (dataset.sptype === "array") {
     const splitValue = value.replaceAll(" ", "").split(",");
@@ -42,6 +54,9 @@ const APIValueToForm = (
 ) => {
   if (node.props.type === "date") {
     return dbDateToHTML(value);
+  }
+  if (node.props.type === "file") {
+    return undefined;
   }
   return value;
 };

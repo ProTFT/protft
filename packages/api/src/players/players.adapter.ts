@@ -8,7 +8,6 @@ export function formatStats({
   topOnePercent,
   totalGames,
 }: PlayerStatsRaw): PlayerStats {
-  debugger;
   return {
     eigthCount: getPercentage(eigthPercent),
     topFourCount: getPercentage(topFourPercent),

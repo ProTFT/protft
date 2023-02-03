@@ -56,6 +56,15 @@ export class PlayersResolver extends BaseResolver {
     return this.playersService.findAll(filters, { take, skip });
   }
 
+  @UseGuards(GqlJwtAuthGuard)
+  @Query(() => [Player])
+  async adminPlayers(
+    @Args() { region, country, take, skip, searchQuery }: GetPlayerArgs,
+  ) {
+    const filters = this.cleanGraphQLFilters({ region, country, searchQuery });
+    return this.playersService.adminFindAll(filters, { take, skip });
+  }
+
   @Query(() => Player)
   async player(@Args("id", { type: () => Int }) id: number) {
     return this.playersService.findOne(id);
@@ -89,5 +98,11 @@ export class PlayersResolver extends BaseResolver {
   @Mutation(() => [Player])
   async createPlayerSlugs() {
     return this.playersService.createSlugs();
+  }
+
+  @UseGuards(GqlJwtAuthGuard)
+  @Mutation(() => Player)
+  async deletePlayer(@Args("id", { type: () => Int }) id: number) {
+    return this.playersService.deleteOne(id);
   }
 }

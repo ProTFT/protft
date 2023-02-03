@@ -188,6 +188,7 @@ export interface IQuery {
     pointSchema(id: number): Nullable<PointSchema> | Promise<Nullable<PointSchema>>;
     tournamentsPlayed(playerId: number): Tournament[] | Promise<Tournament[]>;
     players(region?: Nullable<string>, country?: Nullable<string>, searchQuery?: Nullable<string>, take?: Nullable<number>, skip?: Nullable<number>): Player[] | Promise<Player[]>;
+    adminPlayers(region?: Nullable<string>, country?: Nullable<string>, searchQuery?: Nullable<string>, take?: Nullable<number>, skip?: Nullable<number>): Player[] | Promise<Player[]>;
     player(id: number): Player | Promise<Player>;
     playerBySlug(slug: string): Player | Promise<Player>;
     playerFilterMeta(): PlayerFilterMeta | Promise<PlayerFilterMeta>;
@@ -215,6 +216,7 @@ export interface IMutation {
     createPlayerLobbyGroup(lobbyGroupId: number, players: CreatePlayerLobbyArgs[]): LobbyPlayerInfo[] | Promise<LobbyPlayerInfo[]>;
     createPlayer(name: string, country: string, region: string): Player | Promise<Player>;
     createPlayerSlugs(): Player[] | Promise<Player[]>;
+    deletePlayer(id: number): Player | Promise<Player>;
     createLobbyGroupResult(lobbyGroupId: number, results: CreateLobbyGroupResults[]): BooleanResult | Promise<BooleanResult>;
     createLobbyResult(lobbyId: number, players: PlayerLobbyResultInput[]): BooleanResult | Promise<BooleanResult>;
 }

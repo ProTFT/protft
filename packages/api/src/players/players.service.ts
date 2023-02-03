@@ -1,4 +1,8 @@
-import { BadRequestException, Injectable } from "@nestjs/common";
+import {
+  BadRequestException,
+  Injectable,
+  NotFoundException,
+} from "@nestjs/common";
 import { InjectRepository } from "@nestjs/typeorm";
 import slugify from "slugify";
 import { Repository, UpdateResult } from "typeorm";
@@ -46,6 +50,23 @@ export class PlayersService {
       },
       take,
       skip,
+    });
+  }
+
+  async adminFindAll(
+    { searchQuery, ...filters }: BaseGetPlayerArgs,
+    { take = 10, skip = 0 }: PaginationArgs,
+  ): Promise<Player[]> {
+    const searchQueryFilter =
+      this.searchQueryProvider.getSearchQueryFilter(searchQuery);
+    return this.playerRepository.find({
+      where: {
+        ...searchQueryFilter,
+        ...filters,
+      },
+      take,
+      skip,
+      order: { id: "DESC" },
     });
   }
 
@@ -125,5 +146,63 @@ export class PlayersService {
       lower: true,
       strict: true,
     });
+  }
+
+  public async deleteOne(id: number): Promise<Player> {
+    const player = await this.findOne(id);
+    if (!player) {
+      throw new NotFoundException("Player does not exist");
+    }
+    await this.playerRepository.delete({ id });
+    return player;
+  }
+
+  public async createBulk(fileString: string, dryRun = true): Promise<any> {
+    const [fileHeader, ...lines] = fileString.replace(/\r/g, "").split("\n");
+    const [name, country, region] = fileHeader.split(",");
+    if (name !== "Name" || country !== "Country" || region !== "Region") {
+      throw new BadRequestException(`${name} - ${country} - ${region}`);
+    }
+    const players = lines.map((line) => {
+      const [name, country, region] = line.split(",");
+      return {
+        name,
+        country,
+        region,
+      };
+    });
+    const searchPlayers = await Promise.all(
+      players.map((player) =>
+        this.findAll(
+          { region: player.region, searchQuery: player.name },
+          { take: 1, skip: 0 },
+        ),
+      ),
+    );
+
+    const result = players.reduce(
+      (prev, curr, index) => ({
+        ...prev,
+        newPlayers: [
+          ...prev.newPlayers,
+          ...(searchPlayers[index].length === 0 ? [curr] : []),
+        ],
+        repeatedPlayers: [
+          ...prev.repeatedPlayers,
+          ...(searchPlayers[index].length > 0 ? [curr] : []),
+        ],
+      }),
+      {
+        newPlayers: [],
+        repeatedPlayers: [],
+        dryRun,
+      },
+    );
+
+    if (!dryRun) {
+      this.playerRepository.save(result.newPlayers);
+    }
+
+    return result;
   }
 }
