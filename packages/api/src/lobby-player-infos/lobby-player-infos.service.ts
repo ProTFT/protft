@@ -11,7 +11,13 @@ export class LobbyPlayerInfosService {
     private lobbyPlayerInfoRepository: Repository<LobbyPlayerInfo>,
   ) {}
 
-  async createLobbyPlayer({
+  async createManyLobbyPlayers(
+    payload: Pick<LobbyPlayerInfo, "lobbyId" | "playerId">[],
+  ): Promise<LobbyPlayerInfo[]> {
+    return this.lobbyPlayerInfoRepository.save(payload);
+  }
+
+  async createAllPlayersOfLobby({
     lobbyId,
     playerIds,
   }: CreatePlayerLobbyArgs): Promise<LobbyPlayerInfo[]> {

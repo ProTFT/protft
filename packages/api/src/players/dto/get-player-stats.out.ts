@@ -22,5 +22,5 @@ export class PlayerStats {
 @ObjectType()
 export class PlayersStats extends PlayerStats {
   @Field(() => Player)
-  player: Player;
+  player: Pick<Player, "id" | "name" | "region" | "country" | "slug">;
 }

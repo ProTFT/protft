@@ -9,24 +9,23 @@ import {
 } from "@nestjs/common";
 import { FileInterceptor } from "@nestjs/platform-express";
 import { JwtAuthGuard } from "../auth/jwt-auth.guard";
-import { PlayersService } from "./players.service";
+import { RoundResultsService } from "./round-results.service";
 
-@Controller("players")
+@Controller("roundResults")
 export class PlayersController {
-  constructor(private playersService: PlayersService) {}
+  constructor(private roundResultsService: RoundResultsService) {}
 
   @Post("uploadBulk")
   @UseGuards(JwtAuthGuard)
   @UseInterceptors(FileInterceptor("file"))
   uploadBulk(
     @UploadedFile() file: Express.Multer.File,
-    @Body() body: { dryRun: string },
+    @Body() { stageId }: { stageId: string },
   ) {
     if (!file) {
       throw new BadRequestException("No file provided");
     }
-    const isRealRun = body.dryRun === "false";
     const fileString = file.buffer.toString("utf-8");
-    return this.playersService.createBulk(fileString, !isRealRun);
+    return this.roundResultsService.createBulk(fileString, Number(stageId));
   }
 }

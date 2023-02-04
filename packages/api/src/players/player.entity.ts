@@ -5,6 +5,7 @@ import { PlayerStats } from "./dto/get-player-stats.out";
 @ObjectType()
 @Entity()
 @Index(["slug"], { unique: true })
+@Index(["name"], { unique: false })
 export class Player {
   @Field(() => Int)
   @PrimaryGeneratedColumn()

@@ -1,8 +1,5 @@
 import { Round } from "../rounds/round.entity";
-import {
-  CreateLobbyGroupResultArgs,
-  CreateLobbyGroupResults,
-} from "./dto/create-lobby-group-result.args";
+import { CreateLobbyGroupResults } from "./dto/create-lobby-group-result.args";
 import { CreateLobbyResultArgs } from "./dto/create-lobby-result.args";
 import { PlayerResults } from "./dto/get-results.out";
 import { RoundResultsRaw } from "./dto/get-results.raw";

@@ -4,7 +4,7 @@ import { Player } from "../../players/player.entity";
 @ObjectType()
 export class PlayerResults {
   @Field(() => Player)
-  player: Player;
+  player: Pick<Player, "id" | "name" | "region" | "country" | "slug">;
 
   @Field(() => [Int])
   positions: number[];

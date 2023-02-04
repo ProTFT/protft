@@ -129,12 +129,14 @@ export class PlayersService {
   }
 
   async createSlugs(): Promise<UpdateResult[]> {
-    const allTournaments = await this.playerRepository.find();
-    const payloads = allTournaments.map(async (player) =>
+    const allPlayers = await this.playerRepository.find({
+      where: { slug: "" },
+    });
+    const payloads = allPlayers.map((player) =>
       this.playerRepository.update(
         { id: player.id },
         {
-          slug: await this.createSlug(player),
+          slug: this.createSlug(player),
         },
       ),
     );
@@ -200,7 +202,8 @@ export class PlayersService {
     );
 
     if (!dryRun) {
-      this.playerRepository.save(result.newPlayers);
+      await this.playerRepository.save(result.newPlayers);
+      await this.createSlugs();
     }
 
     return result;

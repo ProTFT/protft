@@ -1,20 +1,174 @@
-import { Injectable } from "@nestjs/common";
+import { BadRequestException, Injectable } from "@nestjs/common";
 import { InjectRepository } from "@nestjs/typeorm";
 import { Repository, SelectQueryBuilder } from "typeorm";
+import { StagesService } from "../stages/stages.service";
 import { PlayersStatsRaw, PlayerStatsRaw } from "./dto/get-player-stats.raw";
 import { RoundResultsRaw } from "./dto/get-results.raw";
 import { GetStatsArgs } from "./dto/get-stats.args";
 import { RoundResult } from "./round-result.entity";
+import chunk from "lodash.chunk";
+import { LobbyPlayerInfosService } from "../lobby-player-infos/lobby-player-infos.service";
+import { Round } from "../rounds/round.entity";
+
+interface BaseFileLine {
+  playerId: number;
+  playerPositions: number[];
+}
+
+interface FileLineWithLobby extends BaseFileLine {
+  lobbyId: number;
+}
+
+interface FileLineWithLobbyAndRound {
+  playerId: number;
+  lobbyId: number;
+  roundId: number;
+  position: number;
+}
+
+interface FileLineWithPlayerLobby {
+  lobbyPlayerId: number;
+  roundId: number;
+  position: number;
+}
 
 @Injectable()
 export class RoundResultsService {
   constructor(
     @InjectRepository(RoundResult)
     private roundResultsRepository: Repository<RoundResult>,
+    private stagesService: StagesService,
+    private lobbyPlayerInfosService: LobbyPlayerInfosService,
   ) {}
 
   public createResults(results: RoundResult[]): Promise<RoundResult[]> {
     return this.roundResultsRepository.save(results);
+  }
+
+  public async createBulk(
+    fileString: string,
+    stageId: number,
+    lobbyGroupId?: number,
+  ): Promise<RoundResult[]> {
+    const [fileHeader, ...lines] = fileString.replace(/\r/g, "").split("\n");
+    const [player, position] = fileHeader.split(",");
+    if (player !== "Player" || position !== "Position") {
+      throw new BadRequestException(`${player} - ${position}`);
+    }
+    const {
+      players: allStagePlayers,
+      rounds: allStageRounds,
+      lobbies: allStageLobbies,
+      lobbyGroups: allStageLobbyGroups,
+    } = await this.stagesService.findOne(stageId, [
+      "players",
+      "rounds",
+      "lobbies",
+      "lobbyGroups",
+    ]);
+
+    if (lines.length % allStagePlayers.length !== 0) {
+      throw new BadRequestException(
+        "Number of lines does not match number of stage players",
+      );
+    }
+
+    if (
+      lines.length / allStagePlayers.length !== allStageLobbyGroups.length &&
+      !lobbyGroupId
+    ) {
+      throw new BadRequestException(
+        "Number of lines does not match number of lobby groups",
+      );
+    }
+
+    const payloadWithPlayerId: BaseFileLine[] = lines.map((line) => {
+      const [playerName, ...positions] = line.split(",");
+      const player = allStagePlayers.find(
+        (p) => p.player.name.toLowerCase() === playerName.toLowerCase(),
+      );
+      return {
+        playerId: player.player.id,
+        playerPositions: positions.map((p) => Number(p)),
+      };
+    });
+
+    let count = 0;
+    const roundsPerLobbyGroup = allStageLobbyGroups.reduce<{
+      [lobbyGroupId: number]: Round[];
+    }>((prev, curr) => {
+      const roundCount = curr.roundsPlayed;
+      const result = {
+        [curr.id]: allStageRounds.slice(count, count + roundCount - 1),
+      };
+      count += roundCount;
+      return {
+        ...prev,
+        ...result,
+      };
+    }, {});
+
+    const lobbyToRoundMap = allStageLobbies.reduce<{
+      [lobbyId: number]: number[];
+    }>(
+      (prev, curr) => ({
+        ...prev,
+        [curr.id]: roundsPerLobbyGroup[curr.lobbyGroupId].map((r) => r.id),
+      }),
+      {},
+    );
+
+    const resultsByLobby = chunk(payloadWithPlayerId, 8);
+
+    const payloadWithPlayerAndLobby = resultsByLobby.reduce<
+      FileLineWithLobby[]
+    >(
+      (prev, curr, index) => [
+        ...prev,
+        ...curr.map((a) => ({
+          playerId: a.playerId,
+          playerPositions: a.playerPositions,
+          lobbyId: allStageLobbies[index].id,
+        })),
+      ],
+      [],
+    );
+
+    const finalSimplePayload = payloadWithPlayerAndLobby.reduce<
+      FileLineWithLobbyAndRound[]
+    >((prev, curr, index) => {
+      const newEntries: FileLineWithLobbyAndRound[] = curr.playerPositions.map(
+        (position) => ({
+          playerId: curr.playerId,
+          lobbyId: curr.lobbyId,
+          position,
+          roundId: lobbyToRoundMap[curr.lobbyId][index],
+        }),
+      );
+      return [...prev, ...newEntries];
+    }, []);
+
+    const playerLobbyCreationResult =
+      await this.lobbyPlayerInfosService.createManyLobbyPlayers(
+        finalSimplePayload.map((p) => ({
+          playerId: p.playerId,
+          lobbyId: p.lobbyId,
+        })),
+      );
+
+    const finalPayload: FileLineWithPlayerLobby[] = finalSimplePayload.map(
+      (p) => ({
+        lobbyPlayerId: playerLobbyCreationResult.find(
+          (r) => r.lobbyId === p.lobbyId && r.playerId === p.playerId,
+        ).id,
+        roundId: p.roundId,
+        position: p.position,
+      }),
+    );
+
+    const results = this.roundResultsRepository.save(finalPayload);
+
+    return results;
   }
 
   public findResultsByStage(stageId: number): Promise<RoundResultsRaw[]> {

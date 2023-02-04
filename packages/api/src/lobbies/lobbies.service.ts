@@ -61,7 +61,7 @@ export class LobbiesService {
     );
     const lobbies = await this.findAllByLobbyGroup(lobbyGroupId);
     const requests = lobbies.map((lobby) => {
-      return this.lobbyPlayerInfosService.createLobbyPlayer({
+      return this.lobbyPlayerInfosService.createAllPlayersOfLobby({
         lobbyId: lobby.id,
         playerIds: formattedData[String(lobby.id)],
       });

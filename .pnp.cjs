@@ -26701,6 +26701,7 @@ function $$SETUP_STATE(hydrateRuntimeState, basePath) {
             ["@types/cookie-parser", "npm:1.4.3"],\
             ["@types/express", "npm:4.17.13"],\
             ["@types/jest", "npm:27.5.0"],\
+            ["@types/lodash.chunk", "npm:4.2.7"],\
             ["@types/multer", "npm:1.4.7"],\
             ["@types/node", "npm:16.11.38"],\
             ["@types/passport-jwt", "npm:3.0.8"],\
@@ -26716,6 +26717,7 @@ function $$SETUP_STATE(hydrateRuntimeState, basePath) {
             ["eslint-plugin-prettier", "virtual:bac4008d35a304375ff1ab4baeb61323523d963ad78fe9677e36b15d15f89064a355ca0cb83f2c600ae38e797c7f86a24ea965c3931d6b33889f658aa9914d2c#npm:4.0.0"],\
             ["graphql", "npm:16.5.0"],\
             ["jest", "virtual:bac4008d35a304375ff1ab4baeb61323523d963ad78fe9677e36b15d15f89064a355ca0cb83f2c600ae38e797c7f86a24ea965c3931d6b33889f658aa9914d2c#npm:28.0.3"],\
+            ["lodash.chunk", "npm:4.2.0"],\
             ["passport", "npm:0.6.0"],\
             ["passport-jwt", "npm:4.0.1"],\
             ["passport-local", "npm:1.0.0"],\
