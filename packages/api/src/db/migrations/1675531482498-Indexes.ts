@@ -10,7 +10,6 @@ export class Indexes1675531482498 implements MigrationInterface {
     await queryRunner.query(
       `ALTER TABLE "stage_player_info" DROP CONSTRAINT "FK_65355f632c40193663d7eca7063"`,
     );
-    await queryRunner.query(`ALTER TABLE "set" DROP COLUMN "slug"`);
     await queryRunner.query(
       `ALTER TABLE "tournament" ALTER COLUMN "visibility" SET NOT NULL`,
     );
@@ -49,9 +48,6 @@ export class Indexes1675531482498 implements MigrationInterface {
     );
     await queryRunner.query(
       `ALTER TABLE "tournament" ALTER COLUMN "visibility" DROP NOT NULL`,
-    );
-    await queryRunner.query(
-      `ALTER TABLE "set" ADD "slug" character varying NOT NULL DEFAULT ''`,
     );
     await queryRunner.query(
       `ALTER TABLE "stage_player_info" ADD CONSTRAINT "FK_65355f632c40193663d7eca7063" FOREIGN KEY ("stageId") REFERENCES "stage"("id") ON DELETE CASCADE ON UPDATE NO ACTION`,
