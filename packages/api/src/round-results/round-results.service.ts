@@ -6,7 +6,7 @@ import { PlayersStatsRaw, PlayerStatsRaw } from "./dto/get-player-stats.raw";
 import { RoundResultsRaw } from "./dto/get-results.raw";
 import { GetStatsArgs } from "./dto/get-stats.args";
 import { RoundResult } from "./round-result.entity";
-import chunk from "lodash.chunk";
+import chunk = require("lodash.chunk");
 import { LobbyPlayerInfosService } from "../lobby-player-infos/lobby-player-infos.service";
 import { Round } from "../rounds/round.entity";
 
@@ -62,6 +62,7 @@ export class RoundResultsService {
       lobbyGroups: allStageLobbyGroups,
     } = await this.stagesService.findOne(stageId, [
       "players",
+      "players.player",
       "rounds",
       "lobbies",
       "lobbyGroups",
@@ -87,6 +88,9 @@ export class RoundResultsService {
       const player = allStagePlayers.find(
         (p) => p.player.name.toLowerCase() === playerName.toLowerCase(),
       );
+      if (!player) {
+        console.log(playerName);
+      }
       return {
         playerId: player.player.id,
         playerPositions: positions.map((p) => Number(p)),
@@ -94,19 +98,21 @@ export class RoundResultsService {
     });
 
     let count = 0;
-    const roundsPerLobbyGroup = allStageLobbyGroups.reduce<{
-      [lobbyGroupId: number]: Round[];
-    }>((prev, curr) => {
-      const roundCount = curr.roundsPlayed;
-      const result = {
-        [curr.id]: allStageRounds.slice(count, count + roundCount - 1),
-      };
-      count += roundCount;
-      return {
-        ...prev,
-        ...result,
-      };
-    }, {});
+    const roundsPerLobbyGroup = allStageLobbyGroups
+      .sort((a, b) => a.sequence - b.sequence)
+      .reduce<{
+        [lobbyGroupId: number]: Round[];
+      }>((prev, curr) => {
+        const roundCount = curr.roundsPlayed;
+        const result = {
+          [curr.id]: allStageRounds.slice(count, count + roundCount),
+        };
+        count += roundCount;
+        return {
+          ...prev,
+          ...result,
+        };
+      }, {});
 
     const lobbyToRoundMap = allStageLobbies.reduce<{
       [lobbyId: number]: number[];
@@ -136,9 +142,9 @@ export class RoundResultsService {
 
     const finalSimplePayload = payloadWithPlayerAndLobby.reduce<
       FileLineWithLobbyAndRound[]
-    >((prev, curr, index) => {
+    >((prev, curr) => {
       const newEntries: FileLineWithLobbyAndRound[] = curr.playerPositions.map(
-        (position) => ({
+        (position, index) => ({
           playerId: curr.playerId,
           lobbyId: curr.lobbyId,
           position,

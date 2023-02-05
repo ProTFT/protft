@@ -57,3 +57,16 @@ export const CREATE_STAGE_PLAYER = gql`
     }
   }
 `;
+
+export type CreateStagePlayerByNameVariables = {
+  stageId: number;
+  playerNames: string;
+};
+
+export const CREATE_STAGE_PLAYER_BY_NAME = gql`
+  mutation createStagePlayersByName($stageId: Int!, $playerNames: String!) {
+    createStagePlayersByName(stageId: $stageId, playerNames: $playerNames) {
+      stageId
+    }
+  }
+`;

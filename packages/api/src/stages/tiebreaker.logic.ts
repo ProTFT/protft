@@ -38,6 +38,18 @@ const tiebreakerMap: { [key in SortingMethods]: Tiebreaker } = {
     id: 8,
     description: "External tiebreaker (ex: seeding)",
   },
+  [SortingMethods.SECOND_PLACES]: {
+    id: 9,
+    description: "Most second places",
+  },
+  [SortingMethods.THIRD_PLACES]: {
+    id: 10,
+    description: "Most third places",
+  },
+  [SortingMethods.TOTAL_EVENT_POINTS]: {
+    id: 11,
+    description: "Total event points",
+  },
 };
 
 export const getAll = () => Object.values(tiebreakerMap);

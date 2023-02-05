@@ -13,7 +13,9 @@ interface Props {
   type?: React.HTMLInputTypeAttribute;
   value?: any;
   onChange?: (
-    event: React.ChangeEvent<HTMLInputElement | HTMLSelectElement>
+    event: React.ChangeEvent<
+      HTMLInputElement | HTMLSelectElement | HTMLTextAreaElement
+    >
   ) => void;
   specialType?: string;
   options?: { name: string; value: string }[];
@@ -89,6 +91,10 @@ export const FormField = (props: React.PropsWithChildren<Props>) => {
     }
     if (props.type === "file") {
       return <input {...props} />;
+    }
+
+    if (props.type === "multiline") {
+      return <textarea {...props} rows={50} cols={50} />;
     }
 
     return <InputFormContent {...props} />;

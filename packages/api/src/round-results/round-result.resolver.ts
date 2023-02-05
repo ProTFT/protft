@@ -11,12 +11,13 @@ import { BooleanResult } from "./dto/create-lobby-result.out";
 import { PlayerResults } from "./dto/get-results.out";
 import { GetStatsArgs } from "./dto/get-stats.args";
 import {
+  addPastPoints,
   formatLobbyGroupResults,
   formatResults,
   fromRawToConsolidatedRoundResults,
 } from "./round-result.adapter";
 import { RoundResult } from "./round-result.entity";
-import { sortResults } from "./round-result.logic";
+import { SortingMethods, sortResults } from "./round-result.logic";
 import { RoundResultsService } from "./round-results.service";
 
 @Resolver(() => RoundResult)
@@ -29,9 +30,30 @@ export class RoundResultsResolver {
 
   @Query(() => [PlayerResults])
   async resultsByStage(@Args("stageId", { type: () => Int }) stageId: number) {
-    const { tiebreakers } = await this.stagesService.findOne(stageId);
+    const { tiebreakers, tournamentId, sequence } =
+      await this.stagesService.findOne(stageId);
     const results = await this.roundResultsService.findResultsByStage(stageId);
     const formattedResults = fromRawToConsolidatedRoundResults(results);
+    if (tiebreakers?.includes(SortingMethods.TOTAL_EVENT_POINTS)) {
+      const allTournamentStages = await this.stagesService.findAllByTournament(
+        tournamentId,
+      );
+      const previousStages = allTournamentStages.filter(
+        (s) => s.sequence < sequence,
+      );
+      if (previousStages.length) {
+        const previousStagesResult = await Promise.all(
+          previousStages.map((stage) =>
+            this.roundResultsService.findResultsByStage(stage.id),
+          ),
+        );
+        const resultsWithPast = addPastPoints(
+          formattedResults,
+          previousStagesResult,
+        );
+        return sortResults(resultsWithPast, tiebreakers);
+      }
+    }
     return sortResults(formattedResults, tiebreakers);
   }
 

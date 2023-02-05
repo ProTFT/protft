@@ -1,11 +1,18 @@
-import { Injectable, NotFoundException } from "@nestjs/common";
+import {
+  BadRequestException,
+  Injectable,
+  NotFoundException,
+} from "@nestjs/common";
 import { InjectRepository } from "@nestjs/typeorm";
 import { Raw, Repository, UpdateResult } from "typeorm";
 import { DeleteResponse } from "../lib/dto/delete-return";
 import { SearchQuery } from "../lib/SearchQuery";
 import { Player } from "../players/player.entity";
 import { SetsService } from "../sets/sets.service";
-import { CreateTournamentPlayerArgs } from "./dto/create-tournament-player.args";
+import {
+  CreateTournamentPlayerArgs,
+  CreateTournamentPlayerByNameArgs,
+} from "./dto/create-tournament-player.args";
 import { CreateTournamentArgs } from "./dto/create-tournament.args";
 import { UpdateTournamentArgs } from "./dto/update-tournament.args";
 import { Tournament } from "./tournament.entity";
@@ -119,6 +126,37 @@ export class TournamentsService {
     }));
     tournament.players = playerObjects as Player[];
     return this.tournamentRepository.save(tournament);
+  }
+
+  async createTournamentPlayerByName({
+    tournamentId,
+    playerNames,
+  }: CreateTournamentPlayerByNameArgs): Promise<Tournament> {
+    const namesToFind = playerNames.replace(/\r/g, "").split("\n");
+    const query = this.tournamentRepository.manager
+      .createQueryBuilder()
+      .select("*")
+      .from("player", "p");
+
+    const queryWithAllConditions = namesToFind.reduce((prev, curr, index) => {
+      if (index === 0) {
+        return prev.where(`p.name = '${curr}'`);
+      }
+      return prev.orWhere(`p.name = '${curr}'`);
+    }, query);
+
+    const results =
+      (await queryWithAllConditions.getRawMany()) as unknown as Player[];
+
+    if (results.length !== namesToFind.length) {
+      throw new BadRequestException(
+        `Provided names: ${namesToFind.length}, names found: ${results.length}`,
+      );
+    }
+
+    const playerIds = results.map((r) => r.id);
+
+    return this.createTournamentPlayer({ tournamentId, playerIds });
   }
 
   async createSlugs(): Promise<UpdateResult[]> {

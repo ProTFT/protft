@@ -12,7 +12,7 @@ import { JwtAuthGuard } from "../auth/jwt-auth.guard";
 import { RoundResultsService } from "./round-results.service";
 
 @Controller("roundResults")
-export class PlayersController {
+export class RoundResultsController {
   constructor(private roundResultsService: RoundResultsService) {}
 
   @Post("uploadBulk")

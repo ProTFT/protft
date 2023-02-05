@@ -16,7 +16,10 @@ import { Tournament } from "./tournament.entity";
 import { TournamentsService } from "./tournaments.service";
 import { DeleteResponse } from "../lib/dto/delete-return";
 import { UpdateTournamentArgs } from "./dto/update-tournament.args";
-import { CreateTournamentPlayerArgs } from "./dto/create-tournament-player.args";
+import {
+  CreateTournamentPlayerArgs,
+  CreateTournamentPlayerByNameArgs,
+} from "./dto/create-tournament-player.args";
 import { Player } from "../players/player.entity";
 
 @Resolver(() => Tournament)
@@ -115,6 +118,15 @@ export class TournamentsResolver {
   ) {
     const payload = { tournamentId, playerIds };
     return this.tournamentsService.createTournamentPlayer(payload);
+  }
+
+  @UseGuards(GqlJwtAuthGuard)
+  @Mutation(() => [Tournament])
+  async createTournamentPlayersByName(
+    @Args() { tournamentId, playerNames }: CreateTournamentPlayerByNameArgs,
+  ) {
+    const payload = { tournamentId, playerNames };
+    return this.tournamentsService.createTournamentPlayerByName(payload);
   }
 
   @UseGuards(GqlJwtAuthGuard)

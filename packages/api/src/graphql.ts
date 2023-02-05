@@ -202,6 +202,7 @@ export interface IMutation {
     updateTournament(id: number, name?: Nullable<string>, setId?: Nullable<number>, region?: Nullable<string[]>, host?: Nullable<string>, participantsNumber?: Nullable<number>, prizePool?: Nullable<number>, currency?: Nullable<string>, startDate?: Nullable<DateTime>, endDate?: Nullable<DateTime>, visibility?: Nullable<boolean>): Tournament | Promise<Tournament>;
     deleteTournament(id: number): DeleteResponse | Promise<DeleteResponse>;
     createTournamentPlayers(tournamentId: number, playerIds: number[]): Tournament | Promise<Tournament>;
+    createTournamentPlayersByName(tournamentId: number, playerNames: string): Tournament[] | Promise<Tournament[]>;
     createTournamentSlugs(): Tournament[] | Promise<Tournament[]>;
     createStage(tournamentId: number, pointSchemaId: number, name: string, sequence: number, isFinal: boolean, roundCount: number, tiebreakers?: Nullable<number[]>, description?: Nullable<string>): Stage | Promise<Stage>;
     updateStage(id: number, tournamentId: number, pointSchemaId: number, name: string, sequence: number, isFinal: boolean, roundCount: number, tiebreakers?: Nullable<number[]>, description?: Nullable<string>): Stage | Promise<Stage>;
@@ -209,6 +210,7 @@ export interface IMutation {
     deleteStage(id: number): DeleteResponse | Promise<DeleteResponse>;
     createStagePlayers(stageId: number, playerIds: number[]): StagePlayerInfo[] | Promise<StagePlayerInfo[]>;
     generateLobbies(stageId: number, roundsPerLobbyGroup: number): CreateLobbiesResponse | Promise<CreateLobbiesResponse>;
+    createStagePlayersByName(stageId: number, playerNames: string): StagePlayerInfo[] | Promise<StagePlayerInfo[]>;
     createLobby(stageId: number, name: string, sequence: number, lobbyGroupId: number): Lobby | Promise<Lobby>;
     updateLobby(id: number, stageId: number, name: string, sequence: number, lobbyGroupId: number): Lobby | Promise<Lobby>;
     deleteLobby(id: number): DeleteResponse | Promise<DeleteResponse>;

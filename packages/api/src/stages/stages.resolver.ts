@@ -16,7 +16,10 @@ import { RoundsService } from "../rounds/rounds.service";
 import { StagePlayerInfo } from "../stage-player-infos/stage-player-info.entity";
 import { StagePlayerInfosService } from "../stage-player-infos/stage-player-infos.service";
 import { CreateLobbiesResponse } from "./dto/create-lobbies.result";
-import { CreateStagePlayerArgs } from "./dto/create-stage-player.args";
+import {
+  CreateStagePlayerArgs,
+  CreateStagePlayerByNameArgs,
+} from "./dto/create-stage-player.args";
 import { CreateStageArgs } from "./dto/create-stage.args";
 import { GenerateLobbiesArgs } from "./dto/generate-lobbies.args";
 import { UpdateStageArgs } from "./dto/update-stage.args";
@@ -140,5 +143,14 @@ export class StagesResolver {
       roundsPerLobbyGroup,
       stagePlayers.length,
     );
+  }
+
+  @UseGuards(GqlJwtAuthGuard)
+  @Mutation(() => [StagePlayerInfo])
+  async createStagePlayersByName(
+    @Args() { stageId, playerNames }: CreateStagePlayerByNameArgs,
+  ) {
+    const payload = { stageId, playerNames };
+    return this.stagePlayerInfosService.createStagePlayerByName(payload);
   }
 }

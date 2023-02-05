@@ -55,6 +55,7 @@ export class Stage {
   roundCount: number;
 
   @Field(() => [StagePlayerInfo])
+  @OneToMany(() => StagePlayerInfo, (stagePlayerInfo) => stagePlayerInfo.stage)
   players: StagePlayerInfo[];
 
   @Field(() => [Lobby], { nullable: true })

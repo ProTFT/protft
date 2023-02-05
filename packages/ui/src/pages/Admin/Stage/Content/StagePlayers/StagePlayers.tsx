@@ -7,6 +7,7 @@ import { TextIconHorizontalContainer } from "../../../../../components/Layout/Ho
 import { RegionsIndicator } from "../../../../../components/RegionIndicator/RegionIndicator";
 import { SearchInput } from "../../../../../components/SearchInput/SearchInput";
 import { Player } from "../../../../../graphql/schema";
+import { BulkPlayerTournamentDialog } from "../../../Components/BulkPlayerTournamentDialog/BulkPlayerTournamentDialog";
 import { useToast } from "../../../Components/Toast/Toast";
 import {
   StyledLeftSide,
@@ -22,9 +23,11 @@ import {
   StyledTournamentPlayerListColumn,
 } from "../../../Tournament/Content/TournamentPlayers/TournamentPlayers.styled";
 import {
+  CreateStagePlayerByNameVariables,
   CreateStagePlayerResult,
   CreateStagePlayerVariables,
   CREATE_STAGE_PLAYER,
+  CREATE_STAGE_PLAYER_BY_NAME,
   StagePlayersResponse,
   STAGE_PLAYERS_QUERY,
   TournamentPlayersResponse,
@@ -129,6 +132,11 @@ export const StagePlayers = () => {
     CreateStagePlayerVariables
   >(CREATE_STAGE_PLAYER);
 
+  const [, createStagePlayersByName] = useMutation<
+    CreateStagePlayerResult,
+    CreateStagePlayerByNameVariables
+  >(CREATE_STAGE_PLAYER_BY_NAME);
+
   const onChangeSearchInput = useCallback(
     (event: ChangeEvent<HTMLInputElement>) => {
       if (timeout.current) {
@@ -187,8 +195,37 @@ export const StagePlayers = () => {
 
   // const onCopyLast = useCallback(async () => {}, []);
 
+  const bulkPlayerDialogRef = useRef<HTMLDialogElement>(null);
+  const bulkPlayerFormRef = useRef<HTMLFormElement>(null);
+
+  const onSubmitBulkPlayer = useCallback(
+    async ({ playerNames }: { playerNames: string }) => {
+      const result = await createStagePlayersByName({
+        stageId: Number(stageId),
+        playerNames,
+      });
+
+      if (result.error) {
+        return alert(result.error);
+      }
+      show();
+      bulkPlayerFormRef.current?.reset();
+      bulkPlayerDialogRef.current?.close();
+    },
+    [createStagePlayersByName, show, stageId]
+  );
+
+  const onBulkAdd = useCallback(() => {
+    bulkPlayerDialogRef.current?.showModal();
+  }, []);
+
   return (
     <StyledContainer>
+      <BulkPlayerTournamentDialog
+        dialogRef={bulkPlayerDialogRef}
+        formRef={bulkPlayerFormRef}
+        onSubmit={onSubmitBulkPlayer}
+      />
       <StyledLeftSide>
         <StyledBar>
           <SearchInput
@@ -210,6 +247,7 @@ export const StagePlayers = () => {
           <StyledButtonContainer>
             {/* <ProTFTButton onClick={onCopyLast}>Copy last stage</ProTFTButton> */}
             <ProTFTButton onClick={onAddAll}>Add all</ProTFTButton>
+            <ProTFTButton onClick={onBulkAdd}>Add bulk</ProTFTButton>
             <ProTFTButton onClick={onSave}>Save</ProTFTButton>
           </StyledButtonContainer>
         </StyledBar>

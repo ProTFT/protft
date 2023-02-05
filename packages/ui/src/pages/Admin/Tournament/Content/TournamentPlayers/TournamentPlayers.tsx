@@ -7,6 +7,7 @@ import { TextIconHorizontalContainer } from "../../../../../components/Layout/Ho
 import { RegionsIndicator } from "../../../../../components/RegionIndicator/RegionIndicator";
 import { SearchInput } from "../../../../../components/SearchInput/SearchInput";
 import { Player } from "../../../../../graphql/schema";
+import { BulkPlayerTournamentDialog } from "../../../Components/BulkPlayerTournamentDialog/BulkPlayerTournamentDialog";
 import { PlayerDialog } from "../../../Components/PlayerDialog/PlayerDialog";
 import { useToast } from "../../../Components/Toast/Toast";
 import {
@@ -17,10 +18,12 @@ import {
 import {
   CreatePlayerResult,
   CreatePlayerVariables,
+  CreateTournamentPlayerByNameVariables,
   CreateTournamentPlayerResult,
   CreateTournamentPlayerVariables,
   CREATE_PLAYER_QUERY,
   CREATE_TOURNAMENT_PLAYER,
+  CREATE_TOURNAMENT_PLAYER_BY_NAME,
   PlayersQueryResult,
   PlayersQueryVariables,
   PLAYERS_QUERY,
@@ -137,6 +140,11 @@ export const TournamentPlayers = () => {
     CreateTournamentPlayerVariables
   >(CREATE_TOURNAMENT_PLAYER);
 
+  const [, createTournamentPlayersByName] = useMutation<
+    CreateTournamentPlayerResult,
+    CreateTournamentPlayerByNameVariables
+  >(CREATE_TOURNAMENT_PLAYER_BY_NAME);
+
   const onChangeSearchInput = useCallback(
     (event: ChangeEvent<HTMLInputElement>) => {
       if (timeout.current) {
@@ -188,6 +196,9 @@ export const TournamentPlayers = () => {
   const dialogRef = useRef<HTMLDialogElement>(null);
   const formRef = useRef<HTMLFormElement>(null);
 
+  const bulkPlayerDialogRef = useRef<HTMLDialogElement>(null);
+  const bulkPlayerFormRef = useRef<HTMLFormElement>(null);
+
   const onSubmit = async (player: Omit<Player, "id" | "playerStats">) => {
     const result = await createPlayer(player);
     if (result.error) {
@@ -199,8 +210,30 @@ export const TournamentPlayers = () => {
     refetch();
   };
 
+  const onSubmitBulkPlayer = useCallback(
+    async ({ playerNames }: { playerNames: string }) => {
+      const result = await createTournamentPlayersByName({
+        tournamentId: Number(tournamentId),
+        playerNames,
+      });
+
+      if (result.error) {
+        return alert(result.error);
+      }
+      show();
+      bulkPlayerFormRef.current?.reset();
+      bulkPlayerDialogRef.current?.close();
+      refetch();
+    },
+    [createTournamentPlayersByName, refetch, show, tournamentId]
+  );
+
   const onClickNewPlayer = useCallback(() => {
     dialogRef.current?.showModal();
+  }, []);
+
+  const onBulkAdd = useCallback(() => {
+    bulkPlayerDialogRef.current?.showModal();
   }, []);
 
   return (
@@ -209,6 +242,11 @@ export const TournamentPlayers = () => {
         dialogRef={dialogRef}
         formRef={formRef}
         onSubmit={onSubmit}
+      />
+      <BulkPlayerTournamentDialog
+        dialogRef={bulkPlayerDialogRef}
+        formRef={bulkPlayerFormRef}
+        onSubmit={onSubmitBulkPlayer}
       />
       <StyledLeftSide>
         <StyledBar>
@@ -229,7 +267,10 @@ export const TournamentPlayers = () => {
       <StyledRightSide>
         <StyledBar>
           <StyledTitle>{`Tournament Players (${playersCount})`}</StyledTitle>
-          <ProTFTButton onClick={onSave}>Save</ProTFTButton>
+          <TextIconHorizontalContainer>
+            <ProTFTButton onClick={onBulkAdd}>Bulk Add</ProTFTButton>
+            <ProTFTButton onClick={onSave}>Save</ProTFTButton>
+          </TextIconHorizontalContainer>
         </StyledBar>
         <DroppableContainer
           content={tournamentPlayers}

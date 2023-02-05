@@ -77,6 +77,25 @@ export const CREATE_TOURNAMENT_PLAYER = gql`
   }
 `;
 
+export type CreateTournamentPlayerByNameVariables = {
+  tournamentId: number;
+  playerNames: string;
+};
+
+export const CREATE_TOURNAMENT_PLAYER_BY_NAME = gql`
+  mutation createTournamentPlayersByName(
+    $tournamentId: Int!
+    $playerNames: String!
+  ) {
+    createTournamentPlayersByName(
+      tournamentId: $tournamentId
+      playerNames: $playerNames
+    ) {
+      id
+    }
+  }
+`;
+
 export interface CreatePlayerResult {
   createPlayer: { id: Pick<Player, "id"> };
 }

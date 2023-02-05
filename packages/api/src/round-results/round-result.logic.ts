@@ -10,6 +10,9 @@ export enum SortingMethods {
   LAST_ROUND_FIRST_PLACE = 6,
   LAST_ROUND_POSITION = 7,
   EXTERNAL_TIEBREAKER = 8,
+  SECOND_PLACES = 9,
+  THIRD_PLACES = 10,
+  TOTAL_EVENT_POINTS = 11,
 }
 
 // b - a, if MORE = highest position
@@ -47,6 +50,14 @@ export const sortByFirstPlaces = (a: PlayerResults, b: PlayerResults) =>
   b.positions.filter((p) => p === 1).length -
   a.positions.filter((p) => p === 1).length;
 
+export const sortBySecondPlaces = (a: PlayerResults, b: PlayerResults) =>
+  b.positions.filter((p) => p === 2).length -
+  a.positions.filter((p) => p === 2).length;
+
+export const sortByThirdPlaces = (a: PlayerResults, b: PlayerResults) =>
+  b.positions.filter((p) => p === 3).length -
+  a.positions.filter((p) => p === 3).length;
+
 export const sortByLastRoundFirstPlace = (
   a: PlayerResults,
   b: PlayerResults,
@@ -62,8 +73,26 @@ export const sortByLastRoundPosition = (a: PlayerResults, b: PlayerResults) =>
 export const sortByExternalTiebreaker = (a: PlayerResults, b: PlayerResults) =>
   a.tiebreakerRanking - b.tiebreakerRanking;
 
+export const sortByTotalEventPoints = (
+  a: PlayerResultsWithPast,
+  b: PlayerResultsWithPast,
+) => {
+  const bStagePoints = b.points.reduce((prev, curr) => prev + curr, 0);
+  const aStagePoints = a.points.reduce((prev, curr) => prev + curr, 0);
+  return b.pastPoints + bStagePoints - (a.pastPoints + aStagePoints);
+};
+
+interface PastPoints {
+  a: number;
+  b: number;
+}
+
 export const sortingMethods: {
-  [key in SortingMethods]: (a: PlayerResults, b: PlayerResults) => number;
+  [key in SortingMethods]: (
+    a: PlayerResults,
+    b: PlayerResults,
+    pastPoints?: PastPoints,
+  ) => number;
 } = {
   [SortingMethods.POINTS]: sortByPoints,
   [SortingMethods.TOP_FOURS]: sortByTopFour,
@@ -74,10 +103,17 @@ export const sortingMethods: {
   [SortingMethods.LAST_ROUND_FIRST_PLACE]: sortByLastRoundFirstPlace,
   [SortingMethods.LAST_ROUND_POSITION]: sortByLastRoundPosition,
   [SortingMethods.EXTERNAL_TIEBREAKER]: sortByExternalTiebreaker,
+  [SortingMethods.SECOND_PLACES]: sortBySecondPlaces,
+  [SortingMethods.THIRD_PLACES]: sortByThirdPlaces,
+  [SortingMethods.TOTAL_EVENT_POINTS]: sortByTotalEventPoints,
 };
 
+export interface PlayerResultsWithPast extends PlayerResults {
+  pastPoints: number;
+}
+
 export const sortResults = (
-  results: PlayerResults[],
+  results: PlayerResultsWithPast[],
   sortMethodIds: number[],
 ) => {
   const sortMethods = (sortMethodIds || [SortingMethods.POINTS]).map(

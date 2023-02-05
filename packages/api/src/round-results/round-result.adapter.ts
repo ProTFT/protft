@@ -1,14 +1,14 @@
 import { Round } from "../rounds/round.entity";
 import { CreateLobbyGroupResults } from "./dto/create-lobby-group-result.args";
 import { CreateLobbyResultArgs } from "./dto/create-lobby-result.args";
-import { PlayerResults } from "./dto/get-results.out";
 import { RoundResultsRaw } from "./dto/get-results.raw";
 import { RoundResult } from "./round-result.entity";
+import { PlayerResultsWithPast } from "./round-result.logic";
 
 export function fromRawToConsolidatedRoundResults(
   rawResults: RoundResultsRaw[],
-): PlayerResults[] {
-  const consolidatedResults: { [key: number]: PlayerResults } = {};
+): PlayerResultsWithPast[] {
+  const consolidatedResults: { [key: number]: PlayerResultsWithPast } = {};
   rawResults.forEach(
     ({
       position,
@@ -35,6 +35,7 @@ export function fromRawToConsolidatedRoundResults(
           positions: [],
           points: [extraPoints],
           lobbyPlayerId: id,
+          pastPoints: 0,
         };
       }
       if (position && points) {
@@ -100,4 +101,19 @@ export function formatLobbyGroupResults(
   );
 
   return result;
+}
+
+export function addPastPoints(
+  formattedResults: PlayerResultsWithPast[],
+  rawPastResults: RoundResultsRaw[][],
+): PlayerResultsWithPast[] {
+  const consolidatedPastResults = fromRawToConsolidatedRoundResults(
+    rawPastResults.flat(),
+  );
+  return formattedResults.map((r) => ({
+    ...r,
+    pastPoints: consolidatedPastResults
+      .find((cpr) => cpr.player.id === r.player.id)
+      .points.reduce((prev, curr) => prev + curr, 0),
+  }));
 }
