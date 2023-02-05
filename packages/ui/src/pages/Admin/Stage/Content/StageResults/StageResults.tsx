@@ -58,6 +58,7 @@ export const StageResults = () => {
     <StyledContainer>
       <Suspense fallback={null}>
         <LobbyGroup
+          stageId={Number(stageId)}
           hasLobbieGroups={hasLobbieGroups}
           selectedLobbyGroup={selectedLobbyGroup}
           onChangeLobbyGroup={onChangeLobbyGroup}

@@ -1,4 +1,4 @@
-import { useCallback, useEffect, useState } from "react";
+import { useCallback, useEffect, useRef, useState } from "react";
 import { useMutation, useQuery } from "urql";
 import { ProTFTButton } from "../../../../../../components/Button/Button";
 import { BigArrowLeft } from "../../../../../../design/icons/BigArrowLeft";
@@ -8,6 +8,8 @@ import {
   LobbyGroup as GqlLobbyGroup,
   Player,
 } from "../../../../../../graphql/schema";
+import { client } from "../../../../../../hooks/useAuth";
+import { BulkPlayerDialog } from "../../../../Components/BulkPlayerDialog/BulkPlayerDialog";
 import { useToast } from "../../../../Components/Toast/Toast";
 import { StyledTitle } from "../../../../Tournament/Content/Content.styled";
 import { LobbyContainer } from "../LobbyContainer/LobbyContainer";
@@ -35,6 +37,7 @@ interface Props {
   hasLobbieGroups: boolean;
   selectedLobbyGroup?: GqlLobbyGroup;
   onChangeLobbyGroup: any;
+  stageId: number;
 }
 
 interface AllLobbyPlayers {
@@ -54,6 +57,7 @@ export const LobbyGroup = ({
   hasLobbieGroups,
   selectedLobbyGroup,
   onChangeLobbyGroup,
+  stageId,
 }: Props) => {
   const [{ data: lobbyPlayersData }] = useQuery<
     LobbyPlayersQueryResult,
@@ -169,8 +173,50 @@ export const LobbyGroup = ({
     []
   );
 
+  const onBulkAdd = useCallback(
+    async (file: FileList) => {
+      if (!file?.item(0)) {
+        return;
+      }
+      const formData = new FormData();
+      formData.append("file", file.item(0)!);
+      formData.append("stageId", String(stageId));
+      const response = await client.postForm(
+        "/roundResults/uploadBulk",
+        formData
+      );
+      return response;
+    },
+    [stageId]
+  );
+
+  const onSubmit = useCallback(
+    async ({ file }: { file: FileList }) => {
+      const result = await onBulkAdd(file);
+      if (result?.status !== 201) {
+        return alert(result?.statusText);
+      }
+      show();
+      formRef.current?.reset();
+      dialogRef.current?.close();
+    },
+    [onBulkAdd, show]
+  );
+
+  const onClickAddBulkPlayer = useCallback(() => {
+    dialogRef.current?.showModal();
+  }, []);
+
+  const dialogRef = useRef<HTMLDialogElement>(null);
+  const formRef = useRef<HTMLFormElement>(null);
+
   return (
     <StyledLobbyGroupContainer>
+      <BulkPlayerDialog
+        dialogRef={dialogRef}
+        formRef={formRef}
+        onSubmit={onSubmit}
+      />
       <StyledBar>
         <StyledTitleContainer>
           <BigArrowLeft onClick={onGoToPreviousLobbyGroup} />
@@ -178,6 +224,7 @@ export const LobbyGroup = ({
           <BigArrowRight onClick={onGoToNextLobbyGroup} />
         </StyledTitleContainer>
         <StyledButtonContainer>
+          <ProTFTButton onClick={onClickAddBulkPlayer}>Bulk add</ProTFTButton>
           <ProTFTButton onClick={onSave}>Save</ProTFTButton>
         </StyledButtonContainer>
       </StyledBar>
