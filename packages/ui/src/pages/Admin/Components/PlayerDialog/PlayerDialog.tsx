@@ -2,6 +2,7 @@ import React from "react";
 import { Player } from "../../../../graphql/schema";
 import { DialogForm } from "../DialogForm/DialogForm";
 import { FormField } from "../DialogForm/FormField";
+import * as lookup from "country-code-lookup";
 
 export interface Props {
   dialogRef: React.RefObject<HTMLDialogElement>;
@@ -25,7 +26,13 @@ export const PlayerDialog = ({
     >
       <FormField label="Name" name="name" />
       <FormField label="Region" name="region" />
-      <FormField label="Country" name="country" />
+      <FormField label="Country" type="select" name="country">
+        {lookup.countries.map((country) => (
+          <option key={country.iso2} value={country.iso3}>
+            {`${country.iso3} - ${country.country}`}
+          </option>
+        ))}
+      </FormField>
     </DialogForm>
   );
 };

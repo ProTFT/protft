@@ -2,8 +2,10 @@ import { Injectable, NotFoundException } from "@nestjs/common";
 import { InjectRepository } from "@nestjs/typeorm";
 import { Repository } from "typeorm";
 import { DeleteResponse } from "../lib/dto/delete-return";
+import { SEQUENCE_SORTING } from "../lib/Sorting";
 import { LobbyPlayerInfo } from "../lobby-player-infos/lobby-player-info.entity";
 import { LobbyPlayerInfosService } from "../lobby-player-infos/lobby-player-infos.service";
+import { CreateLobbyGroupArgs } from "./dto/create-lobby-group.dto";
 import { CreateLobbyArgs } from "./dto/create-lobby.args";
 import { CreatePlayerLobbyGroupArgs } from "./dto/create-player-lobby-group.args";
 import { UpdateLobbyArgs } from "./dto/update-lobby.args";
@@ -19,28 +21,23 @@ export class LobbiesService {
     private lobbyPlayerInfosService: LobbyPlayerInfosService,
   ) {}
 
-  findOneWithPlayers(lobbyId: number): Promise<Lobby> {
+  findOneWithRelations(lobbyId: number, relations: string[]): Promise<Lobby> {
     return this.lobbiesRepository.findOne(lobbyId, {
-      relations: ["players", "players.player"],
+      relations,
     });
   }
 
-  findOneLobbyGroup(lobbyGroupId: number): Promise<LobbyGroup> {
-    return this.lobbyGroupsRepository.findOne(lobbyGroupId);
-  }
-
   findAllByStage(stageId: number): Promise<Lobby[]> {
-    return this.lobbiesRepository.find({ where: { stageId } });
+    return this.lobbiesRepository.find({
+      where: { stageId },
+      ...SEQUENCE_SORTING,
+    });
   }
 
   findAllByLobbyGroup(lobbyGroupId: number): Promise<Lobby[]> {
-    return this.lobbiesRepository.find({ where: { lobbyGroupId } });
-  }
-
-  findAllLobbyGroupsByStage(stageId: number): Promise<LobbyGroup[]> {
-    return this.lobbyGroupsRepository.find({
-      where: { stageId },
-      order: { sequence: "ASC" },
+    return this.lobbiesRepository.find({
+      where: { lobbyGroupId },
+      ...SEQUENCE_SORTING,
     });
   }
 
@@ -48,26 +45,8 @@ export class LobbiesService {
     return this.lobbiesRepository.save(payload);
   }
 
-  async createPlayerLobbyGroup(
-    payload: CreatePlayerLobbyGroupArgs,
-  ): Promise<LobbyPlayerInfo[]> {
-    const { lobbyGroupId, players } = payload;
-    const formattedData = players.reduce(
-      (prev, { lobbyId, playerIds }) => ({
-        ...prev,
-        [lobbyId]: playerIds.map((id) => id),
-      }),
-      {},
-    );
-    const lobbies = await this.findAllByLobbyGroup(lobbyGroupId);
-    const requests = lobbies.map((lobby) => {
-      return this.lobbyPlayerInfosService.createAllPlayersOfLobby({
-        lobbyId: lobby.id,
-        playerIds: formattedData[String(lobby.id)],
-      });
-    });
-    const responses = await Promise.all(requests);
-    return responses.flatMap((a) => a);
+  createMany(lobbies: CreateLobbyArgs[]) {
+    return this.lobbiesRepository.save(lobbies);
   }
 
   async updateOne({ id, ...rest }: UpdateLobbyArgs): Promise<Lobby> {
@@ -84,14 +63,22 @@ export class LobbiesService {
     return new DeleteResponse(id);
   }
 
-  createLobbyGroup({
+  findOneLobbyGroup(lobbyGroupId: number): Promise<LobbyGroup> {
+    return this.lobbyGroupsRepository.findOne(lobbyGroupId);
+  }
+
+  findAllLobbyGroupsByStage(stageId: number): Promise<LobbyGroup[]> {
+    return this.lobbyGroupsRepository.find({
+      where: { stageId },
+      ...SEQUENCE_SORTING,
+    });
+  }
+
+  createOneLobbyGroup({
     roundsPlayed,
     sequence,
     stageId,
-  }: Pick<
-    LobbyGroup,
-    "roundsPlayed" | "sequence" | "stageId"
-  >): Promise<LobbyGroup> {
+  }: CreateLobbyGroupArgs): Promise<LobbyGroup> {
     return this.lobbyGroupsRepository.save({
       roundsPlayed,
       sequence,
@@ -100,12 +87,31 @@ export class LobbiesService {
   }
 
   createManyLobbyGroup(
-    lobbyGroups: Pick<LobbyGroup, "roundsPlayed" | "sequence" | "stageId">[],
+    lobbyGroups: CreateLobbyGroupArgs[],
   ): Promise<LobbyGroup[]> {
-    return this.lobbyGroupsRepository.save(lobbyGroups as any);
+    return this.lobbyGroupsRepository.save(lobbyGroups);
   }
 
-  createMany(lobbies: CreateLobbyArgs[]) {
-    return this.lobbiesRepository.save(lobbies);
+  async createPlayerLobbyGroup(
+    payload: CreatePlayerLobbyGroupArgs,
+  ): Promise<LobbyPlayerInfo[]> {
+    const { lobbies } = payload;
+    const formattedData = lobbies.reduce(
+      (prev, { lobbyId, playerIds }) => ({
+        ...prev,
+        [lobbyId]: playerIds.map((id) => id),
+      }),
+      {},
+    );
+    const requests = lobbies.map((lobby) => {
+      return this.lobbyPlayerInfosService.createManyLobbyPlayersFromGroupedData(
+        {
+          lobbyId: lobby.lobbyId,
+          playerIds: formattedData[String(lobby.lobbyId)],
+        },
+      );
+    });
+    const responses = await Promise.all(requests);
+    return responses.flat();
   }
 }

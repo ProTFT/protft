@@ -1,7 +1,7 @@
-import { BadRequestException, Injectable } from "@nestjs/common";
+import { Injectable } from "@nestjs/common";
 import { InjectRepository } from "@nestjs/typeorm";
 import { Repository } from "typeorm";
-import { Player } from "../players/player.entity";
+import { parseMultilinePlayerNames } from "../lib/MultilineInput";
 import {
   CreateStagePlayerArgs,
   CreateStagePlayerByNameArgs,
@@ -22,7 +22,7 @@ export class StagePlayerInfosService {
     });
   }
 
-  async createStagePlayer({
+  async createStagePlayers({
     stageId,
     playerIds,
   }: CreateStagePlayerArgs): Promise<StagePlayerInfo[]> {
@@ -32,37 +32,18 @@ export class StagePlayerInfosService {
       extraPoints: 0,
       tiebreakerRanking: 0,
     })) as StagePlayerInfo[];
-    return await this.stagePlayerInfoRepository.save(savePayload as any);
+    return await this.stagePlayerInfoRepository.save(savePayload);
   }
 
   async createStagePlayerByName({
     stageId,
     playerNames,
   }: CreateStagePlayerByNameArgs): Promise<StagePlayerInfo[]> {
-    const namesToFind = playerNames.replace(/\r/g, "").split("\n");
-    const query = this.stagePlayerInfoRepository.manager
-      .createQueryBuilder()
-      .select("*")
-      .from("player", "p");
+    const playerIds = await parseMultilinePlayerNames(
+      playerNames,
+      this.stagePlayerInfoRepository.manager,
+    );
 
-    const queryWithAllConditions = namesToFind.reduce((prev, curr, index) => {
-      if (index === 0) {
-        return prev.where(`p.name = '${curr}'`);
-      }
-      return prev.orWhere(`p.name = '${curr}'`);
-    }, query);
-
-    const results =
-      (await queryWithAllConditions.getRawMany()) as unknown as Player[];
-
-    if (results.length !== namesToFind.length) {
-      throw new BadRequestException(
-        `Provided names: ${namesToFind.length}, names found: ${results.length}`,
-      );
-    }
-
-    const playerIds = results.map((r) => r.id);
-
-    return this.createStagePlayer({ stageId, playerIds });
+    return this.createStagePlayers({ stageId, playerIds });
   }
 }

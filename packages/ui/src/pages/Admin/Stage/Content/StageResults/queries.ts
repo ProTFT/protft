@@ -1,9 +1,5 @@
 import { gql } from "urql";
-import {
-  Player,
-  PlayerLobbyResultInput,
-  Stage,
-} from "../../../../../graphql/schema";
+import { Player, Stage } from "../../../../../graphql/schema";
 
 export interface LobbyGroupsQueryResult {
   stage: Pick<Stage, "id" | "lobbyGroups">;
@@ -49,23 +45,6 @@ export const LOBBY_PLAYERS_QUERY = gql`
         region
         country
       }
-    }
-  }
-`;
-
-export interface CreateResultVariables {
-  lobbyId: number;
-  players: PlayerLobbyResultInput[];
-}
-
-export const CREATE_RESULT_QUERY = gql`
-  mutation createLobbyResult(
-    $lobbyId: Int!
-    $players: [PlayerLobbyResultInput!]!
-  ) {
-    createLobbyResult(lobbyId: $lobbyId, players: $players) {
-      result
-      error
     }
   }
 `;

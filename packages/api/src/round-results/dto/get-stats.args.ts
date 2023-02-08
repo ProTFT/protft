@@ -9,24 +9,6 @@ export class SortOption {
   asc: boolean;
 }
 
-@ArgsType()
-export class BaseGetStatsArgs {
-  @Field(() => Int, { name: "setId", nullable: true })
-  setId?: number;
-
-  @Field(() => [String], { name: "tournamentIds", nullable: true })
-  tournamentIds?: number[];
-
-  @Field({ name: "region", nullable: true })
-  region?: string;
-
-  @Field(() => SortOption, { name: "sort", nullable: true })
-  sort?: SortOption;
-
-  @Field({ name: "searchQuery", nullable: true })
-  searchQuery?: string;
-}
-
 // TODO: review this in the future, cant use intersection with arrays
 @ArgsType()
 export class GetStatsArgs {

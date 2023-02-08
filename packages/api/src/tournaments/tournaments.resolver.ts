@@ -42,7 +42,7 @@ export class TournamentsResolver {
   async adminTournaments(
     @Args("searchQuery", { nullable: true }) searchQuery?: string,
   ) {
-    return this.tournamentsService.findAdminAll(searchQuery);
+    return this.tournamentsService.findAll(searchQuery, false);
   }
 
   @Query(() => Tournament)
@@ -88,8 +88,10 @@ export class TournamentsResolver {
 
   @ResolveField()
   async players(@Parent() tournament: Tournament): Promise<Player[]> {
-    const tournamentWithPlayers =
-      await this.tournamentsService.findOneWithPlayers(tournament.id);
+    const tournamentWithPlayers = await this.tournamentsService.findOne(
+      tournament.id,
+      ["players"],
+    );
     return tournamentWithPlayers.players;
   }
 
@@ -117,21 +119,21 @@ export class TournamentsResolver {
     @Args() { tournamentId, playerIds }: CreateTournamentPlayerArgs,
   ) {
     const payload = { tournamentId, playerIds };
-    return this.tournamentsService.createTournamentPlayer(payload);
+    return this.tournamentsService.createTournamentPlayers(payload);
   }
 
   @UseGuards(GqlJwtAuthGuard)
-  @Mutation(() => [Tournament])
+  @Mutation(() => Tournament)
   async createTournamentPlayersByName(
     @Args() { tournamentId, playerNames }: CreateTournamentPlayerByNameArgs,
   ) {
     const payload = { tournamentId, playerNames };
-    return this.tournamentsService.createTournamentPlayerByName(payload);
+    return this.tournamentsService.createTournamentPlayersByName(payload);
   }
 
   @UseGuards(GqlJwtAuthGuard)
   @Mutation(() => [Tournament])
   async createTournamentSlugs() {
-    return this.tournamentsService.createSlugs();
+    return this.tournamentsService.createMissingSlugs();
   }
 }

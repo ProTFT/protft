@@ -1,7 +1,10 @@
 import React from "react";
 import { Link } from "react-router-dom";
 import { RoundedContainer } from "../../../components/Containers/RoundedContainer/RoundedContainer";
-import { RegionsIndicator } from "../../../components/RegionIndicator/RegionIndicator";
+import {
+  CountryIndicator,
+  RegionsIndicator,
+} from "../../../components/RegionIndicator/RegionIndicator";
 import { ArrowRightIcon } from "../../../design/icons/ArrowRight";
 import { Player } from "../../../graphql/schema";
 import { useIsDesktop } from "../../../hooks/useIsDesktop";
@@ -25,7 +28,7 @@ interface Props {
 }
 
 export const PlayerCard = ({
-  player: { name, region, playerStats, slug },
+  player: { name, region, playerStats, slug, country },
 }: Props) => {
   const isDesktop = useIsDesktop();
 
@@ -37,6 +40,7 @@ export const PlayerCard = ({
           <StyledPlayerInfo>
             <StyledPlayerName>{name}</StyledPlayerName>
             <RegionsIndicator regionCodes={[region!]} />
+            <CountryIndicator countryCode={country} />
           </StyledPlayerInfo>
         </StyledPlayerCardHeader>
         {isDesktop && <PlayerCardStats playerStats={playerStats} />}

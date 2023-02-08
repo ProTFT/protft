@@ -1,6 +1,5 @@
 import { Round } from "../rounds/round.entity";
 import { CreateLobbyGroupResults } from "./dto/create-lobby-group-result.args";
-import { CreateLobbyResultArgs } from "./dto/create-lobby-result.args";
 import { RoundResultsRaw } from "./dto/get-results.raw";
 import { RoundResult } from "./round-result.entity";
 import { PlayerResultsWithPast } from "./round-result.logic";
@@ -45,28 +44,6 @@ export function fromRawToConsolidatedRoundResults(
     },
   );
   return Object.values(consolidatedResults);
-}
-
-export function formatResults({
-  players,
-  lobbyId,
-}: CreateLobbyResultArgs): RoundResult[] {
-  return players.reduce((prev, { playerId, positions }) => {
-    return [
-      ...prev,
-      ...positions.reduce((prev, { roundId, position }) => {
-        return [
-          ...prev,
-          {
-            lobbyId,
-            playerId,
-            position,
-            roundId,
-          },
-        ];
-      }, []),
-    ];
-  }, []);
 }
 
 export function formatLobbyGroupResults(

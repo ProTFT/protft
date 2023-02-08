@@ -26,7 +26,7 @@ import { UpdateStageArgs } from "./dto/update-stage.args";
 import { UpdateTiebreakersArgs } from "./dto/update-tiebreakers.args";
 import { Stage } from "./stage.entity";
 import { StagesService } from "./stages.service";
-import { Tiebreaker } from "./tiebreaker";
+import { Tiebreaker } from "./tiebreaker.entity";
 
 @Resolver(() => Stage)
 export class StagesResolver {
@@ -126,7 +126,7 @@ export class StagesResolver {
     @Args() { stageId, playerIds }: CreateStagePlayerArgs,
   ) {
     const payload = { stageId, playerIds };
-    return this.stagePlayerInfosService.createStagePlayer(payload);
+    return this.stagePlayerInfosService.createStagePlayers(payload);
   }
 
   @UseGuards(GqlJwtAuthGuard)

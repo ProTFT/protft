@@ -30,8 +30,9 @@ export class LobbiesResolver {
 
   @ResolveField()
   async players(@Parent() lobby: Lobby): Promise<Player[]> {
-    const lobbyWithPlayers = await this.lobbiesService.findOneWithPlayers(
+    const lobbyWithPlayers = await this.lobbiesService.findOneWithRelations(
       lobby.id,
+      ["players", "players.player"],
     );
     return lobbyWithPlayers.players.map((l) => l.player);
   }
@@ -71,7 +72,7 @@ export class LobbiesResolver {
 
   @UseGuards(GqlJwtAuthGuard)
   @Mutation(() => [LobbyPlayerInfo])
-  async createPlayerLobbyGroup(@Args() payload: CreatePlayerLobbyGroupArgs) {
+  async createLobbyPlayers(@Args() payload: CreatePlayerLobbyGroupArgs) {
     return this.lobbiesService.createPlayerLobbyGroup(payload);
   }
 }

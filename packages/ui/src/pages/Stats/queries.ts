@@ -86,7 +86,7 @@ export const PLAYER_STATS_QUERY = gql`
       player {
         id
         name
-        region
+        country
       }
       averagePosition
       topFourCount

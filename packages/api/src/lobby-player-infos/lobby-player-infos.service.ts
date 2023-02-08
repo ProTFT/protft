@@ -1,7 +1,10 @@
 import { Injectable } from "@nestjs/common";
 import { InjectRepository } from "@nestjs/typeorm";
 import { Repository } from "typeorm";
-import { CreatePlayerLobbyArgs } from "./dto/create-lobby-player-info.args";
+import {
+  CreateManyLobbyPlayerInfoArgs,
+  CreateOneLobbyPlayerInfoArgs,
+} from "./dto/create-lobby-player-info.args";
 import { LobbyPlayerInfo } from "./lobby-player-info.entity";
 
 @Injectable()
@@ -12,19 +15,19 @@ export class LobbyPlayerInfosService {
   ) {}
 
   async createManyLobbyPlayers(
-    payload: Pick<LobbyPlayerInfo, "lobbyId" | "playerId">[],
+    payload: CreateOneLobbyPlayerInfoArgs[],
   ): Promise<LobbyPlayerInfo[]> {
     return this.lobbyPlayerInfoRepository.save(payload);
   }
 
-  async createAllPlayersOfLobby({
+  async createManyLobbyPlayersFromGroupedData({
     lobbyId,
     playerIds,
-  }: CreatePlayerLobbyArgs): Promise<LobbyPlayerInfo[]> {
+  }: CreateManyLobbyPlayerInfoArgs): Promise<LobbyPlayerInfo[]> {
     const savePayload = playerIds.map((playerId) => ({
       lobbyId,
       playerId,
     })) as LobbyPlayerInfo[];
-    return this.lobbyPlayerInfoRepository.save(savePayload);
+    return this.createManyLobbyPlayers(savePayload);
   }
 }

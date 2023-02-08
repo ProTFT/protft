@@ -8,13 +8,10 @@ import {
   Resolver,
 } from "@nestjs/graphql";
 import { BaseResolver } from "../lib/BaseResolver";
-import { RoundResultsService } from "../round-results/round-results.service";
 import { CreatePlayerArgs } from "./dto/create-player.args";
 import { PlayerFilterMeta } from "./dto/get-player-filter-meta.out";
-import { PlayerStats } from "./dto/get-player-stats.out";
 import { GetPlayerArgs } from "./dto/get-players.args";
-import { formatStats } from "./players.adapter";
-import { Player } from "./player.entity";
+import { Player, PlayerCalculatedStats } from "./player.entity";
 import { PlayersService } from "./players.service";
 import { Tournament } from "../tournaments/tournament.entity";
 import { UseGuards } from "@nestjs/common";
@@ -23,29 +20,8 @@ import { GetPlayerStatsArgs } from "./dto/get-player-stats.args";
 
 @Resolver(() => Player)
 export class PlayersResolver extends BaseResolver {
-  constructor(
-    private playersService: PlayersService,
-    private roundResultsService: RoundResultsService,
-  ) {
+  constructor(private playersService: PlayersService) {
     super();
-  }
-
-  @ResolveField(() => PlayerStats)
-  async playerStats(
-    @Parent() player: Player,
-    @Args() { setId, tournamentId }: GetPlayerStatsArgs,
-  ): Promise<PlayerStats> {
-    const rawStats = await this.roundResultsService.findStatsByPlayer(
-      player.id,
-      setId,
-      tournamentId,
-    );
-    return formatStats(rawStats);
-  }
-
-  @Query(() => [Tournament])
-  async tournamentsPlayed(@Args("playerId", { type: () => Int }) id: number) {
-    return this.playersService.findTournamentsPlayed(id);
   }
 
   @Query(() => [Player])
@@ -62,7 +38,7 @@ export class PlayersResolver extends BaseResolver {
     @Args() { region, country, take, skip, searchQuery }: GetPlayerArgs,
   ) {
     const filters = this.cleanGraphQLFilters({ region, country, searchQuery });
-    return this.playersService.adminFindAll(filters, { take, skip });
+    return this.playersService.findAll(filters, { take, skip }, { id: "DESC" });
   }
 
   @Query(() => Player)
@@ -87,6 +63,19 @@ export class PlayersResolver extends BaseResolver {
     };
   }
 
+  @ResolveField()
+  async playerStats(
+    @Parent() player: Player,
+    @Args() { setId, tournamentId }: GetPlayerStatsArgs,
+  ): Promise<PlayerCalculatedStats> {
+    return this.playersService.getPlayerStats(player, setId, tournamentId);
+  }
+
+  @Query(() => [Tournament])
+  async tournamentsPlayed(@Args("playerId", { type: () => Int }) id: number) {
+    return this.playersService.findTournamentsPlayed(id);
+  }
+
   @UseGuards(GqlJwtAuthGuard)
   @Mutation(() => Player)
   async createPlayer(@Args() { name, country, region }: CreatePlayerArgs) {
@@ -97,7 +86,7 @@ export class PlayersResolver extends BaseResolver {
   @UseGuards(GqlJwtAuthGuard)
   @Mutation(() => [Player])
   async createPlayerSlugs() {
-    return this.playersService.createSlugs();
+    return this.playersService.createMissingSlugs();
   }
 
   @UseGuards(GqlJwtAuthGuard)

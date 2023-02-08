@@ -8,7 +8,7 @@ import {
 import { useQuery } from "urql";
 import { ProTFTButton } from "../../components/Button/Button";
 import { TextIconHorizontalContainer } from "../../components/Layout/HorizontalContainer/TextIconHorizontalContainer.styled";
-import { RegionsIndicator } from "../../components/RegionIndicator/RegionIndicator";
+import { CountryIndicator } from "../../components/RegionIndicator/RegionIndicator";
 import { colors } from "../../design/colors";
 import { ArrowRightSimpleIcon } from "../../design/icons/ArrowRightSimple";
 import { useDocumentTitle } from "../../hooks/useDocumentTitle";
@@ -77,10 +77,7 @@ const StatsRows = ({
           <tr key={player.id}>
             <StyledPlayerRowData center={false}>
               <TextIconHorizontalContainer>
-                <RegionsIndicator
-                  showName={false}
-                  regionCodes={[player.region!]}
-                />
+                <CountryIndicator countryCode={player.country} />
                 {player.name}
               </TextIconHorizontalContainer>
             </StyledPlayerRowData>

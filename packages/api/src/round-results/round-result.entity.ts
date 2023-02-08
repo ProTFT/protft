@@ -1,15 +1,20 @@
 import { Column, Entity, JoinColumn, ManyToOne, PrimaryColumn } from "typeorm";
 import { Round } from "../rounds/round.entity";
 import { LobbyPlayerInfo } from "../lobby-player-infos/lobby-player-info.entity";
+import { Field, Int, ObjectType } from "@nestjs/graphql";
 
+@ObjectType()
 @Entity()
 export class RoundResult {
+  @Field(() => Int)
   @PrimaryColumn()
   roundId: number;
 
+  @Field(() => Int)
   @PrimaryColumn()
   lobbyPlayerId: number;
 
+  @Field(() => Int)
   @Column()
   position: number;
 

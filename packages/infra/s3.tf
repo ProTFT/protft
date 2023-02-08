@@ -63,3 +63,22 @@ resource "aws_s3_bucket" "root_bucket" {
   bucket = var.bucket_name
   tags = var.common_tags
 }
+
+# -------
+
+resource "aws_s3_bucket_acl" "image_bucket_acl" {
+  bucket = aws_s3_bucket.image_bucket.id
+  acl    = "public-read"
+}
+
+resource "aws_s3_bucket_policy" "image_bucket_policy" {
+  bucket = aws_s3_bucket.image_bucket.id
+
+  policy = templatefile("templates/s3-policy.json", { bucket = "protft-images" })
+}
+
+# S3 bucket for images
+resource "aws_s3_bucket" "image_bucket" {
+  bucket = "protft-images"
+  tags = var.common_tags
+}

@@ -39,8 +39,10 @@ export const sortByRecentHighestPlacement = (
 };
 
 export const sortByAveragePosition = (a: PlayerResults, b: PlayerResults) =>
-  a.positions.reduce((prev, curr) => prev + curr) / (b.positions.length || 1) -
-  b.positions.reduce((prev, curr) => prev + curr) / (a.positions.length || 1);
+  a.positions.reduce((prev, curr) => prev + curr, 0) /
+    (b.positions.length || 1) -
+  b.positions.reduce((prev, curr) => prev + curr, 0) /
+    (a.positions.length || 1);
 
 export const sortByLessTopEigth = (a: PlayerResults, b: PlayerResults) =>
   a.positions.filter((p) => p === 8).length -
@@ -116,9 +118,10 @@ export const sortResults = (
   results: PlayerResultsWithPast[],
   sortMethodIds: number[],
 ) => {
-  const sortMethods = (sortMethodIds || [SortingMethods.POINTS]).map(
-    (id) => sortingMethods[id],
-  );
+  const tiebreakers = sortMethodIds?.length
+    ? sortMethodIds
+    : [SortingMethods.POINTS];
+  const sortMethods = tiebreakers.map((id) => sortingMethods[id]);
   const sortedResults = [...results].sort((a, b) => {
     for (const sortMethod of sortMethods) {
       const result = sortMethod(a, b);

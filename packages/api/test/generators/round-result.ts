@@ -1,22 +1,20 @@
 import { RoundResult } from "../../src/round-results/round-result.entity";
-import { lobby as genLobby } from "./lobby";
-import { player as genPlayer } from "./player";
 import { round as genRound } from "./round";
+import { lobbyPlayerInfo as genLobbyPlayerInfo } from "./lobby-player-info";
 
 export function roundResult({
-  lobbyId,
-  playerId,
+  lobbyPlayerId,
+  lobbyPlayerInfo,
   position,
   roundId,
+  round,
 }: Partial<RoundResult>): RoundResult {
   const randomId = Math.random() * 999;
   return {
-    lobbyId: lobbyId || randomId,
-    lobby: genLobby({}),
-    player: genPlayer({}),
-    playerId: playerId || randomId,
-    position: position || 0,
-    round: genRound({}),
+    lobbyPlayerId: lobbyPlayerId || randomId,
+    lobbyPlayerInfo: lobbyPlayerInfo || genLobbyPlayerInfo({}),
+    position: position || randomId,
     roundId: roundId || randomId,
+    round: round || genRound({}),
   };
 }

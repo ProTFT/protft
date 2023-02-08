@@ -12,6 +12,10 @@ export function stage({
   tournament,
   tournamentId,
   rounds,
+  description,
+  players,
+  lobbyGroups,
+  tiebreakers,
 }: Partial<Stage>): Stage {
   const randomId = Math.random() * 999;
   return {
@@ -25,5 +29,10 @@ export function stage({
     sequence: sequence || randomId,
     tournament: tournament || genTournament({ id: randomId }),
     tournamentId: tournamentId || randomId,
+    description: description || "",
+    players: players || [],
+    lobbyGroups: lobbyGroups || [],
+    rounds: rounds || [],
+    tiebreakers: tiebreakers || [],
   };
 }

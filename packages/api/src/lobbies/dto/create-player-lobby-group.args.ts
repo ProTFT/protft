@@ -2,11 +2,8 @@ import { ArgsType, Field, InputType, Int } from "@nestjs/graphql";
 
 @ArgsType()
 export class CreatePlayerLobbyGroupArgs {
-  @Field(() => Int, { name: "lobbyGroupId" })
-  lobbyGroupId: number;
-
   @Field(() => [CreatePlayerLobbyArgs], { name: "players" })
-  players: CreatePlayerLobbyArgs[];
+  lobbies: CreatePlayerLobbyArgs[];
 }
 
 @InputType()

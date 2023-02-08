@@ -1,96 +1,178 @@
-import { Test, TestingModule } from "@nestjs/testing";
-import { getRepositoryToken } from "@nestjs/typeorm";
-import { lobby } from "../../test/generators/lobby";
-import { FakeIndexedRepository } from "../../test/stubs/fakeRepository";
+import { Repository } from "typeorm";
+import { DeleteResponse } from "../lib/dto/delete-return";
+import { LobbyPlayerInfosService } from "../lobby-player-infos/lobby-player-infos.service";
+import { CreateLobbyGroupArgs } from "./dto/create-lobby-group.dto";
 import { CreateLobbyArgs } from "./dto/create-lobby.args";
-import { CreatePlayerLobbyArgs } from "./dto/create-player-lobby.args";
+import { CreatePlayerLobbyGroupArgs } from "./dto/create-player-lobby-group.args";
 import { LobbiesService } from "./lobbies.service";
+import { LobbyGroup } from "./lobby-group.entity";
 import { Lobby } from "./lobby.entity";
 
 describe("LobbiesService", () => {
   let service: LobbiesService;
-  const stageIdWithLobbies = 1;
-  const stageIdWithoutLobbies = 4;
-  const lobbyIdWithPlayers = 5;
-  const lobbyRepository = new FakeIndexedRepository<Lobby>([
-    lobby({ id: 1, stageId: stageIdWithLobbies }),
-    lobby({ id: 2, stageId: stageIdWithLobbies }),
-    lobby({ id: 3 }),
-    lobby({ id: 4 }),
-    lobby({ id: lobbyIdWithPlayers, players: [] }),
-  ]);
+  const mockId = 1;
+  const lobbyRepository = {
+    find: jest.fn(),
+    findOne: jest.fn(),
+    save: jest.fn(),
+    update: jest.fn(),
+    delete: jest.fn(),
+  } as unknown as Repository<Lobby>;
+  const lobbyGroupsRepository = {
+    findOne: jest.fn(),
+    find: jest.fn(),
+    save: jest.fn(),
+  } as unknown as Repository<LobbyGroup>;
+  const lobbyPlayerInfosService = {
+    createManyLobbyPlayersFromGroupedData: jest.fn(),
+  } as unknown as LobbyPlayerInfosService;
 
   beforeEach(async () => {
-    const module: TestingModule = await Test.createTestingModule({
-      providers: [
-        LobbiesService,
-        {
-          provide: getRepositoryToken(Lobby),
-          useValue: lobbyRepository,
-        },
-      ],
-    }).compile();
+    service = new LobbiesService(
+      lobbyRepository,
+      lobbyGroupsRepository,
+      lobbyPlayerInfosService,
+    );
+  });
 
-    service = module.get<LobbiesService>(LobbiesService);
+  afterEach(() => {
+    jest.resetAllMocks();
   });
 
   it("should be defined", () => {
     expect(service).toBeDefined();
   });
 
-  describe("find all by stage", () => {
-    it("should find lobbies by stage", async () => {
-      expect(await service.findAllByStage(stageIdWithLobbies)).toHaveLength(2);
+  describe("Lobby Operations", () => {
+    describe("find one with relations", () => {
+      it("should call repository and pass relations", async () => {
+        const relations = ["any", "any.other"];
+        await service.findOneWithRelations(mockId, relations);
+        expect(lobbyRepository.findOne).toHaveBeenCalledWith(mockId, {
+          relations,
+        });
+      });
     });
 
-    it("should find no lobbies if stage does not have it", async () => {
-      expect(await service.findAllByStage(stageIdWithoutLobbies)).toHaveLength(
-        0,
-      );
+    describe("find all by stage", () => {
+      it("should call repository", async () => {
+        await service.findAllByStage(mockId);
+        expect(lobbyRepository.find).toHaveBeenCalled();
+      });
+    });
+
+    describe("find all by lobby group", () => {
+      it("should call repository", async () => {
+        await service.findAllByLobbyGroup(mockId);
+        expect(lobbyRepository.find).toHaveBeenCalled();
+      });
+    });
+
+    describe("create one", () => {
+      it("should call repository", async () => {
+        await service.createOne({} as CreateLobbyArgs);
+        expect(lobbyRepository.save).toHaveBeenCalled();
+      });
+    });
+
+    describe("create many", () => {
+      it("should call repository", async () => {
+        await service.createMany([{}, {}] as CreateLobbyArgs[]);
+        expect(lobbyRepository.save).toHaveBeenCalled();
+      });
+    });
+
+    describe("update one", () => {
+      it("if lobby does not exist, should throw error", async () => {
+        lobbyRepository.findOne = jest.fn().mockResolvedValueOnce(undefined);
+        expect(
+          async () =>
+            await service.updateOne({
+              id: mockId,
+              name: "Test",
+              stageId: mockId,
+              lobbyGroupId: mockId,
+              sequence: 1,
+            }),
+        ).rejects.toThrow();
+      });
+
+      it("if it exists, should update and return entity", async () => {
+        lobbyRepository.findOne = jest.fn().mockResolvedValueOnce({});
+        await service.updateOne({
+          id: mockId,
+          name: "Test",
+          stageId: mockId,
+          lobbyGroupId: mockId,
+          sequence: 1,
+        });
+        expect(lobbyRepository.update).toHaveBeenCalled();
+        expect(lobbyRepository.findOne).toHaveBeenCalled();
+      });
+    });
+
+    describe("delete one", () => {
+      it("should call repository", async () => {
+        const response = await service.deleteOne(mockId);
+        expect(lobbyRepository.delete).toHaveBeenCalled();
+        expect(response).toBeInstanceOf(DeleteResponse);
+      });
     });
   });
 
-  describe("find one with players", () => {
-    it("should find one with players", async () => {
-      expect(await service.findOneWithPlayers(1)).toBeTruthy();
+  describe("Lobby group operations", () => {
+    describe("find one", () => {
+      it("should call repository", async () => {
+        await service.findOneLobbyGroup(mockId);
+        expect(lobbyGroupsRepository.findOne).toHaveBeenCalled();
+      });
     });
 
-    it("should not find one if it doesn't exist", async () => {
-      expect(await service.findOneWithPlayers(13232)).toBeUndefined();
+    describe("find all by stage", () => {
+      it("should call repository", async () => {
+        await service.findAllLobbyGroupsByStage(mockId);
+        expect(lobbyGroupsRepository.find).toHaveBeenCalled();
+      });
+    });
+
+    describe("create one", () => {
+      it("should call repository", async () => {
+        await service.createOneLobbyGroup({} as CreateLobbyGroupArgs);
+        expect(lobbyGroupsRepository.save).toHaveBeenCalled();
+      });
+    });
+
+    describe("create many", () => {
+      it("should call repository", async () => {
+        await service.createManyLobbyGroup([{}, {}] as CreateLobbyGroupArgs[]);
+        expect(lobbyGroupsRepository.save).toHaveBeenCalled();
+      });
     });
   });
 
-  describe("create one", () => {
-    it("should be able to create a new lobby", async () => {
-      const stageId = 100;
-      const payload: CreateLobbyArgs = {
-        name: "anyName",
-        sequence: 0,
-        stageId,
+  describe("Player Lobby Group operations", () => {
+    it("should create players for each lobby", async () => {
+      const firstLobbyPlayers = {
+        lobbyId: 1,
+        playerIds: [1, 2, 3],
       };
-      const lobbyCount = (await service.findAllByStage(stageId)).length;
-      await service.createOne(payload);
-      expect(await service.findAllByStage(stageId)).toHaveLength(
-        lobbyCount + 1,
-      );
-    });
-  });
-
-  describe("create player lobby", () => {
-    it("should be able to create player x lobby", async () => {
-      const lobbyId = lobbyIdWithPlayers;
-      const playerIds = [1, 2, 3];
-      const expectedPlayers = playerIds.map((id) => ({
-        id,
-      }));
-      const payload: CreatePlayerLobbyArgs = {
-        lobbyId,
-        playerIds,
+      const secondLobbyPlayers = {
+        lobbyId: 2,
+        playerIds: [4, 5, 6],
       };
-      await service.createPlayerLobby(payload);
-      expect((await service.findOneWithPlayers(lobbyId)).players).toStrictEqual(
-        expectedPlayers,
-      );
+      const payload: CreatePlayerLobbyGroupArgs = {
+        lobbies: [firstLobbyPlayers, secondLobbyPlayers],
+      };
+      await service.createPlayerLobbyGroup(payload);
+      expect(
+        lobbyPlayerInfosService.createManyLobbyPlayersFromGroupedData,
+      ).toHaveBeenCalledTimes(2);
+      expect(
+        lobbyPlayerInfosService.createManyLobbyPlayersFromGroupedData,
+      ).toHaveBeenCalledWith(firstLobbyPlayers);
+      expect(
+        lobbyPlayerInfosService.createManyLobbyPlayersFromGroupedData,
+      ).toHaveBeenCalledWith(secondLobbyPlayers);
     });
   });
 });
