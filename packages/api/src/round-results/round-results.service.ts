@@ -209,12 +209,13 @@ export class RoundResultsService {
   public async playerStats(args: GetStatsArgs) {
     const stats = await this.findStats(args);
     const formatted: PlayerWithStats[] = stats.map(
-      ({ id, name, region, country, ...stats }) => ({
+      ({ id, name, region, country, slug, ...stats }) => ({
         player: {
           id,
           name,
           region,
           country,
+          slug,
         },
         ...formatStats(stats),
       }),
@@ -244,6 +245,7 @@ export class RoundResultsService {
           .addSelect("name")
           .addSelect("region")
           .addSelect("country")
+          .addSelect("slug")
           .from((rawSubquery) => {
             const baseQuery = this.getBaseStatsQuery(rawSubquery);
             let query = baseQuery

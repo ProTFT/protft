@@ -2,11 +2,11 @@ import { useCallback } from "react";
 import { useDrop } from "react-dnd";
 import { TextIconHorizontalContainer } from "../../../../../../components/Layout/HorizontalContainer/TextIconHorizontalContainer.styled";
 import { Player } from "../../../../../../graphql/schema";
+import { DeleteButton } from "../../../../Components/DeleteButton/DeleteButton";
 import { PlayerContent } from "../../../../Components/PlayerItem/PlayerItem";
 import {
   StyledTournamentPlayerListSmaller,
   StyledTournamentPlayerListColumn,
-  StyledDeleteButton,
   StyledLobbyName,
 } from "./LobbyContainer.styled";
 
@@ -54,9 +54,7 @@ export const LobbyContainer = ({
         {content.map((player) => (
           <TextIconHorizontalContainer key={player.id}>
             <PlayerContent key={player.id} player={player} />
-            <StyledDeleteButton onClick={removePlayer(player.id)}>
-              X
-            </StyledDeleteButton>
+            <DeleteButton onClick={removePlayer(player.id)} />
           </TextIconHorizontalContainer>
         ))}
       </StyledTournamentPlayerListColumn>

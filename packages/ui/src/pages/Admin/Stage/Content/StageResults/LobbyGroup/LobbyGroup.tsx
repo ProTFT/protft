@@ -4,14 +4,14 @@ import { ProTFTButton } from "../../../../../../components/Button/Button";
 import { BigArrowLeft } from "../../../../../../design/icons/BigArrowLeft";
 import { BigArrowRight } from "../../../../../../design/icons/BigArrowRight";
 import {
-  BooleanResult,
   LobbyGroup as GqlLobbyGroup,
   Player,
+  RoundResult,
 } from "../../../../../../graphql/schema";
 import { client } from "../../../../../../hooks/useAuth";
 import { BulkPlayerDialog } from "../../../../Components/BulkPlayerDialog/BulkPlayerDialog";
+import { StyledTitle } from "../../../../Components/Title/Title.styled";
 import { useToast } from "../../../../Components/Toast/Toast";
-import { StyledTitle } from "../../../../Tournament/Content/Content.styled";
 import { LobbyContainer } from "../LobbyContainer/LobbyContainer";
 import {
   LobbyPlayersQueryResult,
@@ -78,7 +78,7 @@ export const LobbyGroup = ({
   });
 
   const [, createLobbyGroupResults] = useMutation<
-    BooleanResult,
+    RoundResult[],
     CreateResultsByLobbyGroupMutationVariables
   >(CREATE_RESULTS_BY_LOBBY_GROUP_MUTATION);
 

@@ -206,7 +206,7 @@ export interface IMutation {
     updateLobby(id: number, stageId: number, name: string, sequence: number, lobbyGroupId: number): Lobby | Promise<Lobby>;
     deleteLobby(id: number): DeleteResponse | Promise<DeleteResponse>;
     createRound(stageId: number, sequence: number): Round | Promise<Round>;
-    createLobbyPlayers(players: CreatePlayerLobbyArgs[]): LobbyPlayerInfo[] | Promise<LobbyPlayerInfo[]>;
+    createLobbyPlayers(lobbies: CreatePlayerLobbyArgs[]): LobbyPlayerInfo[] | Promise<LobbyPlayerInfo[]>;
     createPlayer(name: string, country: string, region: string): Player | Promise<Player>;
     createPlayerSlugs(): Player[] | Promise<Player[]>;
     deletePlayer(id: number): Player | Promise<Player>;

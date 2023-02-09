@@ -1,4 +1,4 @@
-import { PlayerCardSkeleton } from "../components/PlayerCard.skeleton";
+import { PlayerCardSkeleton } from "../PlayerCard/PlayerCard.skeleton";
 import { StyledPlayersList } from "../Players.styled";
 
 export const PlayersListSkeleton = () => {

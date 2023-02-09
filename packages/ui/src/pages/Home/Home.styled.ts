@@ -1,8 +1,8 @@
 import styled from "styled-components";
-import { colors } from "../../design/colors";
+import { StyledVerticalContainer } from "../../components/Layout/VerticalContainer/VerticalContainer.styled";
 
-export const StyledContainer = styled.div`
-  display: flex;
-  flex-direction: column;
-  background-color: ${colors.blackBackground};
+export const StyledContainer = styled(StyledVerticalContainer)`
+  ${({ theme }) => `
+    background-color: ${theme.colors.blackBackground};  
+  `}
 `;

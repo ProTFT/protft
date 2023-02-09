@@ -7,10 +7,6 @@ export const StyledPlayerCardHeader = styled.div`
   display: flex;
   gap: 1rem;
   align-items: center;
-
-  @media ${device.desktop} {
-    width: 30%;
-  }
 `;
 
 export const StyledPlayerImage = styled.div`

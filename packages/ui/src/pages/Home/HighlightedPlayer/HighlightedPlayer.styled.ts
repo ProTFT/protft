@@ -1,11 +1,9 @@
 import styled from "styled-components";
+import { StyledVerticalContainer } from "../../../components/Layout/VerticalContainer/VerticalContainer.styled";
 import { device } from "../../../design/breakpoints";
-import { colors } from "../../../design/colors";
 
-export const StyledContainer = styled.div`
+export const StyledContainer = styled(StyledVerticalContainer)`
   width: 100%;
-  display: flex;
-  flex-direction: column;
   align-items: center;
   padding-top: 4rem;
   padding-bottom: 3rem;
@@ -13,14 +11,16 @@ export const StyledContainer = styled.div`
 `;
 
 export const StyledSectionTitle = styled.p`
-  font-family: VTF Redzone Classic;
-  font-weight: 400;
-  font-size: 32px;
-  line-height: 24px;
-  letter-spacing: 0.25em;
-  text-transform: uppercase;
-  color: ${colors.yellow};
-  text-align: center;
+  ${({ theme }) => `
+    font-family: ${theme.fonts.title};
+    font-weight: 400;
+    font-size: 32px;
+    line-height: 24px;
+    letter-spacing: 0.25em;
+    text-transform: uppercase;
+    color: ${theme.colors.yellow};
+    text-align: center;
+  `}
 `;
 
 export const StyledOuterBox = styled.div`
@@ -56,24 +56,28 @@ export const StyledInnerBox = styled.div`
 `;
 
 export const StyledPlayerName = styled.p`
-  font-family: VTF Redzone Classic;
-  font-weight: 400;
-  font-size: 24px;
-  line-height: 24px;
-  letter-spacing: 0.25em;
-  text-transform: uppercase;
-  color: ${colors.yellow};
+  ${({ theme }) => `
+    font-family: ${theme.fonts.title};
+    font-weight: 400;
+    font-size: 24px;
+    line-height: 24px;
+    letter-spacing: 0.25em;
+    text-transform: uppercase;
+    color: ${theme.colors.yellow};
+  `}
 `;
 
 export const StyledPlayerDescription = styled.p`
-  font-family: Roboto;
-  font-size: 14px;
-  font-weight: 400;
-  line-height: 26px;
-  letter-spacing: 0.05em;
-  text-align: left;
-  flex-grow: 0;
-  color: #999999;
+  ${({ theme }) => `
+    font-family: ${theme.fonts.body};
+    font-size: 14px;
+    font-weight: 400;
+    line-height: 26px;
+    letter-spacing: 0.05em;
+    text-align: left;
+    flex-grow: 0;
+    color: #999999;
+  `}
 `;
 
 interface PlayerImageProps {

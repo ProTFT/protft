@@ -1,16 +1,14 @@
 import { useCallback, useRef } from "react";
 import { useNavigate, useParams } from "react-router-dom";
 import { useMutation, useQuery } from "urql";
+import { ProTFTButton } from "../../../components/Button/Button";
 import { TournamentContent } from "../../../components/TournamentContent/TournamentContent";
 import { Tournament } from "../../../graphql/schema";
 import { StyledHeaderContainer } from "../../Tournament/Tournament.styled";
 import { useToast } from "../Components/Toast/Toast";
 import { TournamentDialog } from "../Components/TournamentDialog/TournamentDialog";
-import {
-  StyledActionButton,
-  StyledActionsContainer,
-  StyledBar,
-} from "./AdminTournament.styled";
+import { ADMIN_TOURNAMENTS_PATH } from "../Tournaments/AdminTournaments";
+import { StyledActionsContainer, StyledBar } from "./AdminTournament.styled";
 import { AdminTournamentContent } from "./Content/Content";
 import {
   DELETE_TOURNAMENT_MUTATION,
@@ -24,7 +22,12 @@ import {
 
 export const AdminTournament = () => {
   const { id: tournamentId } = useParams();
+  const dialogRef = useRef<HTMLDialogElement>(null);
+  const formRef = useRef<HTMLFormElement>(null);
+
   const navigate = useNavigate();
+  const { show } = useToast();
+
   const [{ data }, refetch] = useQuery<TournamentQueryResponse>({
     query: TOURNAMENT_QUERY,
     variables: { id: Number(tournamentId) },
@@ -40,39 +43,37 @@ export const AdminTournament = () => {
     TournamentUpdateVariables
   >(UPDATE_TOURNAMENT_MUTATION);
 
-  const handleDeleteTournament = useCallback(async () => {
+  const onDeleteTournament = useCallback(async () => {
     const deleteResult = await deleteTournament({ id: Number(tournamentId) });
     if (deleteResult.error) {
       return alert(deleteResult.error);
     }
-    navigate("/admin/tournaments");
+    navigate(ADMIN_TOURNAMENTS_PATH);
   }, [deleteTournament, tournamentId, navigate]);
 
-  const dialogRef = useRef<HTMLDialogElement>(null);
-  const formRef = useRef<HTMLFormElement>(null);
+  const onSubmitUpdateTournament = useCallback(
+    async (tournament: Omit<Tournament, "id" | "set">) => {
+      const result = await updateTournament({
+        ...tournament,
+        id: Number(tournamentId),
+      });
 
-  const { show } = useToast();
+      if (result.error) {
+        return alert(result.error);
+      }
+      show();
+      formRef.current?.reset();
+      dialogRef.current?.close();
+      refetch();
+    },
+    [refetch, show, tournamentId, updateTournament]
+  );
 
-  const onSubmit = async (tournament: Omit<Tournament, "id" | "set">) => {
-    const result = await updateTournament({
-      ...tournament,
-      id: Number(tournamentId),
-    });
-
-    if (result.error) {
-      return alert(result.error);
-    }
-    show();
-    formRef.current?.reset();
-    dialogRef.current?.close();
-    refetch();
-  };
-
-  const handleUpdateTournament = () => {
+  const onUpdateTournament = useCallback(() => {
     dialogRef.current?.showModal();
-  };
+  }, []);
 
-  const handleToggleVisibility = useCallback(async () => {
+  const onToggleVisibility = useCallback(async () => {
     const result = await updateTournament({
       id: Number(tournamentId),
       visibility: !Boolean(data?.tournament.visibility),
@@ -84,8 +85,8 @@ export const AdminTournament = () => {
     refetch();
   }, [data?.tournament.visibility, tournamentId, updateTournament, refetch]);
 
-  const handleBackToList = useCallback(() => {
-    navigate("/admin/tournaments");
+  const onBackToList = useCallback(() => {
+    navigate(ADMIN_TOURNAMENTS_PATH);
   }, [navigate]);
 
   return (
@@ -93,25 +94,19 @@ export const AdminTournament = () => {
       <TournamentDialog
         dialogRef={dialogRef}
         formRef={formRef}
-        onSubmit={onSubmit}
+        onSubmit={onSubmitUpdateTournament}
         tournament={data?.tournament}
       />
       <StyledBar>
         <StyledActionsContainer>
-          <StyledActionButton onClick={handleBackToList}>
-            Back to list
-          </StyledActionButton>
+          <ProTFTButton onClick={onBackToList}>Back to list</ProTFTButton>
         </StyledActionsContainer>
         <StyledActionsContainer>
-          <StyledActionButton onClick={handleToggleVisibility}>
+          <ProTFTButton onClick={onToggleVisibility}>
             Make {data?.tournament.visibility ? "invisible" : "visible"}
-          </StyledActionButton>
-          <StyledActionButton onClick={handleUpdateTournament}>
-            Update
-          </StyledActionButton>
-          <StyledActionButton onClick={handleDeleteTournament}>
-            Delete
-          </StyledActionButton>
+          </ProTFTButton>
+          <ProTFTButton onClick={onUpdateTournament}>Update</ProTFTButton>
+          <ProTFTButton onClick={onDeleteTournament}>Delete</ProTFTButton>
         </StyledActionsContainer>
       </StyledBar>
       <StyledHeaderContainer>

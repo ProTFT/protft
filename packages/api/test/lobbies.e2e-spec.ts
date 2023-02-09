@@ -223,7 +223,7 @@ describe("Lobby (e2e)", () => {
         .send({
           query: `
           mutation {
-            createLobbyPlayers(players: {
+            createLobbyPlayers(lobbies: {
               lobbyId: 1,
               playerIds: [1, 2, 3],
             }) {

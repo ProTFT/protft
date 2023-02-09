@@ -2,7 +2,7 @@ import { gql } from "urql";
 import { Player } from "../../graphql/schema";
 
 export interface PlayersQueryResult {
-  players: Player[];
+  players: Pick<Player, "id" | "name" | "country" | "region" | "slug">[];
 }
 
 export interface PlayersQueryVariables {
@@ -19,29 +19,6 @@ export const PLAYERS_QUERY = gql`
       country
       region
       slug
-      playerStats {
-        totalGames
-        averagePosition
-        topFourCount
-      }
-    }
-  }
-`;
-
-export interface PlayerFilterQueryResult {
-  playerFilterMeta: PlayerFilterData;
-}
-
-interface PlayerFilterData {
-  possibleRegions: string[];
-  possibleCountries: string[];
-}
-
-export const PLAYER_FILTERS_QUERY = gql`
-  query playerFilterMeta {
-    playerFilterMeta {
-      possibleRegions
-      possibleCountries
     }
   }
 `;

@@ -5,92 +5,26 @@ import {
   useMemo,
   useState,
 } from "react";
-import { useQuery } from "urql";
 import { ProTFTButton } from "../../components/Button/Button";
-import { TextIconHorizontalContainer } from "../../components/Layout/HorizontalContainer/TextIconHorizontalContainer.styled";
-import { CountryIndicator } from "../../components/RegionIndicator/RegionIndicator";
 import { colors } from "../../design/colors";
 import { ArrowRightSimpleIcon } from "../../design/icons/ArrowRightSimple";
 import { useDocumentTitle } from "../../hooks/useDocumentTitle";
-import {
-  PlayersStatsQueryResult,
-  PlayerStatsQueryVariables,
-  PLAYER_STATS_QUERY,
-  SortColumn,
-  SortDirection,
-  SortOption,
-} from "./queries";
+import { Filters, SortColumn, SortDirection, SortOption } from "./queries";
 import { RegionSelect } from "./RegionSelect/RegionSelect";
 import { SetSelect } from "./SetSelect/SetSelect";
+import { StatRows } from "./StatRows/StatRows";
 import {
   StyledButtonContainer,
   StyledContainer,
-  StyledPlayerRowData,
   StyledPlayerTable,
   StyledPlayerTableContainer,
   StyledPlayerTableHeader,
   StyledPlayerTableHeaderData,
+  StyledPlayerTableHeaderRow,
   StyledStatsFilters,
   StyledTitleContainer,
 } from "./Stats.styled";
 import { TournamentSelect } from "./TournamentSelect/TournamentSelect";
-
-interface Props {
-  regionFilter: string;
-  setFilter: number;
-  tournamentFilter: number[];
-  paginationArgs: object;
-  sort: SortOption;
-}
-
-const StatsRows = ({
-  regionFilter,
-  setFilter,
-  tournamentFilter,
-  paginationArgs,
-  sort,
-}: Props) => {
-  const [{ data: stats }] = useQuery<
-    PlayersStatsQueryResult,
-    PlayerStatsQueryVariables
-  >({
-    query: PLAYER_STATS_QUERY,
-    variables: {
-      region: regionFilter,
-      setId: Number(setFilter),
-      tournamentIds: tournamentFilter,
-      sort,
-      ...paginationArgs,
-    },
-  });
-
-  return (
-    <>
-      {stats?.playerStats.map(
-        ({
-          player,
-          averagePosition,
-          topOneCount,
-          topFourCount,
-          totalGames,
-        }) => (
-          <tr key={player.id}>
-            <StyledPlayerRowData center={false}>
-              <TextIconHorizontalContainer>
-                <CountryIndicator countryCode={player.country} />
-                {player.name}
-              </TextIconHorizontalContainer>
-            </StyledPlayerRowData>
-            <StyledPlayerRowData>{averagePosition}</StyledPlayerRowData>
-            <StyledPlayerRowData>{topOneCount}%</StyledPlayerRowData>
-            <StyledPlayerRowData>{topFourCount}%</StyledPlayerRowData>
-            <StyledPlayerRowData>{totalGames}</StyledPlayerRowData>
-          </tr>
-        )
-      )}
-    </>
-  );
-};
 
 const defaultSorting: { [key in SortColumn]: boolean } = {
   [SortColumn.AVERAGE_POSITION]: SortDirection.ASC,
@@ -99,19 +33,33 @@ const defaultSorting: { [key in SortColumn]: boolean } = {
   [SortColumn.TOTAL_GAMES]: SortDirection.DESC,
 };
 
+const defaultFilter: { [key in Filters]: any } = {
+  [Filters.REGION]: "",
+  [Filters.SET]: 0,
+  [Filters.TOURNAMENTS]: [],
+};
+
+const ITEMS_PER_PAGE = 20;
+
 export const Stats = () => {
   const [page, setPage] = useState(0);
   const paginationArgs = useMemo(
     () => ({
-      skip: page * 20,
-      take: 20,
+      skip: page * ITEMS_PER_PAGE,
+      take: ITEMS_PER_PAGE,
     }),
     [page]
   );
 
-  const [regionFilter, setRegionFilter] = useState("");
-  const [setFilter, setSetFilter] = useState<number>(0);
-  const [tournamentFilter, setTournamentFilter] = useState<number[]>([]);
+  const [regionFilter, setRegionFilter] = useState(
+    defaultFilter[Filters.REGION]
+  );
+  const [setFilter, setSetFilter] = useState<number>(
+    defaultFilter[Filters.SET]
+  );
+  const [tournamentFilter, setTournamentFilter] = useState<number[]>(
+    defaultFilter[Filters.TOURNAMENTS]
+  );
   const [sorting, setSorting] = useState<SortOption>({
     column: SortColumn.AVERAGE_POSITION,
     asc: SortDirection.ASC,
@@ -157,73 +105,84 @@ export const Stats = () => {
       <StyledStatsFilters>
         <TournamentSelect
           value={tournamentFilter}
-          onValueChange={onValueChange<number[]>(setTournamentFilter, [])}
+          onValueChange={onValueChange<number[]>(
+            setTournamentFilter,
+            defaultFilter[Filters.TOURNAMENTS]
+          )}
         />
         <SetSelect
           value={setFilter}
-          onValueChange={onValueChange<number>(setSetFilter, 0)}
+          onValueChange={onValueChange<number>(
+            setSetFilter,
+            defaultFilter[Filters.SET]
+          )}
         />
         <RegionSelect
           value={regionFilter}
-          onValueChange={onValueChange<string>(setRegionFilter, "")}
+          onValueChange={onValueChange<string>(
+            setRegionFilter,
+            defaultFilter[Filters.REGION]
+          )}
         />
       </StyledStatsFilters>
       <StyledPlayerTableContainer>
         <StyledPlayerTable>
           <StyledPlayerTableHeader>
-            <StyledPlayerTableHeaderData>Player</StyledPlayerTableHeaderData>
-            <StyledPlayerTableHeaderData
-              onClick={changeSorting(SortColumn.AVERAGE_POSITION)}
-            >
-              <StyledTitleContainer>
-                Average Position
-                <ArrowRightSimpleIcon
-                  color={colors.blackBackground}
-                  visible={sorting.column === SortColumn.AVERAGE_POSITION}
-                  inverted={sorting.asc}
-                />
-              </StyledTitleContainer>
-            </StyledPlayerTableHeaderData>
-            <StyledPlayerTableHeaderData
-              onClick={changeSorting(SortColumn.TOP_1)}
-            >
-              <StyledTitleContainer>
-                Top 1
-                <ArrowRightSimpleIcon
-                  color={colors.blackBackground}
-                  visible={sorting.column === SortColumn.TOP_1}
-                  inverted={sorting.asc}
-                />
-              </StyledTitleContainer>
-            </StyledPlayerTableHeaderData>
-            <StyledPlayerTableHeaderData
-              onClick={changeSorting(SortColumn.TOP_4)}
-            >
-              <StyledTitleContainer>
-                Top 4
-                <ArrowRightSimpleIcon
-                  color={colors.blackBackground}
-                  visible={sorting.column === SortColumn.TOP_4}
-                  inverted={sorting.asc}
-                />
-              </StyledTitleContainer>
-            </StyledPlayerTableHeaderData>
-            <StyledPlayerTableHeaderData
-              onClick={changeSorting(SortColumn.TOTAL_GAMES)}
-            >
-              <StyledTitleContainer>
-                Total Games
-                <ArrowRightSimpleIcon
-                  color={colors.blackBackground}
-                  visible={sorting.column === SortColumn.TOTAL_GAMES}
-                  inverted={sorting.asc}
-                />
-              </StyledTitleContainer>
-            </StyledPlayerTableHeaderData>
+            <StyledPlayerTableHeaderRow>
+              <StyledPlayerTableHeaderData>Player</StyledPlayerTableHeaderData>
+              <StyledPlayerTableHeaderData
+                onClick={changeSorting(SortColumn.AVERAGE_POSITION)}
+              >
+                <StyledTitleContainer>
+                  Average Position
+                  <ArrowRightSimpleIcon
+                    color={colors.blackBackground}
+                    visible={sorting.column === SortColumn.AVERAGE_POSITION}
+                    inverted={sorting.asc}
+                  />
+                </StyledTitleContainer>
+              </StyledPlayerTableHeaderData>
+              <StyledPlayerTableHeaderData
+                onClick={changeSorting(SortColumn.TOP_1)}
+              >
+                <StyledTitleContainer>
+                  Top 1
+                  <ArrowRightSimpleIcon
+                    color={colors.blackBackground}
+                    visible={sorting.column === SortColumn.TOP_1}
+                    inverted={sorting.asc}
+                  />
+                </StyledTitleContainer>
+              </StyledPlayerTableHeaderData>
+              <StyledPlayerTableHeaderData
+                onClick={changeSorting(SortColumn.TOP_4)}
+              >
+                <StyledTitleContainer>
+                  Top 4
+                  <ArrowRightSimpleIcon
+                    color={colors.blackBackground}
+                    visible={sorting.column === SortColumn.TOP_4}
+                    inverted={sorting.asc}
+                  />
+                </StyledTitleContainer>
+              </StyledPlayerTableHeaderData>
+              <StyledPlayerTableHeaderData
+                onClick={changeSorting(SortColumn.TOTAL_GAMES)}
+              >
+                <StyledTitleContainer>
+                  Total Games
+                  <ArrowRightSimpleIcon
+                    color={colors.blackBackground}
+                    visible={sorting.column === SortColumn.TOTAL_GAMES}
+                    inverted={sorting.asc}
+                  />
+                </StyledTitleContainer>
+              </StyledPlayerTableHeaderData>
+            </StyledPlayerTableHeaderRow>
           </StyledPlayerTableHeader>
           <tbody>
             <Suspense fallback={null}>
-              <StatsRows
+              <StatRows
                 tournamentFilter={tournamentFilter}
                 paginationArgs={deferredPagination}
                 regionFilter={regionFilter}

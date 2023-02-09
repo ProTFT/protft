@@ -13,7 +13,7 @@ import { Footer } from "./components/Footer/Footer";
 import { Players } from "./pages/Players/Players";
 import { About } from "./pages/About/About";
 import { useAuth } from "./hooks/useAuth";
-import { AdminHome } from "./pages/Admin/Home/AdminHome";
+import { AdminTournaments } from "./pages/Admin/Tournaments/AdminTournaments";
 import { Login } from "./pages/Auth/Login/Login";
 import { AdminTournament } from "./pages/Admin/Tournament/AdminTournament";
 import { AdminStage } from "./pages/Admin/Stage/AdminStage";
@@ -62,7 +62,10 @@ export const App = () => {
         <Route path="login" element={<Login />} />
         <Route path="logout" element={<Logout />} />
         <Route path="admin/tournaments" element={<ProtectedRoutes />}>
-          <Route index element={<SuspenseElement element={<AdminHome />} />} />
+          <Route
+            index
+            element={<SuspenseElement element={<AdminTournaments />} />}
+          />
           <Route
             path=":id/stages/:stageId/*"
             element={<SuspenseElement element={<AdminStage />} />}

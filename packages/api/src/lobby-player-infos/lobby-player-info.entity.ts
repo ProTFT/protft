@@ -10,9 +10,13 @@ import {
 import { Lobby } from "../lobbies/lobby.entity";
 import { Player } from "../players/player.entity";
 
+const LOBBY_PLAYER_UNIQUE_CONSTRAINT = "lobbyPlayer";
+
 @ObjectType()
 @Entity()
-@Index(["lobbyId", "playerId"], { unique: true })
+@Index(LOBBY_PLAYER_UNIQUE_CONSTRAINT, ["lobbyId", "playerId"], {
+  unique: true,
+})
 export class LobbyPlayerInfo {
   @Generated()
   @PrimaryColumn()
@@ -29,6 +33,7 @@ export class LobbyPlayerInfo {
 
   @ManyToOne(() => Lobby, (lobby) => lobby.id, {
     onDelete: "CASCADE",
+    orphanedRowAction: "delete",
   })
   lobby: Lobby;
 

@@ -1,9 +1,4 @@
-import {
-  StyledTournamentImage,
-  StyledTournamentInfoContainer,
-  StyledTournamentTitle,
-} from "../../../components/TournamentContent/TournamentContent.styled";
-import { Stage, Tournament } from "../../../graphql/schema";
+import { Stage } from "../../../graphql/schema";
 import {
   StageQueryResponse,
   STAGE_QUERY,
@@ -19,7 +14,7 @@ import {
   useNavigate,
   useParams,
 } from "react-router-dom";
-import { StyledBar, StyledHeaderContainer } from "./AdminStage.styled";
+import { StyledBar } from "./AdminStage.styled";
 import {
   StyledTabButton,
   StyledTabContainer,
@@ -28,10 +23,7 @@ import { useCallback, useRef } from "react";
 import { StagePlayers } from "./Content/StagePlayers/StagePlayers";
 import { StageLobbies } from "./Content/StageLobbies/StageLobbies";
 import { StageResults } from "./Content/StageResults/StageResults";
-import {
-  StyledActionButton,
-  StyledActionsContainer,
-} from "../Tournament/AdminTournament.styled";
+import { StyledActionsContainer } from "../Tournament/AdminTournament.styled";
 import { StageDialog } from "../Components/StageDialog/StageDialog";
 import {
   StageDeleteResult,
@@ -43,15 +35,16 @@ import {
 import { useToast } from "../Components/Toast/Toast";
 import { StageTiebreakers } from "./Content/StageTiebreakers/StageTiebreakers";
 import { SuspenseElement } from "../../../components/SuspendedPage";
-
-interface Props {
-  tournament?: Tournament;
-  stage?: Stage;
-}
+import { ProTFTButton } from "../../../components/Button/Button";
+import { AdminStageHeader } from "./Content/AdminStageHeader";
 
 export const AdminStage = () => {
   const { id, stageId } = useParams();
   const location = useLocation();
+
+  const dialogRef = useRef<HTMLDialogElement>(null);
+  const formRef = useRef<HTMLFormElement>(null);
+
   const isTabSelected = useCallback(
     (path: string) => location.pathname.includes(path),
     [location.pathname]
@@ -61,6 +54,17 @@ export const AdminStage = () => {
     variables: { id: Number(stageId) },
   });
 
+  const [{ data: tournamentData }, refetch] = useQuery<TournamentQueryResponse>(
+    {
+      query: TOURNAMENT_QUERY,
+      variables: { id: Number(id) },
+    }
+  );
+
+  const { show } = useToast();
+
+  const navigate = useNavigate();
+
   const [, deleteStage] = useMutation<StageDeleteResult, { id: number }>(
     DELETE_STAGE_MUTATION
   );
@@ -69,20 +73,9 @@ export const AdminStage = () => {
     UPDATE_STAGE_MUTATION
   );
 
-  const [{ data: tournamentData }, refetch] = useQuery<TournamentQueryResponse>(
-    {
-      query: TOURNAMENT_QUERY,
-      variables: { id: Number(id) },
-    }
-  );
-
   const handleUpdateStage = useCallback(() => {
     dialogRef.current?.showModal();
   }, []);
-
-  const { show } = useToast();
-
-  const navigate = useNavigate();
 
   const handleDeleteStage = useCallback(async () => {
     const deleteResult = await deleteStage({ id: Number(stageId) });
@@ -94,11 +87,8 @@ export const AdminStage = () => {
   }, [deleteStage, stageId, show, navigate]);
 
   const handleBackToTournament = useCallback(() => {
-    navigate(`/admin/tournaments/${id}`);
+    navigate(`/admin/tournaments/${id}/players`);
   }, [navigate, id]);
-
-  const dialogRef = useRef<HTMLDialogElement>(null);
-  const formRef = useRef<HTMLFormElement>(null);
 
   const onSubmit = async (
     formStage: Omit<Stage, "id" | "rounds" | "lobbies">
@@ -128,20 +118,16 @@ export const AdminStage = () => {
       />
       <StyledBar>
         <StyledActionsContainer>
-          <StyledActionButton onClick={handleBackToTournament}>
+          <ProTFTButton onClick={handleBackToTournament}>
             Back to Tournament
-          </StyledActionButton>
+          </ProTFTButton>
         </StyledActionsContainer>
         <StyledActionsContainer>
-          <StyledActionButton onClick={handleUpdateStage}>
-            Update
-          </StyledActionButton>
-          <StyledActionButton onClick={handleDeleteStage}>
-            Delete
-          </StyledActionButton>
+          <ProTFTButton onClick={handleUpdateStage}>Update</ProTFTButton>
+          <ProTFTButton onClick={handleDeleteStage}>Delete</ProTFTButton>
         </StyledActionsContainer>
       </StyledBar>
-      <StageContent
+      <AdminStageHeader
         stage={data?.stage}
         tournament={tournamentData?.tournament}
       />
@@ -168,7 +154,6 @@ export const AdminStage = () => {
         </Link>
       </StyledTabContainer>
       <Routes>
-        <Route index element={<SuspenseElement element={<StagePlayers />} />} />
         <Route
           path={`players`}
           element={<SuspenseElement element={<StagePlayers />} />}
@@ -187,21 +172,5 @@ export const AdminStage = () => {
         />
       </Routes>
     </>
-  );
-};
-
-export const StageContent = ({ stage, tournament }: Props) => {
-  return (
-    <StyledHeaderContainer>
-      <StyledTournamentImage
-        src={`/sets/${tournament?.set.id}.webp`}
-        alt={tournament?.set.name}
-      />
-      <StyledTournamentInfoContainer>
-        <StyledTournamentTitle>{tournament?.name}</StyledTournamentTitle>
-        <StyledTournamentTitle>{`Stage #${stage?.sequence} - ${stage?.name}`}</StyledTournamentTitle>
-        <br />
-      </StyledTournamentInfoContainer>
-    </StyledHeaderContainer>
   );
 };

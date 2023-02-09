@@ -5,7 +5,7 @@ import { StyledRegionText } from "./RegionIndicator.styled";
 import { byIso } from "country-code-lookup";
 
 interface Props {
-  regionCodes: string[];
+  regionCodes?: string[];
   showName?: boolean;
 }
 

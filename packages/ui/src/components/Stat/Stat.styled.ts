@@ -3,6 +3,7 @@ import styled from "styled-components";
 export const StyledStat = styled.div`
   display: flex;
   flex-direction: column;
+  justify-content: space-between;
 `;
 
 export const StyledStatTitle = styled.p`

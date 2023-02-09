@@ -2,7 +2,7 @@ import { ArgsType, Field, InputType, Int } from "@nestjs/graphql";
 
 @ArgsType()
 export class CreatePlayerLobbyGroupArgs {
-  @Field(() => [CreatePlayerLobbyArgs], { name: "players" })
+  @Field(() => [CreatePlayerLobbyArgs])
   lobbies: CreatePlayerLobbyArgs[];
 }
 

@@ -1,20 +1,20 @@
 import { ChangeEvent, useCallback, useMemo, useRef, useState } from "react";
-import { useDrag, useDrop } from "react-dnd";
 import { useParams } from "react-router-dom";
 import { useMutation, useQuery } from "urql";
 import { ProTFTButton } from "../../../../../components/Button/Button";
 import { TextIconHorizontalContainer } from "../../../../../components/Layout/HorizontalContainer/TextIconHorizontalContainer.styled";
-import { RegionsIndicator } from "../../../../../components/RegionIndicator/RegionIndicator";
 import { SearchInput } from "../../../../../components/SearchInput/SearchInput";
 import { Player } from "../../../../../graphql/schema";
 import { BulkPlayerTournamentDialog } from "../../../Components/BulkPlayerTournamentDialog/BulkPlayerTournamentDialog";
-import { PlayerDialog } from "../../../Components/PlayerDialog/PlayerDialog";
-import { useToast } from "../../../Components/Toast/Toast";
+import { DroppableContainer } from "../../../Components/DroppableContainer/DroppableContainer";
 import {
   StyledLeftSide,
   StyledRightSide,
-  StyledTitle,
-} from "../Content.styled";
+} from "../../../Components/Layout/TwoSided.styled";
+import { PlayerDialog } from "../../../Components/PlayerDialog/PlayerDialog";
+import { DraggablePlayer } from "../../../Components/PlayerItem/PlayerItem";
+import { StyledTitle } from "../../../Components/Title/Title.styled";
+import { useToast } from "../../../Components/Toast/Toast";
 import {
   CreatePlayerResult,
   CreatePlayerVariables,
@@ -30,97 +30,32 @@ import {
   TournamentQueryResponse,
   TOURNAMENT_PLAYERS_QUERY,
 } from "./queries";
-import {
-  StyledBar,
-  StyledContainer,
-  StyledDeleteButton,
-  StyledPlayerContentContainer,
-  StyledPlayerName,
-  StyledTournamentPlayerList,
-  StyledTournamentPlayerListColumn,
-} from "./TournamentPlayers.styled";
-
-interface DragAndDropPlayerProps {
-  player: Player;
-  onClick?: () => void;
-}
-
-const DraggablePlayer = ({
-  player,
-  onClick = () => {},
-}: DragAndDropPlayerProps) => {
-  const [, drag] = useDrag(() => ({
-    type: "Player",
-    item: player,
-    collect: (monitor) => ({
-      isDragging: monitor.isDragging,
-    }),
-  }));
-  return (
-    <TextIconHorizontalContainer onClick={onClick} ref={drag}>
-      <PlayerContent player={player} />
-    </TextIconHorizontalContainer>
-  );
-};
-
-const PlayerContent = ({ player: { region, name } }: { player: Player }) => {
-  return (
-    <StyledPlayerContentContainer>
-      <RegionsIndicator regionCodes={[region!]} showName={false} />
-      <StyledPlayerName>{name}</StyledPlayerName>
-    </StyledPlayerContentContainer>
-  );
-};
-
-interface DroppableContainerProps {
-  content: Player[];
-  setContent: React.Dispatch<React.SetStateAction<Player[]>>;
-  onAdd: (player: Player) => void;
-}
-
-const DroppableContainer = ({
-  content,
-  setContent,
-  onAdd,
-}: DroppableContainerProps) => {
-  const [, drop] = useDrop<Player>(() => ({
-    accept: "Player",
-    drop(player) {
-      onAdd(player);
-    },
-    collect: (monitor) => ({
-      isOver: monitor.isOver(),
-      canDrop: monitor.canDrop(),
-    }),
-  }));
-
-  const removePlayer = useCallback(
-    (id: number) => () => {
-      setContent((players) => players.filter((p) => p.id !== id));
-    },
-    [setContent]
-  );
-
-  return (
-    <StyledTournamentPlayerList ref={drop}>
-      <StyledTournamentPlayerListColumn>
-        {content.map((player) => (
-          <TextIconHorizontalContainer key={player.id}>
-            <PlayerContent key={player.id} player={player} />
-            <StyledDeleteButton onClick={removePlayer(player.id)}>
-              X
-            </StyledDeleteButton>
-          </TextIconHorizontalContainer>
-        ))}
-      </StyledTournamentPlayerListColumn>
-    </StyledTournamentPlayerList>
-  );
-};
+import { StyledBar, StyledContainer } from "./TournamentPlayers.styled";
 
 export const TournamentPlayers = () => {
   const { id: tournamentId } = useParams();
   const [searchQuery, setSearchQuery] = useState("");
   let timeout = useRef<ReturnType<typeof setTimeout>>();
+  const { show } = useToast();
+
+  const [{ data: tournamentPlayersData }] = useQuery<TournamentQueryResponse>({
+    query: TOURNAMENT_PLAYERS_QUERY,
+    variables: { id: Number(tournamentId) },
+  });
+
+  const [tournamentPlayers, setTournamentPlayers] = useState<Player[]>(
+    () => tournamentPlayersData?.tournament.players || []
+  );
+  const playersCount = useMemo(
+    () => tournamentPlayers.length,
+    [tournamentPlayers]
+  );
+
+  const dialogRef = useRef<HTMLDialogElement>(null);
+  const formRef = useRef<HTMLFormElement>(null);
+
+  const bulkPlayerDialogRef = useRef<HTMLDialogElement>(null);
+  const bulkPlayerFormRef = useRef<HTMLFormElement>(null);
 
   const [{ data }, refetch] = useQuery<
     PlayersQueryResult,
@@ -128,11 +63,6 @@ export const TournamentPlayers = () => {
   >({
     query: PLAYERS_QUERY,
     variables: { searchQuery },
-  });
-
-  const [{ data: tournamentPlayersData }] = useQuery<TournamentQueryResponse>({
-    query: TOURNAMENT_PLAYERS_QUERY,
-    variables: { id: Number(tournamentId) },
   });
 
   const [, createTournamentPlayers] = useMutation<
@@ -144,6 +74,11 @@ export const TournamentPlayers = () => {
     CreateTournamentPlayerResult,
     CreateTournamentPlayerByNameVariables
   >(CREATE_TOURNAMENT_PLAYER_BY_NAME);
+
+  const [, createPlayer] = useMutation<
+    CreatePlayerResult,
+    CreatePlayerVariables
+  >(CREATE_PLAYER_QUERY);
 
   const onChangeSearchInput = useCallback(
     (event: ChangeEvent<HTMLInputElement>) => {
@@ -157,14 +92,6 @@ export const TournamentPlayers = () => {
     [setSearchQuery]
   );
 
-  const [tournamentPlayers, setTournamentPlayers] = useState<Player[]>(
-    () => tournamentPlayersData?.tournament.players || []
-  );
-  const playersCount = useMemo(
-    () => tournamentPlayers.length,
-    [tournamentPlayers]
-  );
-
   const onAdd = useCallback(({ id, name, region, slug }: Player) => {
     setTournamentPlayers((players) => {
       const allPlayers = [...players, { id, name, region, slug }];
@@ -175,7 +102,6 @@ export const TournamentPlayers = () => {
         .sort((a, b) => a.name.localeCompare(b.name));
     });
   }, []);
-  const { show } = useToast();
 
   const onSave = useCallback(async () => {
     const result = await createTournamentPlayers({
@@ -188,27 +114,19 @@ export const TournamentPlayers = () => {
     show();
   }, [createTournamentPlayers, tournamentId, tournamentPlayers, show]);
 
-  const [, createPlayer] = useMutation<
-    CreatePlayerResult,
-    CreatePlayerVariables
-  >(CREATE_PLAYER_QUERY);
-
-  const dialogRef = useRef<HTMLDialogElement>(null);
-  const formRef = useRef<HTMLFormElement>(null);
-
-  const bulkPlayerDialogRef = useRef<HTMLDialogElement>(null);
-  const bulkPlayerFormRef = useRef<HTMLFormElement>(null);
-
-  const onSubmit = async (player: Omit<Player, "id" | "playerStats">) => {
-    const result = await createPlayer(player);
-    if (result.error) {
-      return alert(result.error);
-    }
-    show();
-    formRef.current?.reset();
-    dialogRef.current?.close();
-    refetch();
-  };
+  const onSubmit = useCallback(
+    async (player: Omit<Player, "id" | "playerStats">) => {
+      const result = await createPlayer(player);
+      if (result.error) {
+        return alert(result.error);
+      }
+      show();
+      formRef.current?.reset();
+      dialogRef.current?.close();
+      refetch();
+    },
+    [createPlayer, refetch, show]
+  );
 
   const onSubmitBulkPlayer = useCallback(
     async ({ playerNames }: { playerNames: string }) => {
@@ -251,7 +169,7 @@ export const TournamentPlayers = () => {
       <StyledLeftSide>
         <StyledBar>
           <SearchInput
-            placeholder="Search Players"
+            placeholder="Search players"
             onChange={onChangeSearchInput}
           />
           <ProTFTButton onClick={onClickNewPlayer}>New Player</ProTFTButton>

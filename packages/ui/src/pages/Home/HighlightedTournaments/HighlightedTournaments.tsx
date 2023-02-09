@@ -1,11 +1,9 @@
-import React from "react";
 import { Logo } from "../../../components/Logo/Logo";
 import {
   StyledContainer,
   StyledTournamentTitle,
 } from "./HighlightedTournaments.styled";
 import { ProTFTButton } from "../../../components/Button/Button";
-import { colors } from "../../../design/colors";
 import { Link } from "react-router-dom";
 
 export const HighlightedTournaments = () => {
@@ -14,7 +12,7 @@ export const HighlightedTournaments = () => {
       <Logo width={150} height={83} />
       <StyledTournamentTitle>Jade Cup</StyledTournamentTitle>
       <Link to={"/tournaments/dragonlands-na-jade-cup"}>
-        <ProTFTButton textColor={colors.otherBlack}>Check out</ProTFTButton>
+        <ProTFTButton>Check out</ProTFTButton>
       </Link>
     </StyledContainer>
   );

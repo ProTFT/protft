@@ -40,8 +40,7 @@ export const CREATE_RESULTS_BY_LOBBY_GROUP_MUTATION = gql`
     $results: [CreateLobbyGroupResults!]!
   ) {
     createLobbyGroupResult(lobbyGroupId: $lobbyGroupId, results: $results) {
-      result
-      error
+      roundId
     }
   }
 `;

@@ -11,6 +11,9 @@ import { PlayerList } from "./PlayerList/PlayerList";
 
 export const AdminPlayers = () => {
   const [searchQuery, setSearchQuery] = useState("");
+  const { show } = useToast();
+  const dialogRef = useRef<HTMLDialogElement>(null);
+  const formRef = useRef<HTMLFormElement>(null);
 
   const onBulkAdd = useCallback(async (file: FileList, dryRun: boolean) => {
     if (!file?.item(0)) {
@@ -22,8 +25,6 @@ export const AdminPlayers = () => {
     const response = await client.postForm("/players/uploadBulk", formData);
     return response;
   }, []);
-
-  const { show } = useToast();
 
   const onSubmit = useCallback(
     async ({ file, dryRun }: { file: FileList; dryRun: boolean }) => {
@@ -44,9 +45,6 @@ export const AdminPlayers = () => {
   const onClickAddBulkPlayer = useCallback(() => {
     dialogRef.current?.showModal();
   }, []);
-
-  const dialogRef = useRef<HTMLDialogElement>(null);
-  const formRef = useRef<HTMLFormElement>(null);
 
   return (
     <StyledContainer>

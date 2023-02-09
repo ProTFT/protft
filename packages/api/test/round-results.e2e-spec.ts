@@ -29,12 +29,14 @@ const mockPlayerWithStats = [
   {
     player: {
       id: 1,
+      slug: "test",
     },
     averagePosition: 2.8,
   },
   {
     player: {
       id: 2,
+      slug: "test",
     },
     averagePosition: 3,
   },
@@ -124,6 +126,7 @@ describe("Round Result (e2e)", () => {
             playerStats {
               player {
                 id
+                slug
               }
               averagePosition
             }

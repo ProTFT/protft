@@ -1,4 +1,4 @@
-import { Repository } from "typeorm";
+import { In, Repository } from "typeorm";
 import {
   CreateManyLobbyPlayerInfoArgs,
   CreateOneLobbyPlayerInfoArgs,
@@ -8,13 +8,34 @@ import { LobbyPlayerInfosService } from "./lobby-player-infos.service";
 
 describe("LobbyPlayerInfos Service", () => {
   let service: LobbyPlayerInfosService;
+  let lobbyPlayerInfoRepository: Repository<LobbyPlayerInfo>;
   const mockId = 1;
-  const lobbyPlayerInfoRepository = {
-    save: jest.fn(),
-  } as unknown as Repository<LobbyPlayerInfo>;
+  const existingPlayers = [
+    {
+      lobbyId: 1,
+      playerId: 10,
+    },
+    {
+      lobbyId: 1,
+      playerId: 11,
+    },
+    {
+      lobbyId: 1,
+      playerId: 12,
+    },
+  ];
 
   beforeEach(async () => {
+    lobbyPlayerInfoRepository = {
+      save: jest.fn(),
+      find: jest.fn().mockResolvedValue(existingPlayers),
+      delete: jest.fn(),
+    } as unknown as Repository<LobbyPlayerInfo>;
     service = new LobbyPlayerInfosService(lobbyPlayerInfoRepository);
+  });
+
+  afterEach(() => {
+    jest.resetAllMocks();
   });
 
   it("should be defined", () => {
@@ -40,12 +61,25 @@ describe("LobbyPlayerInfos Service", () => {
       expect(lobbyPlayerInfoRepository.save).toHaveBeenCalled();
     });
 
-    it("creating from consolidated object, should call repository", async () => {
+    it("creating from consolidated object, should consider already created", async () => {
       await service.createManyLobbyPlayersFromGroupedData({
         lobbyId: mockId,
-        playerIds: [1, 2, 3],
+        playerIds: [10, 13],
       } as CreateManyLobbyPlayerInfoArgs);
-      expect(lobbyPlayerInfoRepository.save).toHaveBeenCalled();
+      expect(lobbyPlayerInfoRepository.delete).toHaveBeenCalledWith(
+        expect.objectContaining({
+          lobbyId: mockId,
+          playerId: In([11, 12]),
+        }),
+      );
+      expect(lobbyPlayerInfoRepository.save).toHaveBeenCalledWith(
+        expect.arrayContaining([
+          {
+            lobbyId: mockId,
+            playerId: 13,
+          },
+        ]),
+      );
     });
   });
 });

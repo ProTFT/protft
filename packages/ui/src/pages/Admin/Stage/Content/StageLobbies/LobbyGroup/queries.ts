@@ -6,7 +6,7 @@ export interface CreatePlayerLobbyGroupResult {
 }
 
 export type CreatePlayerLobbyGroupVariables = {
-  players: CreatePlayerLobbyVariables[];
+  lobbies: CreatePlayerLobbyVariables[];
 };
 
 type CreatePlayerLobbyVariables = {
@@ -15,8 +15,8 @@ type CreatePlayerLobbyVariables = {
 };
 
 export const CREATE_LOBBY_PLAYERS = gql`
-  mutation createLobbyPlayers($players: [CreatePlayerLobbyArgs!]!) {
-    createLobbyPlayers(players: $players) {
+  mutation createLobbyPlayers($lobbies: [CreatePlayerLobbyArgs!]!) {
+    createLobbyPlayers(lobbies: $lobbies) {
       id
     }
   }

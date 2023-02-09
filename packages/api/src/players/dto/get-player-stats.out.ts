@@ -1,4 +1,4 @@
-import { Field, Float, Int, ObjectType } from "@nestjs/graphql";
+import { Field, ObjectType } from "@nestjs/graphql";
 import { Player, PlayerCalculatedStats } from "../player.entity";
 
 @ObjectType()

@@ -114,6 +114,7 @@ describe("TournamentsService", () => {
           where: expect.objectContaining({
             name: expect.anything(),
             endDate: expect.anything(),
+            visibility: true,
           }),
           order: expect.objectContaining({
             startDate: "DESC",
@@ -132,6 +133,7 @@ describe("TournamentsService", () => {
           where: expect.objectContaining({
             startDate: expect.anything(),
             endDate: expect.anything(),
+            visibility: true,
           }),
           order: expect.objectContaining({
             startDate: "DESC",
@@ -150,6 +152,7 @@ describe("TournamentsService", () => {
           where: expect.objectContaining({
             name: expect.anything(),
             startDate: expect.anything(),
+            visibility: true,
           }),
           order: expect.objectContaining({
             startDate: "ASC",

@@ -1,8 +1,8 @@
 import { useCallback, useEffect, useState } from "react";
 import { useLocation, useNavigate } from "react-router-dom";
+import { ProTFTButton } from "../../../components/Button/Button";
 import { useAuth } from "../../../hooks/useAuth";
 import {
-  StyledButton,
   StyledContainer,
   StyledInput,
   StyledLoginForm,
@@ -58,7 +58,7 @@ export const Login = () => {
           type="password"
           onChange={onChange("password")}
         />
-        <StyledButton onClick={handleLogin(payload)}>Login</StyledButton>
+        <ProTFTButton onClick={handleLogin(payload)}>Login</ProTFTButton>
       </StyledLoginForm>
     </StyledContainer>
   );

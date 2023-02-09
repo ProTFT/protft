@@ -11,4 +11,5 @@ export interface PlayersStatsRaw extends PlayerStatsRaw {
   name: string;
   region: string;
   country: string;
+  slug: string;
 }

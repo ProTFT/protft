@@ -1,13 +1,16 @@
-import React, { useCallback, useRef } from "react";
+import { useCallback, useRef } from "react";
 import { Link } from "react-router-dom";
 import { useMutation, useQuery } from "urql";
+import { ProTFTButton } from "../../../components/Button/Button";
 import { Tournament } from "../../../graphql/schema";
 import { TournamentListItem } from "../../Tournaments/TournamentListItem/TournamentListItem";
-import { StyledTournamentList } from "../../Tournaments/Tournaments.styled";
 import { StyledAdminBar } from "../Components/AdminBar/AdminBar.styled";
 import { useToast } from "../Components/Toast/Toast";
 import { TournamentDialog } from "../Components/TournamentDialog/TournamentDialog";
-import { StyledButton, StyledContainer } from "./AdminHome.styled";
+import {
+  StyledContainer,
+  StyledTournamentList,
+} from "./AdminTournaments.styled";
 import {
   CreateTournamentResult,
   CreateTournamentVariables,
@@ -17,13 +20,15 @@ import {
   TOURNAMENTS_QUERY,
 } from "./queries";
 
-export const AdminHome = () => {
-  const searchQuery = "";
+export const ADMIN_TOURNAMENTS_PATH = "/admin/tournaments";
+
+export const AdminTournaments = () => {
+  const dialogRef = useRef<HTMLDialogElement>(null);
+  const formRef = useRef<HTMLFormElement>(null);
+  const { show } = useToast();
+
   const [{ data }, refetch] = useQuery<TournamentsQueryResult>({
     query: TOURNAMENTS_QUERY,
-    variables: {
-      searchQuery,
-    },
   });
 
   const [, createTournament] = useMutation<
@@ -32,10 +37,6 @@ export const AdminHome = () => {
   >(CREATE_TOURNAMENT_QUERY);
 
   const [, createPlayerSlugs] = useMutation(CREATE_PLAYER_SLUGS_MUTATION);
-
-  const dialogRef = useRef<HTMLDialogElement>(null);
-  const formRef = useRef<HTMLFormElement>(null);
-  const { show } = useToast();
 
   const onSubmit = async (tournament: Omit<Tournament, "id" | "set">) => {
     const result = await createTournament(tournament);
@@ -56,6 +57,10 @@ export const AdminHome = () => {
     show();
   }, [createPlayerSlugs, show]);
 
+  const onAddTournament = useCallback(() => {
+    dialogRef.current?.showModal();
+  }, []);
+
   return (
     <StyledContainer>
       <TournamentDialog
@@ -64,16 +69,14 @@ export const AdminHome = () => {
         onSubmit={onSubmit}
       />
       <StyledAdminBar>
-        <StyledButton onClick={onCreatePlayerSlugs}>
+        <ProTFTButton onClick={onCreatePlayerSlugs}>
           Create Player Slugs
-        </StyledButton>
-        <StyledButton onClick={() => dialogRef.current?.showModal()}>
-          Add Tournament
-        </StyledButton>
+        </ProTFTButton>
+        <ProTFTButton onClick={onAddTournament}>Add Tournament</ProTFTButton>
       </StyledAdminBar>
       <StyledTournamentList>
         {data?.adminTournaments.map((tournament) => (
-          <Link key={tournament.id} to={`${tournament.id}`}>
+          <Link key={tournament.id} to={`${tournament.id}/players`}>
             <TournamentListItem tournament={tournament} />
           </Link>
         ))}

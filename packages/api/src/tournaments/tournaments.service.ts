@@ -52,6 +52,7 @@ export class TournamentsService {
       where: {
         endDate: Raw(beforeToday),
         ...searchQueryFilter,
+        visibility: true,
       },
       order: { startDate: "DESC" },
     });
@@ -62,6 +63,7 @@ export class TournamentsService {
       where: {
         startDate: Raw(beforeOrToday),
         endDate: Raw(afterOrToday),
+        visibility: true,
       },
       order: { startDate: "DESC" },
     });
@@ -73,6 +75,7 @@ export class TournamentsService {
       where: {
         startDate: Raw(afterToday),
         ...searchQueryFilter,
+        visibility: true,
       },
       order: { startDate: "ASC" },
     });

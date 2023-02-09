@@ -340,6 +340,7 @@ describe("RoundResults service", () => {
             id: 1,
             name: "name",
             region: "region",
+            slug: "slug",
           },
           averagePosition: 0,
           eigthCount: 0,
@@ -366,25 +367,10 @@ describe("RoundResults service", () => {
     });
 
     it("if pagination is passed, should apply", async () => {
-      const response = await service.playerStats({
+      await service.playerStats({
         take: 23,
         skip: 40,
       });
-      expect(response).toStrictEqual([
-        {
-          player: {
-            country: "country",
-            id: 1,
-            name: "name",
-            region: "region",
-          },
-          averagePosition: 0,
-          eigthCount: 0,
-          topFourCount: 0,
-          topOneCount: 0,
-          totalGames: 0,
-        },
-      ]);
 
       expect(fakeQueryBuilder.takeSpy).toBe(23);
       expect(fakeQueryBuilder.skipSpy).toBe(40);

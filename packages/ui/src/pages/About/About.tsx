@@ -54,8 +54,7 @@ export const About = () => {
         </a>
         <StyledText>
           Pro TFT is just a hobby for now and I pay for all the infrastructure
-          myself. Honestly maybe it will just flop or maybe it will get big, but
-          if you want to show your support I have a{" "}
+          myself. If you want to show your support I have a{" "}
           <StyledLink href="https://ko-fi.com/protft" target={"_blank"}>
             Ko-fi.
           </StyledLink>

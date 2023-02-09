@@ -1,4 +1,5 @@
 import styled from "styled-components";
+import { TITLE_FONT_FAMILY } from "../../../design/fonts/Fonts";
 
 export const StyledContainer = styled.div`
   width: 100%;
@@ -18,7 +19,7 @@ export const StyledContainer = styled.div`
 `;
 
 export const StyledTournamentTitle = styled.p`
-  font-family: VTF Redzone Classic;
+  ${TITLE_FONT_FAMILY}
   font-weight: 400;
   font-size: 48px;
   line-height: 38px;

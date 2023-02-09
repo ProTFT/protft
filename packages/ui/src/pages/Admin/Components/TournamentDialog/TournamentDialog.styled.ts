@@ -1,7 +1,7 @@
 import styled from "styled-components";
+import { ProTFTButton } from "../../../../components/Button/Button";
 import { StyledHorizontalContainer } from "../../../../components/Layout/HorizontalContainer/HorizontalContainer.styled";
 import { colors } from "../../../../design/colors";
-import { StyledButton } from "../../Home/AdminHome.styled";
 
 export const StyledAddTournamentDialog = styled.dialog`
   background-color: ${colors.darkPurple};
@@ -9,7 +9,7 @@ export const StyledAddTournamentDialog = styled.dialog`
   border-radius: 5%;
 `;
 
-export const StyledFullWidthButton = styled(StyledButton)`
+export const StyledFullWidthButton = styled(ProTFTButton)`
   width: 100%;
 `;
 

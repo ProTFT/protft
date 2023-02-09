@@ -1,5 +1,5 @@
 import { TournamentListItemSkeleton } from "../TournamentListItem/TournamentListItem.skeleton";
-import { StyledTournamentList } from "../Tournaments.styled";
+import { StyledTournamentList } from "./TournamentBaseList.styled";
 
 export const TournamentListSkeleton = () => {
   return (

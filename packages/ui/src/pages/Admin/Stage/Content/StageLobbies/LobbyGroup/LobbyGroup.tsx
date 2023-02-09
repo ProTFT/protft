@@ -4,7 +4,6 @@ import { ProTFTButton } from "../../../../../../components/Button/Button";
 import { BigArrowLeft } from "../../../../../../design/icons/BigArrowLeft";
 import { BigArrowRight } from "../../../../../../design/icons/BigArrowRight";
 import { Player } from "../../../../../../graphql/schema";
-import { StyledTitle } from "../../../../Tournament/Content/Content.styled";
 import { LobbyContainer } from "../LobbyContainer/LobbyContainer";
 import { GenerateLobbies } from "./GenerateLobbies";
 import {
@@ -25,6 +24,7 @@ import {
   CREATE_LOBBY_PLAYERS,
 } from "./queries";
 import { useToast } from "../../../../Components/Toast/Toast";
+import { StyledTitle } from "../../../../Components/Title/Title.styled";
 
 interface Props {
   hasLobbieGroups: boolean;
@@ -49,6 +49,7 @@ export const LobbyGroup = ({
   onChangeSelectedPlayers,
   lobbyGroupName,
 }: Props) => {
+  const { show } = useToast();
   const [{ data: lobbyPlayersData }] = useQuery<
     LobbyPlayersQueryResult,
     LobbyPlayersQueryVariables
@@ -92,11 +93,9 @@ export const LobbyGroup = ({
     onChangeSelectedPlayers(playerIds);
   }, [allLobbiesWithPlayers, onChangeSelectedPlayers]);
 
-  const { show } = useToast();
-
   const onSave = useCallback(async () => {
     const result = await createPlayerLobbyGroup({
-      players: allLobbiesWithPlayers.map((l) => ({
+      lobbies: allLobbiesWithPlayers.map((l) => ({
         lobbyId: l.lobbyId,
         playerIds: l.players.map((p) => p.id),
       })),
