@@ -8,6 +8,7 @@ export class JwtStrategy extends PassportStrategy(Strategy) {
   constructor(private configService: ConfigService) {
     super({
       jwtFromRequest: ExtractJwt.fromExtractors([
+        /* istanbul ignore next */
         (req) => {
           return req.signedCookies && req.signedCookies["auth"];
         },

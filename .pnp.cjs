@@ -14939,6 +14939,15 @@ function $$SETUP_STATE(hydrateRuntimeState, basePath) {
           "linkType": "HARD"\
         }]\
       ]],\
+      ["country-code-lookup", [\
+        ["npm:0.0.22", {\
+          "packageLocation": "./.yarn/cache/country-code-lookup-npm-0.0.22-6fdf0b7cdb-d13c623601.zip/node_modules/country-code-lookup/",\
+          "packageDependencies": [\
+            ["country-code-lookup", "npm:0.0.22"]\
+          ],\
+          "linkType": "HARD"\
+        }]\
+      ]],\
       ["cp-file", [\
         ["npm:7.0.0", {\
           "packageLocation": "./.yarn/cache/cp-file-npm-7.0.0-f8cf3451db-dd60ed8d86.zip/node_modules/cp-file/",\
@@ -26712,6 +26721,7 @@ function $$SETUP_STATE(hydrateRuntimeState, basePath) {
             ["apollo-server-express", "virtual:bac4008d35a304375ff1ab4baeb61323523d963ad78fe9677e36b15d15f89064a355ca0cb83f2c600ae38e797c7f86a24ea965c3931d6b33889f658aa9914d2c#npm:3.8.1"],\
             ["bcrypt", "npm:5.1.0"],\
             ["cookie-parser", "npm:1.4.6"],\
+            ["country-code-lookup", "npm:0.0.22"],\
             ["eslint", "npm:8.16.0"],\
             ["eslint-config-prettier", "virtual:bac4008d35a304375ff1ab4baeb61323523d963ad78fe9677e36b15d15f89064a355ca0cb83f2c600ae38e797c7f86a24ea965c3931d6b33889f658aa9914d2c#npm:8.5.0"],\
             ["eslint-plugin-prettier", "virtual:bac4008d35a304375ff1ab4baeb61323523d963ad78fe9677e36b15d15f89064a355ca0cb83f2c600ae38e797c7f86a24ea965c3931d6b33889f658aa9914d2c#npm:4.0.0"],\
@@ -26768,6 +26778,7 @@ function $$SETUP_STATE(hydrateRuntimeState, basePath) {
             ["@types/styled-components", "npm:5.1.26"],\
             ["@urql/exchange-graphcache", "virtual:258f67bfb17ac70f76e552bac762bf306bdba6124c2f4eb9750027eafe0ae10f09ef2722b1c3b436c5e4260ebaad0c93cc4998d2525f2ce7b6d70ee4be5420b2#npm:5.0.0"],\
             ["axios", "npm:1.2.2"],\
+            ["country-code-lookup", "npm:0.0.22"],\
             ["eslint-config-react-app", "virtual:258f67bfb17ac70f76e552bac762bf306bdba6124c2f4eb9750027eafe0ae10f09ef2722b1c3b436c5e4260ebaad0c93cc4998d2525f2ce7b6d70ee4be5420b2#npm:7.0.1"],\
             ["framer-motion", "virtual:258f67bfb17ac70f76e552bac762bf306bdba6124c2f4eb9750027eafe0ae10f09ef2722b1c3b436c5e4260ebaad0c93cc4998d2525f2ce7b6d70ee4be5420b2#npm:6.3.6"],\
             ["graphql", "npm:16.5.0"],\

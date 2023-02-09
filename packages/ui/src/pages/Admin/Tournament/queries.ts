@@ -98,21 +98,3 @@ export interface Results {
   positions: number[];
   points: number[];
 }
-
-export interface ResultsQueryResponse {
-  resultsByStage: Results[];
-}
-
-export const RESULTS_QUERY = gql`
-  query ($stageId: Int!) {
-    resultsByStage(stageId: $stageId) {
-      player {
-        id
-        name
-        region
-      }
-      positions
-      points
-    }
-  }
-`;

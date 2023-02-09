@@ -9364,6 +9364,13 @@ __metadata:
   languageName: node
   linkType: hard
 
+"country-code-lookup@npm:^0.0.22":
+  version: 0.0.22
+  resolution: "country-code-lookup@npm:0.0.22"
+  checksum: d13c6236016de264ca3d8260d2a733a769098729e8fb03c5dcb38a386b771b8d5df76a8b578f7d188b2603436afd48572635e6bb50c8cdbf6cd73719eeab0e48
+  languageName: node
+  linkType: hard
+
 "cp-file@npm:^7.0.0":
   version: 7.0.0
   resolution: "cp-file@npm:7.0.0"
@@ -18794,6 +18801,7 @@ __metadata:
     apollo-server-express: ^3.8.1
     bcrypt: ^5.1.0
     cookie-parser: ^1.4.6
+    country-code-lookup: ^0.0.22
     eslint: ^8.0.1
     eslint-config-prettier: ^8.3.0
     eslint-plugin-prettier: ^4.0.0
@@ -18848,6 +18856,7 @@ __metadata:
     "@types/styled-components": ^5.1.26
     "@urql/exchange-graphcache": ^5.0.0
     axios: ^1.2.2
+    country-code-lookup: ^0.0.22
     eslint-config-react-app: ^7.0.1
     framer-motion: ^6.3.4
     graphql: ^16.5.0

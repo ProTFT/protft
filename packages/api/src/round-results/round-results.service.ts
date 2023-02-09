@@ -6,25 +6,23 @@ import { PlayersStatsRaw, PlayerStatsRaw } from "./dto/get-player-stats.raw";
 import { RoundResultsRaw } from "./dto/get-results.raw";
 import { GetStatsArgs } from "./dto/get-stats.args";
 import { RoundResult } from "./round-result.entity";
-import chunk = require("lodash.chunk");
 import { LobbyPlayerInfosService } from "../lobby-player-infos/lobby-player-infos.service";
-import { Round } from "../rounds/round.entity";
-
-interface BaseFileLine {
-  playerId: number;
-  playerPositions: number[];
-}
-
-interface FileLineWithLobby extends BaseFileLine {
-  lobbyId: number;
-}
-
-interface FileLineWithLobbyAndRound {
-  playerId: number;
-  lobbyId: number;
-  roundId: number;
-  position: number;
-}
+import {
+  addPastPoints,
+  formatLobbyGroupResults,
+  fromRawToConsolidatedRoundResults,
+} from "./round-result.adapter";
+import { SortingMethods, sortResults } from "./round-result.logic";
+import { PlayerWithStats } from "../players/dto/get-player-stats.out";
+import { formatStats } from "../players/players.adapter";
+import { CreateLobbyGroupResultArgs } from "./dto/create-lobby-group-result.args";
+import { LobbiesService } from "../lobbies/lobbies.service";
+import { parseFileString } from "../lib/FileParser";
+import {
+  buildResults,
+  createRoundResultEntries,
+  extractLobbyPlayerEntries,
+} from "./bulk-creation.logic";
 
 interface FileLineWithPlayerLobby {
   lobbyPlayerId: number;
@@ -39,19 +37,31 @@ export class RoundResultsService {
     private roundResultsRepository: Repository<RoundResult>,
     private stagesService: StagesService,
     private lobbyPlayerInfosService: LobbyPlayerInfosService,
+    private lobbiesService: LobbiesService,
   ) {}
 
-  public createResults(results: RoundResult[]): Promise<RoundResult[]> {
-    return this.roundResultsRepository.save(results);
+  public async createResults({
+    lobbyGroupId,
+    results,
+  }: CreateLobbyGroupResultArgs): Promise<RoundResult[]> {
+    const { roundsPlayed, sequence, stageId } =
+      await this.lobbiesService.findOneLobbyGroup(lobbyGroupId);
+    const { rounds } = await this.stagesService.findOne(stageId, ["rounds"]);
+    const positionInputs = formatLobbyGroupResults(
+      results,
+      roundsPlayed,
+      sequence,
+      rounds,
+    );
+    return this.roundResultsRepository.save(positionInputs);
   }
 
   public async createBulk(
     fileString: string,
     stageId: number,
-    lobbyGroupId?: number,
   ): Promise<RoundResult[]> {
-    const [fileHeader, ...lines] = fileString.replace(/\r/g, "").split("\n");
-    const [player, position] = fileHeader.split(",");
+    const { titles, lines } = parseFileString(fileString);
+    const [player, position] = titles;
     if (player !== "Player" || position !== "Position") {
       throw new BadRequestException(`${player} - ${position}`);
     }
@@ -74,102 +84,30 @@ export class RoundResultsService {
       );
     }
 
-    if (
-      lines.length / allStagePlayers.length !== allStageLobbyGroups.length &&
-      !lobbyGroupId
-    ) {
+    if (lines.length / allStagePlayers.length !== allStageLobbyGroups.length) {
       throw new BadRequestException(
         "Number of lines does not match number of lobby groups",
       );
     }
 
-    const payloadWithPlayerId: BaseFileLine[] = lines.map((line) => {
-      const [playerName, ...positions] = line.split(",");
-      const player = allStagePlayers.find(
-        (p) => p.player.name.toLowerCase() === playerName.toLowerCase(),
-      );
-      if (!player) {
-        console.log(playerName);
-      }
-      return {
-        playerId: player.player.id,
-        playerPositions: positions.map((p) => Number(p)),
-      };
-    });
-
-    let count = 0;
-    const roundsPerLobbyGroup = allStageLobbyGroups
-      .sort((a, b) => a.sequence - b.sequence)
-      .reduce<{
-        [lobbyGroupId: number]: Round[];
-      }>((prev, curr) => {
-        const roundCount = curr.roundsPlayed;
-        const result = {
-          [curr.id]: allStageRounds.slice(count, count + roundCount),
-        };
-        count += roundCount;
-        return {
-          ...prev,
-          ...result,
-        };
-      }, {});
-
-    const lobbyToRoundMap = allStageLobbies.reduce<{
-      [lobbyId: number]: number[];
-    }>(
-      (prev, curr) => ({
-        ...prev,
-        [curr.id]: roundsPerLobbyGroup[curr.lobbyGroupId].map((r) => r.id),
-      }),
-      {},
+    const resultEntries = buildResults(
+      lines,
+      allStagePlayers,
+      allStageLobbyGroups,
+      allStageRounds,
+      allStageLobbies,
     );
 
-    const resultsByLobby = chunk(payloadWithPlayerId, 8);
+    const lobbyPlayerEntries = extractLobbyPlayerEntries(resultEntries);
 
-    const payloadWithPlayerAndLobby = resultsByLobby.reduce<
-      FileLineWithLobby[]
-    >(
-      (prev, curr, index) => [
-        ...prev,
-        ...curr.map((a) => ({
-          playerId: a.playerId,
-          playerPositions: a.playerPositions,
-          lobbyId: allStageLobbies[index].id,
-        })),
-      ],
-      [],
-    );
-
-    const finalSimplePayload = payloadWithPlayerAndLobby.reduce<
-      FileLineWithLobbyAndRound[]
-    >((prev, curr) => {
-      const newEntries: FileLineWithLobbyAndRound[] = curr.playerPositions.map(
-        (position, index) => ({
-          playerId: curr.playerId,
-          lobbyId: curr.lobbyId,
-          position,
-          roundId: lobbyToRoundMap[curr.lobbyId][index],
-        }),
-      );
-      return [...prev, ...newEntries];
-    }, []);
-
-    const playerLobbyCreationResult =
+    const lobbyPlayers =
       await this.lobbyPlayerInfosService.createManyLobbyPlayers(
-        finalSimplePayload.map((p) => ({
-          playerId: p.playerId,
-          lobbyId: p.lobbyId,
-        })),
+        lobbyPlayerEntries,
       );
 
-    const finalPayload: FileLineWithPlayerLobby[] = finalSimplePayload.map(
-      (p) => ({
-        lobbyPlayerId: playerLobbyCreationResult.find(
-          (r) => r.lobbyId === p.lobbyId && r.playerId === p.playerId,
-        ).id,
-        roundId: p.roundId,
-        position: p.position,
-      }),
+    const finalPayload: FileLineWithPlayerLobby[] = createRoundResultEntries(
+      resultEntries,
+      lobbyPlayers,
     );
 
     const results = this.roundResultsRepository.save(finalPayload);
@@ -177,7 +115,33 @@ export class RoundResultsService {
     return results;
   }
 
-  public findResultsByStage(stageId: number): Promise<RoundResultsRaw[]> {
+  public async resultsByStage(stageId: number) {
+    const { tiebreakers, tournamentId, sequence } =
+      await this.stagesService.findOne(stageId);
+    const results = await this.findResultsByStage(stageId);
+    const formattedResults = fromRawToConsolidatedRoundResults(results);
+    if (tiebreakers?.includes(SortingMethods.TOTAL_EVENT_POINTS)) {
+      const allTournamentStages = await this.stagesService.findAllByTournament(
+        tournamentId,
+      );
+      const previousStages = allTournamentStages.filter(
+        (s) => s.sequence < sequence,
+      );
+      if (previousStages.length) {
+        const previousStagesResult = await Promise.all(
+          previousStages.map((stage) => this.findResultsByStage(stage.id)),
+        );
+        const resultsWithPast = addPastPoints(
+          formattedResults,
+          previousStagesResult,
+        );
+        return sortResults(resultsWithPast, tiebreakers);
+      }
+    }
+    return sortResults(formattedResults, tiebreakers);
+  }
+
+  private findResultsByStage(stageId: number): Promise<RoundResultsRaw[]> {
     return this.roundResultsRepository.manager
       .createQueryBuilder()
       .select(
@@ -206,7 +170,12 @@ export class RoundResultsService {
       .getRawMany();
   }
 
-  public findResultsByLobbyGroup(
+  public async resultsByLobbyGroup(lobbyGroupId: number) {
+    const results = await this.findResultsByLobbyGroup(lobbyGroupId);
+    return fromRawToConsolidatedRoundResults(results);
+  }
+
+  private findResultsByLobbyGroup(
     lobbyGroupId: number,
   ): Promise<RoundResultsRaw[]> {
     return this.roundResultsRepository.manager
@@ -237,7 +206,24 @@ export class RoundResultsService {
       .getRawMany();
   }
 
-  public findStats({
+  public async playerStats(args: GetStatsArgs) {
+    const stats = await this.findStats(args);
+    const formatted: PlayerWithStats[] = stats.map(
+      ({ id, name, region, country, slug, ...stats }) => ({
+        player: {
+          id,
+          name,
+          region,
+          country,
+          slug,
+        },
+        ...formatStats(stats),
+      }),
+    );
+    return formatted;
+  }
+
+  private findStats({
     setId,
     skip,
     take = 10,
@@ -259,6 +245,7 @@ export class RoundResultsService {
           .addSelect("name")
           .addSelect("region")
           .addSelect("country")
+          .addSelect("slug")
           .from((rawSubquery) => {
             const baseQuery = this.getBaseStatsQuery(rawSubquery);
             let query = baseQuery

@@ -23,7 +23,6 @@ export const StyledPlayerTableContainer = styled(StyledVerticalContainer)`
 `;
 
 export const StyledPlayerTableHeader = styled.thead`
-  background-color: ${colors.yellow};
   font-family: Roboto;
   font-size: 15px;
   font-weight: 600;
@@ -32,7 +31,13 @@ export const StyledPlayerTableHeader = styled.thead`
   padding: 0.5rem;
 `;
 
-export const StyledPlayerTableHeaderData = styled.th<{ onClick?: () => void }>`
+export const StyledPlayerTableHeaderRow = styled.tr`
+  background-color: ${colors.yellow};
+`;
+
+export const StyledPlayerTableHeaderData = styled.th<{
+  onClick?: () => void;
+}>`
   ${({ onClick }) => `
     padding: 0.5rem;
     text-align: center;
@@ -46,22 +51,9 @@ export const StyledPlayerTable = styled.table`
   border-collapse: collapse;
   width: 100%;
 
-  tr:nth-child(odd) {
+  tr:nth-child(even):not(:first-child) {
     background-color: ${colors.dividerGray};
   }
-`;
-
-export const StyledPlayerRowData = styled.td<{ center?: boolean }>`
-  ${({ center = true }) => `
-    font-family: Roboto;
-    font-size: 15px;
-    font-weight: 600;
-    line-height: 25px;
-    letter-spacing: 0.1em;
-    padding: 0.5rem;
-    color: ${colors.white};
-    ${center && `text-align: center;`}
-  `}
 `;
 
 export const StyledStatsFilters = styled(StyledVerticalContainer)`

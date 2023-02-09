@@ -15,6 +15,8 @@ export function tournament({
   setId,
   set,
   stages,
+  slug,
+  visibility,
 }: TournamentGeneratorParams): Tournament {
   const randomId = Math.random() * 999;
   return {
@@ -29,5 +31,7 @@ export function tournament({
     setId: setId || randomId,
     set: set || genSet({}),
     stages: stages || [],
+    slug: slug || "",
+    visibility: visibility || false,
   };
 }

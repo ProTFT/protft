@@ -1,5 +1,4 @@
 import { Link, useParams } from "react-router-dom";
-import { StyledContainer } from "../Content.styled";
 import {
   CreateStageResult,
   CreateStageVariables,
@@ -18,45 +17,50 @@ import {
 } from "./TournamentStages.styled";
 import { StageCard } from "./StageCard/StageCard";
 import { useToast } from "../../../Components/Toast/Toast";
+import { StyledVerticalContainer } from "../../../../../components/Layout/VerticalContainer/VerticalContainer.styled";
 
 export const TournamentStages = () => {
   const { id: tournamentId } = useParams();
-  const [{ data }, refetch] = useQuery<TournamentStageQueryResponse>({
-    query: TOURNAMENT_STAGES_QUERY,
-    variables: { id: Number(tournamentId) },
-  });
-  const networkRefetch = useCallback(() => refetch(), [refetch]);
-
-  const [, createStage] = useMutation<CreateStageResult, CreateStageVariables>(
-    CREATE_STAGE_MUTATION
-  );
-
   const dialogRef = useRef<HTMLDialogElement>(null);
   const formRef = useRef<HTMLFormElement>(null);
 
   const { show } = useToast();
 
-  const onSubmit = async (stage: Omit<Stage, "id" | "rounds" | "lobbies">) => {
-    const result = await createStage({
-      ...stage,
-      tournamentId: Number(tournamentId),
-      isFinal: false,
-    });
-    if (result.error) {
-      return alert(result.error);
-    }
-    show();
-    formRef.current?.reset();
-    dialogRef.current?.close();
-    networkRefetch();
-  };
+  const [{ data }, refetch] = useQuery<TournamentStageQueryResponse>({
+    query: TOURNAMENT_STAGES_QUERY,
+    variables: { id: Number(tournamentId) },
+  });
+
+  const [, createStage] = useMutation<CreateStageResult, CreateStageVariables>(
+    CREATE_STAGE_MUTATION
+  );
+
+  const networkRefetch = useCallback(() => refetch(), [refetch]);
+
+  const onSubmit = useCallback(
+    async (stage: Omit<Stage, "id" | "rounds" | "lobbies">) => {
+      const result = await createStage({
+        ...stage,
+        tournamentId: Number(tournamentId),
+        isFinal: false,
+      });
+      if (result.error) {
+        return alert(result.error);
+      }
+      show();
+      formRef.current?.reset();
+      dialogRef.current?.close();
+      networkRefetch();
+    },
+    [createStage, networkRefetch, show, tournamentId]
+  );
 
   const onClickNewStage = useCallback(() => {
     dialogRef.current?.showModal();
   }, []);
 
   return (
-    <StyledContainer>
+    <StyledVerticalContainer>
       <StageDialog
         dialogRef={dialogRef}
         formRef={formRef}
@@ -70,12 +74,12 @@ export const TournamentStages = () => {
       <StyledStagesContainer>
         {data?.tournament.stages?.map((stage) => {
           return (
-            <Link key={stage.id} to={`${stage.id}`}>
+            <Link key={stage.id} to={`${stage.id}/players`}>
               <StageCard key={stage.id} stage={stage} />
             </Link>
           );
         })}
       </StyledStagesContainer>
-    </StyledContainer>
+    </StyledVerticalContainer>
   );
 };

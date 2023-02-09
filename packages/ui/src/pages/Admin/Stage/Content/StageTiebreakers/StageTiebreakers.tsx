@@ -3,6 +3,11 @@ import { useParams } from "react-router-dom";
 import { useQuery, useMutation } from "urql";
 import { ProTFTButton } from "../../../../../components/Button/Button";
 import { Tiebreaker } from "../../../../../graphql/schema";
+import { DeleteButton } from "../../../Components/DeleteButton/DeleteButton";
+import {
+  StyledLeftSide,
+  StyledRightSide,
+} from "../../../Components/Layout/TwoSided.styled";
 import { useToast } from "../../../Components/Toast/Toast";
 import {
   StageQueryResponse,
@@ -15,26 +20,25 @@ import {
 } from "./queries";
 import {
   StyledContainer,
-  StyledDeleteButton,
   StyledStageTiebreakerBar,
-  StyledStageTiebreakerContainer,
   StyledStageTiebreakerList,
-  StyledTiebreakerList,
   StyledTiebreakerListItem,
   StyledTitle,
 } from "./StageTiebreakers.styled";
 
 export const StageTiebreakers = () => {
   const { stageId } = useParams();
-  const [{ data }] = useQuery<TiebreakersQueryResult>({
-    query: TIEBREAKERS_QUERY,
-  });
+  const { show } = useToast();
 
   const [{ data: stageData }] = useQuery<StageQueryResponse>({
     query: STAGE_QUERY,
     variables: {
       id: Number(stageId),
     },
+  });
+
+  const [{ data }] = useQuery<TiebreakersQueryResult>({
+    query: TIEBREAKERS_QUERY,
   });
 
   const [, updateTiebreakers] = useMutation<
@@ -65,7 +69,7 @@ export const StageTiebreakers = () => {
     ) as { [id: number]: string };
   }, [data?.tiebreakers]);
 
-  const handleAddTiebreaker = useCallback(
+  const onAddTiebreaker = useCallback(
     (id: number) => () => {
       setLocalStageTiebreakers((current) => [...current, id]);
       setRemainingTiebreakers((current) =>
@@ -75,7 +79,7 @@ export const StageTiebreakers = () => {
     []
   );
 
-  const handleRemoveTiebreaker = useCallback(
+  const onRemoveTiebreaker = useCallback(
     (id: number) => () => {
       setLocalStageTiebreakers((current) => current.filter((i) => i !== id));
       setRemainingTiebreakers((current) => [
@@ -85,9 +89,8 @@ export const StageTiebreakers = () => {
     },
     [tiebreakerMapping]
   );
-  const { show } = useToast();
 
-  const handleSave = useCallback(async () => {
+  const onSave = useCallback(async () => {
     const result = await updateTiebreakers({
       id: Number(stageId),
       tiebreakers: localStageTiebreakers,
@@ -100,33 +103,31 @@ export const StageTiebreakers = () => {
 
   return (
     <StyledContainer>
-      <StyledTiebreakerList>
+      <StyledLeftSide>
         {remainingTiebreakers.map((tb) => (
           <StyledTiebreakerListItem
             clickable
             key={tb.id}
-            onClick={handleAddTiebreaker(tb.id)}
+            onClick={onAddTiebreaker(tb.id)}
           >
             {tb.description}
           </StyledTiebreakerListItem>
         ))}
-      </StyledTiebreakerList>
-      <StyledStageTiebreakerContainer>
+      </StyledLeftSide>
+      <StyledRightSide>
         <StyledStageTiebreakerBar>
           <StyledTitle>{`Stage Tiebreakers`}</StyledTitle>
-          <ProTFTButton onClick={handleSave}>Save</ProTFTButton>
+          <ProTFTButton onClick={onSave}>Save</ProTFTButton>
         </StyledStageTiebreakerBar>
         <StyledStageTiebreakerList>
           {localStageTiebreakers.map((id) => (
             <StyledTiebreakerListItem key={id}>
               {tiebreakerMapping[id]}
-              <StyledDeleteButton onClick={handleRemoveTiebreaker(id)}>
-                X
-              </StyledDeleteButton>
+              <DeleteButton onClick={onRemoveTiebreaker(id)} />
             </StyledTiebreakerListItem>
           ))}
         </StyledStageTiebreakerList>
-      </StyledStageTiebreakerContainer>
+      </StyledRightSide>
     </StyledContainer>
   );
 };

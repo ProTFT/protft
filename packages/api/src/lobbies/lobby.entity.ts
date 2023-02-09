@@ -36,7 +36,9 @@ export class Lobby {
   sequence: number;
 
   @Field(() => [Player])
-  @OneToMany(() => LobbyPlayerInfo, (lobbyPlayer) => lobbyPlayer.lobby)
+  @OneToMany(() => LobbyPlayerInfo, (lobbyPlayer) => lobbyPlayer.lobby, {
+    cascade: true,
+  })
   players: LobbyPlayerInfo[];
 
   @ManyToOne(() => Stage, (stage) => stage.id, {

@@ -8,20 +8,26 @@ import {
   UnauthorizedException,
   UseGuards,
 } from "@nestjs/common";
+import { ConfigService } from "@nestjs/config";
 import {
   Response as ExpressResponse,
   Request as ExpressRequest,
 } from "express";
-import { AuthService } from "./auth.service";
+import { AuthService, StrippedUser } from "./auth.service";
+import { CreateUserBodyDto } from "./dto/create-user.dto";
 import { JwtAuthGuard } from "./jwt-auth.guard";
 import { LocalAuthGuard } from "./local-auth.guard";
 
 @Controller("auth")
 export class AuthController {
-  constructor(private authService: AuthService) {}
+  constructor(
+    private authService: AuthService,
+    private configService: ConfigService,
+  ) {}
 
   @Get("login")
   @UseGuards(JwtAuthGuard)
+  /* istanbul ignore next */
   getAuthenticated(@Response() res: ExpressResponse) {
     return res.status(202).send();
   }
@@ -29,7 +35,7 @@ export class AuthController {
   @UseGuards(LocalAuthGuard)
   @Post("login")
   async login(
-    @Request() req: ExpressRequest & { user: any },
+    @Request() req: ExpressRequest & { user: StrippedUser },
     @Response() res: ExpressResponse,
   ) {
     const response = await this.authService.login(req.user, res);
@@ -41,7 +47,7 @@ export class AuthController {
     @Body()
     { username, password, key }: CreateUserBodyDto,
   ) {
-    if (!key || key !== process.env.SIGNIN_KEY) {
+    if (!key || key !== this.configService.get("SIGNIN_KEY")) {
       throw new UnauthorizedException();
     }
     await this.authService.signin(username, password);

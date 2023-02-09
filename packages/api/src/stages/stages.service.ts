@@ -10,10 +10,10 @@ import { CreateStageArgs } from "./dto/create-stage.args";
 import { UpdateStageArgs } from "./dto/update-stage.args";
 import { UpdateTiebreakersArgs } from "./dto/update-tiebreakers.args";
 import { Stage } from "./stage.entity";
-import { Tiebreaker } from "./tiebreaker";
+import { Tiebreaker } from "./tiebreaker.entity";
 import { getAll } from "./tiebreaker.logic";
 
-const PLAYERS_IN_TFT_LOBBY = 8;
+export const PLAYERS_IN_TFT_LOBBY = 8;
 
 @Injectable()
 export class StagesService {
@@ -47,6 +47,10 @@ export class StagesService {
     return allTournamentStages[stageIndex - 1];
   }
 
+  findTiebreakers(): Tiebreaker[] {
+    return getAll();
+  }
+
   async createOne(payload: CreateStageArgs): Promise<Stage> {
     const stage = await this.stageRepository.save(payload);
     this.createRounds(stage.id, payload.roundCount);
@@ -75,6 +79,11 @@ export class StagesService {
 
     await this.stageRepository.update({ id }, rest);
     return this.stageRepository.findOne(id);
+  }
+
+  async deleteOne(id: number): Promise<DeleteResponse> {
+    await this.stageRepository.delete({ id });
+    return new DeleteResponse(id);
   }
 
   async generateLobbies(
@@ -113,19 +122,12 @@ export class StagesService {
     };
   }
 
-  async deleteOne(id: number): Promise<DeleteResponse> {
-    await this.stageRepository.delete({ id });
-    return new DeleteResponse(id);
-  }
-
-  findTiebreakers(): Tiebreaker[] {
-    return getAll();
-  }
-
   private async createRounds(stageId: number, roundCount: number) {
-    for (let i = 0; i < roundCount; i++) {
-      await this.roundService.createOne({ sequence: i, stageId });
-    }
+    const iterable = new Array(roundCount).fill({});
+    const roundCreationPromises = iterable.map((_, index) =>
+      this.roundService.createOne({ sequence: index + 1, stageId }),
+    );
+    return Promise.all(roundCreationPromises);
   }
 
   private createLobbyName(

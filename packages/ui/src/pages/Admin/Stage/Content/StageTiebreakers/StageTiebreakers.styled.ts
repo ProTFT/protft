@@ -9,12 +9,6 @@ export const StyledContainer = styled(StyledHorizontalContainer)`
   min-height: 50rem;
 `;
 
-export const StyledTiebreakerList = styled(StyledVerticalContainer)`
-  padding: 2rem;
-  gap: 1rem;
-  min-width: 25%;
-`;
-
 export const StyledTiebreakerListItem = styled(StyledHorizontalContainer)<{
   clickable?: boolean;
 }>`
@@ -29,11 +23,6 @@ export const StyledTiebreakerListItem = styled(StyledHorizontalContainer)<{
   letter-spacing: 0.1em;
   text-align: left;
   ${({ clickable = false }) => clickable && `cursor: pointer;`}
-`;
-
-export const StyledStageTiebreakerContainer = styled(StyledVerticalContainer)`
-  min-heigth: 50rem;
-  gap: 0.5rem;
 `;
 
 export const StyledStageTiebreakerBar = styled(StyledHorizontalContainer)`
@@ -54,15 +43,4 @@ export const StyledStageTiebreakerList = styled(StyledVerticalContainer)`
   height: 100%;
   padding: 1.5rem;
   gap: 1rem;
-`;
-
-export const StyledDeleteButton = styled.p`
-  font-family: Roboto;
-  font-size: 15px;
-  font-weight: 600;
-  line-height: 38px;
-  letter-spacing: 0.1em;
-  text-align: left;
-  color: red;
-  cursor: pointer;
 `;

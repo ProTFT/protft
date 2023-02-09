@@ -1,26 +1,8 @@
-import { Field, Float, Int, ObjectType } from "@nestjs/graphql";
-import { Player } from "../player.entity";
+import { Field, ObjectType } from "@nestjs/graphql";
+import { Player, PlayerCalculatedStats } from "../player.entity";
 
 @ObjectType()
-export class PlayerStats {
-  @Field(() => Float)
-  averagePosition: number;
-
-  @Field(() => Int)
-  totalGames: number;
-
-  @Field(() => Float)
-  topFourCount: number;
-
-  @Field(() => Float)
-  topOneCount: number;
-
-  @Field(() => Float)
-  eigthCount: number;
-}
-
-@ObjectType()
-export class PlayersStats extends PlayerStats {
+export class PlayerWithStats extends PlayerCalculatedStats {
   @Field(() => Player)
-  player: Pick<Player, "id" | "name" | "region" | "country" | "slug">;
+  player: Omit<Player, "playerStats">;
 }

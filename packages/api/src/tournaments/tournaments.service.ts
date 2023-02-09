@@ -1,12 +1,7 @@
-import {
-  BadRequestException,
-  Injectable,
-  NotFoundException,
-} from "@nestjs/common";
+import { Injectable, NotFoundException } from "@nestjs/common";
 import { InjectRepository } from "@nestjs/typeorm";
-import { Raw, Repository, UpdateResult } from "typeorm";
+import { Raw, Repository } from "typeorm";
 import { DeleteResponse } from "../lib/dto/delete-return";
-import { SearchQuery } from "../lib/SearchQuery";
 import { Player } from "../players/player.entity";
 import { SetsService } from "../sets/sets.service";
 import {
@@ -17,36 +12,34 @@ import { CreateTournamentArgs } from "./dto/create-tournament.args";
 import { UpdateTournamentArgs } from "./dto/update-tournament.args";
 import { Tournament } from "./tournament.entity";
 import slugify from "slugify";
+import { getSearchQueryFilter } from "../lib/SearchQuery";
+import { parseMultilinePlayerNames } from "../lib/MultilineInput";
+import {
+  afterOrToday,
+  afterToday,
+  beforeOrToday,
+  beforeToday,
+} from "../lib/DateFilter";
 
 @Injectable()
 export class TournamentsService {
   constructor(
     @InjectRepository(Tournament)
     private tournamentRepository: Repository<Tournament>,
-    private searchQueryProvider: SearchQuery,
     private setsService: SetsService,
   ) {}
 
-  findAll(searchQuery?: string): Promise<Tournament[]> {
-    const searchQueryFilter =
-      this.searchQueryProvider.getSearchQueryFilter(searchQuery);
+  findAll(searchQuery?: string, onlyVisible = true): Promise<Tournament[]> {
+    const searchQueryFilter = getSearchQueryFilter(searchQuery);
+    const visibilityFilter = onlyVisible ? { visibility: true } : {};
     return this.tournamentRepository.find({
-      where: { ...searchQueryFilter, visibility: true },
+      where: { ...searchQueryFilter, ...visibilityFilter },
       order: { startDate: "DESC" },
     });
   }
 
-  findAdminAll(searchQuery?: string): Promise<Tournament[]> {
-    const searchQueryFilter =
-      this.searchQueryProvider.getSearchQueryFilter(searchQuery);
-    return this.tournamentRepository.find({
-      where: { ...searchQueryFilter },
-      order: { startDate: "DESC" },
-    });
-  }
-
-  findOne(id: number): Promise<Tournament> {
-    return this.tournamentRepository.findOne(id);
+  findOne(id: number, relations?: string[]): Promise<Tournament> {
+    return this.tournamentRepository.findOne(id, { relations });
   }
 
   findOneBySlug(slug: string): Promise<Tournament> {
@@ -54,12 +47,12 @@ export class TournamentsService {
   }
 
   findPast(searchQuery?: string): Promise<Tournament[]> {
-    const searchQueryFilter =
-      this.searchQueryProvider.getSearchQueryFilter(searchQuery);
+    const searchQueryFilter = getSearchQueryFilter(searchQuery);
     return this.tournamentRepository.find({
       where: {
-        endDate: Raw((alias) => `${alias} < CURRENT_DATE`),
+        endDate: Raw(beforeToday),
         ...searchQueryFilter,
+        visibility: true,
       },
       order: { startDate: "DESC" },
     });
@@ -68,20 +61,21 @@ export class TournamentsService {
   findOngoing(): Promise<Tournament[]> {
     return this.tournamentRepository.find({
       where: {
-        startDate: Raw((alias) => `${alias} <= CURRENT_DATE`),
-        endDate: Raw((alias) => `${alias} >= CURRENT_DATE`),
+        startDate: Raw(beforeOrToday),
+        endDate: Raw(afterOrToday),
+        visibility: true,
       },
       order: { startDate: "DESC" },
     });
   }
 
   findUpcoming(searchQuery?: string): Promise<Tournament[]> {
-    const searchQueryFilter =
-      this.searchQueryProvider.getSearchQueryFilter(searchQuery);
+    const searchQueryFilter = getSearchQueryFilter(searchQuery);
     return this.tournamentRepository.find({
       where: {
-        startDate: Raw((alias) => `${alias} > CURRENT_DATE`),
+        startDate: Raw(afterToday),
         ...searchQueryFilter,
+        visibility: true,
       },
       order: { startDate: "ASC" },
     });
@@ -110,17 +104,14 @@ export class TournamentsService {
     return new DeleteResponse(id);
   }
 
-  findOneWithPlayers(tournamentId: number): Promise<Tournament> {
-    return this.tournamentRepository.findOne(tournamentId, {
-      relations: ["players"],
-    });
-  }
-
-  async createTournamentPlayer({
+  async createTournamentPlayers({
     tournamentId,
     playerIds,
   }: CreateTournamentPlayerArgs): Promise<Tournament> {
     const tournament = await this.tournamentRepository.findOne(tournamentId);
+    if (!tournament) {
+      throw new NotFoundException();
+    }
     const playerObjects = playerIds.map((id: number) => ({
       id,
     }));
@@ -128,39 +119,21 @@ export class TournamentsService {
     return this.tournamentRepository.save(tournament);
   }
 
-  async createTournamentPlayerByName({
+  async createTournamentPlayersByName({
     tournamentId,
     playerNames,
   }: CreateTournamentPlayerByNameArgs): Promise<Tournament> {
-    const namesToFind = playerNames.replace(/\r/g, "").split("\n");
-    const query = this.tournamentRepository.manager
-      .createQueryBuilder()
-      .select("*")
-      .from("player", "p");
+    const playerIds = await parseMultilinePlayerNames(
+      playerNames,
+      this.tournamentRepository.manager,
+    );
 
-    const queryWithAllConditions = namesToFind.reduce((prev, curr, index) => {
-      if (index === 0) {
-        return prev.where(`p.name = '${curr}'`);
-      }
-      return prev.orWhere(`p.name = '${curr}'`);
-    }, query);
-
-    const results =
-      (await queryWithAllConditions.getRawMany()) as unknown as Player[];
-
-    if (results.length !== namesToFind.length) {
-      throw new BadRequestException(
-        `Provided names: ${namesToFind.length}, names found: ${results.length}`,
-      );
-    }
-
-    const playerIds = results.map((r) => r.id);
-
-    return this.createTournamentPlayer({ tournamentId, playerIds });
+    return this.createTournamentPlayers({ tournamentId, playerIds });
   }
 
-  async createSlugs(): Promise<UpdateResult[]> {
+  async createMissingSlugs(): Promise<Tournament[]> {
     const allTournaments = await this.tournamentRepository.find({
+      where: { slug: "" },
       relations: ["set"],
     });
     const payloads = allTournaments.map(async (tournament) =>
@@ -171,7 +144,8 @@ export class TournamentsService {
         },
       ),
     );
-    return Promise.all(payloads);
+    await Promise.all(payloads);
+    return allTournaments;
   }
 
   private async createSlug(

@@ -11,6 +11,8 @@ import reportWebVitals from "./reportWebVitals";
 import * as serviceWorker from "./serviceWorker";
 import { ProvideAuth } from "./hooks/useAuth";
 import { ProvideToast } from "./pages/Admin/Components/Toast/Toast";
+import { ThemeProvider } from "styled-components";
+import { theme } from "./design/theme";
 
 const rootElement = document.getElementById("root");
 if (!rootElement) throw new Error("Failed to find the root element");
@@ -27,6 +29,9 @@ const graphqlClient = createClient({
       keys: {
         PlayerStats: () => null,
         PlayerResults: () => null,
+        PlayerCalculatedStats: () => null,
+        PlayerWithStats: () => null,
+        StagePlayerInfo: () => null,
       },
       resolvers: {
         Query: {
@@ -48,7 +53,9 @@ root.render(
         <DndProvider backend={HTML5Backend}>
           <ProvideAuth>
             <ProvideToast>
-              <App />
+              <ThemeProvider theme={theme}>
+                <App />
+              </ThemeProvider>
             </ProvideToast>
           </ProvideAuth>
         </DndProvider>

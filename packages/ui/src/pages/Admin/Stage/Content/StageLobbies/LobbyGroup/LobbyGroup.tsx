@@ -4,7 +4,6 @@ import { ProTFTButton } from "../../../../../../components/Button/Button";
 import { BigArrowLeft } from "../../../../../../design/icons/BigArrowLeft";
 import { BigArrowRight } from "../../../../../../design/icons/BigArrowRight";
 import { Player } from "../../../../../../graphql/schema";
-import { StyledTitle } from "../../../../Tournament/Content/Content.styled";
 import { LobbyContainer } from "../LobbyContainer/LobbyContainer";
 import { GenerateLobbies } from "./GenerateLobbies";
 import {
@@ -22,9 +21,10 @@ import {
 import {
   CreatePlayerLobbyGroupResult,
   CreatePlayerLobbyGroupVariables,
-  CREATE_PLAYER_LOBBY_GROUP,
+  CREATE_LOBBY_PLAYERS,
 } from "./queries";
 import { useToast } from "../../../../Components/Toast/Toast";
+import { StyledTitle } from "../../../../Components/Title/Title.styled";
 
 interface Props {
   hasLobbieGroups: boolean;
@@ -49,6 +49,7 @@ export const LobbyGroup = ({
   onChangeSelectedPlayers,
   lobbyGroupName,
 }: Props) => {
+  const { show } = useToast();
   const [{ data: lobbyPlayersData }] = useQuery<
     LobbyPlayersQueryResult,
     LobbyPlayersQueryVariables
@@ -61,7 +62,7 @@ export const LobbyGroup = ({
   const [, createPlayerLobbyGroup] = useMutation<
     CreatePlayerLobbyGroupResult,
     CreatePlayerLobbyGroupVariables
-  >(CREATE_PLAYER_LOBBY_GROUP);
+  >(CREATE_LOBBY_PLAYERS);
 
   const [allLobbiesWithPlayers, setAllLobbiesWithPlayers] = useState<
     AllLobbyPlayers[]
@@ -92,12 +93,9 @@ export const LobbyGroup = ({
     onChangeSelectedPlayers(playerIds);
   }, [allLobbiesWithPlayers, onChangeSelectedPlayers]);
 
-  const { show } = useToast();
-
   const onSave = useCallback(async () => {
     const result = await createPlayerLobbyGroup({
-      lobbyGroupId: selectedLobbyGroup!,
-      players: allLobbiesWithPlayers.map((l) => ({
+      lobbies: allLobbiesWithPlayers.map((l) => ({
         lobbyId: l.lobbyId,
         playerIds: l.players.map((p) => p.id),
       })),
@@ -106,7 +104,7 @@ export const LobbyGroup = ({
       return alert(result.error);
     }
     show();
-  }, [allLobbiesWithPlayers, createPlayerLobbyGroup, selectedLobbyGroup, show]);
+  }, [allLobbiesWithPlayers, createPlayerLobbyGroup, show]);
 
   const onAdd = useCallback(
     ({ lobbyId, name: lobbyName }: AllLobbyPlayers) =>

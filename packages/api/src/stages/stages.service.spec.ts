@@ -1,64 +1,255 @@
-import { Test, TestingModule } from "@nestjs/testing";
-import { getRepositoryToken } from "@nestjs/typeorm";
-import { stage } from "../../test/generators/stage";
-import { FakeIndexedRepository } from "../../test/stubs/fakeRepository";
+import { NotFoundException } from "@nestjs/common";
+import { Repository } from "typeorm";
+import { DeleteResponse } from "../lib/dto/delete-return";
+import { LobbiesService } from "../lobbies/lobbies.service";
+import { RoundsService } from "../rounds/rounds.service";
+import { CreateStageArgs } from "./dto/create-stage.args";
+import { UpdateStageArgs } from "./dto/update-stage.args";
+import { UpdateTiebreakersArgs } from "./dto/update-tiebreakers.args";
 import { Stage } from "./stage.entity";
 import { StagesService } from "./stages.service";
+import { getAll } from "./tiebreaker.logic";
 
-describe("Stages Service", () => {
+describe("Stages service", () => {
   let service: StagesService;
-  const tournamentIdWithStages = 1;
-  const tournamentIdWithoutStages = 2;
-  const stageRepository = new FakeIndexedRepository<Stage>([
-    stage({ id: 1, tournamentId: tournamentIdWithStages }),
-    stage({ id: 2, tournamentId: tournamentIdWithStages }),
-  ]);
+  let stageRepository: Repository<Stage>;
+  let roundsService: RoundsService;
+  let lobbiesService: LobbiesService;
 
-  beforeEach(async () => {
-    const module: TestingModule = await Test.createTestingModule({
-      providers: [
-        StagesService,
-        {
-          provide: getRepositoryToken(Stage),
-          useValue: stageRepository,
-        },
-      ],
-    }).compile();
+  const mockStageId = 1;
+  const mockTournamentId = 2;
 
-    service = module.get<StagesService>(StagesService);
+  beforeEach(() => {
+    stageRepository = {
+      findOne: jest.fn(),
+      find: jest.fn(),
+      save: jest.fn(),
+      update: jest.fn(),
+      delete: jest.fn(),
+    } as unknown as Repository<Stage>;
+
+    roundsService = {
+      createOne: jest.fn(),
+      countByStage: jest.fn(),
+    } as unknown as RoundsService;
+
+    lobbiesService = {
+      createManyLobbyGroup: jest.fn(),
+      createMany: jest.fn(),
+    } as unknown as LobbiesService;
+    service = new StagesService(stageRepository, roundsService, lobbiesService);
   });
 
-  it("should be defined", async () => {
-    expect(service).toBeDefined();
+  afterEach(() => {
+    jest.resetAllMocks();
   });
 
-  describe("find all by tournament", () => {
-    it("should get all stages from a tournament", async () => {
-      expect(
-        await service.findAllByTournament(tournamentIdWithStages),
-      ).toHaveLength(2);
-    });
+  describe("findOne", () => {
+    it("should call repository", async () => {
+      const relations = ["anyRelation", "otherRelation"];
 
-    it("should return empty array if tournament id has no stages registered", async () => {
-      expect(
-        await service.findAllByTournament(tournamentIdWithoutStages),
-      ).toHaveLength(0);
-    });
-  });
+      await service.findOne(mockStageId, relations);
 
-  describe("create one", () => {
-    it("should be able to create a stage", async () => {
-      const payload = stage({
-        id: 10,
-        tournamentId: 10,
+      expect(stageRepository.findOne).toHaveBeenCalledWith(mockStageId, {
+        relations,
       });
+    });
+  });
+
+  describe("findAllByTournament", () => {
+    it("should call repository", async () => {
+      await service.findAllByTournament(mockTournamentId);
+
+      expect(stageRepository.find).toHaveBeenCalledWith({
+        where: { tournamentId: mockTournamentId },
+        order: { sequence: "ASC" },
+      });
+    });
+  });
+
+  describe("findPreviousStage", () => {
+    it("should throw if passed stage is the first", async () => {
+      const mockStage = {
+        id: mockStageId,
+        tournamentId: mockTournamentId,
+      } as Stage;
+      stageRepository.find = jest.fn().mockResolvedValue([
+        {
+          id: mockStageId,
+        },
+        {
+          id: 2,
+        },
+        {
+          id: 3,
+        },
+      ]);
+
       expect(
-        await service.findAllByTournament(payload.tournamentId),
-      ).toHaveLength(0);
+        async () => await service.findPreviousStage(mockStage),
+      ).rejects.toThrowError(NotFoundException);
+    });
+
+    it("should return previous stage if is not the first", async () => {
+      const mockStage = {
+        id: mockStageId,
+        tournamentId: mockTournamentId,
+      } as Stage;
+      stageRepository.find = jest.fn().mockResolvedValue([
+        {
+          id: 123,
+        },
+        {
+          id: mockStageId,
+        },
+        {
+          id: 456,
+        },
+      ]);
+
+      const result = await service.findPreviousStage(mockStage);
+
+      expect(result).toStrictEqual({
+        id: 123,
+      });
+    });
+  });
+
+  describe("createOne", () => {
+    it("should create stages and rounds related to it", async () => {
+      const roundCount = 5;
+      const payload = { roundCount } as CreateStageArgs;
+      stageRepository.save = jest.fn().mockResolvedValue({
+        id: 5,
+        roundCount,
+      });
+
       await service.createOne(payload);
+
+      expect(stageRepository.save).toHaveBeenCalledWith(payload);
+      expect(roundsService.createOne).toHaveBeenCalledTimes(roundCount);
+    });
+  });
+
+  describe("updateOne", () => {
+    it("if stage does not exist, should throw", async () => {
+      const updatePayload = {
+        name: "Test",
+      } as UpdateStageArgs;
+      stageRepository.findOne = jest.fn().mockResolvedValue(undefined);
+
       expect(
-        await service.findAllByTournament(payload.tournamentId),
-      ).toHaveLength(1);
+        async () =>
+          await service.updateOne({ id: mockStageId, ...updatePayload }),
+      ).rejects.toThrowError(NotFoundException);
+    });
+
+    it("should update stage and return it", async () => {
+      const updatePayload = {
+        name: "Test",
+      } as UpdateStageArgs;
+      stageRepository.findOne = jest.fn().mockResolvedValue({});
+
+      await service.updateOne({ id: mockStageId, ...updatePayload });
+
+      expect(stageRepository.update).toHaveBeenCalledWith(
+        { id: mockStageId },
+        updatePayload,
+      );
+      expect(stageRepository.findOne).toHaveBeenCalledTimes(2);
+    });
+  });
+
+  describe("updateTiebreakers", () => {
+    it("if stage does not exist, should throw", async () => {
+      const updatePayload = {
+        id: 1,
+        tiebreakers: [1, 2, 3],
+      } as UpdateTiebreakersArgs;
+      stageRepository.findOne = jest.fn().mockResolvedValue(undefined);
+
+      expect(
+        async () => await service.updateTiebreakers(updatePayload),
+      ).rejects.toThrowError(NotFoundException);
+    });
+
+    it("should update tiebreakers and return stage", async () => {
+      const updatePayload = {
+        id: 1,
+        tiebreakers: [1, 2, 3],
+      } as UpdateTiebreakersArgs;
+
+      stageRepository.findOne = jest.fn().mockResolvedValue({});
+
+      await service.updateTiebreakers(updatePayload);
+
+      expect(stageRepository.update).toHaveBeenCalledWith(
+        { id: mockStageId },
+        { tiebreakers: [1, 2, 3] },
+      );
+      expect(stageRepository.findOne).toHaveBeenCalledTimes(2);
+    });
+  });
+
+  describe("deleteOne", () => {
+    it("should delete", async () => {
+      const response = await service.deleteOne(mockStageId);
+
+      expect(stageRepository.delete).toHaveBeenCalledWith({ id: mockStageId });
+      expect(response).toStrictEqual(new DeleteResponse(mockStageId));
+    });
+  });
+
+  describe("generateLobbies", () => {
+    it("should create lobby groups and lobbies", async () => {
+      const roundsPerLobbyGroup = 2;
+      const playerCount = 32;
+      roundsService.countByStage = jest.fn().mockResolvedValue(6);
+      lobbiesService.createManyLobbyGroup = jest.fn().mockResolvedValue([
+        { id: 1, sequence: 1 },
+        { id: 2, sequence: 2 },
+        { id: 3, sequence: 3 },
+      ]);
+      lobbiesService.createMany = jest
+        .fn()
+        .mockResolvedValue([{ id: 1 }, { id: 2 }, { id: 3 }, { id: 4 }]);
+
+      const response = await service.generateLobbies(
+        mockStageId,
+        roundsPerLobbyGroup,
+        playerCount,
+      );
+
+      expect(lobbiesService.createManyLobbyGroup).toHaveBeenCalledWith([
+        { roundsPlayed: 2, sequence: 1, stageId: mockStageId },
+        { roundsPlayed: 2, sequence: 2, stageId: mockStageId },
+        { roundsPlayed: 2, sequence: 3, stageId: mockStageId },
+      ]);
+      expect(lobbiesService.createMany).toHaveBeenCalledWith([
+        { lobbyGroupId: 1, sequence: 1, stageId: mockStageId, name: "A1" },
+        { lobbyGroupId: 1, sequence: 2, stageId: mockStageId, name: "B1" },
+        { lobbyGroupId: 1, sequence: 3, stageId: mockStageId, name: "C1" },
+        { lobbyGroupId: 1, sequence: 4, stageId: mockStageId, name: "D1" },
+        { lobbyGroupId: 2, sequence: 1, stageId: mockStageId, name: "A2" },
+        { lobbyGroupId: 2, sequence: 2, stageId: mockStageId, name: "B2" },
+        { lobbyGroupId: 2, sequence: 3, stageId: mockStageId, name: "C2" },
+        { lobbyGroupId: 2, sequence: 4, stageId: mockStageId, name: "D2" },
+        { lobbyGroupId: 3, sequence: 1, stageId: mockStageId, name: "A3" },
+        { lobbyGroupId: 3, sequence: 2, stageId: mockStageId, name: "B3" },
+        { lobbyGroupId: 3, sequence: 3, stageId: mockStageId, name: "C3" },
+        { lobbyGroupId: 3, sequence: 4, stageId: mockStageId, name: "D3" },
+      ]);
+      expect(response).toStrictEqual({
+        createdLobbyGroups: 3,
+        createdLobbies: 4,
+      });
+    });
+  });
+
+  describe("findTiebreakers", () => {
+    it("should get static data", () => {
+      const response = service.findTiebreakers();
+      expect(response).toStrictEqual(getAll());
     });
   });
 });

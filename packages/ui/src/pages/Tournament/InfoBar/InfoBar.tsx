@@ -7,9 +7,9 @@ import { formatMoney } from "../../../formatter/Money";
 import { Tournament } from "../../../graphql/schema";
 import { StyledInfoBar, StyledInfoIndicatorText } from "./InfoBar.styled";
 
-type Props = Pick<Tournament, "participantsNumber" | "prizePool">;
+type Props = Pick<Tournament, "participantsNumber" | "prizePool" | "currency">;
 
-export const InfoBar = ({ participantsNumber, prizePool }: Props) => {
+export const InfoBar = ({ participantsNumber, prizePool, currency }: Props) => {
   return (
     <StyledInfoBar>
       <TextIconHorizontalContainer>
@@ -21,7 +21,7 @@ export const InfoBar = ({ participantsNumber, prizePool }: Props) => {
       <TextIconHorizontalContainer>
         <TourneysIcon color={colors.purple} />
         <StyledInfoIndicatorText>
-          {formatMoney("USD", prizePool)}
+          {formatMoney(currency, prizePool)}
         </StyledInfoIndicatorText>
       </TextIconHorizontalContainer>
     </StyledInfoBar>

@@ -2,9 +2,10 @@ import { useMemo } from "react";
 import { RegionCode, regionCodeToName } from "../../formatter/Region";
 import { TextIconHorizontalContainer } from "../Layout/HorizontalContainer/TextIconHorizontalContainer.styled";
 import { StyledRegionText } from "./RegionIndicator.styled";
+import { byIso } from "country-code-lookup";
 
 interface Props {
-  regionCodes: string[];
+  regionCodes?: string[];
   showName?: boolean;
 }
 
@@ -46,5 +47,32 @@ export const RegionsIndicator = ({ regionCodes, showName = true }: Props) => {
         />
       ))}
     </>
+  );
+};
+
+interface CountryIndicatorProps {
+  countryCode?: string | null;
+  showName?: boolean;
+}
+
+export const CountryIndicator = ({
+  countryCode,
+  showName = false,
+}: CountryIndicatorProps) => {
+  if (!countryCode) {
+    return <></>;
+  }
+
+  return (
+    <TextIconHorizontalContainer>
+      <img
+        src={`https://protft-images.s3.us-east-1.amazonaws.com/countries/${countryCode}.webp`}
+        alt={countryCode}
+        style={{ width: "16px" }}
+      />
+      {showName && (
+        <StyledRegionText>{byIso(countryCode)?.country}</StyledRegionText>
+      )}
+    </TextIconHorizontalContainer>
   );
 };

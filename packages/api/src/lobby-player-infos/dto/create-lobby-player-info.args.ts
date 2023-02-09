@@ -1,10 +1,9 @@
-import { ArgsType, Field, Int } from "@nestjs/graphql";
-
-@ArgsType()
-export class CreatePlayerLobbyArgs {
-  @Field(() => Int, { name: "lobbyId" })
+export interface CreateOneLobbyPlayerInfoArgs {
   lobbyId: number;
+  playerId: number;
+}
 
-  @Field(() => [Int], { name: "playerIds" })
+export interface CreateManyLobbyPlayerInfoArgs {
+  lobbyId: number;
   playerIds: number[];
 }

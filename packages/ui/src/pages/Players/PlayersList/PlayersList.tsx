@@ -1,5 +1,5 @@
 import { useQuery } from "urql";
-import { PlayerCard } from "../components/PlayerCard";
+import { PlayerCard } from "../PlayerCard/PlayerCard";
 import { StyledPlayersList } from "../Players.styled";
 import {
   PlayersQueryResult,

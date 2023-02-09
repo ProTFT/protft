@@ -22,24 +22,6 @@ export const PLAYERS_QUERY = gql`
   }
 `;
 
-export interface PlayerFilterQueryResult {
-  playerFilterMeta: PlayerFilterData;
-}
-
-interface PlayerFilterData {
-  possibleRegions: string[];
-  possibleCountries: string[];
-}
-
-export const PLAYER_FILTERS_QUERY = gql`
-  query playerFilterMeta {
-    playerFilterMeta {
-      possibleRegions
-      possibleCountries
-    }
-  }
-`;
-
 export interface TournamentQueryResponse {
   tournament: Tournament;
 }

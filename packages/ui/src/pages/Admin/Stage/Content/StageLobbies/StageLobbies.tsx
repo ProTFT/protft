@@ -3,11 +3,11 @@ import { useParams } from "react-router-dom";
 import { useQuery } from "urql";
 import { SearchInput } from "../../../../../components/SearchInput/SearchInput";
 import { Player } from "../../../../../graphql/schema";
-import { DraggablePlayer } from "../../../Components/PlayerItem/PlayerItem";
 import {
   StyledLeftSide,
   StyledRightSide,
-} from "../../../Tournament/Content/Content.styled";
+} from "../../../Components/Layout/TwoSided.styled";
+import { DraggablePlayer } from "../../../Components/PlayerItem/PlayerItem";
 import { LobbyGroup } from "./LobbyGroup/LobbyGroup";
 import {
   LobbyGroupsQueryResult,
@@ -20,12 +20,19 @@ import { StyledBar, StyledContainer } from "./StageLobbies.styled";
 
 export const StageLobbies = () => {
   const { stageId } = useParams();
+  const [searchQuery, setSearchQuery] = useState("");
 
   const [{ data: lobbyGroupsData }] = useQuery<
     LobbyGroupsQueryResult,
     LobbyGroupsQueryVariables
   >({
     query: LOBBY_GROUPS_QUERY,
+    variables: { id: Number(stageId) },
+    requestPolicy: "network-only",
+  });
+
+  const [{ data: stagePlayersData }] = useQuery<StagePlayersResponse>({
+    query: STAGE_PLAYERS_QUERY,
     variables: { id: Number(stageId) },
   });
 
@@ -68,28 +75,15 @@ export const StageLobbies = () => {
     [lobbyGroupsData?.stage.lobbyGroups]
   );
 
-  const [{ data: stagePlayersData }] = useQuery<StagePlayersResponse>({
-    query: STAGE_PLAYERS_QUERY,
-    variables: { id: Number(stageId) },
-  });
-
   const [remainingPlayers, setRemainingPlayers] = useState<Player[]>(
     () => stagePlayersData?.stage.players.map((p) => p.player) || []
   );
 
-  const [filteredRemainingPlayers, setFilteredRemainingPlayers] = useState<
-    Player[]
-  >(() => remainingPlayers);
-
   const onChangeSearchInput = useCallback(
     (event: ChangeEvent<HTMLInputElement>) => {
-      setFilteredRemainingPlayers(() =>
-        remainingPlayers.filter((p) =>
-          p.name.toLowerCase().includes(event.target.value.toLowerCase())
-        )
-      );
+      setSearchQuery(event.target.value);
     },
-    [remainingPlayers, setFilteredRemainingPlayers]
+    []
   );
 
   const onChangeSelectedPlayers = useCallback(
@@ -99,7 +93,6 @@ export const StageLobbies = () => {
           .map((p) => p.player)
           .filter((p) => !playerIds.includes(p.id)) || [];
       setRemainingPlayers(playersLeft);
-      setFilteredRemainingPlayers(playersLeft);
     },
     [stagePlayersData?.stage.players]
   );
@@ -110,12 +103,17 @@ export const StageLobbies = () => {
         <StyledBar>
           <SearchInput
             placeholder="Search Players"
+            value={searchQuery}
             onChange={onChangeSearchInput}
           />
         </StyledBar>
-        {filteredRemainingPlayers.map((player) => (
-          <DraggablePlayer key={player.id} player={player} />
-        ))}
+        {remainingPlayers
+          .filter((p) =>
+            p.name.toLowerCase().includes(searchQuery.toLowerCase())
+          )
+          .map((player) => (
+            <DraggablePlayer key={player.id} player={player} />
+          ))}
       </StyledLeftSide>
       <StyledRightSide>
         <Suspense fallback={null}>
@@ -123,7 +121,7 @@ export const StageLobbies = () => {
             hasLobbieGroups={hasLobbieGroups}
             selectedLobbyGroup={selectedLobbyGroup}
             lobbyGroupName={selectedLobbyGroupName}
-            stageId={Number(stageId!)}
+            stageId={Number(stageId)}
             onChangeLobbyGroup={onChangeLobbyGroup}
             onChangeSelectedPlayers={onChangeSelectedPlayers}
           />

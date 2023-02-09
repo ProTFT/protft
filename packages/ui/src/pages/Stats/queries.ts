@@ -1,33 +1,5 @@
 import { gql } from "urql";
-import { Player, PlayersStats } from "../../graphql/schema";
-
-export interface PlayersQueryWithStatsArgs {
-  region?: string;
-  setId?: number;
-  tournamentId?: number;
-  skip?: number;
-  take?: number;
-}
-
-export interface PlayersQueryWithStatsResult {
-  playerStats: PlayersStats[];
-}
-
-export const PLAYERS_QUERY_WITH_STATS = gql`
-  query playersStats($region: String, $setId: Int, $take: Int, $skip: Int) {
-    playerStats(setId: $setId, skip: $skip, take: $take, region: $region) {
-      player {
-        id
-        name
-      }
-      totalGames
-      averagePosition
-      topOneCount
-      eigthCount
-      topFourCount
-    }
-  }
-`;
+import { Player, PlayerCalculatedStats } from "../../graphql/schema";
 
 export interface PlayerQueryResult {
   players: Player[];
@@ -38,6 +10,12 @@ export enum SortColumn {
   TOP_1 = "topOnePercent",
   TOP_4 = "topFourPercent",
   TOTAL_GAMES = "totalGames",
+}
+
+export enum Filters {
+  REGION,
+  TOURNAMENTS,
+  SET,
 }
 
 export const SortDirection = {
@@ -51,7 +29,7 @@ export interface SortOption {
 }
 
 export interface PlayersStatsQueryResult {
-  playerStats: PlayersStats[];
+  playerStats: ({ player: Player } & PlayerCalculatedStats)[];
 }
 
 export interface PlayerStatsQueryVariables {
@@ -63,7 +41,7 @@ export interface PlayerStatsQueryVariables {
   sort?: SortOption;
   searchQuery?: string;
 }
-// region, country, take, skip, searchQuery
+
 export const PLAYER_STATS_QUERY = gql`
   query stats(
     $setId: Int
@@ -86,7 +64,8 @@ export const PLAYER_STATS_QUERY = gql`
       player {
         id
         name
-        region
+        country
+        slug
       }
       averagePosition
       topFourCount

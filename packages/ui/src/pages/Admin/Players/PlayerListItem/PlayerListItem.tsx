@@ -17,12 +17,12 @@ interface Props {
 }
 
 export const PlayerListItem = ({ player, afterDelete }: Props) => {
+  const { show } = useToast();
+
   const [, deletePlayer] = useMutation<
     DeletePlayerResult,
     DeletePlayerVariables
   >(DELETE_PLAYER_MUTATION);
-
-  const { show } = useToast();
 
   const onDelete = useCallback(
     (id: number) => async () => {

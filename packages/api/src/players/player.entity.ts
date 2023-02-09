@@ -1,6 +1,23 @@
-import { Field, Int, ObjectType } from "@nestjs/graphql";
+import { Field, Float, Int, ObjectType } from "@nestjs/graphql";
 import { Column, Entity, Index, PrimaryGeneratedColumn } from "typeorm";
-import { PlayerStats } from "./dto/get-player-stats.out";
+
+@ObjectType()
+export class PlayerCalculatedStats {
+  @Field(() => Float)
+  averagePosition: number;
+
+  @Field(() => Int)
+  totalGames: number;
+
+  @Field(() => Float)
+  topFourCount: number;
+
+  @Field(() => Float)
+  topOneCount: number;
+
+  @Field(() => Float)
+  eigthCount: number;
+}
 
 @ObjectType()
 @Entity()
@@ -16,7 +33,7 @@ export class Player {
   name: string;
 
   @Field({ nullable: true })
-  playerStats?: PlayerStats;
+  playerStats?: PlayerCalculatedStats;
 
   @Field({ nullable: true })
   @Column({ nullable: true })
