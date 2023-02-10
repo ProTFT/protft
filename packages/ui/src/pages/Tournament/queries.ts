@@ -50,7 +50,7 @@ export const RESULTS_QUERY = gql`
       player {
         id
         name
-        region
+        country
         slug
       }
       positions

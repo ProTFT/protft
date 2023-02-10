@@ -71,7 +71,9 @@ export const CountryIndicator = ({
         style={{ width: "16px" }}
       />
       {showName && (
-        <StyledRegionText>{byIso(countryCode)?.country}</StyledRegionText>
+        <StyledRegionText>
+          {byIso(countryCode)?.country || "No Country representation"}
+        </StyledRegionText>
       )}
     </TextIconHorizontalContainer>
   );

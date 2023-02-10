@@ -18,7 +18,7 @@ export const TournamentBaseList = ({
   return (
     <StyledTournamentList>
       {tournaments?.map((tournament) => (
-        <Link key={tournament.id} to={`${tournament.slug}`}>
+        <Link key={tournament.id} to={`/tournaments/${tournament.slug}`}>
           <TournamentListItem
             tournament={tournament}
             color={color}

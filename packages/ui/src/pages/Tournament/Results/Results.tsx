@@ -1,6 +1,6 @@
 import { Link } from "react-router-dom";
 import { useQuery } from "urql";
-import { RegionsIndicator } from "../../../components/RegionIndicator/RegionIndicator";
+import { CountryIndicator } from "../../../components/RegionIndicator/RegionIndicator";
 import { Stage } from "../../../graphql/schema";
 import { NoDataAdded } from "../NoDataAdded/NoDataAdded";
 import { ResultsQueryResponse, RESULTS_QUERY } from "../queries";
@@ -61,8 +61,8 @@ export const Results = ({
               <td>
                 <Link to={`/players/${player.slug}`}>
                   <StyledTablePlayerName>
-                    <RegionsIndicator
-                      regionCodes={[player.region!]}
+                    <CountryIndicator
+                      countryCode={player.country}
                       showName={false}
                     />
                     <StyledPlayerName>{player.name}</StyledPlayerName>
