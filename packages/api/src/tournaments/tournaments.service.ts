@@ -19,7 +19,7 @@ import {
   afterToday,
   beforeOrToday,
   beforeToday,
-} from "../lib/DateFilter";
+} from "../lib/DBRawFilter";
 
 @Injectable()
 export class TournamentsService {

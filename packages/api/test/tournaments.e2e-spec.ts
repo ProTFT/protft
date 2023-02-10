@@ -59,6 +59,7 @@ const fakeTournamentService = {
     .fn()
     .mockResolvedValue(mockTournaments[0]),
   createMissingSlugs: jest.fn().mockResolvedValue(mockTournaments),
+  findWithStats: jest.fn().mockResolvedValue(mockTournaments),
 };
 
 const fakeSetsService = {
@@ -212,6 +213,27 @@ describe("Tournament (e2e)", () => {
 
       expect(response.body).toStrictEqual({
         data: { tournamentBySlug: mockTournaments[0] },
+      });
+    });
+  });
+
+  describe("tournamentsWithStats", () => {
+    it("should get data from service", async () => {
+      const response = await request(app.getHttpServer())
+        .post(graphql)
+        .send({
+          query: `
+          query {
+            tournamentsWithStats {
+              id
+              name
+            }
+          }`,
+        })
+        .expect(HttpStatus.OK);
+
+      expect(response.body).toStrictEqual({
+        data: { tournamentsWithStats: mockTournaments },
       });
     });
   });

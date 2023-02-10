@@ -5,11 +5,13 @@ import {
 } from "@nestjs/common";
 import { InjectRepository } from "@nestjs/typeorm";
 import slugify from "slugify";
-import { ILike, Repository } from "typeorm";
+import { ILike, Raw, Repository } from "typeorm";
 import { EntityFieldsNames } from "typeorm/common/EntityFieldsNames";
+import { isEqualName } from "../lib/DBRawFilter";
 import { PaginationArgs } from "../lib/dto/pagination.args";
 import { parseFileString } from "../lib/FileParser";
 import { getSearchQueryFilter } from "../lib/SearchQuery";
+import { PlayerStatsRaw } from "../round-results/dto/get-player-stats.raw";
 import { RoundResultsService } from "../round-results/round-results.service";
 import { Tournament } from "../tournaments/tournament.entity";
 import { CreatePlayerArgs } from "./dto/create-player.args";
@@ -99,6 +101,7 @@ export class PlayersService {
         name,
         country,
         region,
+        slug: name,
       };
     });
 
@@ -181,7 +184,7 @@ export class PlayersService {
 
   async createMissingSlugs(): Promise<Player[]> {
     const allPlayers = await this.playerRepository.find({
-      where: { slug: "" },
+      where: [{ slug: "" }, { slug: Raw(isEqualName) }],
     });
     const payloads = allPlayers.map((player) =>
       this.playerRepository.update(
@@ -196,12 +199,13 @@ export class PlayersService {
   }
 
   async getPlayerStats(player: Player, setId: number, tournamentId: number) {
-    const rawStats = await this.roundResultsService.findStatsByPlayer(
-      player.id,
-      setId,
-      tournamentId,
-    );
-    return formatStats(rawStats);
+    const rawStats: PlayerStatsRaw | undefined =
+      await this.roundResultsService.findStatsByPlayer(
+        player.id,
+        setId,
+        tournamentId,
+      );
+    return formatStats(rawStats || ({} as PlayerStatsRaw));
   }
 
   private createSlug(player: Pick<Player, "id" | "name" | "region">): string {

@@ -294,7 +294,7 @@ export class RoundResultsService {
     playerId: number,
     setId?: number,
     tournamentId?: number,
-  ): Promise<PlayerStatsRaw> {
+  ): Promise<PlayerStatsRaw | undefined> {
     const queryBuilder =
       this.roundResultsRepository.manager.createQueryBuilder();
     // add subquery here to get the / total games values
@@ -340,7 +340,7 @@ export class RoundResultsService {
 
         return query;
       }, "rawStats")
-      .getRawOne();
+      .getRawOne() as Promise<PlayerStatsRaw | undefined>;
   }
 
   private getBaseStatsQuery(

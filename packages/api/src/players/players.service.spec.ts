@@ -154,11 +154,13 @@ describe("PlayersService", () => {
       country: "BRA",
       name: "Lucas",
       region: "BR",
+      slug: "Lucas",
     };
     const englishPlayer = {
       country: "GBR",
       name: "Pedro",
       region: "EMEA",
+      slug: "Pedro",
     };
 
     it("when title is wrong, should throw", async () => {
@@ -285,6 +287,24 @@ describe("PlayersService", () => {
       };
       const formattedStats = {
         averagePosition: 1,
+        eigthCount: 0,
+        topFourCount: 0,
+        topOneCount: 0,
+        totalGames: 0,
+      };
+      roundResultsService.findStatsByPlayer = jest
+        .fn()
+        .mockResolvedValue(statsRaw);
+
+      const response = await service.getPlayerStats({} as Player, 1, 1);
+
+      expect(response).toStrictEqual(formattedStats);
+    });
+
+    it("if stats are empty, should return all zero", async () => {
+      const statsRaw = undefined;
+      const formattedStats = {
+        averagePosition: 0,
         eigthCount: 0,
         topFourCount: 0,
         topOneCount: 0,
