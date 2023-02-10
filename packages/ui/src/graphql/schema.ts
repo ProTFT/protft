@@ -177,6 +177,7 @@ export interface IQuery {
   pastTournaments(
     searchQuery?: Nullable<string>
   ): Tournament[] | Promise<Tournament[]>;
+  tournamentsWithStats(): Tournament[] | Promise<Tournament[]>;
   stages(tournamentId: number): Stage[] | Promise<Stage[]>;
   stage(id: number): Stage | Promise<Stage>;
   playersFromPreviousStage(

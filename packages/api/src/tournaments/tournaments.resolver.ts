@@ -74,6 +74,11 @@ export class TournamentsResolver {
     return this.tournamentsService.findPast(searchQuery);
   }
 
+  @Query(() => [Tournament])
+  async tournamentsWithStats() {
+    return this.tournamentsService.findWithStats();
+  }
+
   @ResolveField()
   async set(@Parent() tournament: Tournament) {
     const { setId } = tournament;

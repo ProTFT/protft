@@ -4,7 +4,7 @@ import { Tournament } from "../../../graphql/schema";
 import { DataSelect } from "../DataSelect/DataSelect";
 import {
   TournamentsQueryResponse,
-  TOURNAMENTS_QUERY,
+  TOURNAMENTS_WITH_STATS_QUERY,
 } from "../DataSelect/queries";
 
 interface Props {
@@ -16,14 +16,14 @@ type SelectTournament = Pick<Tournament, "id" | "name" | "set">;
 
 export const TournamentSelect = ({ value, onValueChange }: Props) => {
   const [{ data, fetching }] = useQuery<TournamentsQueryResponse>({
-    query: TOURNAMENTS_QUERY,
+    query: TOURNAMENTS_WITH_STATS_QUERY,
   });
 
   const getPrefix = useCallback((data: SelectTournament) => data.set.name, []);
 
   return (
     <DataSelect<number[], SelectTournament>
-      data={data?.tournaments}
+      data={data?.tournamentsWithStats}
       valueKey="id"
       labelKey="name"
       value={value}

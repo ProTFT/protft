@@ -46,6 +46,14 @@ export class TournamentsService {
     return this.tournamentRepository.findOne({ slug });
   }
 
+  async findWithStats(): Promise<Tournament[]> {
+    const [past, current] = await Promise.all([
+      this.findPast(),
+      this.findOngoing(),
+    ]);
+    return [...past, ...current];
+  }
+
   findPast(searchQuery?: string): Promise<Tournament[]> {
     const searchQueryFilter = getSearchQueryFilter(searchQuery);
     return this.tournamentRepository.find({

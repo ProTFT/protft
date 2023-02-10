@@ -2,12 +2,12 @@ import { gql } from "urql";
 import { Set, Tournament } from "../../../graphql/schema";
 
 export interface TournamentsQueryResponse {
-  tournaments: Tournament[];
+  tournamentsWithStats: Tournament[];
 }
 
-export const TOURNAMENTS_QUERY = gql`
+export const TOURNAMENTS_WITH_STATS_QUERY = gql`
   query tournaments {
-    tournaments {
+    tournamentsWithStats {
       id
       name
       set {

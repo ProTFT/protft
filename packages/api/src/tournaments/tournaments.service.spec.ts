@@ -124,6 +124,28 @@ describe("TournamentsService", () => {
     });
   });
 
+  describe("findWithStats", () => {
+    it("should call past and ongoing", async () => {
+      const tournaments = [
+        {
+          id: mockTournamentId,
+          name: "anyName",
+          players: [],
+        },
+        {
+          id: 2,
+          name: "anyName",
+          players: [],
+        },
+      ];
+      tournamentRepository.find = jest.fn().mockResolvedValue(tournaments);
+      const response = await service.findWithStats();
+
+      expect(tournamentRepository.find).toHaveBeenCalledTimes(2);
+      expect(response).toStrictEqual([...tournaments, ...tournaments]);
+    });
+  });
+
   describe("findOngoing", () => {
     it("should call repository", async () => {
       await service.findOngoing();
