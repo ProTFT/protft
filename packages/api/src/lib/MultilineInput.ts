@@ -11,9 +11,9 @@ export const parseMultilinePlayerNames = async (
 
   const queryWithAllConditions = namesToFind.reduce((prev, curr, index) => {
     if (index === 0) {
-      return prev.where(`p.name = '${curr}'`);
+      return prev.where(`p.name ILIKE '%${curr}%'`);
     }
-    return prev.orWhere(`p.name = '${curr}'`);
+    return prev.orWhere(`p.name ILIKE '%${curr}%'`);
   }, query);
 
   const results = (await queryWithAllConditions.getRawMany()) as Player[];
