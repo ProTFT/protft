@@ -66,11 +66,20 @@ export const buildResults = (
 
 export const extractLobbyPlayerEntries = (
   resultEntries: FileLineWithLobbyAndRound[],
-): Pick<LobbyPlayerInfo, "playerId" | "lobbyId">[] =>
-  resultEntries.map((p) => ({
-    playerId: p.playerId,
-    lobbyId: p.lobbyId,
-  }));
+): Pick<LobbyPlayerInfo, "playerId" | "lobbyId">[] => {
+  const uniqueCombinationsOfPlayerAndLobby = new Set(
+    resultEntries.map((entry) => `${entry.playerId},${entry.lobbyId}`),
+  );
+  return Array.from(uniqueCombinationsOfPlayerAndLobby).map(
+    (hashedIdentifier) => {
+      const [playerId, lobbyId] = hashedIdentifier.split(",");
+      return {
+        playerId: Number(playerId),
+        lobbyId: Number(lobbyId),
+      };
+    },
+  );
+};
 
 export const createRoundResultEntries = (
   resultEntries: FileLineWithLobbyAndRound[],

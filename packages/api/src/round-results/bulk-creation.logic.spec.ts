@@ -106,6 +106,22 @@ describe("Bulk result creation", () => {
         { playerId: 3, lobbyId: 2 },
       ]);
     });
+
+    it("if there's more than one position, should not repeat player and lobby", () => {
+      const results = [
+        { playerId: 1, lobbyId: 1, roundId: 1, position: 1 },
+        { playerId: 1, lobbyId: 1, roundId: 2, position: 2 },
+        { playerId: 2, lobbyId: 2, roundId: 1, position: 1 },
+        { playerId: 3, lobbyId: 2, roundId: 1, position: 1 },
+        { playerId: 3, lobbyId: 2, roundId: 2, position: 2 },
+        { playerId: 3, lobbyId: 2, roundId: 3, position: 3 },
+      ];
+      expect(extractLobbyPlayerEntries(results)).toStrictEqual([
+        { playerId: 1, lobbyId: 1 },
+        { playerId: 2, lobbyId: 2 },
+        { playerId: 3, lobbyId: 2 },
+      ]);
+    });
   });
 
   describe("extractLobbyPlayerEntries", () => {
