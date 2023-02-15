@@ -46,7 +46,7 @@ export const mockLobbyGroups = lobbyGroups.map((value) => ({
 })) as unknown as LobbyGroup[];
 
 export const mockRounds = rounds.map((value) => ({
-  id: value,
+  id: 6 - value,
   sequence: value,
 })) as unknown as Round[];
 

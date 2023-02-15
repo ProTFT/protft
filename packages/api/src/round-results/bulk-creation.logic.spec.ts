@@ -76,10 +76,11 @@ describe("Bulk result creation", () => {
         mockRounds,
         mockLobbies,
       );
+      const resultsForPlayerOne = result.filter((r) => r.playerId === 1);
       expect(result).toHaveLength(numberOfPlayers * numberOfRounds);
-      expect(result.filter((r) => r.playerId === 1)).toHaveLength(
-        numberOfRounds,
-      );
+      expect(resultsForPlayerOne).toHaveLength(numberOfRounds);
+      expect(resultsForPlayerOne.find((r) => r.roundId === 0).position).toBe(1);
+      expect(resultsForPlayerOne.find((r) => r.roundId === 1).position).toBe(2);
     });
 
     it("if player is not found, should throw", () => {

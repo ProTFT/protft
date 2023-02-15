@@ -114,6 +114,10 @@ export const sortLobbies = (
     });
 };
 
+const sortRounds = (allStageRounds: Round[]) => {
+  return allStageRounds.sort((a, b) => b.sequence - a.sequence);
+};
+
 function parseFileLine(
   lines: string[],
   allStagePlayers: StagePlayerInfo[],
@@ -138,12 +142,13 @@ function getRoundsPerLobbyGroup(
   allStageRounds: Round[],
 ): LobbyGroupRounds {
   let count = 0;
+  const sortedRounds = sortRounds(allStageRounds);
   const roundsPerLobbyGroup = allStageLobbyGroups
     .sort((a, b) => a.sequence - b.sequence)
     .reduce<LobbyGroupRounds>((prev, curr) => {
       const roundCount = curr.roundsPlayed;
       const result = {
-        [curr.id]: allStageRounds.slice(count, count + roundCount),
+        [curr.id]: sortedRounds.slice(count, count + roundCount),
       };
       count += roundCount;
       return {
