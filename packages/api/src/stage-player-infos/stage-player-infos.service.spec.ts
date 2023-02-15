@@ -174,7 +174,7 @@ describe("StagePlayerInfos service", () => {
       expect(
         async () =>
           await service.createTiebreakerBulk(fileString, mockPlayerId),
-      ).rejects.toThrow();
+      ).rejects.toThrowError("Names not found: lele");
     });
 
     it("should update", async () => {

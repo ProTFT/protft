@@ -101,7 +101,9 @@ export class StagePlayerInfosService {
 
     if (notFoundPlayers.length) {
       throw new BadRequestException(
-        `Names not found: ${notFoundPlayers.map((p) => p.name).join(", ")}`,
+        `Names not found: ${notFoundPlayers
+          .map((p) => p.player.name)
+          .join(", ")}`,
       );
     }
 
