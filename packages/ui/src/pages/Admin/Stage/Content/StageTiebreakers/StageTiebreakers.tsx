@@ -5,7 +5,6 @@ import { ProTFTButton } from "../../../../../components/Button/Button";
 import { Tiebreaker } from "../../../../../graphql/schema";
 import { client } from "../../../../../hooks/useAuth";
 import { BulkPlayerDialog } from "../../../Components/BulkPlayerDialog/BulkPlayerDialog";
-import { BulkPlayerTournamentDialog } from "../../../Components/BulkPlayerTournamentDialog/BulkPlayerTournamentDialog";
 import { DeleteButton } from "../../../Components/DeleteButton/DeleteButton";
 import {
   StyledLeftSide,
