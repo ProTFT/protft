@@ -115,7 +115,7 @@ export const sortLobbies = (
 };
 
 const sortRounds = (allStageRounds: Round[]) => {
-  return allStageRounds.sort((a, b) => b.sequence - a.sequence);
+  return allStageRounds.sort((a, b) => a.sequence - b.sequence);
 };
 
 function parseFileLine(
