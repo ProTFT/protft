@@ -175,6 +175,7 @@ export interface IQuery {
     stage(id: number): Stage | Promise<Stage>;
     playersFromPreviousStage(id: number): StagePlayerInfo[] | Promise<StagePlayerInfo[]>;
     tiebreakers(): Tiebreaker[] | Promise<Tiebreaker[]>;
+    stagePlayer(stageId: number, playerId: number): StagePlayerInfo | Promise<StagePlayerInfo>;
     lobbies(lobbyGroupId: number): Lobby[] | Promise<Lobby[]>;
     pointSchemas(): PointSchema[] | Promise<PointSchema[]>;
     pointSchema(id: number): Nullable<PointSchema> | Promise<Nullable<PointSchema>>;
@@ -203,10 +204,12 @@ export interface IMutation {
     createStagePlayers(stageId: number, playerIds: number[]): StagePlayerInfo[] | Promise<StagePlayerInfo[]>;
     generateLobbies(stageId: number, roundsPerLobbyGroup: number): CreateLobbiesResponse | Promise<CreateLobbiesResponse>;
     createStagePlayersByName(stageId: number, playerNames: string): StagePlayerInfo[] | Promise<StagePlayerInfo[]>;
-    createLobby(stageId: number, name: string, sequence: number, lobbyGroupId: number): Lobby | Promise<Lobby>;
-    updateLobby(id: number, stageId: number, name: string, sequence: number, lobbyGroupId: number): Lobby | Promise<Lobby>;
+    updateStagePlayer(stageId: number, playerId: number, extraPoints?: Nullable<number>, tiebreakerRanking?: Nullable<number>): StagePlayerInfo | Promise<StagePlayerInfo>;
+    createLobby(stageId: number, sequence: number, lobbyGroupId: number, name?: Nullable<string>): Lobby | Promise<Lobby>;
+    updateLobby(id: number, stageId: number, sequence: number, lobbyGroupId: number, name?: Nullable<string>): Lobby | Promise<Lobby>;
     deleteLobby(id: number): DeleteResponse | Promise<DeleteResponse>;
     createRound(stageId: number, sequence: number): Round | Promise<Round>;
+    createLobbyGroup(stageId: number, sequence: number, roundsPlayed: number): LobbyGroup | Promise<LobbyGroup>;
     createLobbyPlayers(lobbies: CreatePlayerLobbyArgs[]): LobbyPlayerInfo[] | Promise<LobbyPlayerInfo[]>;
     createPlayer(name: string, country: string, region: string): Player | Promise<Player>;
     createPlayerSlugs(): Player[] | Promise<Player[]>;

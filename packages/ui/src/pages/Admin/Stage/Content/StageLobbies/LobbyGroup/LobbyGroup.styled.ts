@@ -6,7 +6,8 @@ export const StyledLobbyGroupContainer = styled(StyledVerticalContainer)`
   gap: 2rem;
 `;
 
-export const StyledBar = styled(StyledHorizontalContainer)`
+export const StyledBar = styled(StyledVerticalContainer)`
+  align-items: center;
   justify-content: center;
   gap: 2rem;
 `;

@@ -10,6 +10,7 @@ import { LobbiesService } from "../src/lobbies/lobbies.service";
 import { RoundsService } from "../src/rounds/rounds.service";
 import { PointSchemasService } from "../src/points/points.service";
 import { StagePlayerInfosService } from "../src/stage-player-infos/stage-player-infos.service";
+import { mockStagePlayers } from "./data/bulk-result-creation";
 
 const graphql = "/graphql";
 
@@ -122,6 +123,8 @@ const fakePointSchemasService = {
 const fakeStagePlayerInfosService = {
   findAllByStage: jest.fn().mockResolvedValue(mockStagePlayerInfos),
   createStagePlayers: jest.fn().mockResolvedValue(mockSimpleStagePlayerInfos),
+  findOne: jest.fn().mockResolvedValue(mockStagePlayers[0]),
+  updateOne: jest.fn().mockResolvedValue(mockStagePlayers[0]),
   createStagePlayerByName: jest
     .fn()
     .mockResolvedValue(mockSimpleStagePlayerInfos),
@@ -429,6 +432,52 @@ describe("Stages (e2e)", () => {
 
       expect(response.body).toStrictEqual({
         data: { generateLobbies: mockGeneratedLobbies },
+      });
+    });
+  });
+
+  describe("stagePlayer", () => {
+    it("should get", async () => {
+      const response = await request(app.getHttpServer())
+        .post(graphql)
+        .send({
+          query: `
+          query {
+            stagePlayer(stageId: 1, playerId: 1) {
+              player {
+                id
+                name
+              }
+            }
+          }`,
+        })
+        .expect(HttpStatus.OK);
+
+      expect(response.body).toStrictEqual({
+        data: { stagePlayer: mockStagePlayers[0] },
+      });
+    });
+  });
+
+  describe("updateStagePlayer", () => {
+    it("should update", async () => {
+      const response = await request(app.getHttpServer())
+        .post(graphql)
+        .send({
+          query: `
+          mutation {
+            updateStagePlayer(stageId: 1, playerId: 1, extraPoints: 10) {
+              player {
+                id
+                name
+              }
+            }
+          }`,
+        })
+        .expect(HttpStatus.OK);
+
+      expect(response.body).toStrictEqual({
+        data: { updateStagePlayer: mockStagePlayers[0] },
       });
     });
   });

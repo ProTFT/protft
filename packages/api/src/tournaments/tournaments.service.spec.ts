@@ -27,9 +27,11 @@ describe("TournamentsService", () => {
         from: jest.fn().mockReturnThis(),
         where: jest.fn().mockReturnThis(),
         orWhere: jest.fn().mockReturnThis(),
-        getRawMany: jest
-          .fn()
-          .mockResolvedValue([{ id: 1 }, { id: 2 }, { id: 3 }]),
+        getRawMany: jest.fn().mockResolvedValue([
+          { id: 1, name: "a" },
+          { id: 2, name: "b" },
+          { id: 3, name: "c" },
+        ]),
       },
     } as unknown as Repository<Tournament>;
     setsService = {

@@ -4,11 +4,14 @@ import {
   mockRounds,
   mockStagePlayers,
 } from "../../test/data/bulk-result-creation";
+import { LobbyGroup } from "../lobbies/lobby-group.entity";
+import { Lobby } from "../lobbies/lobby.entity";
 import { LobbyPlayerInfo } from "../lobby-player-infos/lobby-player-info.entity";
 import {
   buildResults,
   createRoundResultEntries,
   extractLobbyPlayerEntries,
+  sortLobbies,
 } from "./bulk-creation.logic";
 
 describe("Bulk result creation", () => {
@@ -159,6 +162,38 @@ describe("Bulk result creation", () => {
         { lobbyPlayerId: 10, roundId: 1, position: 1 },
         { lobbyPlayerId: 11, roundId: 1, position: 2 },
         { lobbyPlayerId: 12, roundId: 1, position: 3 },
+      ]);
+    });
+  });
+
+  describe("sortLobbies", () => {
+    it("should sort lobbies by lobby group sequence and lobby sequence", () => {
+      const lobbieGroups = [
+        { id: 3, sequence: 1 },
+        { id: 2, sequence: 2 },
+        { id: 1, sequence: 3 },
+      ] as LobbyGroup[];
+
+      const lobbies = [
+        { id: 1, lobbyGroupId: 1, sequence: 2 },
+        { id: 2, lobbyGroupId: 1, sequence: 1 },
+        { id: 10, lobbyGroupId: 2, sequence: 1 },
+        { id: 3, lobbyGroupId: 2, sequence: 2 },
+        { id: 4, lobbyGroupId: 3, sequence: 1 },
+        { id: 5, lobbyGroupId: 3, sequence: 4 },
+        { id: 6, lobbyGroupId: 3, sequence: 3 },
+        { id: 7, lobbyGroupId: 3, sequence: 2 },
+      ] as Lobby[];
+
+      expect(sortLobbies(lobbieGroups, lobbies)).toStrictEqual([
+        { id: 4, lobbyGroupId: 3, lobbyGroupSequence: 1, sequence: 1 },
+        { id: 7, lobbyGroupId: 3, lobbyGroupSequence: 1, sequence: 2 },
+        { id: 6, lobbyGroupId: 3, lobbyGroupSequence: 1, sequence: 3 },
+        { id: 5, lobbyGroupId: 3, lobbyGroupSequence: 1, sequence: 4 },
+        { id: 10, lobbyGroupId: 2, lobbyGroupSequence: 2, sequence: 1 },
+        { id: 3, lobbyGroupId: 2, lobbyGroupSequence: 2, sequence: 2 },
+        { id: 2, lobbyGroupId: 1, lobbyGroupSequence: 3, sequence: 1 },
+        { id: 1, lobbyGroupId: 1, lobbyGroupSequence: 3, sequence: 2 },
       ]);
     });
   });

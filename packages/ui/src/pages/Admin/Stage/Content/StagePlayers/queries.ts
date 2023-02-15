@@ -70,3 +70,55 @@ export const CREATE_STAGE_PLAYER_BY_NAME = gql`
     }
   }
 `;
+
+export type GetStagePlayerVariables = {
+  stageId: number;
+  playerId: number;
+};
+
+export interface GetStagePlayerResult {
+  stagePlayer: StagePlayerInfo;
+}
+
+export const GET_STAGE_PLAYER_QUERY = gql`
+  query stagePlayer($stageId: Int!, $playerId: Int!) {
+    stagePlayer(stageId: $stageId, playerId: $playerId) {
+      stageId
+      playerId
+      extraPoints
+      tiebreakerRanking
+    }
+  }
+`;
+
+export type UpdateStagePlayerVariables = {
+  stageId: number;
+  playerId: number;
+  extraPoints?: number;
+  tiebreakerRanking?: number;
+};
+
+export interface UpdateStagePlayerResult {
+  updateStagePlayer: StagePlayerInfo;
+}
+
+export const UPDATE_STAGE_PLAYER_MUTATION = gql`
+  mutation updateStagePlayer(
+    $stageId: Int!
+    $playerId: Int!
+    $extraPoints: Int
+    $tiebreakerRanking: Int
+  ) {
+    updateStagePlayer(
+      stageId: $stageId
+      playerId: $playerId
+      extraPoints: $extraPoints
+      tiebreakerRanking: $tiebreakerRanking
+    ) {
+      stageId
+      playerId
+      extraPoints
+      tiebreakerRanking
+    }
+  }
+`;

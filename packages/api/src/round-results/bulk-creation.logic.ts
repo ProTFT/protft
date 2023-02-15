@@ -93,6 +93,27 @@ export const createRoundResultEntries = (
     position: p.position,
   }));
 
+export const sortLobbies = (
+  allStageLobbyGroups: LobbyGroup[],
+  allStageLobbies: Lobby[],
+) => {
+  return allStageLobbies
+    .map((lobby) => ({
+      ...lobby,
+      lobbyGroupSequence: allStageLobbyGroups.find(
+        (lobbyGroup) => lobbyGroup.id === lobby.lobbyGroupId,
+      ).sequence,
+    }))
+    .sort((a, b) => {
+      const orderByLobbyGroupSequence =
+        a.lobbyGroupSequence - b.lobbyGroupSequence;
+      if (orderByLobbyGroupSequence === 0) {
+        return a.sequence - b.sequence;
+      }
+      return orderByLobbyGroupSequence;
+    });
+};
+
 function parseFileLine(
   lines: string[],
   allStagePlayers: StagePlayerInfo[],
@@ -107,7 +128,7 @@ function parseFileLine(
     }
     return {
       playerId: player.player.id,
-      playerPositions: positions.map((p) => Number(p)),
+      playerPositions: positions.filter(Boolean).map((p) => Number(p)),
     };
   });
 }
@@ -137,17 +158,15 @@ function getRoundsPerLobby(
   allStageLobbies: Lobby[],
   roundsPerLobbyGroup: LobbyGroupRounds,
 ): LobbyRounds {
-  return allStageLobbies
-    .sort((a, b) => a.sequence - b.sequence)
-    .reduce<{
-      [lobbyId: number]: number[];
-    }>(
-      (prev, curr) => ({
-        ...prev,
-        [curr.id]: roundsPerLobbyGroup[curr.lobbyGroupId].map((r) => r.id),
-      }),
-      {},
-    );
+  return allStageLobbies.reduce<{
+    [lobbyId: number]: number[];
+  }>(
+    (prev, curr) => ({
+      ...prev,
+      [curr.id]: roundsPerLobbyGroup[curr.lobbyGroupId].map((r) => r.id),
+    }),
+    {},
+  );
 }
 
 function crossResultsWithLobby(

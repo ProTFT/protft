@@ -1,8 +1,11 @@
-import { useCallback, useMemo, useState } from "react";
+import { useCallback, useMemo, useRef, useState } from "react";
 import { useParams } from "react-router-dom";
 import { useQuery, useMutation } from "urql";
 import { ProTFTButton } from "../../../../../components/Button/Button";
 import { Tiebreaker } from "../../../../../graphql/schema";
+import { client } from "../../../../../hooks/useAuth";
+import { BulkPlayerDialog } from "../../../Components/BulkPlayerDialog/BulkPlayerDialog";
+import { BulkPlayerTournamentDialog } from "../../../Components/BulkPlayerTournamentDialog/BulkPlayerTournamentDialog";
 import { DeleteButton } from "../../../Components/DeleteButton/DeleteButton";
 import {
   StyledLeftSide,
@@ -29,6 +32,8 @@ import {
 export const StageTiebreakers = () => {
   const { stageId } = useParams();
   const { show } = useToast();
+  const bulkTiebreakerDialogRef = useRef<HTMLDialogElement>(null);
+  const bulkTiebreakerFormRef = useRef<HTMLFormElement>(null);
 
   const [{ data: stageData }] = useQuery<StageQueryResponse>({
     query: STAGE_QUERY,
@@ -101,8 +106,47 @@ export const StageTiebreakers = () => {
     show();
   }, [localStageTiebreakers, show, stageId, updateTiebreakers]);
 
+  const onUploadBulk = useCallback(async () => {
+    bulkTiebreakerDialogRef.current?.showModal();
+  }, []);
+
+  const onBulkAdd = useCallback(
+    async (file: FileList) => {
+      if (!file?.item(0)) {
+        return;
+      }
+      const formData = new FormData();
+      formData.append("file", file.item(0)!);
+      formData.append("stageId", String(stageId));
+      const response = await client.postForm(
+        "/stagePlayerInfos/uploadTiebreakerListBulk",
+        formData
+      );
+      return response;
+    },
+    [stageId]
+  );
+
+  const onSubmitBulkTiebreaker = useCallback(
+    async ({ file }: { file: FileList }) => {
+      const result = await onBulkAdd(file);
+      if (result?.status !== 201) {
+        return alert(result?.statusText);
+      }
+      show();
+      bulkTiebreakerFormRef.current?.reset();
+      bulkTiebreakerDialogRef.current?.close();
+    },
+    [onBulkAdd, show]
+  );
+
   return (
     <StyledContainer>
+      <BulkPlayerDialog
+        dialogRef={bulkTiebreakerDialogRef}
+        formRef={bulkTiebreakerFormRef}
+        onSubmit={onSubmitBulkTiebreaker}
+      />
       <StyledLeftSide>
         {remainingTiebreakers.map((tb) => (
           <StyledTiebreakerListItem
@@ -117,6 +161,7 @@ export const StageTiebreakers = () => {
       <StyledRightSide>
         <StyledStageTiebreakerBar>
           <StyledTitle>{`Stage Tiebreakers`}</StyledTitle>
+          <ProTFTButton onClick={onUploadBulk}>Upload Bulk</ProTFTButton>
           <ProTFTButton onClick={onSave}>Save</ProTFTButton>
         </StyledStageTiebreakerBar>
         <StyledStageTiebreakerList>

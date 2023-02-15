@@ -22,6 +22,8 @@ import {
 } from "./dto/create-stage-player.args";
 import { CreateStageArgs } from "./dto/create-stage.args";
 import { GenerateLobbiesArgs } from "./dto/generate-lobbies.args";
+import { GetStagePlayerArgs } from "./dto/get-stage-player.args";
+import { UpdateStagePlayerArgs } from "./dto/update-stage-player.args";
 import { UpdateStageArgs } from "./dto/update-stage.args";
 import { UpdateTiebreakersArgs } from "./dto/update-tiebreakers.args";
 import { Stage } from "./stage.entity";
@@ -152,5 +154,17 @@ export class StagesResolver {
   ) {
     const payload = { stageId, playerNames };
     return this.stagePlayerInfosService.createStagePlayerByName(payload);
+  }
+
+  @UseGuards(GqlJwtAuthGuard)
+  @Query(() => StagePlayerInfo)
+  async stagePlayer(@Args() args: GetStagePlayerArgs) {
+    return this.stagePlayerInfosService.findOne(args);
+  }
+
+  @UseGuards(GqlJwtAuthGuard)
+  @Mutation(() => StagePlayerInfo)
+  async updateStagePlayer(@Args() args: UpdateStagePlayerArgs) {
+    return this.stagePlayerInfosService.updateOne(args);
   }
 }

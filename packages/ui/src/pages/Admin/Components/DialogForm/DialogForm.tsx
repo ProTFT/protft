@@ -1,4 +1,4 @@
-import React from "react";
+import React, { useEffect } from "react";
 import { useState, useCallback } from "react";
 import {
   ButtonVariant,
@@ -70,6 +70,10 @@ export const DialogForm = <T extends object, K extends object>({
   children,
 }: React.PropsWithChildren<Props<T, K>>) => {
   const [localEntity, setLocalEntity] = useState<T>((entity as T) || {});
+
+  useEffect(() => {
+    setLocalEntity((entity as T) || {});
+  }, [entity]);
 
   const onChangeFormInput = useCallback(
     ({ target }: React.ChangeEvent<HTMLInputElement>) => {

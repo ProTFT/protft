@@ -22,6 +22,7 @@ import {
   buildResults,
   createRoundResultEntries,
   extractLobbyPlayerEntries,
+  sortLobbies,
 } from "./bulk-creation.logic";
 
 interface FileLineWithPlayerLobby {
@@ -90,12 +91,14 @@ export class RoundResultsService {
       );
     }
 
+    const sortedLobbies = sortLobbies(allStageLobbyGroups, allStageLobbies);
+
     const resultEntries = buildResults(
       lines,
       allStagePlayers,
       allStageLobbyGroups,
       allStageRounds,
-      allStageLobbies,
+      sortedLobbies,
     );
 
     const lobbyPlayerEntries = extractLobbyPlayerEntries(resultEntries);

@@ -20,6 +20,8 @@ import { UseGuards } from "@nestjs/common";
 import { UpdateLobbyArgs } from "./dto/update-lobby.args";
 import { LobbyPlayerInfo } from "../lobby-player-infos/lobby-player-info.entity";
 import { CreatePlayerLobbyGroupArgs } from "./dto/create-player-lobby-group.args";
+import { LobbyGroup } from "./lobby-group.entity";
+import { CreateLobbyGroupArgs } from "./dto/create-lobby-group.args";
 
 @Resolver(() => Lobby)
 export class LobbiesResolver {
@@ -68,6 +70,15 @@ export class LobbiesResolver {
   async createRound(@Args() { sequence, stageId }: CreateRoundArgs) {
     const payload = { sequence, stageId };
     return this.roundsService.createOne(payload);
+  }
+
+  @UseGuards(GqlJwtAuthGuard)
+  @Mutation(() => LobbyGroup)
+  async createLobbyGroup(
+    @Args() { stageId, sequence, roundsPlayed }: CreateLobbyGroupArgs,
+  ) {
+    const payload = { stageId, sequence, roundsPlayed };
+    return this.lobbiesService.createOneLobbyGroup(payload);
   }
 
   @UseGuards(GqlJwtAuthGuard)

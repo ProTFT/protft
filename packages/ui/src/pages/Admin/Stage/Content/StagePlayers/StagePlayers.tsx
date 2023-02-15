@@ -1,7 +1,7 @@
 import { ChangeEvent, useCallback, useMemo, useRef, useState } from "react";
 import { useParams } from "react-router-dom";
 import { useMutation, useQuery } from "urql";
-import { Player } from "../../../../../graphql/schema";
+import { Player, StagePlayerInfo } from "../../../../../graphql/schema";
 import { ProTFTButton } from "../../../../../components/Button/Button";
 import { SearchInput } from "../../../../../components/SearchInput/SearchInput";
 import { BulkPlayerTournamentDialog } from "../../../Components/BulkPlayerTournamentDialog/BulkPlayerTournamentDialog";
@@ -19,24 +19,35 @@ import {
   CreateStagePlayerVariables,
   CREATE_STAGE_PLAYER,
   CREATE_STAGE_PLAYER_BY_NAME,
+  GetStagePlayerResult,
+  GetStagePlayerVariables,
+  GET_STAGE_PLAYER_QUERY,
   StagePlayersResponse,
   STAGE_PLAYERS_QUERY,
   TournamentPlayersResponse,
   TOURNAMENT_PLAYERS_QUERY,
+  UpdateStagePlayerResult,
+  UpdateStagePlayerVariables,
+  UPDATE_STAGE_PLAYER_MUTATION,
 } from "./queries";
 import {
   StyledBar,
   StyledButtonContainer,
   StyledContainer,
 } from "./StagePlayers.styled";
+import { StagePlayerDialog } from "../../../Components/StagePlayerDialog/StagePlayerDialog";
 
 export const StagePlayers = () => {
   const { id: tournamentId, stageId } = useParams();
 
   const [searchQuery, setSearchQuery] = useState("");
+
+  const [editedPlayerId, setEditedPlayerId] = useState(0);
   const { show } = useToast();
   const bulkPlayerDialogRef = useRef<HTMLDialogElement>(null);
   const bulkPlayerFormRef = useRef<HTMLFormElement>(null);
+  const editStagePlayerDialogRef = useRef<HTMLDialogElement>(null);
+  const editStagePlayerFormRef = useRef<HTMLFormElement>(null);
 
   const [{ data }] = useQuery<TournamentPlayersResponse>({
     query: TOURNAMENT_PLAYERS_QUERY,
@@ -48,6 +59,15 @@ export const StagePlayers = () => {
     variables: { id: Number(stageId) },
   });
 
+  const [{ data: stagePlayerData }] = useQuery<
+    GetStagePlayerResult,
+    GetStagePlayerVariables
+  >({
+    query: GET_STAGE_PLAYER_QUERY,
+    variables: { stageId: Number(stageId), playerId: editedPlayerId },
+    pause: !Boolean(editedPlayerId),
+  });
+
   const [, createStagePlayers] = useMutation<
     CreateStagePlayerResult,
     CreateStagePlayerVariables
@@ -57,6 +77,11 @@ export const StagePlayers = () => {
     CreateStagePlayerResult,
     CreateStagePlayerByNameVariables
   >(CREATE_STAGE_PLAYER_BY_NAME);
+
+  const [, updateStagePlayer] = useMutation<
+    UpdateStagePlayerResult,
+    UpdateStagePlayerVariables
+  >(UPDATE_STAGE_PLAYER_MUTATION);
 
   const onChangeSearchInput = useCallback(
     (event: ChangeEvent<HTMLInputElement>) => {
@@ -127,8 +152,35 @@ export const StagePlayers = () => {
     [createStagePlayersByName, show, stageId]
   );
 
+  const onSubmitStagePlayer = useCallback(
+    async ({
+      tiebreakerRanking,
+      extraPoints,
+    }: Pick<StagePlayerInfo, "tiebreakerRanking" | "extraPoints">) => {
+      const result = await updateStagePlayer({
+        stageId: Number(stageId),
+        playerId: editedPlayerId,
+        tiebreakerRanking,
+        extraPoints,
+      });
+
+      if (result.error) {
+        return alert(result.error);
+      }
+      show();
+      editStagePlayerFormRef.current?.reset();
+      editStagePlayerDialogRef.current?.close();
+    },
+    [editedPlayerId, show, stageId, updateStagePlayer]
+  );
+
   const onBulkAdd = useCallback(() => {
     bulkPlayerDialogRef.current?.showModal();
+  }, []);
+
+  const onEditClick = useCallback(async (player: Player) => {
+    setEditedPlayerId(player.id);
+    editStagePlayerDialogRef.current?.showModal();
   }, []);
 
   return (
@@ -137,6 +189,12 @@ export const StagePlayers = () => {
         dialogRef={bulkPlayerDialogRef}
         formRef={bulkPlayerFormRef}
         onSubmit={onSubmitBulkPlayer}
+      />
+      <StagePlayerDialog
+        dialogRef={editStagePlayerDialogRef}
+        formRef={editStagePlayerFormRef}
+        onSubmit={onSubmitStagePlayer}
+        stagePlayerInfo={stagePlayerData?.stagePlayer}
       />
       <StyledLeftSide>
         <StyledBar>
@@ -169,6 +227,8 @@ export const StagePlayers = () => {
           content={stagePlayers}
           setContent={setStagePlayers}
           onAdd={onAdd}
+          editable
+          onEditClick={onEditClick}
         />
       </StyledRightSide>
     </StyledContainer>

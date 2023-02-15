@@ -15,9 +15,15 @@ import {
 
 interface Props {
   stageId: number;
+  refetchLobbyGroups: () => void;
+  onSetManual: () => void;
 }
 
-export const GenerateLobbies = ({ stageId }: Props) => {
+export const GenerateLobbies = ({
+  stageId,
+  refetchLobbyGroups,
+  onSetManual,
+}: Props) => {
   const [roundsPerLobby, setRoundsPerLobby] = useState<number>(0);
   const [, generateLobbies] = useMutation<
     GenerateLobbiesResult,
@@ -35,7 +41,8 @@ export const GenerateLobbies = ({ stageId }: Props) => {
       return alert(result.error);
     }
     show();
-  }, [generateLobbies, roundsPerLobby, stageId, show]);
+    refetchLobbyGroups();
+  }, [generateLobbies, roundsPerLobby, stageId, show, refetchLobbyGroups]);
 
   return (
     <StyledContainer>
@@ -48,6 +55,7 @@ export const GenerateLobbies = ({ stageId }: Props) => {
         }
       />
       <ProTFTButton onClick={onGenerateLobbies}>Generate Lobbies</ProTFTButton>
+      <ProTFTButton onClick={onSetManual}>Don't</ProTFTButton>
     </StyledContainer>
   );
 };

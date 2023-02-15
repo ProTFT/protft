@@ -22,7 +22,7 @@ export const StageLobbies = () => {
   const { stageId } = useParams();
   const [searchQuery, setSearchQuery] = useState("");
 
-  const [{ data: lobbyGroupsData }] = useQuery<
+  const [{ data: lobbyGroupsData }, refetch] = useQuery<
     LobbyGroupsQueryResult,
     LobbyGroupsQueryVariables
   >({
@@ -97,6 +97,10 @@ export const StageLobbies = () => {
     [stagePlayersData?.stage.players]
   );
 
+  const refetchLobbyGroups = useCallback(() => {
+    refetch();
+  }, [refetch]);
+
   return (
     <StyledContainer>
       <StyledLeftSide>
@@ -124,6 +128,7 @@ export const StageLobbies = () => {
             stageId={Number(stageId)}
             onChangeLobbyGroup={onChangeLobbyGroup}
             onChangeSelectedPlayers={onChangeSelectedPlayers}
+            refetchLobbyGroups={refetchLobbyGroups}
           />
         </Suspense>
       </StyledRightSide>

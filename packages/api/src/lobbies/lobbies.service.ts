@@ -11,6 +11,7 @@ import { CreatePlayerLobbyGroupArgs } from "./dto/create-player-lobby-group.args
 import { UpdateLobbyArgs } from "./dto/update-lobby.args";
 import { LobbyGroup } from "./lobby-group.entity";
 import { Lobby } from "./lobby.entity";
+import { createLobbyName } from "./lobby.logic";
 
 @Injectable()
 export class LobbiesService {
@@ -41,8 +42,20 @@ export class LobbiesService {
     });
   }
 
-  createOne(payload: CreateLobbyArgs): Promise<Lobby> {
-    return this.lobbiesRepository.save(payload);
+  async createOne({
+    lobbyGroupId,
+    sequence,
+    stageId,
+    name,
+  }: CreateLobbyArgs): Promise<Lobby> {
+    const lobbyName =
+      name || (await this.createLobbyName(lobbyGroupId, sequence));
+    return this.lobbiesRepository.save({
+      lobbyGroupId,
+      sequence,
+      stageId,
+      name: lobbyName,
+    });
   }
 
   createMany(lobbies: CreateLobbyArgs[]) {
@@ -113,5 +126,13 @@ export class LobbiesService {
     });
     const responses = await Promise.all(requests);
     return responses.flat();
+  }
+
+  private async createLobbyName(
+    lobbyGroupId: number,
+    lobbySequence: number,
+  ): Promise<string> {
+    const lobbyGroup = await this.findOneLobbyGroup(lobbyGroupId);
+    return createLobbyName(lobbyGroup.sequence, lobbySequence);
   }
 }

@@ -4,6 +4,7 @@ import { Repository } from "typeorm";
 import { DeleteResponse } from "../lib/dto/delete-return";
 import { CreateLobbyArgs } from "../lobbies/dto/create-lobby.args";
 import { LobbiesService } from "../lobbies/lobbies.service";
+import { createLobbyName } from "../lobbies/lobby.logic";
 import { RoundsService } from "../rounds/rounds.service";
 import { CreateLobbiesResponse } from "./dto/create-lobbies.result";
 import { CreateStageArgs } from "./dto/create-stage.args";
@@ -109,7 +110,7 @@ export class StagesService {
       ({ id: lobbyGroupId, sequence }): CreateLobbyArgs[] => {
         return lobbyQuantityArray.map((_, index) => ({
           lobbyGroupId: lobbyGroupId,
-          name: this.createLobbyName(sequence, index + 1),
+          name: createLobbyName(sequence, index + 1),
           sequence: index + 1,
           stageId,
         }));
@@ -128,16 +129,5 @@ export class StagesService {
       this.roundService.createOne({ sequence: index + 1, stageId }),
     );
     return Promise.all(roundCreationPromises);
-  }
-
-  private createLobbyName(
-    lobbyGroupSequence: number,
-    lobbySequence: number,
-  ): string {
-    const BASE_CHARCODE = 64;
-    return (
-      String.fromCharCode(BASE_CHARCODE + lobbySequence).toUpperCase() +
-      String(lobbyGroupSequence)
-    );
   }
 }

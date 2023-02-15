@@ -1,17 +1,25 @@
 import { Repository } from "typeorm";
+import { formatString } from "../../test/helpers/File";
 import { StagePlayerInfo } from "./stage-player-info.entity";
 import { StagePlayerInfosService } from "./stage-player-infos.service";
 
 describe("StagePlayerInfos service", () => {
   let service: StagePlayerInfosService;
-  const databaseResult = [{ id: 1 }, { id: 2 }, { id: 3 }];
+  const databaseResult = [
+    { id: 1, name: "a" },
+    { id: 2, name: "b" },
+    { id: 3, name: "c" },
+  ];
   let stagePlayerInfoRepository: Repository<StagePlayerInfo>;
   const mockStageId = 1;
+  const mockPlayerId = 2;
 
   beforeEach(() => {
     stagePlayerInfoRepository = {
       find: jest.fn(),
       save: jest.fn(),
+      findOne: jest.fn(),
+      update: jest.fn(),
       manager: {
         createQueryBuilder: jest.fn().mockReturnThis(),
         select: jest.fn().mockReturnThis(),
@@ -35,6 +43,30 @@ describe("StagePlayerInfos service", () => {
         relations: ["player"],
         where: { stageId: mockStageId },
       });
+    });
+  });
+
+  describe("getOne", () => {
+    it("should call repository", async () => {
+      await service.findOne({ stageId: mockStageId, playerId: mockPlayerId });
+      expect(stagePlayerInfoRepository.findOne).toHaveBeenCalledWith({
+        where: { stageId: mockStageId, playerId: mockPlayerId },
+      });
+    });
+  });
+
+  describe("updateOne", () => {
+    it("should call repository", async () => {
+      await service.updateOne({
+        stageId: mockStageId,
+        playerId: mockPlayerId,
+        extraPoints: 10,
+      });
+      expect(stagePlayerInfoRepository.update).toHaveBeenCalledWith(
+        { stageId: mockStageId, playerId: mockPlayerId },
+        { extraPoints: 10 },
+      );
+      expect(stagePlayerInfoRepository.findOne).toHaveBeenCalled();
     });
   });
 
@@ -112,6 +144,54 @@ describe("StagePlayerInfos service", () => {
           }),
       ).rejects.toThrowError("Provided names: 4, names found: 3");
       expect(stagePlayerInfoRepository.save).not.toHaveBeenCalled();
+    });
+  });
+
+  describe("createTiebreakerBulk", () => {
+    it("if file does not have correct headers, should throw error", async () => {
+      const fileString = formatString(`
+        Name,Lala
+        Lucas,1
+        Pedro,2
+      `);
+      expect(
+        async () => await service.createTiebreakerBulk(fileString, mockStageId),
+      ).rejects.toThrowError(`Name - Lala`);
+    });
+
+    it("if some name does not exist on database, should throw", async () => {
+      stagePlayerInfoRepository.find = jest
+        .fn()
+        .mockResolvedValue([
+          { player: { name: "lele" } },
+          { player: { name: "pedro" } },
+        ]);
+      const fileString = formatString(`
+            Name,Ranking
+            Lucas,1
+            Pedro,2
+          `);
+      expect(
+        async () =>
+          await service.createTiebreakerBulk(fileString, mockPlayerId),
+      ).rejects.toThrow();
+    });
+
+    it("should update", async () => {
+      stagePlayerInfoRepository.find = jest
+        .fn()
+        .mockResolvedValue([
+          { player: { name: "lucas" } },
+          { player: { name: "pedro" } },
+        ]);
+      const fileString = formatString(`
+            Name,Ranking
+            Lucas,1
+            Pedro,2
+          `);
+      await service.createTiebreakerBulk(fileString, mockPlayerId);
+
+      expect(stagePlayerInfoRepository.update).toHaveBeenCalled();
     });
   });
 });

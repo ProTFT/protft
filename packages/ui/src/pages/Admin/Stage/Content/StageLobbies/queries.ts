@@ -101,6 +101,23 @@ export const GENERATE_LOBBIES_MUTATION = gql`
   }
 `;
 
+export interface CreateLobbyGroupsResult {
+  id: number;
+}
+
+export type CreateLobbyGroupsVariables = {
+  stageId: number;
+  lobbyGroupsCount: number;
+};
+
+export const CREATE_LOBBY_GROUPS_MUTATION = gql`
+  mutation createLobbyGroups($stageId: Int!, $lobbyGroupsCount: Int!) {
+    createLobbyGroups(stageId: $stageId, lobbyGroupsCount: $lobbyGroupsCount) {
+      id
+    }
+  }
+`;
+
 export interface LobbyPlayersQueryResult {
   lobbies: {
     id: number;

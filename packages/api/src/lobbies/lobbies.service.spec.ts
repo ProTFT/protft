@@ -11,23 +11,26 @@ import { Lobby } from "./lobby.entity";
 describe("LobbiesService", () => {
   let service: LobbiesService;
   const mockId = 1;
-  const lobbyRepository = {
-    find: jest.fn(),
-    findOne: jest.fn(),
-    save: jest.fn(),
-    update: jest.fn(),
-    delete: jest.fn(),
-  } as unknown as Repository<Lobby>;
-  const lobbyGroupsRepository = {
-    findOne: jest.fn(),
-    find: jest.fn(),
-    save: jest.fn(),
-  } as unknown as Repository<LobbyGroup>;
-  const lobbyPlayerInfosService = {
-    createManyLobbyPlayersFromGroupedData: jest.fn(),
-  } as unknown as LobbyPlayerInfosService;
+  let lobbyRepository: Repository<Lobby>;
+  let lobbyGroupsRepository: Repository<LobbyGroup>;
+  let lobbyPlayerInfosService: LobbyPlayerInfosService;
 
   beforeEach(async () => {
+    lobbyRepository = {
+      find: jest.fn(),
+      findOne: jest.fn(),
+      save: jest.fn(),
+      update: jest.fn(),
+      delete: jest.fn(),
+    } as unknown as Repository<Lobby>;
+    lobbyGroupsRepository = {
+      findOne: jest.fn().mockResolvedValue({ sequence: 1 }),
+      find: jest.fn(),
+      save: jest.fn(),
+    } as unknown as Repository<LobbyGroup>;
+    lobbyPlayerInfosService = {
+      createManyLobbyPlayersFromGroupedData: jest.fn(),
+    } as unknown as LobbyPlayerInfosService;
     service = new LobbiesService(
       lobbyRepository,
       lobbyGroupsRepository,
@@ -69,8 +72,15 @@ describe("LobbiesService", () => {
     });
 
     describe("create one", () => {
-      it("should call repository", async () => {
+      it("should just call repository if name is passed", async () => {
+        await service.createOne({ name: "name" } as CreateLobbyArgs);
+        expect(lobbyGroupsRepository.findOne).not.toHaveBeenCalled();
+        expect(lobbyRepository.save).toHaveBeenCalled();
+      });
+
+      it("if name is not passed, should fetch lobby group and create name", async () => {
         await service.createOne({} as CreateLobbyArgs);
+        expect(lobbyGroupsRepository.findOne).toHaveBeenCalled();
         expect(lobbyRepository.save).toHaveBeenCalled();
       });
     });

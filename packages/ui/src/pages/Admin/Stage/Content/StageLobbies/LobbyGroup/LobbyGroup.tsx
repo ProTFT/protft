@@ -1,9 +1,13 @@
-import { useCallback, useEffect, useState } from "react";
+import { useCallback, useEffect, useRef, useState } from "react";
 import { useMutation, useQuery } from "urql";
 import { ProTFTButton } from "../../../../../../components/Button/Button";
 import { BigArrowLeft } from "../../../../../../design/icons/BigArrowLeft";
 import { BigArrowRight } from "../../../../../../design/icons/BigArrowRight";
-import { Player } from "../../../../../../graphql/schema";
+import {
+  Lobby,
+  LobbyGroup as LobbyGroupEntity,
+  Player,
+} from "../../../../../../graphql/schema";
 import { LobbyContainer } from "../LobbyContainer/LobbyContainer";
 import { GenerateLobbies } from "./GenerateLobbies";
 import {
@@ -19,12 +23,20 @@ import {
   StyledTitleContainer,
 } from "./LobbyGroup.styled";
 import {
+  CreateLobbyGroupResult,
+  CreateLobbyGroupVariables,
+  CreateLobbyResult,
+  CreateLobbyVariables,
   CreatePlayerLobbyGroupResult,
   CreatePlayerLobbyGroupVariables,
-  CREATE_LOBBY_PLAYERS,
+  CREATE_LOBBY_GROUP_MUTATION,
+  CREATE_LOBBY_MUTATION,
+  CREATE_LOBBY_PLAYERS_MUTATION,
 } from "./queries";
 import { useToast } from "../../../../Components/Toast/Toast";
 import { StyledTitle } from "../../../../Components/Title/Title.styled";
+import { LobbyGroupDialog } from "../../../../Components/LobbyGroupDialog/LobbyGroupDialog";
+import { LobbyDialog } from "../../../../Components/LobbyDialog/LobbyDialog";
 
 interface Props {
   hasLobbieGroups: boolean;
@@ -33,6 +45,7 @@ interface Props {
   lobbyGroupName?: number;
   onChangeLobbyGroup: any;
   onChangeSelectedPlayers: any;
+  refetchLobbyGroups: () => void;
 }
 
 interface AllLobbyPlayers {
@@ -48,21 +61,37 @@ export const LobbyGroup = ({
   onChangeLobbyGroup,
   onChangeSelectedPlayers,
   lobbyGroupName,
+  refetchLobbyGroups,
 }: Props) => {
   const { show } = useToast();
-  const [{ data: lobbyPlayersData }] = useQuery<
+  const [isManual, setIsManual] = useState(false);
+  const addLobbyGroupDialogRef = useRef<HTMLDialogElement>(null);
+  const addLobbyGroupFormRef = useRef<HTMLFormElement>(null);
+  const addLobbyDialogRef = useRef<HTMLDialogElement>(null);
+  const addLobbyFormRef = useRef<HTMLFormElement>(null);
+
+  const [{ data: lobbyPlayersData }, refetch] = useQuery<
     LobbyPlayersQueryResult,
     LobbyPlayersQueryVariables
   >({
     query: LOBBY_PLAYERS_QUERY,
     variables: { lobbyGroupId: Number(selectedLobbyGroup) },
-    pause: !hasLobbieGroups,
+    pause: !hasLobbieGroups && !isManual,
   });
 
   const [, createPlayerLobbyGroup] = useMutation<
     CreatePlayerLobbyGroupResult,
     CreatePlayerLobbyGroupVariables
-  >(CREATE_LOBBY_PLAYERS);
+  >(CREATE_LOBBY_PLAYERS_MUTATION);
+
+  const [, createLobbyGroup] = useMutation<
+    CreateLobbyGroupResult,
+    CreateLobbyGroupVariables
+  >(CREATE_LOBBY_GROUP_MUTATION);
+
+  const [, createLobby] = useMutation<CreateLobbyResult, CreateLobbyVariables>(
+    CREATE_LOBBY_MUTATION
+  );
 
   const [allLobbiesWithPlayers, setAllLobbiesWithPlayers] = useState<
     AllLobbyPlayers[]
@@ -92,6 +121,53 @@ export const LobbyGroup = ({
       .map((p) => p.id);
     onChangeSelectedPlayers(playerIds);
   }, [allLobbiesWithPlayers, onChangeSelectedPlayers]);
+
+  const onCreateLobbyGroup = useCallback(async () => {
+    addLobbyGroupDialogRef.current?.showModal();
+  }, []);
+
+  const onSubmitCreateLobbyGroup = useCallback(
+    async ({
+      sequence,
+      roundsPlayed,
+    }: Pick<LobbyGroupEntity, "roundsPlayed" | "sequence">) => {
+      const result = await createLobbyGroup({
+        roundsPlayed,
+        sequence,
+        stageId,
+      });
+      if (result.error) {
+        return alert(result.error);
+      }
+      show();
+      refetchLobbyGroups();
+      addLobbyGroupFormRef.current?.reset();
+      addLobbyGroupDialogRef.current?.close();
+    },
+    [createLobbyGroup, show, stageId, refetchLobbyGroups]
+  );
+
+  const onCreateLobby = useCallback(async () => {
+    addLobbyDialogRef.current?.showModal();
+  }, []);
+
+  const onSubmitCreateLobby = useCallback(
+    async ({ sequence }: Pick<Lobby, "sequence">) => {
+      const result = await createLobby({
+        lobbyGroupId: selectedLobbyGroup!,
+        sequence,
+        stageId,
+      });
+      if (result.error) {
+        return alert(result.error);
+      }
+      show();
+      refetch();
+      addLobbyFormRef.current?.reset();
+      addLobbyDialogRef.current?.close();
+    },
+    [createLobby, selectedLobbyGroup, show, stageId, refetch]
+  );
 
   const onSave = useCallback(async () => {
     const result = await createPlayerLobbyGroup({
@@ -158,17 +234,37 @@ export const LobbyGroup = ({
     onChangeLobbyGroup(-1);
   }, [onChangeLobbyGroup]);
 
-  if (!hasLobbieGroups) {
+  const setModeToManual = useCallback(() => {
+    setIsManual(true);
+  }, []);
+
+  if (!hasLobbieGroups && !isManual) {
     return (
       <>
         <StyledTitle>Lobby Groups</StyledTitle>
-        <GenerateLobbies stageId={stageId} />
+        <GenerateLobbies
+          stageId={stageId}
+          refetchLobbyGroups={refetchLobbyGroups}
+          onSetManual={setModeToManual}
+        />
       </>
     );
   }
 
   return (
     <StyledLobbyGroupContainer>
+      <LobbyGroupDialog
+        dialogRef={addLobbyGroupDialogRef}
+        formRef={addLobbyGroupFormRef}
+        onSubmit={onSubmitCreateLobbyGroup}
+        lobbyGroup={{} as LobbyGroupEntity}
+      />
+      <LobbyDialog
+        dialogRef={addLobbyDialogRef}
+        formRef={addLobbyFormRef}
+        onSubmit={onSubmitCreateLobby}
+        lobby={{} as Lobby}
+      />
       <StyledBar>
         <StyledTitleContainer>
           <BigArrowLeft onClick={onGoToPreviousLobbyGroup} />
@@ -177,6 +273,12 @@ export const LobbyGroup = ({
         </StyledTitleContainer>
         <StyledButtonContainer>
           <ProTFTButton onClick={onSave}>Save</ProTFTButton>
+          <ProTFTButton onClick={onCreateLobbyGroup}>
+            Create Lobby Group
+          </ProTFTButton>
+          {selectedLobbyGroup && (
+            <ProTFTButton onClick={onCreateLobby}>Create Lobby</ProTFTButton>
+          )}
         </StyledButtonContainer>
       </StyledBar>
       <StyledLobbyContainer>

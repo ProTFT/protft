@@ -20,7 +20,10 @@ export const parseMultilinePlayerNames = async (
 
   if (results.length !== namesToFind.length) {
     throw new BadRequestException(
-      `Provided names: ${namesToFind.length}, names found: ${results.length}`,
+      `Provided names: ${namesToFind.length}, names found: ${results.length}
+      \nNot found: ${namesToFind.filter(
+        (n) => !results.find((r) => r.name.toLowerCase() === n.toLowerCase()),
+      )}`,
     );
   }
 

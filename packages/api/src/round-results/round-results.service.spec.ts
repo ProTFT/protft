@@ -13,6 +13,7 @@ jest.mock("./bulk-creation.logic", () => ({
   buildResults: jest.fn(),
   createRoundResultEntries: jest.fn(),
   extractLobbyPlayerEntries: jest.fn(),
+  sortLobbies: jest.fn(),
 }));
 
 class FakeQueryBuilder {
