@@ -74,16 +74,26 @@ export class StagePlayerInfosService {
 
   async createTiebreakerBulk(fileString: string, stageId: number) {
     const { titles, lines } = parseFileString(fileString);
-    const [name, ranking] = titles;
-    if (name !== "Name" || ranking !== "Ranking") {
-      throw new BadRequestException(`${name} - ${ranking}`);
+    const [firstTitle, secondTitle, thirdTitle] = titles;
+    if (
+      firstTitle !== "Name" ||
+      secondTitle !== "Ranking" ||
+      thirdTitle !== "ExtraPoints"
+    ) {
+      throw new BadRequestException(
+        `${firstTitle} - ${secondTitle} - ${thirdTitle}`,
+      );
     }
 
     const stagePlayers = await this.findAllByStage(stageId);
 
     const fileData = lines.map((line) => {
-      const [name, tiebreakerRanking] = line.split(",");
-      return { name, tiebreakerRanking: Number(tiebreakerRanking) };
+      const [name, tiebreakerRanking, extraPoints] = line.split(",");
+      return {
+        name,
+        tiebreakerRanking: Number(tiebreakerRanking || 0),
+        extraPoints: Number(extraPoints || 0),
+      };
     });
 
     const resolvedInfo = stagePlayers.map((sp) => {
@@ -94,6 +104,7 @@ export class StagePlayerInfosService {
         player: sp.player,
         name: entry?.name,
         tiebreakerRanking: entry?.tiebreakerRanking,
+        extraPoints: entry?.extraPoints,
       };
     });
 
@@ -110,7 +121,14 @@ export class StagePlayerInfosService {
     const updates = resolvedInfo.map((x) =>
       this.stagePlayerInfoRepository.update(
         { stageId, playerId: x.player.id },
-        { tiebreakerRanking: x.tiebreakerRanking },
+        {
+          ...(x.tiebreakerRanking > 0 && {
+            tiebreakerRanking: x.tiebreakerRanking,
+          }),
+          ...(x.extraPoints > 0 && {
+            extraPoints: x.extraPoints,
+          }),
+        },
       ),
     );
 

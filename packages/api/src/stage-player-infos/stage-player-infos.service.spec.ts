@@ -167,7 +167,7 @@ describe("StagePlayerInfos service", () => {
           { player: { name: "pedro" } },
         ]);
       const fileString = formatString(`
-            Name,Ranking
+            Name,Ranking,ExtraPoints
             Lucas,1
             Pedro,2
           `);
@@ -185,13 +185,73 @@ describe("StagePlayerInfos service", () => {
           { player: { name: "pedro" } },
         ]);
       const fileString = formatString(`
-            Name,Ranking
+            Name,Ranking,ExtraPoints
             Lucas,1
             Pedro,2
           `);
       await service.createTiebreakerBulk(fileString, mockPlayerId);
 
       expect(stagePlayerInfoRepository.update).toHaveBeenCalled();
+    });
+
+    it("if extra points are not passed, should not update them", async () => {
+      stagePlayerInfoRepository.find = jest
+        .fn()
+        .mockResolvedValue([
+          { player: { id: 1, name: "lucas" } },
+          { player: { id: 2, name: "pedro" } },
+        ]);
+      const fileString = formatString(`
+            Name,Ranking,ExtraPoints
+            Lucas,1
+            Pedro,2
+          `);
+      await service.createTiebreakerBulk(fileString, mockStageId);
+
+      expect(stagePlayerInfoRepository.update).toHaveBeenCalledWith(
+        {
+          playerId: 1,
+          stageId: mockStageId,
+        },
+        { tiebreakerRanking: 1 },
+      );
+      expect(stagePlayerInfoRepository.update).toHaveBeenCalledWith(
+        {
+          playerId: 2,
+          stageId: mockStageId,
+        },
+        { tiebreakerRanking: 2 },
+      );
+    });
+
+    it("if tiebreakers are not passed, should not update them", async () => {
+      stagePlayerInfoRepository.find = jest
+        .fn()
+        .mockResolvedValue([
+          { player: { id: 1, name: "lucas" } },
+          { player: { id: 2, name: "pedro" } },
+        ]);
+      const fileString = formatString(`
+            Name,Ranking,ExtraPoints
+            Lucas,,1
+            Pedro,,2
+          `);
+      await service.createTiebreakerBulk(fileString, mockStageId);
+
+      expect(stagePlayerInfoRepository.update).toHaveBeenCalledWith(
+        {
+          playerId: 1,
+          stageId: mockStageId,
+        },
+        { extraPoints: 1 },
+      );
+      expect(stagePlayerInfoRepository.update).toHaveBeenCalledWith(
+        {
+          playerId: 2,
+          stageId: mockStageId,
+        },
+        { extraPoints: 2 },
+      );
     });
   });
 });
