@@ -20,12 +20,20 @@ export class RoundResultsController {
   @UseInterceptors(FileInterceptor("file"))
   uploadBulk(
     @UploadedFile() file: Express.Multer.File,
-    @Body() { stageId }: { stageId: string },
+    @Body()
+    {
+      stageId,
+      ignorePlayerNumber = "false",
+    }: { stageId: string; ignorePlayerNumber: string },
   ) {
     if (!file) {
       throw new BadRequestException("No file provided");
     }
     const fileString = file.buffer.toString("utf-8");
-    return this.roundResultsService.createBulk(fileString, Number(stageId));
+    return this.roundResultsService.createBulk(
+      fileString,
+      Number(stageId),
+      ignorePlayerNumber === "true",
+    );
   }
 }

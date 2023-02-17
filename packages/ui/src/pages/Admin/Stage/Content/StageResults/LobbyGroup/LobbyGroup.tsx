@@ -174,13 +174,14 @@ export const LobbyGroup = ({
   );
 
   const onBulkAdd = useCallback(
-    async (file: FileList) => {
+    async (file: FileList, ignorePlayerNumber: boolean) => {
       if (!file?.item(0)) {
         return;
       }
       const formData = new FormData();
       formData.append("file", file.item(0)!);
       formData.append("stageId", String(stageId));
+      formData.append("ignorePlayerNumber", String(ignorePlayerNumber));
       const response = await client.postForm(
         "/roundResults/uploadBulk",
         formData
@@ -191,8 +192,14 @@ export const LobbyGroup = ({
   );
 
   const onSubmit = useCallback(
-    async ({ file }: { file: FileList }) => {
-      const result = await onBulkAdd(file);
+    async ({
+      file,
+      ignorePlayerNumber,
+    }: {
+      file: FileList;
+      ignorePlayerNumber: boolean;
+    }) => {
+      const result = await onBulkAdd(file, ignorePlayerNumber);
       if (result?.status !== 201) {
         return alert(result?.statusText);
       }

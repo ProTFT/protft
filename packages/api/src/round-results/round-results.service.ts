@@ -60,6 +60,7 @@ export class RoundResultsService {
   public async createBulk(
     fileString: string,
     stageId: number,
+    ignorePlayerNumber: boolean,
   ): Promise<RoundResult[]> {
     const { titles, lines } = parseFileString(fileString);
     const [player, position] = titles;
@@ -79,13 +80,16 @@ export class RoundResultsService {
       "lobbyGroups",
     ]);
 
-    if (lines.length % allStagePlayers.length !== 0) {
+    if (!ignorePlayerNumber && lines.length % allStagePlayers.length !== 0) {
       throw new BadRequestException(
         "Number of lines does not match number of stage players",
       );
     }
 
-    if (lines.length / allStagePlayers.length !== allStageLobbyGroups.length) {
+    if (
+      !ignorePlayerNumber &&
+      lines.length / allStagePlayers.length !== allStageLobbyGroups.length
+    ) {
       throw new BadRequestException(
         "Number of lines does not match number of lobby groups",
       );
