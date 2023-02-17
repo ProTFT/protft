@@ -18,7 +18,7 @@ export const parseMultilinePlayerNames = async (
 
   const results = (await queryWithAllConditions.getRawMany()) as Player[];
 
-  if (results.length !== namesToFind.length) {
+  if (results.length < namesToFind.length) {
     throw new BadRequestException(
       `Provided names: ${namesToFind.length}, names found: ${results.length}
       \nNot found: ${namesToFind.filter(
