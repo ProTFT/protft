@@ -1,10 +1,5 @@
 import { gql } from "urql";
-import {
-  Player,
-  Stage,
-  StagePlayerInfo,
-  Tournament,
-} from "../../../../../graphql/schema";
+import { Player, Stage, Tournament } from "../../../../../graphql/schema";
 
 export interface TournamentPlayersResponse {
   tournament: Tournament;
