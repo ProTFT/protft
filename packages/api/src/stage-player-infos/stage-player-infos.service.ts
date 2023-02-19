@@ -2,11 +2,6 @@ import { BadRequestException, Injectable } from "@nestjs/common";
 import { InjectRepository } from "@nestjs/typeorm";
 import { Repository } from "typeorm";
 import { parseFileString } from "../lib/FileParser";
-import { parseMultilinePlayerNames } from "../lib/MultilineInput";
-import {
-  CreateStagePlayerArgs,
-  CreateStagePlayerByNameArgs,
-} from "../stages/dto/create-stage-player.args";
 import { GetStagePlayerArgs } from "../stages/dto/get-stage-player.args";
 import { UpdateStagePlayerArgs } from "../stages/dto/update-stage-player.args";
 import { StagePlayerInfo } from "./stage-player-info.entity";
@@ -23,31 +18,6 @@ export class StagePlayerInfosService {
       relations: ["player"],
       where: { stageId },
     });
-  }
-
-  async createStagePlayers({
-    stageId,
-    playerIds,
-  }: CreateStagePlayerArgs): Promise<StagePlayerInfo[]> {
-    const savePayload = playerIds.map((playerId) => ({
-      stageId,
-      playerId,
-      extraPoints: 0,
-      tiebreakerRanking: 0,
-    })) as StagePlayerInfo[];
-    return await this.stagePlayerInfoRepository.save(savePayload);
-  }
-
-  async createStagePlayerByName({
-    stageId,
-    playerNames,
-  }: CreateStagePlayerByNameArgs): Promise<StagePlayerInfo[]> {
-    const playerIds = await parseMultilinePlayerNames(
-      playerNames,
-      this.stagePlayerInfoRepository.manager,
-    );
-
-    return this.createStagePlayers({ stageId, playerIds });
   }
 
   async findOne({ stageId, playerId }: GetStagePlayerArgs) {

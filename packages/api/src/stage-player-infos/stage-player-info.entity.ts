@@ -24,6 +24,7 @@ export class StagePlayerInfo {
 
   @ManyToOne(() => Stage, (stage) => stage.id, {
     onDelete: "CASCADE",
+    orphanedRowAction: "delete",
   })
   stage: Stage;
 

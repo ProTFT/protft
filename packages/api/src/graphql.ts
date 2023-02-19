@@ -201,9 +201,9 @@ export interface IMutation {
     updateStage(id: number, tournamentId: number, pointSchemaId: number, name: string, sequence: number, isFinal: boolean, roundCount: number, tiebreakers?: Nullable<number[]>, description?: Nullable<string>): Stage | Promise<Stage>;
     updateTiebreakers(id: number, tiebreakers: number[]): Stage | Promise<Stage>;
     deleteStage(id: number): DeleteResponse | Promise<DeleteResponse>;
-    createStagePlayers(stageId: number, playerIds: number[]): StagePlayerInfo[] | Promise<StagePlayerInfo[]>;
+    createStagePlayers(stageId: number, playerIds: number[]): Stage | Promise<Stage>;
     generateLobbies(stageId: number, roundsPerLobbyGroup: number): CreateLobbiesResponse | Promise<CreateLobbiesResponse>;
-    createStagePlayersByName(stageId: number, playerNames: string): StagePlayerInfo[] | Promise<StagePlayerInfo[]>;
+    createStagePlayersByName(stageId: number, playerNames: string): Stage | Promise<Stage>;
     updateStagePlayer(stageId: number, playerId: number, extraPoints?: Nullable<number>, tiebreakerRanking?: Nullable<number>): StagePlayerInfo | Promise<StagePlayerInfo>;
     createLobby(stageId: number, sequence: number, lobbyGroupId: number, name?: Nullable<string>): Lobby | Promise<Lobby>;
     updateLobby(id: number, stageId: number, sequence: number, lobbyGroupId: number, name?: Nullable<string>): Lobby | Promise<Lobby>;

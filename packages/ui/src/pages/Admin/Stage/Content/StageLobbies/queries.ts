@@ -42,23 +42,6 @@ export const STAGE_PLAYERS_QUERY = gql`
   }
 `;
 
-export interface CreateStagePlayerResult {
-  createStagePlayers: { stageId: Pick<StagePlayerInfo, "stageId"> }[];
-}
-
-export type CreateStagePlayerVariables = {
-  stageId: number;
-  playerIds: number[];
-};
-
-export const CREATE_STAGE_PLAYER = gql`
-  mutation createStagePlayers($stageId: Int!, $playerIds: [Int!]!) {
-    createStagePlayers(stageId: $stageId, playerIds: $playerIds) {
-      stageId
-    }
-  }
-`;
-
 export interface LobbyGroupsQueryResult {
   stage: Pick<Stage, "id" | "lobbyGroups">;
 }

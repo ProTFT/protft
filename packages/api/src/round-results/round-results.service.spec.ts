@@ -181,7 +181,7 @@ describe("RoundResults service", () => {
         Pedro,GBR,EMEA
       `);
       expect(
-        async () => await service.createBulk(fileString, 1),
+        async () => await service.createBulk(fileString, 1, false),
       ).rejects.toThrowError(`Name - Country`);
     });
 
@@ -196,7 +196,7 @@ describe("RoundResults service", () => {
           Lucas,2
         `);
       expect(
-        async () => await service.createBulk(fileString, 1),
+        async () => await service.createBulk(fileString, 1, false),
       ).rejects.toThrowError(
         `Number of lines does not match number of stage players`,
       );
@@ -216,7 +216,7 @@ describe("RoundResults service", () => {
             Pedro,1
           `);
       expect(
-        async () => await service.createBulk(fileString, 1),
+        async () => await service.createBulk(fileString, 1, false),
       ).rejects.toThrowError(
         `Number of lines does not match number of lobby groups`,
       );
@@ -232,7 +232,7 @@ describe("RoundResults service", () => {
             Lucas,1
             Pedro,2
           `);
-      await service.createBulk(fileString, 1);
+      await service.createBulk(fileString, 1, false);
 
       expect(lobbyPlayerInfosService.createManyLobbyPlayers).toHaveBeenCalled();
       expect(roundResultsRepository.save).toHaveBeenCalled();

@@ -42,7 +42,7 @@ export const STAGE_PLAYERS_QUERY = gql`
 `;
 
 export interface CreateStagePlayerResult {
-  createStagePlayers: { stageId: Pick<StagePlayerInfo, "stageId"> }[];
+  createStagePlayers: { id: Pick<Stage, "id"> };
 }
 
 export type CreateStagePlayerVariables = {
@@ -53,7 +53,7 @@ export type CreateStagePlayerVariables = {
 export const CREATE_STAGE_PLAYER = gql`
   mutation createStagePlayers($stageId: Int!, $playerIds: [Int!]!) {
     createStagePlayers(stageId: $stageId, playerIds: $playerIds) {
-      stageId
+      id
     }
   }
 `;
@@ -66,7 +66,7 @@ export type CreateStagePlayerByNameVariables = {
 export const CREATE_STAGE_PLAYER_BY_NAME = gql`
   mutation createStagePlayersByName($stageId: Int!, $playerNames: String!) {
     createStagePlayersByName(stageId: $stageId, playerNames: $playerNames) {
-      stageId
+      id
     }
   }
 `;

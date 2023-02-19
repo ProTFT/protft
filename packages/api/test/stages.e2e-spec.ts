@@ -40,10 +40,6 @@ const mockStagePlayerInfos = [
   },
 ];
 
-const mockSimpleStagePlayerInfos = mockStagePlayerInfos.map((spi) => ({
-  playerId: spi.playerId,
-}));
-
 const mockGeneratedLobbies = {
   createdLobbyGroups: 1,
   createdLobbies: 1,
@@ -104,6 +100,8 @@ const fakeStagesService = {
   updateTiebreakers: jest.fn().mockResolvedValue(mockStages[0]),
   deleteOne: jest.fn().mockResolvedValue({ id: 1 }),
   generateLobbies: jest.fn().mockResolvedValue(mockGeneratedLobbies),
+  createStagePlayers: jest.fn().mockResolvedValue(mockStages[0]),
+  createStagePlayerByName: jest.fn().mockResolvedValue(mockStages[0]),
 };
 
 const fakeLobbiesService = {
@@ -122,12 +120,8 @@ const fakePointSchemasService = {
 
 const fakeStagePlayerInfosService = {
   findAllByStage: jest.fn().mockResolvedValue(mockStagePlayerInfos),
-  createStagePlayers: jest.fn().mockResolvedValue(mockSimpleStagePlayerInfos),
   findOne: jest.fn().mockResolvedValue(mockStagePlayers[0]),
   updateOne: jest.fn().mockResolvedValue(mockStagePlayers[0]),
-  createStagePlayerByName: jest
-    .fn()
-    .mockResolvedValue(mockSimpleStagePlayerInfos),
 };
 
 describe("Stages (e2e)", () => {
@@ -383,14 +377,15 @@ describe("Stages (e2e)", () => {
           query: `
           mutation {
             createStagePlayers(stageId: 1, playerIds: [1, 2, 3]) {
-              playerId
+              id
+              name
             }
           }`,
         })
         .expect(HttpStatus.OK);
 
       expect(response.body).toStrictEqual({
-        data: { createStagePlayers: mockSimpleStagePlayerInfos },
+        data: { createStagePlayers: mockStages[0] },
       });
     });
   });
@@ -403,14 +398,15 @@ describe("Stages (e2e)", () => {
           query: `
           mutation {
             createStagePlayersByName(stageId: 1, playerNames: "LucasPedro") {
-              playerId
+              id
+              name
             }
           }`,
         })
         .expect(HttpStatus.OK);
 
       expect(response.body).toStrictEqual({
-        data: { createStagePlayersByName: mockSimpleStagePlayerInfos },
+        data: { createStagePlayersByName: mockStages[0] },
       });
     });
   });

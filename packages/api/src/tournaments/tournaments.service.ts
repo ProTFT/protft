@@ -13,7 +13,7 @@ import { UpdateTournamentArgs } from "./dto/update-tournament.args";
 import { Tournament } from "./tournament.entity";
 import slugify from "slugify";
 import { getSearchQueryFilter } from "../lib/SearchQuery";
-import { parseMultilinePlayerNames } from "../lib/MultilineInput";
+import { parseMultilinePlayerNamesFromAll } from "../lib/MultilineInput";
 import {
   afterOrToday,
   afterToday,
@@ -51,7 +51,7 @@ export class TournamentsService {
       this.findPast(),
       this.findOngoing(),
     ]);
-    return [...past, ...current];
+    return [...current, ...past];
   }
 
   findPast(searchQuery?: string): Promise<Tournament[]> {
@@ -131,7 +131,7 @@ export class TournamentsService {
     tournamentId,
     playerNames,
   }: CreateTournamentPlayerByNameArgs): Promise<Tournament> {
-    const playerIds = await parseMultilinePlayerNames(
+    const playerIds = await parseMultilinePlayerNamesFromAll(
       playerNames,
       this.tournamentRepository.manager,
     );

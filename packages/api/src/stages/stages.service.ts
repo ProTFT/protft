@@ -2,11 +2,17 @@ import { Injectable, NotFoundException } from "@nestjs/common";
 import { InjectRepository } from "@nestjs/typeorm";
 import { Repository } from "typeorm";
 import { DeleteResponse } from "../lib/dto/delete-return";
+import { parseMultilinePlayerNamesFromTournament } from "../lib/MultilineInput";
 import { CreateLobbyArgs } from "../lobbies/dto/create-lobby.args";
 import { LobbiesService } from "../lobbies/lobbies.service";
 import { createLobbyName } from "../lobbies/lobby.logic";
 import { RoundsService } from "../rounds/rounds.service";
+import { StagePlayerInfo } from "../stage-player-infos/stage-player-info.entity";
 import { CreateLobbiesResponse } from "./dto/create-lobbies.result";
+import {
+  CreateStagePlayerArgs,
+  CreateStagePlayerByNameArgs,
+} from "./dto/create-stage-player.args";
 import { CreateStageArgs } from "./dto/create-stage.args";
 import { UpdateStageArgs } from "./dto/update-stage.args";
 import { UpdateTiebreakersArgs } from "./dto/update-tiebreakers.args";
@@ -121,6 +127,35 @@ export class StagesService {
       createdLobbyGroups: lobbyGroups.length,
       createdLobbies: lobbies.length,
     };
+  }
+
+  async createStagePlayers({
+    stageId,
+    playerIds,
+  }: CreateStagePlayerArgs): Promise<Stage> {
+    const savePayload = playerIds.map((playerId) => ({
+      stageId,
+      playerId,
+      extraPoints: 0,
+      tiebreakerRanking: 0,
+    })) as StagePlayerInfo[];
+    const stage = await this.findOne(stageId);
+    stage.players = savePayload;
+    return this.stageRepository.save(stage);
+  }
+
+  async createStagePlayerByName({
+    stageId,
+    playerNames,
+  }: CreateStagePlayerByNameArgs): Promise<Stage> {
+    const { tournamentId } = await this.findOne(stageId);
+    const playerIds = await parseMultilinePlayerNamesFromTournament(
+      playerNames,
+      tournamentId,
+      this.stageRepository.manager,
+    );
+
+    return this.createStagePlayers({ stageId, playerIds });
   }
 
   private async createRounds(stageId: number, roundCount: number) {

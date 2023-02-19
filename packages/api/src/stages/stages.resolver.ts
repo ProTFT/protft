@@ -123,12 +123,12 @@ export class StagesResolver {
   }
 
   @UseGuards(GqlJwtAuthGuard)
-  @Mutation(() => [StagePlayerInfo])
+  @Mutation(() => Stage)
   async createStagePlayers(
     @Args() { stageId, playerIds }: CreateStagePlayerArgs,
   ) {
     const payload = { stageId, playerIds };
-    return this.stagePlayerInfosService.createStagePlayers(payload);
+    return this.stagesService.createStagePlayers(payload);
   }
 
   @UseGuards(GqlJwtAuthGuard)
@@ -148,12 +148,12 @@ export class StagesResolver {
   }
 
   @UseGuards(GqlJwtAuthGuard)
-  @Mutation(() => [StagePlayerInfo])
+  @Mutation(() => Stage)
   async createStagePlayersByName(
     @Args() { stageId, playerNames }: CreateStagePlayerByNameArgs,
   ) {
     const payload = { stageId, playerNames };
-    return this.stagePlayerInfosService.createStagePlayerByName(payload);
+    return this.stagesService.createStagePlayerByName(payload);
   }
 
   @UseGuards(GqlJwtAuthGuard)

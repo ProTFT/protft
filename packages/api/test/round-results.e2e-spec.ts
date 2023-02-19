@@ -181,6 +181,22 @@ describe("Round Result (e2e)", () => {
       expect(fakeRoundResultsService.createBulk).toHaveBeenCalledWith(
         "test\n",
         5,
+        false,
+      );
+    });
+
+    it("should pass all parameters", async () => {
+      await request(app.getHttpServer())
+        .post("/roundResults/uploadBulk")
+        .field("stageId", "5")
+        .field("ignorePlayerNumber", "true")
+        .attach("file", "test/data/fakeFile.csv")
+        .expect(HttpStatus.CREATED);
+
+      expect(fakeRoundResultsService.createBulk).toHaveBeenCalledWith(
+        "test\n",
+        5,
+        true,
       );
     });
   });

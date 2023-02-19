@@ -55,7 +55,11 @@ export class Stage {
   roundCount: number;
 
   @Field(() => [StagePlayerInfo])
-  @OneToMany(() => StagePlayerInfo, (stagePlayerInfo) => stagePlayerInfo.stage)
+  @OneToMany(
+    () => StagePlayerInfo,
+    (stagePlayerInfo) => stagePlayerInfo.stage,
+    { cascade: true },
+  )
   players: StagePlayerInfo[];
 
   @Field(() => [Lobby], { nullable: true })

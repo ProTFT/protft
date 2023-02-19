@@ -18,6 +18,11 @@ describe("Stages service", () => {
 
   const mockStageId = 1;
   const mockTournamentId = 2;
+  const databaseResult = [
+    { id: 1, name: "a" },
+    { id: 2, name: "b" },
+    { id: 3, name: "c" },
+  ];
 
   beforeEach(() => {
     stageRepository = {
@@ -26,6 +31,16 @@ describe("Stages service", () => {
       save: jest.fn(),
       update: jest.fn(),
       delete: jest.fn(),
+      manager: {
+        createQueryBuilder: jest.fn().mockReturnThis(),
+        select: jest.fn().mockReturnThis(),
+        from: jest.fn().mockReturnThis(),
+        where: jest.fn().mockReturnThis(),
+        andWhere: jest.fn().mockReturnThis(),
+        orWhere: jest.fn().mockReturnThis(),
+        innerJoin: jest.fn().mockReturnThis(),
+        getRawMany: jest.fn().mockResolvedValue(databaseResult),
+      },
     } as unknown as Repository<Stage>;
 
     roundsService = {
@@ -243,6 +258,96 @@ describe("Stages service", () => {
         createdLobbyGroups: 3,
         createdLobbies: 4,
       });
+    });
+  });
+
+  describe("createStagePlayer", () => {
+    it("should call repository", async () => {
+      const mockPlayerIds = [1, 2, 3];
+      stageRepository.findOne = jest.fn().mockResolvedValue({});
+
+      await service.createStagePlayers({
+        stageId: mockStageId,
+        playerIds: mockPlayerIds,
+      });
+
+      expect(stageRepository.save).toHaveBeenCalledWith({
+        players: [
+          {
+            stageId: mockStageId,
+            playerId: 1,
+            extraPoints: 0,
+            tiebreakerRanking: 0,
+          },
+          {
+            stageId: mockStageId,
+            playerId: 2,
+            extraPoints: 0,
+            tiebreakerRanking: 0,
+          },
+          {
+            stageId: mockStageId,
+            playerId: 3,
+            extraPoints: 0,
+            tiebreakerRanking: 0,
+          },
+        ],
+      });
+    });
+  });
+
+  describe("createStagePlayerByName", () => {
+    it("should save three players if they are found on DB", async () => {
+      const mockPlayerNames = `Ana
+      Boris
+      Camila`;
+      stageRepository.findOne = jest.fn().mockResolvedValue({});
+
+      await service.createStagePlayerByName({
+        stageId: mockStageId,
+        playerNames: mockPlayerNames,
+      });
+
+      expect(stageRepository.save).toHaveBeenCalledWith({
+        players: [
+          {
+            stageId: mockStageId,
+            playerId: 1,
+            extraPoints: 0,
+            tiebreakerRanking: 0,
+          },
+          {
+            stageId: mockStageId,
+            playerId: 2,
+            extraPoints: 0,
+            tiebreakerRanking: 0,
+          },
+          {
+            stageId: mockStageId,
+            playerId: 3,
+            extraPoints: 0,
+            tiebreakerRanking: 0,
+          },
+        ],
+      });
+    });
+
+    it("should throw if cant find some player in DB", async () => {
+      const mockPlayerNames = `Ana
+        Boris
+        Camila
+        Denis`;
+
+      stageRepository.findOne = jest.fn().mockResolvedValue({});
+
+      expect(
+        async () =>
+          await service.createStagePlayerByName({
+            stageId: mockStageId,
+            playerNames: mockPlayerNames,
+          }),
+      ).rejects.toThrowError("Provided names: 4, names found: 3");
+      expect(stageRepository.save).not.toHaveBeenCalled();
     });
   });
 
