@@ -5,13 +5,16 @@ import {
 import {
   sortByAveragePosition,
   sortByExternalTiebreaker,
+  sortByFifthPlaces,
   sortByFirstPlaces,
+  sortByFourthPlaces,
   sortByLastRoundFirstPlace,
   sortByLastRoundPosition,
   sortByLessTopEigth,
   sortByPoints,
   sortByRecentHighestPlacement,
   sortBySecondPlaces,
+  sortBySixthPlaces,
   sortByThirdPlaces,
   sortByTopFour,
   sortByTotalEventPoints,
@@ -148,7 +151,7 @@ describe("Sorting with tie breakers", () => {
     });
   });
 
-  describe("sort by most top two", () => {
+  describe("sort by most second places", () => {
     const twoTop2Player = generatePlayer([2, 2, 8]);
     const oneTop2Player = generatePlayer([2, 8, 8]);
     const noTop2Player = generatePlayer([3, 3, 4]);
@@ -168,7 +171,7 @@ describe("Sorting with tie breakers", () => {
     });
   });
 
-  describe("sort by most top three", () => {
+  describe("sort by most third places", () => {
     const twoTop3Player = generatePlayer([3, 3, 8]);
     const oneTop3Player = generatePlayer([3, 8, 8]);
     const noTop3Player = generatePlayer([4, 4, 4]);
@@ -183,6 +186,72 @@ describe("Sorting with tie breakers", () => {
 
     it("should be zero if a = b", () => {
       expect(sortByThirdPlaces(twoTop3Player, twoTop3Player)).toBe(0);
+    });
+  });
+
+  describe("sort by most fourth places", () => {
+    const twoFourthsPlayer = generatePlayer([4, 4, 8]);
+    const oneFourthPlayer = generatePlayer([4, 8, 8]);
+    const noFourthsPlayer = generatePlayer([5, 5, 5]);
+
+    it("should be negative if a has higher placement than b", () => {
+      expect(
+        sortByFourthPlaces(twoFourthsPlayer, noFourthsPlayer),
+      ).toBeLessThan(0);
+    });
+
+    it("should be positive if b has higher placement than a", () => {
+      expect(
+        sortByFourthPlaces(noFourthsPlayer, oneFourthPlayer),
+      ).toBeGreaterThan(0);
+    });
+
+    it("should be zero if a = b", () => {
+      expect(sortByFourthPlaces(twoFourthsPlayer, twoFourthsPlayer)).toBe(0);
+    });
+  });
+
+  describe("sort by most fifth places", () => {
+    const twoFifthsPlayer = generatePlayer([5, 5, 8]);
+    const oneFifthPlayer = generatePlayer([5, 8, 8]);
+    const noFifthsPlayer = generatePlayer([6, 6, 6]);
+
+    it("should be negative if a has higher placement than b", () => {
+      expect(sortByFifthPlaces(twoFifthsPlayer, noFifthsPlayer)).toBeLessThan(
+        0,
+      );
+    });
+
+    it("should be positive if b has higher placement than a", () => {
+      expect(sortByFifthPlaces(noFifthsPlayer, oneFifthPlayer)).toBeGreaterThan(
+        0,
+      );
+    });
+
+    it("should be zero if a = b", () => {
+      expect(sortByFifthPlaces(twoFifthsPlayer, twoFifthsPlayer)).toBe(0);
+    });
+  });
+
+  describe("sort by most sixth places", () => {
+    const twoSixthsPlayer = generatePlayer([6, 6, 8]);
+    const oneSixthPlayer = generatePlayer([6, 8, 8]);
+    const noSixthsPlayer = generatePlayer([7, 7, 7]);
+
+    it("should be negative if a has higher placement than b", () => {
+      expect(sortBySixthPlaces(twoSixthsPlayer, noSixthsPlayer)).toBeLessThan(
+        0,
+      );
+    });
+
+    it("should be positive if b has higher placement than a", () => {
+      expect(sortBySixthPlaces(noSixthsPlayer, oneSixthPlayer)).toBeGreaterThan(
+        0,
+      );
+    });
+
+    it("should be zero if a = b", () => {
+      expect(sortBySixthPlaces(twoSixthsPlayer, twoSixthsPlayer)).toBe(0);
     });
   });
 

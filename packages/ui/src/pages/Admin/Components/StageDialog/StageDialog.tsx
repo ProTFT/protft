@@ -29,6 +29,7 @@ export const StageDialog = ({ dialogRef, formRef, onSubmit, stage }: Props) => {
       >
         <option value="2">8 - 1</option>
         <option value="1">10 - 8 - 6 - 1</option>
+        <option value="3">9 - 7 - 1</option>
       </FormField>
       <FormField label="Round Count" name="roundCount" type="number" />
     </DialogForm>
