@@ -1,4 +1,4 @@
-import { Tournament, TournamentsPlayed } from "../../../graphql/schema";
+import { TournamentsPlayed } from "../../../graphql/schema";
 import { TournamentBaseList } from "../../Tournaments/TournamentList/TournamentBaseList";
 import {
   StyledTourneyStatsContainer,
