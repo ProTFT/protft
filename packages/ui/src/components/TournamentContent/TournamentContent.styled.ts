@@ -4,8 +4,6 @@ import { colors } from "../../design/colors";
 import { StyledHorizontalContainer } from "../Layout/HorizontalContainer/HorizontalContainer.styled";
 import { StyledVerticalContainer } from "../Layout/VerticalContainer/VerticalContainer.styled";
 
-export const StyledContainer = styled(StyledVerticalContainer)``;
-
 export const StyledTournamentImage = styled.img`
   width: 30%;
   border-radius: 8px 0 0 8px;
@@ -31,6 +29,7 @@ export const StyledTournamentInfoContainer = styled(StyledVerticalContainer)`
   align-items: start;
   justify-content: space-between;
   width: 100%;
+  position: relative;
 
   @media ${device.tablet} {
     padding: 1.5rem;
@@ -57,6 +56,69 @@ export const StyledTournamentTitle = styled.p`
   @media ${device.desktop} {
     font-size: 32px;
     line-height: 32px;
+  }
+`;
+
+const positionColorMap: { [position: number]: string } = {
+  1: "#D4AF37",
+  2: "#363636",
+  3: "#9F7A34",
+};
+
+export const StyledPlayerPositionContainer = styled.div<{ position: number }>`
+  ${({ position, theme }) => `
+    align-self: end;
+    background-color: ${
+      Object.keys(positionColorMap).includes(String(position))
+        ? positionColorMap[position]
+        : theme.colors.darkPurple
+    };
+    margin-top: -0.5rem;
+    margin-right: -1rem;
+    position: absolute;
+    padding-left: 0.5rem;
+    padding-right: 0.5rem;
+
+    @media ${device.tablet} {
+      right: 0;
+      top: 0;
+      margin: 0;
+    }
+
+    @media ${device.desktop} {
+      top: auto;
+      right: auto;
+      position: relative;
+      align-self: center;
+      background-color: transparent;
+      padding: 1rem;
+      border-radius: 10px;
+      border: 3px solid;
+      border-color: ${
+        Object.keys(positionColorMap).includes(String(position))
+          ? positionColorMap[position]
+          : "transparent"
+      };
+    }
+  `}
+`;
+
+export const StyledPlayerPosition = styled.p`
+  font-family: Roboto;
+  font-size: 14px;
+  font-weight: 600;
+  line-height: 24px;
+  letter-spacing: 0.1em;
+  text-align: left;
+
+  @media ${device.tablet} {
+    font-size: 20px;
+    line-height: 20px;
+  }
+
+  @media ${device.desktop} {
+    font-size: 20px;
+    line-height: 20px;
   }
 `;
 

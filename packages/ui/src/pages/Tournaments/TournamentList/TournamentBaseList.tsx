@@ -1,10 +1,10 @@
 import { Link } from "react-router-dom";
-import { Tournament } from "../../../graphql/schema";
 import { TournamentListItem } from "../TournamentListItem/TournamentListItem";
+import { TournamentWithMaybePlayerResult } from "../Tournaments.types";
 import { StyledTournamentList } from "./TournamentBaseList.styled";
 
 interface BaseListProps {
-  tournaments: Tournament[] | undefined;
+  tournaments: TournamentWithMaybePlayerResult[] | undefined;
   searchQuery?: string;
   color?: string;
   isLive?: boolean;

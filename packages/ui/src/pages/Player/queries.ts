@@ -1,20 +1,8 @@
 import { gql } from "urql";
-import { Player, Tournament } from "../../graphql/schema";
+import { Player, TournamentsPlayed } from "../../graphql/schema";
 
 export interface PlayerTournamentQueryResult {
-  tournamentsPlayed: Pick<
-    Tournament,
-    | "id"
-    | "name"
-    | "region"
-    | "slug"
-    | "set"
-    | "startDate"
-    | "endDate"
-    | "participantsNumber"
-    | "prizePool"
-    | "currency"
-  >[];
+  tournamentsPlayed: TournamentsPlayed[];
 }
 
 export const PLAYER_TOURNAMENT_QUERY = gql`
@@ -27,12 +15,13 @@ export const PLAYER_TOURNAMENT_QUERY = gql`
       participantsNumber
       prizePool
       currency
+      startDate
+      endDate
       set {
         id
         name
       }
-      startDate
-      endDate
+      finalPosition
     }
   }
 `;

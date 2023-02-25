@@ -160,6 +160,33 @@ export interface PlayerFilterMeta {
     possibleRegions: string[];
 }
 
+export interface TournamentsPlayed {
+    id: number;
+    name: string;
+    region?: Nullable<string[]>;
+    host?: Nullable<string>;
+    participantsNumber?: Nullable<number>;
+    prizePool?: Nullable<number>;
+    currency?: Nullable<string>;
+    startDate?: Nullable<DateTime>;
+    endDate?: Nullable<DateTime>;
+    setId: number;
+    slug: string;
+    visibility: boolean;
+    set: Set;
+    stages?: Nullable<Stage[]>;
+    players?: Nullable<Player[]>;
+    finalPosition?: Nullable<number>;
+}
+
+export interface TournamentResult {
+    tournamentId: number;
+    finalPosition: number;
+    playerId: number;
+    prize: number;
+    otherRewards: string;
+}
+
 export interface IQuery {
     sets(): Set[] | Promise<Set[]>;
     set(id: number): Nullable<Set> | Promise<Nullable<Set>>;
@@ -184,10 +211,11 @@ export interface IQuery {
     player(id: number): Player | Promise<Player>;
     playerBySlug(slug: string): Player | Promise<Player>;
     playerFilterMeta(): PlayerFilterMeta | Promise<PlayerFilterMeta>;
-    tournamentsPlayed(playerId: number): Tournament[] | Promise<Tournament[]>;
+    tournamentsPlayed(playerId: number): TournamentsPlayed[] | Promise<TournamentsPlayed[]>;
     resultsByStage(stageId: number): PlayerResults[] | Promise<PlayerResults[]>;
     resultsByLobbyGroup(lobbyGroupId: number): PlayerResults[] | Promise<PlayerResults[]>;
     playerStats(setId?: Nullable<number>, tournamentIds?: Nullable<number[]>, region?: Nullable<string>, sort?: Nullable<SortOption>, searchQuery?: Nullable<string>, take?: Nullable<number>, skip?: Nullable<number>): PlayerWithStats[] | Promise<PlayerWithStats[]>;
+    resultsOfTournament(tournamentId: number): TournamentResult[] | Promise<TournamentResult[]>;
 }
 
 export interface IMutation {
@@ -215,6 +243,7 @@ export interface IMutation {
     createPlayerSlugs(): Player[] | Promise<Player[]>;
     deletePlayer(id: number): Player | Promise<Player>;
     createLobbyGroupResult(lobbyGroupId: number, results: CreateLobbyGroupResults[]): RoundResult[] | Promise<RoundResult[]>;
+    lockTournament(id: number): TournamentResult[] | Promise<TournamentResult[]>;
 }
 
 export type DateTime = any;

@@ -14,6 +14,18 @@ describe("PlayersService", () => {
     save: jest.fn(),
     update: jest.fn(),
     delete: jest.fn(),
+    manager: {
+      createQueryBuilder: () => ({
+        select: jest.fn().mockReturnThis(),
+        distinct: jest.fn().mockReturnThis(),
+        orderBy: jest.fn().mockReturnThis(),
+        from: jest.fn().mockReturnThis(),
+        innerJoin: jest.fn().mockReturnThis(),
+        leftJoin: jest.fn().mockReturnThis(),
+        where: jest.fn().mockReturnThis(),
+        execute: jest.fn().mockResolvedValue(mockQueryBuilderValue),
+      }),
+    },
     createQueryBuilder: () => ({
       select: jest.fn().mockReturnThis(),
       distinct: jest.fn().mockReturnThis(),
@@ -253,12 +265,25 @@ describe("PlayersService", () => {
 
   describe("find tournaments played", () => {
     it("should call query builder", async () => {
-      const tournamentData = { id: 1, name: "TournamentName" };
+      const tournamentData = {
+        id: 1,
+        name: "TournamentName",
+        setId: 1,
+        setName: "Beta",
+      };
       mockQueryBuilderValue = [tournamentData];
 
       const response = await service.findTournamentsPlayed(1);
 
-      expect(response).toStrictEqual([tournamentData]);
+      expect(response).toStrictEqual([
+        {
+          ...tournamentData,
+          set: {
+            id: 1,
+            name: "Beta",
+          },
+        },
+      ]);
     });
   });
 

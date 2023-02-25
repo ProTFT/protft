@@ -13,9 +13,10 @@ import { parseFileString } from "../lib/FileParser";
 import { getSearchQueryFilter } from "../lib/SearchQuery";
 import { PlayerStatsRaw } from "../round-results/dto/get-player-stats.raw";
 import { RoundResultsService } from "../round-results/round-results.service";
-import { Tournament } from "../tournaments/tournament.entity";
 import { CreatePlayerArgs } from "./dto/create-player.args";
 import { BaseGetPlayerArgs } from "./dto/get-players.args";
+import { TournamentsPlayed } from "./dto/get-tournaments-played.out";
+import { TournamentsPlayedRaw } from "./dto/get-tournaments-played.raw";
 import { Player } from "./player.entity";
 import { formatStats } from "./players.adapter";
 
@@ -165,17 +166,35 @@ export class PlayersService {
     return this.unpackBy<PlayerRegion>(rawResults, "region");
   }
 
-  async findTournamentsPlayed(id: number): Promise<Tournament[]> {
-    return this.playerRepository
-      .createQueryBuilder()
-      .select("t.*")
-      .distinct()
-      .from("stage_player_info", "spi")
-      .innerJoin("stage", "s", "s.id = spi.stageId")
-      .innerJoin("tournament", "t", "t.id = s.tournamentId")
-      .where({ playerId: id })
-      .orderBy("t.startDate", "DESC")
-      .execute();
+  async findTournamentsPlayed(playerId: number): Promise<TournamentsPlayed[]> {
+    const rawResults: TournamentsPlayedRaw[] =
+      await this.playerRepository.manager
+        .createQueryBuilder()
+        .select(
+          't.*, set.id as "setId", set.name as "setName", tr.finalPosition',
+        )
+        .distinct()
+        .from("stage_player_info", "spi")
+        .innerJoin("stage", "s", "s.id = spi.stageId")
+        .innerJoin("tournament", "t", "t.id = s.tournamentId")
+        .innerJoin("set", "set", "set.id = t.setId")
+        .leftJoin(
+          "tournament_result",
+          "tr",
+          "tr.tournamentId = t.id AND tr.playerId = :playerId",
+          { playerId },
+        )
+        .where({ playerId })
+        .orderBy("t.startDate", "DESC")
+        .execute();
+
+    return rawResults.map((raw) => ({
+      ...raw,
+      set: {
+        id: raw.setId,
+        name: raw.setName,
+      },
+    }));
   }
 
   unpackBy<T>(result: T[], property: keyof T) {

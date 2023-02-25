@@ -3,14 +3,17 @@ import { colors } from "../../design/colors";
 import { PlayersIcon } from "../../design/icons/Players";
 import { TourneysIcon } from "../../design/icons/Tourneys";
 import { formatMoney } from "../../formatter/Money";
-import { Tournament } from "../../graphql/schema";
+import { getOrdinal } from "../../formatter/Number";
 import { useIsDesktop } from "../../hooks/useIsDesktop";
+import { TournamentWithMaybePlayerResult } from "../../pages/Tournaments/Tournaments.types";
 import { DateIndicator } from "../DateIndicator/DateIndicator";
 import { TextIconHorizontalContainer } from "../Layout/HorizontalContainer/TextIconHorizontalContainer.styled";
 import { RegionsIndicator } from "../RegionIndicator/RegionIndicator";
 import {
   StyledExtraInfo,
   StyledLiveContainer,
+  StyledPlayerPosition,
+  StyledPlayerPositionContainer,
   StyledRegionDateContainer,
   StyledTitleContainer,
   StyledTournamentImage,
@@ -21,9 +24,21 @@ import {
 } from "./TournamentContent.styled";
 
 interface Props {
-  tournament: Tournament;
+  tournament: TournamentWithMaybePlayerResult;
   isLive?: boolean;
 }
+
+interface PositionLabelProps {
+  position: number;
+}
+
+const PlayerPositionLabel = ({ position }: PositionLabelProps) => {
+  return (
+    <StyledPlayerPositionContainer position={position}>
+      <StyledPlayerPosition>{getOrdinal(position)}</StyledPlayerPosition>
+    </StyledPlayerPositionContainer>
+  );
+};
 
 export const TournamentContent = ({
   tournament: {
@@ -35,6 +50,7 @@ export const TournamentContent = ({
     prizePool,
     region,
     currency,
+    finalPosition,
   },
   isLive = false,
 }: Props) => {
@@ -53,6 +69,7 @@ export const TournamentContent = ({
           <StyledTournamentTitle>{name}</StyledTournamentTitle>
         </StyledTitleContainer>
         {isLive && <StyledLiveContainer>LIVE</StyledLiveContainer>}
+        {finalPosition && <PlayerPositionLabel position={finalPosition} />}
         <StyledTournamentInfoInnerContainer>
           <StyledRegionDateContainer>
             <RegionsIndicator regionCodes={region!} />

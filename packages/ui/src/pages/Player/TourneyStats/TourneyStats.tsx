@@ -1,4 +1,4 @@
-import { Tournament } from "../../../graphql/schema";
+import { Tournament, TournamentsPlayed } from "../../../graphql/schema";
 import { TournamentBaseList } from "../../Tournaments/TournamentList/TournamentBaseList";
 import {
   StyledTourneyStatsContainer,
@@ -6,17 +6,14 @@ import {
 } from "./TourneyStats.styled";
 
 interface Props {
-  tournaments?: Pick<
-    Tournament,
-    "slug" | "id" | "set" | "name" | "region" | "startDate" | "endDate"
-  >[];
+  tournaments?: TournamentsPlayed[];
 }
 
 export const TourneyStats = ({ tournaments }: Props) => {
   return (
     <StyledTourneyStatsContainer>
       <StyledTitle>Tourney appearances</StyledTitle>
-      <TournamentBaseList tournaments={tournaments as Tournament[]} />
+      <TournamentBaseList tournaments={tournaments} />
     </StyledTourneyStatsContainer>
   );
 };

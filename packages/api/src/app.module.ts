@@ -21,6 +21,7 @@ import { LobbyPlayerInfosModule } from "./lobby-player-infos/lobby-player-infos.
 import { isProd } from "./config/environment";
 import { getDatabaseInfo } from "./config/dbConfig";
 import { getOrigin } from "./config/cors";
+import { TournamentResultsModule } from "./tournament-results/tournament-results.module";
 
 @Module({
   imports: [
@@ -76,6 +77,7 @@ import { getOrigin } from "./config/cors";
     AuthModule,
     UsersModule,
     LobbyPlayerInfosModule,
+    TournamentResultsModule,
   ],
   controllers: [AppController],
   providers: [AppService],

@@ -11,6 +11,10 @@ export const StyledTourneyStatsContainer = styled(StyledVerticalContainer)`
   @media ${device.tablet} {
     margin-left: -4rem;
     margin-right: -4rem;
+    padding: 2rem;
+  }
+
+  @media ${device.desktop} {
     padding: 4rem;
     gap: 2rem;
   }

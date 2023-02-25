@@ -13,10 +13,10 @@ import { PlayerFilterMeta } from "./dto/get-player-filter-meta.out";
 import { GetPlayerArgs } from "./dto/get-players.args";
 import { Player, PlayerCalculatedStats } from "./player.entity";
 import { PlayersService } from "./players.service";
-import { Tournament } from "../tournaments/tournament.entity";
 import { UseGuards } from "@nestjs/common";
 import { GqlJwtAuthGuard } from "../auth/jwt-auth.guard";
 import { GetPlayerStatsArgs } from "./dto/get-player-stats.args";
+import { TournamentsPlayed } from "./dto/get-tournaments-played.out";
 
 @Resolver(() => Player)
 export class PlayersResolver extends BaseResolver {
@@ -71,7 +71,7 @@ export class PlayersResolver extends BaseResolver {
     return this.playersService.getPlayerStats(player, setId, tournamentId);
   }
 
-  @Query(() => [Tournament])
+  @Query(() => [TournamentsPlayed])
   async tournamentsPlayed(@Args("playerId", { type: () => Int }) id: number) {
     return this.playersService.findTournamentsPlayed(id);
   }

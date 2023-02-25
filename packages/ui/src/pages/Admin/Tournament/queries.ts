@@ -67,6 +67,24 @@ export const UPDATE_TOURNAMENT_MUTATION = gql`
   }
 `;
 
+export interface LockResultsResult {
+  lockTournament: {
+    tournamentId: number;
+  };
+}
+
+export interface LockResultsVariables {
+  id: number;
+}
+
+export const LOCK_RESULTS_MUTATION = gql`
+  mutation ($id: Int!) {
+    lockTournament(id: $id) {
+      tournamentId
+    }
+  }
+`;
+
 export interface TournamentQueryResponse {
   tournament: Tournament;
 }

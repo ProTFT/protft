@@ -16,6 +16,7 @@ export const StyledContainer = styled.div`
   justify-content: center;
   gap: 3rem;
   padding: 3rem;
+  padding-bottom: 10rem;
 `;
 
 export const StyledTournamentTitle = styled.p`
