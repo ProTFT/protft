@@ -92,7 +92,8 @@
       "src/**/*.(t|j)s",
       "!**/*.module.ts",
       "!src/db/migrations/*",
-      "!**/*.entity.ts"
+      "!**/*.entity.ts",
+      "!src/graphql.ts"
     ],
     "coverageDirectory": "../coverage",
     "testEnvironment": "node"

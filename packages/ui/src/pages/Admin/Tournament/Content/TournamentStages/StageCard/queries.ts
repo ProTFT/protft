@@ -1,5 +1,5 @@
 import { gql } from "urql";
-import { Stage } from "../../../../../../graphql/schema";
+import { Stage, StageType } from "../../../../../../graphql/schema";
 
 export interface DeleteResult {
   id: number;
@@ -21,8 +21,17 @@ export interface UpdateStageResult {
   updateStage: { id: Pick<Stage, "id"> };
 }
 
-export type UpdateStageVariables = any & {
+export type UpdateStageVariables = {
+  id: number;
   tournamentId: number;
+  pointSchemaId: number;
+  name: string;
+  sequence: number;
+  isFinal: boolean;
+  roundCount: number;
+  description: string;
+  qualifiedCount: number;
+  stageType: StageType;
 };
 
 export const UPDATE_STAGE_MUTATION = gql`
@@ -35,6 +44,8 @@ export const UPDATE_STAGE_MUTATION = gql`
     $isFinal: Boolean!
     $roundCount: Int!
     $description: String
+    $qualifiedCount: Int!
+    $stageType: StageType!
   ) {
     updateStage(
       id: $id
@@ -45,6 +56,8 @@ export const UPDATE_STAGE_MUTATION = gql`
       isFinal: $isFinal
       description: $description
       roundCount: $roundCount
+      qualifiedCount: $qualifiedCount
+      stageType: $stageType
     ) {
       id
     }

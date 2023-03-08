@@ -28,7 +28,7 @@ export const StyledBodyContainer = styled.div`
   background-color: ${colors.blackBackground};
   height: 100%;
 
-  @media ${device.tablet} {
+  @media ${device.desktop} {
     padding: 2rem 6rem 2rem 6rem;
   }
 `;

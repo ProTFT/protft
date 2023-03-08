@@ -10,6 +10,7 @@ import { LobbyPlayerInfosService } from "../lobby-player-infos/lobby-player-info
 import {
   addPastPoints,
   formatLobbyGroupResults,
+  formatLobbyResults,
   fromRawToConsolidatedRoundResults,
 } from "./round-result.adapter";
 import { SortingMethods, sortResults } from "./round-result.logic";
@@ -24,6 +25,7 @@ import {
   extractLobbyPlayerEntries,
   sortLobbies,
 } from "./bulk-creation.logic";
+import { LobbyGroupWithLobbies } from "./dto/get-lobby-results.out";
 
 interface FileLineWithPlayerLobby {
   lobbyPlayerId: number;
@@ -122,7 +124,7 @@ export class RoundResultsService {
     return results;
   }
 
-  public async resultsByStage(stageId: number) {
+  public async overviewResultsByStage(stageId: number) {
     const { tiebreakers, tournamentId, sequence } =
       await this.stagesService.findOne(stageId);
     const results = await this.findResultsByStage(stageId);
@@ -148,69 +150,33 @@ export class RoundResultsService {
     return sortResults(formattedResults, tiebreakers);
   }
 
-  private findResultsByStage(stageId: number): Promise<RoundResultsRaw[]> {
-    return this.roundResultsRepository.manager
-      .createQueryBuilder()
-      .select(
-        "result.roundId, result.position, lpi.id, lpi.playerId, round.sequence, player.name, player.region, player.country, player.slug, points.points",
-      )
-      .from("lobby_player_info", "lpi")
-      .innerJoin("lobby", "lobby", "lobby.id = lpi.lobbyId")
-      .innerJoin("stage", "stage", "stage.id = lobby.stageId")
-      .innerJoin("player", "player", "player.id = lpi.playerId")
-      .leftJoin("round_result", "result", "lpi.id = result.lobbyPlayerId")
-      .leftJoin(
-        "points",
-        "points",
-        "points.pointSchemaId = stage.pointSchemaId and points.position = result.position",
-      )
-      .leftJoin("round", "round", "round.id = result.roundId")
-      .orderBy("lpi.id, round.sequence")
-      .leftJoin(
-        "stage_player_info",
-        "spi",
-        "spi.stageId = stage.id and spi.playerId = player.id",
-      )
-      .addSelect("COALESCE(spi.extraPoints, 0)", "extraPoints")
-      .addSelect("COALESCE(spi.tiebreakerRanking, 0)", "tiebreakerRanking")
-      .where("stage.id = :stageId", { stageId })
-      .getRawMany();
+  public async lobbyResultsByStage(
+    stageId: number,
+  ): Promise<LobbyGroupWithLobbies[]> {
+    const lobbyGroups = await this.lobbiesService.findAllLobbyGroupsByStage(
+      stageId,
+    );
+
+    const lobbies = await Promise.all(
+      lobbyGroups.map((lobbyGroup) =>
+        this.lobbiesService.findAllByLobbyGroup(lobbyGroup.id),
+      ),
+    );
+
+    const resultsByLobby = lobbies.map((lobbyGroup) =>
+      Promise.all(
+        lobbyGroup.map((lobby) => this.resultsByLobby(lobby.id, stageId)),
+      ),
+    );
+
+    const result = await Promise.all(resultsByLobby);
+
+    return formatLobbyResults(lobbyGroups, lobbies, result);
   }
 
   public async resultsByLobbyGroup(lobbyGroupId: number) {
     const results = await this.findResultsByLobbyGroup(lobbyGroupId);
     return fromRawToConsolidatedRoundResults(results);
-  }
-
-  private findResultsByLobbyGroup(
-    lobbyGroupId: number,
-  ): Promise<RoundResultsRaw[]> {
-    return this.roundResultsRepository.manager
-      .createQueryBuilder()
-      .select(
-        "result.roundId, result.position, lpi.id, lpi.playerId, round.sequence, player.name, player.region, player.country, points.points",
-      )
-      .from("lobby_player_info", "lpi")
-      .innerJoin("lobby", "lobby", "lobby.id = lpi.lobbyId")
-      .innerJoin("stage", "stage", "stage.id = lobby.stageId")
-      .innerJoin("player", "player", "player.id = lpi.playerId")
-      .leftJoin("round_result", "result", "lpi.id = result.lobbyPlayerId")
-      .leftJoin(
-        "points",
-        "points",
-        "points.pointSchemaId = stage.pointSchemaId and points.position = result.position",
-      )
-      .leftJoin("round", "round", "round.id = result.roundId")
-      .orderBy("lpi.id, round.sequence")
-      .leftJoin(
-        "stage_player_info",
-        "spi",
-        "spi.stageId = stage.id and spi.playerId = player.id",
-      )
-      .addSelect("COALESCE(spi.extraPoints, 0)", "extraPoints")
-      .addSelect("COALESCE(spi.tiebreakerRanking, 0)", "tiebreakerRanking")
-      .where("lobby.lobbyGroupId = :lobbyGroupId", { lobbyGroupId })
-      .getRawMany();
   }
 
   public async playerStats(args: GetStatsArgs) {
@@ -228,6 +194,91 @@ export class RoundResultsService {
       }),
     );
     return formatted;
+  }
+
+  public findStatsByPlayer(
+    playerId: number,
+    setId?: number,
+    tournamentId?: number,
+  ): Promise<PlayerStatsRaw | undefined> {
+    const queryBuilder =
+      this.roundResultsRepository.manager.createQueryBuilder();
+    // add subquery here to get the / total games values
+    return queryBuilder
+      .select('"totalGames"')
+      .addSelect('"averagePosition"')
+      .addSelect('"topFourCount" / "totalGames"', "topFourPercent")
+      .addSelect('"topOneCount" / "totalGames"', "topOnePercent")
+      .addSelect('"eigthCount" / "totalGames"', "eigthPercent")
+      .addSelect("id")
+      .addSelect("name")
+      .addSelect("region")
+      .addSelect("country")
+      .from((qb) => {
+        let query = this.getBaseStatsQuery(qb)
+          .addSelect("player.*")
+          .from("round_result", "result")
+          .innerJoin(
+            "lobby_player_info",
+            "lpi",
+            "lpi.id = result.lobbyPlayerId",
+          )
+          .innerJoin("player", "player", "player.id = lpi.playerId")
+          .innerJoin("lobby", "lobby", "lobby.id = lpi.lobbyId")
+          .innerJoin("stage", "stage", "stage.id = lobby.stageId")
+          .innerJoin(
+            "tournament",
+            "tournament",
+            "tournament.id = stage.tournamentId",
+          )
+          .groupBy("player.id")
+          .where("lpi.playerId = :playerId", { playerId });
+
+        if (setId) {
+          query = query.andWhere("tournament.setId = :setId", { setId });
+        }
+
+        if (tournamentId) {
+          query = query.andWhere("tournament.id = :tournamentId", {
+            tournamentId,
+          });
+        }
+
+        return query;
+      }, "rawStats")
+      .getRawOne() as Promise<PlayerStatsRaw | undefined>;
+  }
+
+  private findResultsByStage(stageId: number): Promise<RoundResultsRaw[]> {
+    const queryBuilder =
+      this.roundResultsRepository.manager.createQueryBuilder();
+    const baseQuery = this.getBaseResultsQuery(queryBuilder);
+    return baseQuery.where("stage.id = :stageId", { stageId }).getRawMany();
+  }
+
+  private async resultsByLobby(lobbyId: number, stageId: number) {
+    const { tiebreakers } = await this.stagesService.findOne(stageId);
+    const results = await this.findResultsByLobby(lobbyId);
+    const formattedResults = fromRawToConsolidatedRoundResults(results);
+    return sortResults(formattedResults, tiebreakers);
+  }
+
+  private findResultsByLobby(lobbyId: number): Promise<RoundResultsRaw[]> {
+    const queryBuilder =
+      this.roundResultsRepository.manager.createQueryBuilder();
+    const baseQuery = this.getBaseResultsQuery(queryBuilder);
+    return baseQuery.where("lobby.id = :lobbyId", { lobbyId }).getRawMany();
+  }
+
+  private findResultsByLobbyGroup(
+    lobbyGroupId: number,
+  ): Promise<RoundResultsRaw[]> {
+    const queryBuilder =
+      this.roundResultsRepository.manager.createQueryBuilder();
+    const baseQuery = this.getBaseResultsQuery(queryBuilder);
+    return baseQuery
+      .where("lobby.lobbyGroupId = :lobbyGroupId", { lobbyGroupId })
+      .getRawMany();
   }
 
   private findStats({
@@ -297,57 +348,32 @@ export class RoundResultsService {
       .getRawMany<PlayersStatsRaw>();
   }
 
-  public findStatsByPlayer(
-    playerId: number,
-    setId?: number,
-    tournamentId?: number,
-  ): Promise<PlayerStatsRaw | undefined> {
-    const queryBuilder =
-      this.roundResultsRepository.manager.createQueryBuilder();
-    // add subquery here to get the / total games values
+  private getBaseResultsQuery(
+    queryBuilder: SelectQueryBuilder<any>,
+  ): SelectQueryBuilder<any> {
     return queryBuilder
-      .select('"totalGames"')
-      .addSelect('"averagePosition"')
-      .addSelect('"topFourCount" / "totalGames"', "topFourPercent")
-      .addSelect('"topOneCount" / "totalGames"', "topOnePercent")
-      .addSelect('"eigthCount" / "totalGames"', "eigthPercent")
-      .addSelect("id")
-      .addSelect("name")
-      .addSelect("region")
-      .addSelect("country")
-      .from((qb) => {
-        let query = this.getBaseStatsQuery(qb)
-          .addSelect("player.*")
-          .from("round_result", "result")
-          .innerJoin(
-            "lobby_player_info",
-            "lpi",
-            "lpi.id = result.lobbyPlayerId",
-          )
-          .innerJoin("player", "player", "player.id = lpi.playerId")
-          .innerJoin("lobby", "lobby", "lobby.id = lpi.lobbyId")
-          .innerJoin("stage", "stage", "stage.id = lobby.stageId")
-          .innerJoin(
-            "tournament",
-            "tournament",
-            "tournament.id = stage.tournamentId",
-          )
-          .groupBy("player.id")
-          .where("lpi.playerId = :playerId", { playerId });
-
-        if (setId) {
-          query = query.andWhere("tournament.setId = :setId", { setId });
-        }
-
-        if (tournamentId) {
-          query = query.andWhere("tournament.id = :tournamentId", {
-            tournamentId,
-          });
-        }
-
-        return query;
-      }, "rawStats")
-      .getRawOne() as Promise<PlayerStatsRaw | undefined>;
+      .select(
+        "result.roundId, result.position, lpi.id, lpi.playerId, round.sequence, player.name, player.region, player.country, player.slug, points.points",
+      )
+      .from("lobby_player_info", "lpi")
+      .innerJoin("lobby", "lobby", "lobby.id = lpi.lobbyId")
+      .innerJoin("stage", "stage", "stage.id = lobby.stageId")
+      .innerJoin("player", "player", "player.id = lpi.playerId")
+      .leftJoin("round_result", "result", "lpi.id = result.lobbyPlayerId")
+      .leftJoin(
+        "points",
+        "points",
+        "points.pointSchemaId = stage.pointSchemaId and points.position = result.position",
+      )
+      .leftJoin("round", "round", "round.id = result.roundId")
+      .orderBy("lpi.id, round.sequence")
+      .leftJoin(
+        "stage_player_info",
+        "spi",
+        "spi.stageId = stage.id and spi.playerId = player.id",
+      )
+      .addSelect("COALESCE(spi.extraPoints, 0)", "extraPoints")
+      .addSelect("COALESCE(spi.tiebreakerRanking, 0)", "tiebreakerRanking");
   }
 
   private getBaseStatsQuery(

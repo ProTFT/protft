@@ -42,12 +42,20 @@ const mockPlayerWithStats = [
   },
 ];
 
+const mockLobbyResults = [
+  {
+    id: 1,
+    lobbies: [{ id: 1, results: mockResults }],
+  },
+];
+
 const fakeRoundResultsService = {
-  resultsByStage: jest.fn().mockResolvedValue(mockResults),
+  overviewResultsByStage: jest.fn().mockResolvedValue(mockResults),
   resultsByLobbyGroup: jest.fn().mockResolvedValue(mockResults),
   playerStats: jest.fn().mockResolvedValue(mockPlayerWithStats),
   createResults: jest.fn().mockResolvedValue(mockRoundResults),
   createBulk: jest.fn(),
+  lobbyResultsByStage: jest.fn().mockResolvedValue(mockLobbyResults),
 };
 
 describe("Round Result (e2e)", () => {
@@ -92,6 +100,32 @@ describe("Round Result (e2e)", () => {
 
       expect(response.body).toStrictEqual({
         data: { resultsByStage: mockResults },
+      });
+    });
+  });
+
+  describe("lobbyResultsByStage", () => {
+    it("should get data from service", async () => {
+      const response = await request(app.getHttpServer())
+        .post(graphql)
+        .send({
+          query: `
+          query {
+            lobbyResultsByStage(stageId: 1) {
+              id
+              lobbies {
+                id
+                results {
+                  points
+                }
+              }
+            }
+          }`,
+        })
+        .expect(HttpStatus.OK);
+
+      expect(response.body).toStrictEqual({
+        data: { lobbyResultsByStage: mockLobbyResults },
       });
     });
   });

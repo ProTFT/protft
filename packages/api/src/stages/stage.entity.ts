@@ -1,4 +1,4 @@
-import { Field, Int, ObjectType } from "@nestjs/graphql";
+import { Field, Int, ObjectType, registerEnumType } from "@nestjs/graphql";
 import {
   Column,
   Entity,
@@ -14,6 +14,13 @@ import { PointSchema } from "../points/point.entity";
 import { Tournament } from "../tournaments/tournament.entity";
 import { StagePlayerInfo } from "../stage-player-infos/stage-player-info.entity";
 import { LobbyGroup } from "../lobbies/lobby-group.entity";
+
+export enum StageType {
+  RANKING = "Ranking",
+  GROUP_BASED = "Group Based",
+}
+
+registerEnumType(StageType, { name: "StageType" });
 
 @ObjectType()
 @Entity()
@@ -50,6 +57,14 @@ export class Stage {
   @Field(() => [Int])
   @Column("int", { nullable: true, array: true })
   tiebreakers?: number[];
+
+  @Field(() => StageType)
+  @Column({ default: StageType.RANKING, enum: StageType, type: "enum" })
+  stageType: StageType;
+
+  @Field(() => Int)
+  @Column({ default: 0 })
+  qualifiedCount: number;
 
   @Field(() => Int)
   roundCount: number;

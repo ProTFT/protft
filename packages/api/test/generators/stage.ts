@@ -1,4 +1,4 @@
-import { Stage } from "../../src/stages/stage.entity";
+import { Stage, StageType } from "../../src/stages/stage.entity";
 import { tournament as genTournament } from "./tournament";
 
 export function stage({
@@ -16,6 +16,8 @@ export function stage({
   players,
   lobbyGroups,
   tiebreakers,
+  stageType,
+  qualifiedCount,
 }: Partial<Stage>): Stage {
   const randomId = Math.random() * 999;
   return {
@@ -34,5 +36,7 @@ export function stage({
     lobbyGroups: lobbyGroups || [],
     rounds: rounds || [],
     tiebreakers: tiebreakers || [],
+    stageType: stageType || StageType.RANKING,
+    qualifiedCount: qualifiedCount || 0,
   };
 }

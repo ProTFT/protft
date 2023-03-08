@@ -293,7 +293,18 @@ describe("Stages (e2e)", () => {
         .send({
           query: `
           mutation {
-            createStage(tournamentId: 1, pointSchemaId: 2, name: "name", sequence: 1, isFinal: false, roundCount: 1, tiebreakers: [1, 2, 3], description: "desc") {
+            createStage(
+              tournamentId: 1,
+              pointSchemaId: 2,
+              name: "name",
+              sequence: 1,
+              isFinal: false,
+              roundCount: 1,
+              tiebreakers: [1, 2, 3],
+              description: "desc",
+              qualifiedCount: 4,
+              stageType: RANKING,
+            ) {
               id
               name
             }
@@ -314,7 +325,19 @@ describe("Stages (e2e)", () => {
         .send({
           query: `
           mutation {
-            updateStage(id: 1, tournamentId: 1, pointSchemaId: 2, name: "name", sequence: 1, isFinal: false, roundCount: 1, tiebreakers: [1, 2, 3], description: "desc") {
+            updateStage(
+              id: 1,
+              tournamentId: 1,
+              pointSchemaId: 2,
+              name: "name",
+              sequence: 1,
+              isFinal: false,
+              roundCount: 1,
+              tiebreakers: [1, 2, 3],
+              description: "desc",
+              qualifiedCount: 4,
+              stageType: RANKING,
+            ) {
               id
               name
             }

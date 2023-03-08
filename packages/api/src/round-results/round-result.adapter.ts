@@ -1,5 +1,8 @@
+import { LobbyGroup } from "../lobbies/lobby-group.entity";
+import { Lobby } from "../lobbies/lobby.entity";
 import { Round } from "../rounds/round.entity";
 import { CreateLobbyGroupResults } from "./dto/create-lobby-group-result.args";
+import { LobbyGroupWithLobbies } from "./dto/get-lobby-results.out";
 import { RoundResultsRaw } from "./dto/get-results.raw";
 import { RoundResult } from "./round-result.entity";
 import { PlayerResultsWithPast } from "./round-result.logic";
@@ -93,4 +96,32 @@ export function addPastPoints(
       .find((cpr) => cpr.player.id === r.player.id)
       .points.reduce((prev, curr) => prev + curr, 0),
   }));
+}
+
+export function formatLobbyResults(
+  lobbyGroups: LobbyGroup[],
+  lobbies: Lobby[][],
+  result: PlayerResultsWithPast[][][],
+): LobbyGroupWithLobbies[] {
+  const consolidatedResult = lobbyGroups.reduce(
+    (prev, curr, lobbyGroupIndex) => [
+      ...prev,
+      {
+        ...curr,
+        lobbies: lobbies[lobbyGroupIndex].reduce(
+          (prev, curr, lobbyIndex) => [
+            ...prev,
+            {
+              ...curr,
+              results: result[lobbyGroupIndex][lobbyIndex],
+            },
+          ],
+          [],
+        ),
+      },
+    ],
+    [],
+  );
+
+  return consolidatedResult;
 }

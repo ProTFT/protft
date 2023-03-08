@@ -1,6 +1,9 @@
 import { rawRoundResults } from "../../test/data/raw-round-results";
+import { lobby } from "../../test/generators/lobby";
+import { lobbyGroup } from "../../test/generators/lobby-group";
 import {
   addPastPoints,
+  formatLobbyResults,
   fromRawToConsolidatedRoundResults,
 } from "./round-result.adapter";
 import { PlayerResultsWithPast } from "./round-result.logic";
@@ -60,6 +63,57 @@ describe("Round Results Adapter", () => {
         pastPoints: 8 + 7,
       }));
       expect(response).toStrictEqual(expectedResponse);
+    });
+  });
+
+  describe("formatLobbyResults", () => {
+    it("should consolidate all results on lobby group structure", () => {
+      const [firstLobbyGroup, secondLobbyGroup] = [
+        lobbyGroup({}),
+        lobbyGroup({}),
+      ];
+
+      const [firstLobby, secondLobby] = [lobby({}), lobby({})];
+
+      const response = formatLobbyResults(
+        [firstLobbyGroup, secondLobbyGroup],
+        [
+          [firstLobby, secondLobby],
+          [firstLobby, secondLobby],
+        ],
+        [
+          [consolidatedResults, consolidatedResults],
+          [consolidatedResults, consolidatedResults],
+        ],
+      );
+      expect(response).toStrictEqual([
+        {
+          ...firstLobbyGroup,
+          lobbies: [
+            {
+              ...firstLobby,
+              results: consolidatedResults,
+            },
+            {
+              ...secondLobby,
+              results: consolidatedResults,
+            },
+          ],
+        },
+        {
+          ...secondLobbyGroup,
+          lobbies: [
+            {
+              ...firstLobby,
+              results: consolidatedResults,
+            },
+            {
+              ...secondLobby,
+              results: consolidatedResults,
+            },
+          ],
+        },
+      ]);
     });
   });
 });

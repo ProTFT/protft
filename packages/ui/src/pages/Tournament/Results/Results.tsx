@@ -1,34 +1,58 @@
-import { Link } from "react-router-dom";
+import { useCallback, useEffect, useState } from "react";
 import { useQuery } from "urql";
-import { CountryIndicator } from "../../../components/RegionIndicator/RegionIndicator";
-import { Stage } from "../../../graphql/schema";
+import { Stage, StageType } from "../../../graphql/schema";
 import { NoDataAdded } from "../NoDataAdded/NoDataAdded";
-import { ResultsQueryResponse, RESULTS_QUERY } from "../queries";
 import {
-  StyledPlayerName,
-  StyledResultsContainer,
-  StyledTable,
-  StyledTableData,
-  StyledTablePlayerHeader,
-  StyledTablePlayerName,
-  StyledTableRoundHeader,
-  StyledTournamentModeButton,
-} from "./Results.styled";
+  ResultsByLobbyQueryResponse,
+  ResultsByLobbyGroupQueryResponse,
+  RESULTS_BY_LOBBY,
+  RESULTS_BY_STAGE_QUERY,
+} from "../queries";
+import { ChangeViewButton } from "./ChangeViewButton";
+import { StyledButtonBar, StyledResultsContainer } from "./Results.styled";
+import { LobbyResultTable } from "./ResultTable/LobbyResultTable";
+import { OverviewResultTable } from "./ResultTable/OverviewResultTable";
 
-export const Results = ({
-  open,
-  selectedStage,
-}: {
+export enum ViewType {
+  OVERVIEW,
+  LOBBY,
+}
+
+interface Props {
   open: boolean;
   selectedStage: Stage | null;
-}) => {
-  const [{ data }] = useQuery<ResultsQueryResponse>({
-    query: RESULTS_QUERY,
+}
+
+export const Results = ({ open, selectedStage }: Props) => {
+  const [currentView, setCurrentView] = useState(ViewType.OVERVIEW);
+
+  useEffect(() => {
+    setCurrentView(
+      selectedStage?.stageType === StageType.GROUP_BASED
+        ? ViewType.LOBBY
+        : ViewType.OVERVIEW
+    );
+  }, [selectedStage?.stageType]);
+
+  const [{ data: overviewData }] = useQuery<ResultsByLobbyGroupQueryResponse>({
+    query: RESULTS_BY_STAGE_QUERY,
     variables: { stageId: selectedStage?.id },
-    pause: !selectedStage,
+    pause: !selectedStage || currentView === ViewType.LOBBY,
   });
 
-  if (data?.resultsByStage.length === 0 && open) {
+  const [{ data: lobbyData }] = useQuery<ResultsByLobbyQueryResponse>({
+    query: RESULTS_BY_LOBBY,
+    variables: { stageId: selectedStage?.id },
+    pause: !selectedStage || currentView === ViewType.OVERVIEW,
+  });
+
+  const onChangeViewType = useCallback(() => {
+    setCurrentView((current) =>
+      current === ViewType.LOBBY ? ViewType.OVERVIEW : ViewType.LOBBY
+    );
+  }, []);
+
+  if (overviewData?.resultsByStage.length === 0 && open) {
     return (
       <StyledResultsContainer show={open}>
         <NoDataAdded />
@@ -37,50 +61,33 @@ export const Results = ({
   }
 
   return (
-    <StyledResultsContainer show={open}>
-      {false && (
-        <StyledTournamentModeButton>Lobbies</StyledTournamentModeButton>
+    <>
+      {open && (
+        <StyledButtonBar>
+          <ChangeViewButton
+            onClick={onChangeViewType}
+            currentView={currentView}
+          />
+        </StyledButtonBar>
       )}
-      <StyledTable>
-        <thead>
-          <tr>
-            <StyledTableRoundHeader>#</StyledTableRoundHeader>
-            <StyledTablePlayerHeader>Player</StyledTablePlayerHeader>
-            <StyledTableRoundHeader>P</StyledTableRoundHeader>
-            {new Array(selectedStage?.roundCount).fill(0).map((_, index) => (
-              <StyledTableRoundHeader key={index}>{`R${
-                index + 1
-              }`}</StyledTableRoundHeader>
-            ))}
-          </tr>
-        </thead>
-        <tbody>
-          {data?.resultsByStage.map(({ player, points, positions }, index) => (
-            <tr key={player.id}>
-              <StyledTableData>{index + 1}</StyledTableData>
-              <td>
-                <Link to={`/players/${player.slug}`}>
-                  <StyledTablePlayerName>
-                    <CountryIndicator
-                      countryCode={player.country}
-                      showName={false}
-                    />
-                    <StyledPlayerName>{player.name}</StyledPlayerName>
-                  </StyledTablePlayerName>
-                </Link>
-              </td>
-              <StyledTableData>
-                {points.reduce((prev, cur) => prev + cur, 0)}
-              </StyledTableData>
-              {positions.map((position, index) => (
-                <StyledTableData key={index} highlighted={position <= 4}>
-                  {position}
-                </StyledTableData>
-              ))}
-            </tr>
-          ))}
-        </tbody>
-      </StyledTable>
-    </StyledResultsContainer>
+      {currentView === ViewType.OVERVIEW ? (
+        <OverviewResultTable
+          open={open}
+          roundCount={selectedStage?.roundCount}
+          stageResults={overviewData?.resultsByStage}
+          stageType={selectedStage?.stageType}
+          currentView={currentView}
+          qualifiedCount={selectedStage?.qualifiedCount || 0}
+        />
+      ) : (
+        <LobbyResultTable
+          open={open}
+          stageResults={lobbyData?.lobbyResultsByStage}
+          stageType={selectedStage?.stageType}
+          currentView={currentView}
+          qualifiedCount={selectedStage?.qualifiedCount || 0}
+        />
+      )}
+    </>
   );
 };

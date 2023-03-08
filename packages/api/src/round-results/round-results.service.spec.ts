@@ -1,4 +1,7 @@
 import { Repository } from "typeorm";
+import { lobby } from "../../test/generators/lobby";
+import { lobbyGroup } from "../../test/generators/lobby-group";
+import { stage } from "../../test/generators/stage";
 import { formatString } from "../../test/helpers/File";
 import { LobbiesService } from "../lobbies/lobbies.service";
 import { LobbyPlayerInfosService } from "../lobby-player-infos/lobby-player-infos.service";
@@ -109,26 +112,31 @@ const mockRawResults = {
 describe("RoundResults service", () => {
   let service: RoundResultsService;
   let roundResultsRepository: Repository<RoundResult>;
+  let stagesService: StagesService;
+  let lobbyPlayerInfosService: LobbyPlayerInfosService;
+  let lobbiesService: LobbiesService;
   const fakeQueryBuilder = new FakeQueryBuilder();
 
-  const stagesService = {
-    findOne: jest.fn(),
-    findAllByTournament: jest.fn(),
-  } as unknown as StagesService;
-
-  const lobbyPlayerInfosService = {
-    createManyLobbyPlayers: jest.fn(),
-  } as unknown as LobbyPlayerInfosService;
-
-  const lobbiesService = {
-    findOneLobbyGroup: jest.fn().mockResolvedValue({
-      roundsPlayed: 2,
-      sequence: 1,
-      stageId: 1,
-    }),
-  } as unknown as LobbiesService;
-
   beforeEach(() => {
+    stagesService = {
+      findOne: jest.fn().mockResolvedValue(stage({})),
+      findAllByTournament: jest.fn(),
+    } as unknown as StagesService;
+
+    lobbyPlayerInfosService = {
+      createManyLobbyPlayers: jest.fn(),
+    } as unknown as LobbyPlayerInfosService;
+
+    lobbiesService = {
+      findOneLobbyGroup: jest.fn().mockResolvedValue({
+        roundsPlayed: 2,
+        sequence: 1,
+        stageId: 1,
+      }),
+      findAllLobbyGroupsByStage: jest.fn(),
+      findAllByLobbyGroup: jest.fn(),
+    } as unknown as LobbiesService;
+
     roundResultsRepository = {
       save: jest.fn(),
       manager: {
@@ -150,20 +158,21 @@ describe("RoundResults service", () => {
   });
 
   describe("createResults", () => {
-    stagesService.findOne = jest.fn().mockResolvedValue({
-      rounds: [
-        {
-          id: 1,
-        },
-        {
-          id: 2,
-        },
-        {
-          id: 3,
-        },
-      ],
-    });
     it("should create on repository", async () => {
+      stagesService.findOne = jest.fn().mockResolvedValue({
+        rounds: [
+          {
+            id: 1,
+          },
+          {
+            id: 2,
+          },
+          {
+            id: 3,
+          },
+        ],
+      });
+
       const payload: CreateLobbyGroupResultArgs = {
         lobbyGroupId: 1,
         results: [{ lobbyPlayerId: 1, positions: [1, 2] }],
@@ -239,13 +248,13 @@ describe("RoundResults service", () => {
     });
   });
 
-  describe("resultsByStage", () => {
+  describe("overviewResultsByStage", () => {
     it("should get data from DB and format", async () => {
       stagesService.findOne = jest.fn().mockResolvedValue({
         tournamentId: 1,
         sequence: 1,
       });
-      const response = await service.resultsByStage(1);
+      const response = await service.overviewResultsByStage(1);
       expect(response).toStrictEqual(
         fromRawToConsolidatedRoundResults([mockRawResults]),
       );
@@ -274,7 +283,7 @@ describe("RoundResults service", () => {
           sequence: 3,
         },
       ]);
-      const response = await service.resultsByStage(1);
+      const response = await service.overviewResultsByStage(1);
       expect(response).toStrictEqual(
         fromRawToConsolidatedRoundResults([mockRawResults]).map((r) => ({
           ...r,
@@ -306,7 +315,7 @@ describe("RoundResults service", () => {
           sequence: 3,
         },
       ]);
-      const response = await service.resultsByStage(1);
+      const response = await service.overviewResultsByStage(1);
       expect(response).toStrictEqual(
         fromRawToConsolidatedRoundResults([mockRawResults]),
       );
@@ -322,12 +331,54 @@ describe("RoundResults service", () => {
     });
   });
 
-  describe("resultsByLobbyGroup", () => {
+  describe("lobbyResultsByStage", () => {
     it("should get data from DB and format", async () => {
-      const response = await service.resultsByLobbyGroup(1);
-      expect(response).toStrictEqual(
-        fromRawToConsolidatedRoundResults([mockRawResults]),
-      );
+      const [firstLobbyGroup, secondLobbyGroup] = [
+        lobbyGroup({}),
+        lobbyGroup({}),
+      ];
+      const [firstLobby, secondLobby] = [lobby({}), lobby({})];
+      lobbiesService.findAllLobbyGroupsByStage = jest
+        .fn()
+        .mockResolvedValueOnce([firstLobbyGroup, secondLobbyGroup]);
+
+      lobbiesService.findAllByLobbyGroup = jest
+        .fn()
+        .mockResolvedValue([firstLobby, secondLobby]);
+      const formattedResults = fromRawToConsolidatedRoundResults([
+        mockRawResults,
+      ]);
+
+      const response = await service.lobbyResultsByStage(1);
+
+      expect(response).toStrictEqual([
+        {
+          ...firstLobbyGroup,
+          lobbies: [
+            {
+              ...firstLobby,
+              results: formattedResults,
+            },
+            {
+              ...secondLobby,
+              results: formattedResults,
+            },
+          ],
+        },
+        {
+          ...secondLobbyGroup,
+          lobbies: [
+            {
+              ...firstLobby,
+              results: formattedResults,
+            },
+            {
+              ...secondLobby,
+              results: formattedResults,
+            },
+          ],
+        },
+      ]);
     });
   });
 

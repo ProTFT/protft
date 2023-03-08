@@ -1,5 +1,6 @@
 import styled from "styled-components";
 import { StyledHorizontalContainer } from "../../../components/Layout/HorizontalContainer/HorizontalContainer.styled";
+import { StyledVerticalContainer } from "../../../components/Layout/VerticalContainer/VerticalContainer.styled";
 import { device } from "../../../design/breakpoints";
 import { colors } from "../../../design/colors";
 
@@ -17,17 +18,21 @@ export const StyledResultsContainer = styled.div<{ show: boolean }>`
   }
 `;
 
-export const StyledTournamentModeButton = styled.button`
-  font-family: Roboto;
-  font-size: 11px;
-  font-weight: 700;
-  line-height: 38px;
-  letter-spacing: 0.2em;
-  text-align: left;
-  color: ${colors.yellow};
-  text-transform: uppercase;
-  background-color: ${colors.blackTiles};
-  align-self: flex-end;
+export const StyledLobbyResultsContainer = styled.div<{ show: boolean }>`
+  display: flex;
+  flex-direction: column;
+  gap: 2rem;
+  background-color: #1e1c35;
+  ${(props) => (!props.show ? "max-height: 0px" : "max-height: fit-content")};
+  overflow: auto;
+  transition: max-height 1s ease-out;
+  flex-wrap: wrap;
+
+  @media ${device.tablet} {
+    gap: 5rem;
+    flex-direction: column;
+    align-items: center;
+  }
 `;
 
 export const StyledPlayerName = styled.p`
@@ -95,4 +100,48 @@ export const StyledTable = styled.table`
 
 export const StyledTablePlayerName = styled(StyledHorizontalContainer)`
   gap: 1rem;
+`;
+
+export const StyledLobbyGroupContainer = styled(StyledHorizontalContainer)`
+  gap: 2rem;
+`;
+
+export const StyledLobbyContainer = styled(StyledVerticalContainer)`
+  gap: 2rem;
+`;
+
+export const StyledButtonBar = styled(StyledHorizontalContainer)`
+  width: 100%;
+  background-color: #1e1c35;
+  padding-top: 2rem;
+  padding-bottom: 2rem;
+  justify-content: center;
+
+  @media ${device.desktop} {
+    justify-content: flex-end;
+    padding-right: 20%;
+  }
+`;
+
+export const StyledLobbyName = styled.p`
+  align-self: center;
+  font-family: VTF Redzone Classic;
+  font-size: 32px;
+  font-weight: 400;
+  line-height: 32px;
+  letter-spacing: 0.27em;
+  text-align: left;
+`;
+
+export const StyledTableRow = styled.tr<{
+  index: number;
+  qualifiedCount: number;
+  hasQualifier: boolean;
+}>`
+  ${({ index, qualifiedCount, hasQualifier }) =>
+    index < qualifiedCount &&
+    hasQualifier &&
+    ((index % 2 === 0 &&
+      `background-color: rgba(37, 75, 2, 0.2) !important;`) ||
+      `background-color: rgba(37, 75, 2, 0.4) !important;`)}
 `;

@@ -1,4 +1,5 @@
 import { ArgsType, Field, Int } from "@nestjs/graphql";
+import { StageType } from "../stage.entity";
 
 @ArgsType()
 export class UpdateStageArgs {
@@ -19,6 +20,12 @@ export class UpdateStageArgs {
 
   @Field({ name: "isFinal" })
   isFinal: boolean;
+
+  @Field(() => Int, { name: "qualifiedCount" })
+  qualifiedCount: number;
+
+  @Field(() => StageType, { name: "stageType" })
+  stageType: StageType;
 
   @Field(() => Int, { name: "roundCount" })
   roundCount: number;

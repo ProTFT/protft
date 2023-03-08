@@ -59,13 +59,13 @@ export const StyledTournamentTitle = styled.p`
   }
 `;
 
-const positionColorMap: { [position: number]: string } = {
-  1: "#D4AF37",
-  2: "#363636",
-  3: "#9F7A34",
+const positionColorMap: { [position: string]: string } = {
+  "1st": "#D4AF37",
+  "2nd": "#363636",
+  "3rd": "#9F7A34",
 };
 
-export const StyledPlayerPositionContainer = styled.div<{ position: number }>`
+export const StyledPlayerPositionContainer = styled.div<{ position: string }>`
   ${({ position, theme }) => `
     align-self: end;
     background-color: ${
@@ -78,6 +78,7 @@ export const StyledPlayerPositionContainer = styled.div<{ position: number }>`
     position: absolute;
     padding-left: 0.5rem;
     padding-right: 0.5rem;
+    white-space: nowrap;
 
     @media ${device.tablet} {
       right: 0;

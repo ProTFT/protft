@@ -7,6 +7,11 @@
 
 /* tslint:disable */
 /* eslint-disable */
+export enum StageType {
+    RANKING = "RANKING",
+    GROUP_BASED = "GROUP_BASED"
+}
+
 export interface SortOption {
     column: string;
     asc: boolean;
@@ -103,6 +108,8 @@ export interface Stage {
     tournamentId: number;
     pointSchemaId: number;
     tiebreakers: number[];
+    stageType: StageType;
+    qualifiedCount: number;
     roundCount: number;
     players: StagePlayerInfo[];
     lobbies?: Nullable<Lobby[]>;
@@ -155,6 +162,23 @@ export interface PlayerResults {
     lobbyPlayerId: number;
 }
 
+export interface LobbyGroupWithLobbies {
+    id: number;
+    stageId: number;
+    sequence: number;
+    roundsPlayed: number;
+    lobbies: LobbyWithResults[];
+}
+
+export interface LobbyWithResults {
+    id: number;
+    stageId: number;
+    name: string;
+    sequence: number;
+    players: Player[];
+    results: PlayerResults[];
+}
+
 export interface PlayerFilterMeta {
     possibleCountries: string[];
     possibleRegions: string[];
@@ -176,13 +200,13 @@ export interface TournamentsPlayed {
     set: Set;
     stages?: Nullable<Stage[]>;
     players?: Nullable<Player[]>;
-    finalPosition?: Nullable<number>;
+    finalPosition?: Nullable<string>;
 }
 
 export interface TournamentResult {
     tournamentId: number;
-    finalPosition: number;
     playerId: number;
+    finalPosition: string;
     prize: number;
     otherRewards: string;
 }
@@ -213,6 +237,7 @@ export interface IQuery {
     playerFilterMeta(): PlayerFilterMeta | Promise<PlayerFilterMeta>;
     tournamentsPlayed(playerId: number): TournamentsPlayed[] | Promise<TournamentsPlayed[]>;
     resultsByStage(stageId: number): PlayerResults[] | Promise<PlayerResults[]>;
+    lobbyResultsByStage(stageId: number): LobbyGroupWithLobbies[] | Promise<LobbyGroupWithLobbies[]>;
     resultsByLobbyGroup(lobbyGroupId: number): PlayerResults[] | Promise<PlayerResults[]>;
     playerStats(setId?: Nullable<number>, tournamentIds?: Nullable<number[]>, region?: Nullable<string>, sort?: Nullable<SortOption>, searchQuery?: Nullable<string>, take?: Nullable<number>, skip?: Nullable<number>): PlayerWithStats[] | Promise<PlayerWithStats[]>;
     resultsOfTournament(tournamentId: number): TournamentResult[] | Promise<TournamentResult[]>;
@@ -225,8 +250,8 @@ export interface IMutation {
     createTournamentPlayers(tournamentId: number, playerIds: number[]): Tournament | Promise<Tournament>;
     createTournamentPlayersByName(tournamentId: number, playerNames: string): Tournament | Promise<Tournament>;
     createTournamentSlugs(): Tournament[] | Promise<Tournament[]>;
-    createStage(tournamentId: number, pointSchemaId: number, name: string, sequence: number, isFinal: boolean, roundCount: number, tiebreakers?: Nullable<number[]>, description?: Nullable<string>): Stage | Promise<Stage>;
-    updateStage(id: number, tournamentId: number, pointSchemaId: number, name: string, sequence: number, isFinal: boolean, roundCount: number, tiebreakers?: Nullable<number[]>, description?: Nullable<string>): Stage | Promise<Stage>;
+    createStage(tournamentId: number, pointSchemaId: number, name: string, sequence: number, isFinal: boolean, qualifiedCount: number, stageType: StageType, roundCount: number, tiebreakers?: Nullable<number[]>, description?: Nullable<string>): Stage | Promise<Stage>;
+    updateStage(id: number, tournamentId: number, pointSchemaId: number, name: string, sequence: number, isFinal: boolean, qualifiedCount: number, stageType: StageType, roundCount: number, tiebreakers?: Nullable<number[]>, description?: Nullable<string>): Stage | Promise<Stage>;
     updateTiebreakers(id: number, tiebreakers: number[]): Stage | Promise<Stage>;
     deleteStage(id: number): DeleteResponse | Promise<DeleteResponse>;
     createStagePlayers(stageId: number, playerIds: number[]): Stage | Promise<Stage>;

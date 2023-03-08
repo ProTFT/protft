@@ -3,7 +3,6 @@ import { colors } from "../../design/colors";
 import { PlayersIcon } from "../../design/icons/Players";
 import { TourneysIcon } from "../../design/icons/Tourneys";
 import { formatMoney } from "../../formatter/Money";
-import { getOrdinal } from "../../formatter/Number";
 import { useIsDesktop } from "../../hooks/useIsDesktop";
 import { TournamentWithMaybePlayerResult } from "../../pages/Tournaments/Tournaments.types";
 import { DateIndicator } from "../DateIndicator/DateIndicator";
@@ -29,13 +28,13 @@ interface Props {
 }
 
 interface PositionLabelProps {
-  position: number;
+  position: string;
 }
 
 const PlayerPositionLabel = ({ position }: PositionLabelProps) => {
   return (
     <StyledPlayerPositionContainer position={position}>
-      <StyledPlayerPosition>{getOrdinal(position)}</StyledPlayerPosition>
+      <StyledPlayerPosition>{position}</StyledPlayerPosition>
     </StyledPlayerPositionContainer>
   );
 };

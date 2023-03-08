@@ -1,5 +1,10 @@
 import { gql } from "urql";
-import { Player, Tournament } from "../../graphql/schema";
+import {
+  LobbyGroupWithLobbies,
+  Player,
+  PlayerResults,
+  Tournament,
+} from "../../graphql/schema";
 
 export interface TournamentBySlugQueryResponse {
   tournamentBySlug: Tournament;
@@ -29,22 +34,24 @@ export const TOURNAMENT_BY_SLUG_QUERY = gql`
         description
         isFinal
         roundCount
+        stageType
+        qualifiedCount
       }
     }
   }
 `;
 
-export interface Results {
+export interface ResultsByLobbyGroup {
   player: Player;
   positions: number[];
   points: number[];
 }
 
-export interface ResultsQueryResponse {
-  resultsByStage: Results[];
+export interface ResultsByLobbyGroupQueryResponse {
+  resultsByStage: PlayerResults[];
 }
 
-export const RESULTS_QUERY = gql`
+export const RESULTS_BY_STAGE_QUERY = gql`
   query ($stageId: Int!) {
     resultsByStage(stageId: $stageId) {
       player {
@@ -55,6 +62,39 @@ export const RESULTS_QUERY = gql`
       }
       positions
       points
+    }
+  }
+`;
+
+export interface ResultsByLobbyGroup {
+  player: Player;
+  positions: number[];
+  points: number[];
+}
+
+export interface ResultsByLobbyQueryResponse {
+  lobbyResultsByStage: LobbyGroupWithLobbies[];
+}
+
+export const RESULTS_BY_LOBBY = gql`
+  query ($stageId: Int!) {
+    lobbyResultsByStage(stageId: $stageId) {
+      id
+      roundsPlayed
+      lobbies {
+        id
+        name
+        results {
+          player {
+            id
+            name
+            country
+            slug
+          }
+          positions
+          points
+        }
+      }
     }
   }
 `;

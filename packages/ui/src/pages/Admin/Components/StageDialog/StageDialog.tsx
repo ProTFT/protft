@@ -1,5 +1,5 @@
 import React from "react";
-import { Stage } from "../../../../graphql/schema";
+import { Stage, StageType } from "../../../../graphql/schema";
 import { DialogForm } from "../DialogForm/DialogForm";
 import { FormField } from "../DialogForm/FormField";
 
@@ -32,6 +32,11 @@ export const StageDialog = ({ dialogRef, formRef, onSubmit, stage }: Props) => {
         <option value="3">9 - 7 - 1</option>
       </FormField>
       <FormField label="Round Count" name="roundCount" type="number" />
+      <FormField label="Stage Type" type="select" name="stageType">
+        <option value={StageType.RANKING}>Ranking</option>
+        <option value={StageType.GROUP_BASED}>Group based</option>
+      </FormField>
+      <FormField label="Qualified #" name="qualifiedCount" type="number" />
     </DialogForm>
   );
 };

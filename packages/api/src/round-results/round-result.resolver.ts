@@ -3,6 +3,7 @@ import { Args, Int, Mutation, Query, Resolver } from "@nestjs/graphql";
 import { GqlJwtAuthGuard } from "../auth/jwt-auth.guard";
 import { PlayerWithStats } from "../players/dto/get-player-stats.out";
 import { CreateLobbyGroupResultArgs } from "./dto/create-lobby-group-result.args";
+import { LobbyGroupWithLobbies } from "./dto/get-lobby-results.out";
 import { PlayerResults } from "./dto/get-results.out";
 import { GetStatsArgs } from "./dto/get-stats.args";
 import { RoundResult } from "./round-result.entity";
@@ -14,10 +15,16 @@ export class RoundResultsResolver {
 
   @Query(() => [PlayerResults])
   resultsByStage(@Args("stageId", { type: () => Int }) stageId: number) {
-    return this.roundResultsService.resultsByStage(stageId);
+    return this.roundResultsService.overviewResultsByStage(stageId);
   }
 
-  @UseGuards(GqlJwtAuthGuard)
+  @Query(() => [LobbyGroupWithLobbies])
+  async lobbyResultsByStage(
+    @Args("stageId", { type: () => Int }) stageId: number,
+  ): Promise<LobbyGroupWithLobbies[]> {
+    return this.roundResultsService.lobbyResultsByStage(stageId);
+  }
+
   @Query(() => [PlayerResults])
   resultsByLobbyGroup(
     @Args("lobbyGroupId", { type: () => Int }) lobbyGroupId: number,

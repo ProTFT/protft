@@ -1,11 +1,10 @@
-import { Column, Entity, Index, ManyToOne, PrimaryColumn } from "typeorm";
+import { Column, Entity, ManyToOne, PrimaryColumn } from "typeorm";
 import { Field, Int, ObjectType } from "@nestjs/graphql";
 import { Tournament } from "../tournaments/tournament.entity";
 import { Player } from "../players/player.entity";
 
 @Entity()
 @ObjectType()
-@Index(["tournamentId", "playerId"], { unique: true })
 export class TournamentResult {
   @Field(() => Int)
   @PrimaryColumn()
@@ -13,11 +12,11 @@ export class TournamentResult {
 
   @Field(() => Int)
   @PrimaryColumn()
-  finalPosition: number;
-
-  @Field(() => Int)
-  @Column()
   playerId: number;
+
+  @Field()
+  @Column()
+  finalPosition: string;
 
   @Field(() => Int)
   @Column({ default: 0 })
