@@ -51,7 +51,7 @@ export const StatRows = ({
         }) => (
           <tr key={player.id}>
             <StyledPlayerRowData center={false}>
-              <Link to={`/player/${player.slug}`}>
+              <Link to={`/players/${player.slug}`}>
                 <TextIconHorizontalContainer>
                   <CountryIndicator countryCode={player.country} />
                   {player.name}
