@@ -269,6 +269,7 @@ export interface IMutation {
     deletePlayer(id: number): Player | Promise<Player>;
     createLobbyGroupResult(lobbyGroupId: number, results: CreateLobbyGroupResults[]): RoundResult[] | Promise<RoundResult[]>;
     lockTournament(id: number): TournamentResult[] | Promise<TournamentResult[]>;
+    deleteTournamentResults(id: number): DeleteResponse | Promise<DeleteResponse>;
 }
 
 export type DateTime = any;

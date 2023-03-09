@@ -27,6 +27,7 @@ describe("TournamentResultsService", () => {
   const tournamentResultRepository = {
     save: jest.fn(),
     find: jest.fn(),
+    delete: jest.fn(),
   } as unknown as Repository<TournamentResult>;
 
   const stagesService = {
@@ -59,6 +60,16 @@ describe("TournamentResultsService", () => {
         where: {
           tournamentId,
         },
+      });
+    });
+  });
+
+  describe("deleteResults", () => {
+    it("should call delete on repo with parameters", async () => {
+      const tournamentId = 1;
+      await service.deleteResults(tournamentId);
+      expect(tournamentResultRepository.delete).toHaveBeenCalledWith({
+        tournamentId,
       });
     });
   });
@@ -419,6 +430,196 @@ describe("TournamentResultsService", () => {
           {
             finalPosition: "13th-16th",
             playerId: 16,
+            tournamentId: mockTournamentId,
+          },
+        ]);
+      });
+    });
+
+    describe("tournament with play-ins", () => {
+      beforeEach(() => {
+        stagesService.findAllByTournament = jest.fn().mockResolvedValue([
+          { id: 1, stageType: StageType.RANKING },
+          { id: 2, stageType: StageType.GROUP_BASED },
+          { id: 3, stageType: StageType.RANKING },
+        ]);
+        roundResultsService.overviewResultsByStage = jest
+          .fn()
+          .mockImplementation((stageId: number) => {
+            if (stageId === 3) {
+              return [
+                playerWithOnlyPosition(1, 1),
+                playerWithOnlyPosition(2, 2),
+                playerWithOnlyPosition(3, 3),
+                playerWithOnlyPosition(4, 4),
+                playerWithOnlyPosition(5, 5),
+                playerWithOnlyPosition(6, 6),
+                playerWithOnlyPosition(7, 7),
+                playerWithOnlyPosition(8, 8),
+              ];
+            }
+
+            return [
+              playerWithOnlyPosition(1, 1),
+              playerWithOnlyPosition(2, 2),
+              playerWithOnlyPosition(3, 3),
+              playerWithOnlyPosition(4, 4),
+              playerWithOnlyPosition(17, 5),
+              playerWithOnlyPosition(18, 6),
+              playerWithOnlyPosition(19, 7),
+              playerWithOnlyPosition(20, 8),
+            ];
+          });
+        roundResultsService.lobbyResultsByStage = jest
+          .fn()
+          .mockImplementation(() => {
+            return [
+              {
+                id: 1,
+                lobbies: [
+                  {
+                    id: 1,
+                    results: [
+                      playerWithOnlyPosition(1, 1),
+                      playerWithOnlyPosition(2, 2),
+                      playerWithOnlyPosition(9, 3),
+                      playerWithOnlyPosition(10, 4),
+                    ],
+                  },
+                  {
+                    id: 2,
+                    results: [
+                      playerWithOnlyPosition(3, 5),
+                      playerWithOnlyPosition(4, 6),
+                      playerWithOnlyPosition(11, 7),
+                      playerWithOnlyPosition(12, 8),
+                    ],
+                  },
+                  {
+                    id: 3,
+                    results: [
+                      playerWithOnlyPosition(5, 1),
+                      playerWithOnlyPosition(6, 2),
+                      playerWithOnlyPosition(13, 3),
+                      playerWithOnlyPosition(14, 4),
+                    ],
+                  },
+                  {
+                    id: 4,
+                    results: [
+                      playerWithOnlyPosition(7, 5),
+                      playerWithOnlyPosition(8, 6),
+                      playerWithOnlyPosition(15, 7),
+                      playerWithOnlyPosition(16, 8),
+                    ],
+                  },
+                ],
+              },
+            ];
+          });
+      });
+
+      it("should save results based on calculation", async () => {
+        await service.lockResults(mockTournamentId);
+        expect(tournamentResultRepository.save).toHaveBeenCalledWith([
+          {
+            finalPosition: "1st",
+            playerId: 1,
+            tournamentId: mockTournamentId,
+          },
+          {
+            finalPosition: "2nd",
+            playerId: 2,
+            tournamentId: mockTournamentId,
+          },
+          {
+            finalPosition: "3rd",
+            playerId: 3,
+            tournamentId: mockTournamentId,
+          },
+          {
+            finalPosition: "4th",
+            playerId: 4,
+            tournamentId: mockTournamentId,
+          },
+          {
+            finalPosition: "5th",
+            playerId: 5,
+            tournamentId: mockTournamentId,
+          },
+          {
+            finalPosition: "6th",
+            playerId: 6,
+            tournamentId: mockTournamentId,
+          },
+          {
+            finalPosition: "7th",
+            playerId: 7,
+            tournamentId: mockTournamentId,
+          },
+          {
+            finalPosition: "8th",
+            playerId: 8,
+            tournamentId: mockTournamentId,
+          },
+          {
+            finalPosition: "9th-12th",
+            playerId: 9,
+            tournamentId: mockTournamentId,
+          },
+          {
+            finalPosition: "9th-12th",
+            playerId: 11,
+            tournamentId: mockTournamentId,
+          },
+          {
+            finalPosition: "9th-12th",
+            playerId: 13,
+            tournamentId: mockTournamentId,
+          },
+          {
+            finalPosition: "9th-12th",
+            playerId: 15,
+            tournamentId: mockTournamentId,
+          },
+          {
+            finalPosition: "13th-16th",
+            playerId: 10,
+            tournamentId: mockTournamentId,
+          },
+          {
+            finalPosition: "13th-16th",
+            playerId: 12,
+            tournamentId: mockTournamentId,
+          },
+          {
+            finalPosition: "13th-16th",
+            playerId: 14,
+            tournamentId: mockTournamentId,
+          },
+          {
+            finalPosition: "13th-16th",
+            playerId: 16,
+            tournamentId: mockTournamentId,
+          },
+          {
+            finalPosition: "17th",
+            playerId: 17,
+            tournamentId: mockTournamentId,
+          },
+          {
+            finalPosition: "18th",
+            playerId: 18,
+            tournamentId: mockTournamentId,
+          },
+          {
+            finalPosition: "19th",
+            playerId: 19,
+            tournamentId: mockTournamentId,
+          },
+          {
+            finalPosition: "20th",
+            playerId: 20,
             tournamentId: mockTournamentId,
           },
         ]);

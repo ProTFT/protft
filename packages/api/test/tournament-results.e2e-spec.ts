@@ -1,7 +1,7 @@
 import { Test, TestingModule } from "@nestjs/testing";
 import { HttpStatus, INestApplication } from "@nestjs/common";
 import request from "supertest";
-import { GqlJwtAuthGuard, JwtAuthGuard } from "../src/auth/jwt-auth.guard";
+import { GqlJwtAuthGuard } from "../src/auth/jwt-auth.guard";
 import { TournamentResultsService } from "../src/tournament-results/tournament-results.service";
 import { TournamentResultsResolver } from "../src/tournament-results/tournament-results.resolver";
 import { ApolloDriverConfig, ApolloDriver } from "@nestjs/apollo";
@@ -10,6 +10,7 @@ import { GraphQLModule } from "@nestjs/graphql";
 const fakeTournamentResultsService = {
   lockResults: jest.fn(),
   findAllByTournament: jest.fn(),
+  deleteResults: jest.fn(),
 };
 
 describe("Tournament Result Infos (e2e)", () => {
@@ -71,6 +72,26 @@ describe("Tournament Result Infos (e2e)", () => {
         .expect(HttpStatus.OK);
 
       expect(fakeTournamentResultsService.lockResults).toHaveBeenCalledWith(1);
+    });
+  });
+
+  describe("deleteTournamentResults", () => {
+    it("should call service", async () => {
+      await request(app.getHttpServer())
+        .post("/graphql")
+        .send({
+          query: `
+            mutation {
+              deleteTournamentResults(id: 1) {
+                id
+              }
+            }`,
+        })
+        .expect(HttpStatus.OK);
+
+      expect(fakeTournamentResultsService.deleteResults).toHaveBeenCalledWith(
+        1,
+      );
     });
   });
 });

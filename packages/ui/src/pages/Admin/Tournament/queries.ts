@@ -85,6 +85,24 @@ export const LOCK_RESULTS_MUTATION = gql`
   }
 `;
 
+export interface DeleteResultsResult {
+  deleteTournamentResults: {
+    id: number;
+  };
+}
+
+export interface DeleteResultsVariables {
+  id: number;
+}
+
+export const DELETE_RESULTS_MUTATION = gql`
+  mutation ($id: Int!) {
+    deleteTournamentResults(id: $id) {
+      id
+    }
+  }
+`;
+
 export interface TournamentQueryResponse {
   tournament: Tournament;
 }

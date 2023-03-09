@@ -1,6 +1,7 @@
 import { Injectable } from "@nestjs/common";
 import { InjectRepository } from "@nestjs/typeorm";
 import { Repository } from "typeorm";
+import { DeleteResponse } from "../lib/dto/delete-return";
 import { getOrdinal } from "../lib/Number";
 import { RoundResultsService } from "../round-results/round-results.service";
 import { StageType } from "../stages/stage.entity";
@@ -30,19 +31,26 @@ export class TournamentResultsService {
       "tournamentId" | "finalPosition" | "playerId"
     >[] = [];
 
+    const arrayOfLobbyPlayers = new Array(PLAYERS_IN_TFT_LOBBY).fill(0);
+
     for (const stage of tournamentStages.reverse()) {
       if (stage.stageType === StageType.RANKING) {
         const results = await this.roundResultsService.overviewResultsByStage(
           stage.id,
         );
 
-        results.slice(finalResults.length).forEach((playersInStage) => {
-          finalResults.push({
-            tournamentId,
-            finalPosition: getOrdinal(finalResults.length + 1),
-            playerId: playersInStage.player.id,
+        results
+          .filter(
+            (result) =>
+              !finalResults.find((fr) => fr.playerId === result.player.id),
+          )
+          .forEach((playersInStage) => {
+            finalResults.push({
+              tournamentId,
+              finalPosition: getOrdinal(finalResults.length + 1),
+              playerId: playersInStage.player.id,
+            });
           });
-        });
       }
 
       if (stage.stageType === StageType.GROUP_BASED) {
@@ -52,32 +60,35 @@ export class TournamentResultsService {
 
         for (const lobbyGroup of results) {
           const lobbies = lobbyGroup.lobbies;
-          new Array(PLAYERS_IN_TFT_LOBBY)
-            .fill(0)
-            .forEach((_, positionIndex) => {
-              lobbies.forEach((lobby, _, allLobbies) => {
-                const offset = positionIndex * allLobbies.length + 1;
-                if (
-                  !finalResults.find(
-                    (result) =>
-                      result.playerId ===
-                      lobby.results[positionIndex].player.id,
-                  )
-                ) {
-                  finalResults.push({
-                    tournamentId,
-                    playerId: lobby.results[positionIndex].player.id,
-                    finalPosition: `${getOrdinal(offset)}-${getOrdinal(
-                      offset + allLobbies.length - 1,
-                    )}`,
-                  });
-                }
-              });
+          arrayOfLobbyPlayers.forEach((_, positionIndex) => {
+            lobbies.forEach((lobby, _, allLobbies) => {
+              const offset = positionIndex * allLobbies.length + 1;
+              if (
+                !finalResults.find(
+                  (result) =>
+                    result.playerId === lobby.results[positionIndex].player.id,
+                )
+              ) {
+                finalResults.push({
+                  tournamentId,
+                  playerId: lobby.results[positionIndex].player.id,
+                  finalPosition: `${getOrdinal(offset)}-${getOrdinal(
+                    offset + allLobbies.length - 1,
+                  )}`,
+                });
+              }
             });
+          });
         }
       }
+      // console.log(finalResults);
     }
 
     return this.tournamentResultRepository.save(finalResults);
+  }
+
+  async deleteResults(tournamentId: number): Promise<DeleteResponse> {
+    await this.tournamentResultRepository.delete({ tournamentId });
+    return { id: tournamentId };
   }
 }

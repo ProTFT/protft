@@ -11,6 +11,9 @@ import { ADMIN_TOURNAMENTS_PATH } from "../Tournaments/AdminTournaments";
 import { StyledActionsContainer, StyledBar } from "./AdminTournament.styled";
 import { AdminTournamentContent } from "./Content/Content";
 import {
+  DeleteResultsResult,
+  DeleteResultsVariables,
+  DELETE_RESULTS_MUTATION,
   DELETE_TOURNAMENT_MUTATION,
   LockResultsResult,
   LockResultsVariables,
@@ -49,6 +52,11 @@ export const AdminTournament = () => {
   const [, lockResults] = useMutation<LockResultsResult, LockResultsVariables>(
     LOCK_RESULTS_MUTATION
   );
+
+  const [, deleteResults] = useMutation<
+    DeleteResultsResult,
+    DeleteResultsVariables
+  >(DELETE_RESULTS_MUTATION);
 
   const onDeleteTournament = useCallback(async () => {
     const deleteResult = await deleteTournament({ id: Number(tournamentId) });
@@ -110,6 +118,17 @@ export const AdminTournament = () => {
     show();
   }, [lockResults, tournamentId, show]);
 
+  const onDeleteResults = useCallback(async () => {
+    const result = await deleteResults({
+      id: Number(tournamentId),
+    });
+
+    if (result.error) {
+      return alert(result.error);
+    }
+    show();
+  }, [deleteResults, tournamentId, show]);
+
   const onBackToList = useCallback(() => {
     navigate(ADMIN_TOURNAMENTS_PATH);
   }, [navigate]);
@@ -128,6 +147,7 @@ export const AdminTournament = () => {
         </StyledActionsContainer>
         <StyledActionsContainer>
           <ProTFTButton onClick={onLockResults}>Lock results</ProTFTButton>
+          <ProTFTButton onClick={onDeleteResults}>Delete results</ProTFTButton>
           <ProTFTButton onClick={onToggleVisibility}>
             Make {data?.tournament.visibility ? "invisible" : "visible"}
           </ProTFTButton>
