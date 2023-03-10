@@ -14,6 +14,7 @@ import {
   sortByPoints,
   sortByRecentHighestPlacement,
   sortBySecondPlaces,
+  sortBySeventhPlaces,
   sortBySixthPlaces,
   sortByThirdPlaces,
   sortByTopFour,
@@ -252,6 +253,28 @@ describe("Sorting with tie breakers", () => {
 
     it("should be zero if a = b", () => {
       expect(sortBySixthPlaces(twoSixthsPlayer, twoSixthsPlayer)).toBe(0);
+    });
+  });
+
+  describe("sort by most seventh places", () => {
+    const twoSeventhsPlayer = generatePlayer([7, 7, 8]);
+    const oneSeventhPlayer = generatePlayer([7, 8, 8]);
+    const noSeventhsPlayer = generatePlayer([8, 8, 8]);
+
+    it("should be negative if a has higher placement than b", () => {
+      expect(
+        sortBySeventhPlaces(twoSeventhsPlayer, noSeventhsPlayer),
+      ).toBeLessThan(0);
+    });
+
+    it("should be positive if b has higher placement than a", () => {
+      expect(
+        sortBySeventhPlaces(noSeventhsPlayer, oneSeventhPlayer),
+      ).toBeGreaterThan(0);
+    });
+
+    it("should be zero if a = b", () => {
+      expect(sortBySeventhPlaces(twoSeventhsPlayer, twoSeventhsPlayer)).toBe(0);
     });
   });
 
