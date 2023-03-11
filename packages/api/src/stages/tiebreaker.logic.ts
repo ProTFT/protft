@@ -67,11 +67,11 @@ const tiebreakerMap: { [key in SortingMethods]: Tiebreaker } = {
     description: "Most seventh places",
   },
   [SortingMethods.TOP_THREES]: {
-    id: 15,
+    id: 16,
     description: "Most Top 3",
   },
   [SortingMethods.TOP_TWOS]: {
-    id: 15,
+    id: 17,
     description: "Most Top 2",
   },
 };
