@@ -18,6 +18,8 @@ import {
   sortBySixthPlaces,
   sortByThirdPlaces,
   sortByTopFour,
+  sortByTopThree,
+  sortByTopTwo,
   sortByTotalEventPoints,
   SortingMethods,
   sortResults,
@@ -56,6 +58,46 @@ describe("Sorting with tie breakers", () => {
       expect(
         sortByPoints(playerWithThreeTopFours, playerWithThreeTopFours),
       ).toBe(0);
+    });
+  });
+
+  describe("sort by top three", () => {
+    const playerWithThreeTopThrees = generatePlayer([1, 2, 3, 5, 5]);
+    const playerWithTwoTopThrees = generatePlayer([1, 2, 5, 6, 7]);
+    it("should be negative if a has higher placement than b", () => {
+      expect(
+        sortByTopThree(playerWithThreeTopThrees, playerWithTwoTopThrees),
+      ).toBeLessThan(0);
+    });
+    it("should be positive if b has higher placement than a", () => {
+      expect(
+        sortByTopThree(playerWithTwoTopThrees, playerWithThreeTopThrees),
+      ).toBeGreaterThan(0);
+    });
+    it("should be zero if a = b", () => {
+      expect(
+        sortByTopThree(playerWithThreeTopThrees, playerWithThreeTopThrees),
+      ).toBe(0);
+    });
+  });
+
+  describe("sort by top two", () => {
+    const playerWithThreeTopTwos = generatePlayer([1, 2, 2, 5, 5]);
+    const playerWithTwoTopTwos = generatePlayer([1, 2, 5, 6, 7]);
+    it("should be negative if a has higher placement than b", () => {
+      expect(
+        sortByTopTwo(playerWithThreeTopTwos, playerWithTwoTopTwos),
+      ).toBeLessThan(0);
+    });
+    it("should be positive if b has higher placement than a", () => {
+      expect(
+        sortByTopTwo(playerWithTwoTopTwos, playerWithThreeTopTwos),
+      ).toBeGreaterThan(0);
+    });
+    it("should be zero if a = b", () => {
+      expect(sortByTopTwo(playerWithThreeTopTwos, playerWithThreeTopTwos)).toBe(
+        0,
+      );
     });
   });
 

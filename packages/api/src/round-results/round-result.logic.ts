@@ -17,6 +17,8 @@ export enum SortingMethods {
   FIFTH_PLACES = 13,
   SIXTH_PLACES = 14,
   SEVENTH_PLACES = 15,
+  TOP_THREES = 16,
+  TOP_TWOS = 17,
 }
 
 // b - a, if MORE = highest position
@@ -28,6 +30,14 @@ export const sortByPoints = (a: PlayerResults, b: PlayerResults) =>
 export const sortByTopFour = (a: PlayerResults, b: PlayerResults) =>
   b.positions.filter((p) => p <= 4).length -
   a.positions.filter((p) => p <= 4).length;
+
+export const sortByTopThree = (a: PlayerResults, b: PlayerResults) =>
+  b.positions.filter((p) => p <= 3).length -
+  a.positions.filter((p) => p <= 3).length;
+
+export const sortByTopTwo = (a: PlayerResults, b: PlayerResults) =>
+  b.positions.filter((p) => p <= 2).length -
+  a.positions.filter((p) => p <= 2).length;
 
 export const sortByRecentHighestPlacement = (
   a: PlayerResults,
@@ -132,6 +142,8 @@ export const sortingMethods: {
   [SortingMethods.FIFTH_PLACES]: sortByFifthPlaces,
   [SortingMethods.SIXTH_PLACES]: sortBySixthPlaces,
   [SortingMethods.SEVENTH_PLACES]: sortBySeventhPlaces,
+  [SortingMethods.TOP_THREES]: sortByTopThree,
+  [SortingMethods.TOP_TWOS]: sortByTopTwo,
 };
 
 export interface PlayerResultsWithPast extends PlayerResults {
