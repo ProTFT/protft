@@ -5,7 +5,12 @@ variable "domain_name" {
 
 variable "bucket_name" {
   type = string
-  description = "The name of the bucket without the www. prefix. Normally domain_name."
+  description = "Name of the root frontend bucket"
+}
+
+variable "image_bucket_name" {
+  type = string
+  description = "Name of bucket for serve images"
 }
 
 variable "common_tags" {

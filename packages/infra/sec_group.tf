@@ -37,8 +37,7 @@ resource "aws_security_group" "ptft_ecs_sec_group" {
     protocol         = "tcp"
     from_port        = 3001
     to_port          = 3001
-    cidr_blocks      = ["0.0.0.0/0"]
-    ipv6_cidr_blocks = ["::/0"]
+    security_groups  = [ aws_security_group.ptft_alb_sec_group.id ]
   }
 
   egress {
