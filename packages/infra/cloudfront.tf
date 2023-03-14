@@ -1,8 +1,8 @@
 # Cloudfront distribution for main s3 site.
 resource "aws_cloudfront_distribution" "www_s3_distribution" {
   origin {
-    domain_name = aws_s3_bucket.www_bucket.bucket_regional_domain_name
-    origin_id   = "S3-www.${var.bucket_name}"
+    domain_name              = aws_s3_bucket.www_bucket.bucket_regional_domain_name
+    origin_id                = "S3-www.${var.bucket_name}"
     origin_access_control_id = aws_cloudfront_origin_access_control.s3_oac.id
   }
 
@@ -33,7 +33,7 @@ resource "aws_cloudfront_distribution" "www_s3_distribution" {
     }
 
     viewer_protocol_policy = "redirect-to-https"
-    min_ttl                = 0 
+    min_ttl                = 0
     default_ttl            = 86400
     max_ttl                = 604800
     compress               = true

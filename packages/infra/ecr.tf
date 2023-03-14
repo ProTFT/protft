@@ -1,5 +1,5 @@
 resource "aws_ecr_repository" "ptft_ecr" {
-  name = "ptft-ecr"
+  name                 = "ptft-ecr"
   image_tag_mutability = "MUTABLE"
 
   image_scanning_configuration {
@@ -14,10 +14,10 @@ resource "aws_ecr_lifecycle_policy" "ptft_ecr_policy" {
     rules = [{
       rulePriority = 1
       description  = "keep last 10 images"
-      action       = {
+      action = {
         type = "expire"
       }
-      selection     = {
+      selection = {
         tagStatus   = "any"
         countType   = "imageCountMoreThan"
         countNumber = 10

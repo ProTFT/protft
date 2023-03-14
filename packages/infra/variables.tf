@@ -1,15 +1,15 @@
 variable "domain_name" {
-  type = string
+  type        = string
   description = "The domain name for the website."
 }
 
 variable "bucket_name" {
-  type = string
+  type        = string
   description = "Name of the root frontend bucket"
 }
 
 variable "image_bucket_name" {
-  type = string
+  type        = string
   description = "Name of bucket for serve images"
 }
 
@@ -18,31 +18,31 @@ variable "common_tags" {
 }
 
 variable "db_username" {
-  type = string
+  type        = string
   description = "DB username"
 }
 
 variable "db_password" {
-  type = string
+  type        = string
   description = "DB password"
 }
 
 variable "db_url" {
-  type = string
+  type        = string
   description = "DB URL"
 }
 
 variable "signin_key" {
-  type = string
+  type        = string
   description = "Key to create users"
 }
 
 variable "jwt_secret" {
-  type = string
+  type        = string
   description = "JWT encryption"
 }
 
 variable "cookie_secret" {
-  type = string
+  type        = string
   description = "Cookie encryption"
 }

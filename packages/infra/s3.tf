@@ -72,6 +72,6 @@ resource "aws_s3_bucket_policy" "image_bucket_policy" {
 
 # S3 bucket for images
 resource "aws_s3_bucket" "image_bucket" {
-  bucket = var.image_bucket_name 
+  bucket = var.image_bucket_name
   tags   = var.common_tags
 }
