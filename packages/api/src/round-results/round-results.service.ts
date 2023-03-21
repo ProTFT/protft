@@ -13,7 +13,11 @@ import {
   formatLobbyResults,
   fromRawToConsolidatedRoundResults,
 } from "./round-result.adapter";
-import { SortingMethods, sortResults } from "./round-result.logic";
+import {
+  SortingMethods,
+  SortingMethodsNeedPastResults,
+  sortResults,
+} from "./round-result.logic";
 import { PlayerWithStats } from "../players/dto/get-player-stats.out";
 import { formatStats } from "../players/players.adapter";
 import { CreateLobbyGroupResultArgs } from "./dto/create-lobby-group-result.args";
@@ -129,7 +133,7 @@ export class RoundResultsService {
       await this.stagesService.findOne(stageId);
     const results = await this.findResultsByStage(stageId);
     const formattedResults = fromRawToConsolidatedRoundResults(results);
-    if (tiebreakers?.includes(SortingMethods.TOTAL_EVENT_POINTS)) {
+    if (tiebreakers?.some((t) => SortingMethodsNeedPastResults.includes(t))) {
       const allTournamentStages = await this.stagesService.findAllByTournament(
         tournamentId,
       );

@@ -6,6 +6,7 @@ import { formatString } from "../../test/helpers/File";
 import { LobbiesService } from "../lobbies/lobbies.service";
 import { LobbyPlayerInfosService } from "../lobby-player-infos/lobby-player-infos.service";
 import { StagesService } from "../stages/stages.service";
+import { tiebreakerMap } from "../stages/tiebreaker.logic";
 import { CreateLobbyGroupResultArgs } from "./dto/create-lobby-group-result.args";
 import { fromRawToConsolidatedRoundResults } from "./round-result.adapter";
 import { RoundResult } from "./round-result.entity";
@@ -321,6 +322,45 @@ describe("RoundResults service", () => {
         fromRawToConsolidatedRoundResults([mockRawResults]),
       );
     });
+
+    [
+      SortingMethods.TOTAL_EVENT_AVG_POS,
+      SortingMethods.TOTAL_EVENT_FIRST_PLACE,
+      SortingMethods.TOTAL_EVENT_SECOND_PLACE,
+    ].map((method) =>
+      it(`if tiebreaker has ${tiebreakerMap[method].description}, should add past points`, async () => {
+        stagesService.findOne = jest.fn().mockResolvedValue({
+          tiebreakers: [method],
+          tournamentId: 1,
+          sequence: 2,
+        });
+        stagesService.findAllByTournament = jest.fn().mockResolvedValue([
+          {
+            tiebreakers: [],
+            tournamentId: 1,
+            sequence: 1,
+          },
+          {
+            tiebreakers: [],
+            tournamentId: 1,
+            sequence: 2,
+          },
+          {
+            tiebreakers: [],
+            tournamentId: 1,
+            sequence: 3,
+          },
+        ]);
+        const response = await service.overviewResultsByStage(1);
+        expect(response).toStrictEqual(
+          fromRawToConsolidatedRoundResults([mockRawResults]).map((r) => ({
+            ...r,
+            pastPoints: 5,
+            pastPositions: [1],
+          })),
+        );
+      }),
+    );
   });
 
   describe("resultsByLobbyGroup", () => {

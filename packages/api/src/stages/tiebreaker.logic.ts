@@ -1,7 +1,7 @@
 import { SortingMethods } from "../round-results/round-result.logic";
 import { Tiebreaker } from "./tiebreaker.entity";
 
-const tiebreakerMap: { [key in SortingMethods]: Tiebreaker } = {
+export const tiebreakerMap: { [key in SortingMethods]: Tiebreaker } = {
   [SortingMethods.POINTS]: {
     id: 0,
     description: "Most points",

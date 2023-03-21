@@ -24,6 +24,13 @@ export enum SortingMethods {
   TOTAL_EVENT_SECOND_PLACE = 20,
 }
 
+export const SortingMethodsNeedPastResults = [
+  SortingMethods.TOTAL_EVENT_POINTS,
+  SortingMethods.TOTAL_EVENT_AVG_POS,
+  SortingMethods.TOTAL_EVENT_FIRST_PLACE,
+  SortingMethods.TOTAL_EVENT_SECOND_PLACE,
+];
+
 // b - a, if MORE = highest position
 // a - b, if LESS = highest position
 export const sortByPoints = (a: PlayerResults, b: PlayerResults) =>
