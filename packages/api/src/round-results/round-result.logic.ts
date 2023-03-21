@@ -19,6 +19,7 @@ export enum SortingMethods {
   SEVENTH_PLACES = 15,
   TOP_THREES = 16,
   TOP_TWOS = 17,
+  TOTAL_EVENT_AVG_POS = 18,
 }
 
 // b - a, if MORE = highest position
@@ -54,9 +55,9 @@ export const sortByRecentHighestPlacement = (
 
 export const sortByAveragePosition = (a: PlayerResults, b: PlayerResults) =>
   a.positions.reduce((prev, curr) => prev + curr, 0) /
-    (b.positions.length || 1) -
+    (a.positions.length || 1) -
   b.positions.reduce((prev, curr) => prev + curr, 0) /
-    (a.positions.length || 1);
+    (b.positions.length || 1);
 
 export const sortByLessTopEigth = (a: PlayerResults, b: PlayerResults) =>
   a.positions.filter((p) => p === 8).length -
@@ -114,6 +115,21 @@ export const sortByTotalEventPoints = (
   return b.pastPoints + bStagePoints - (a.pastPoints + aStagePoints);
 };
 
+export const sortByTotalEventAveragePosition = (
+  a: PlayerResultsWithPast,
+  b: PlayerResultsWithPast,
+) => {
+  const aWithAllPositions = {
+    ...a,
+    positions: [...a.pastPositions, ...a.positions],
+  };
+  const bWithAllPositions = {
+    ...b,
+    positions: [...b.pastPositions, ...b.positions],
+  };
+  return sortByAveragePosition(aWithAllPositions, bWithAllPositions);
+};
+
 interface PastPoints {
   a: number;
   b: number;
@@ -144,10 +160,12 @@ export const sortingMethods: {
   [SortingMethods.SEVENTH_PLACES]: sortBySeventhPlaces,
   [SortingMethods.TOP_THREES]: sortByTopThree,
   [SortingMethods.TOP_TWOS]: sortByTopTwo,
+  [SortingMethods.TOTAL_EVENT_AVG_POS]: sortByTotalEventAveragePosition,
 };
 
 export interface PlayerResultsWithPast extends PlayerResults {
   pastPoints: number;
+  pastPositions: number[];
 }
 
 export const sortResults = (

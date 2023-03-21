@@ -38,6 +38,7 @@ export function fromRawToConsolidatedRoundResults(
           points: [extraPoints],
           lobbyPlayerId: id,
           pastPoints: 0,
+          pastPositions: [],
         };
       }
       if (position && points) {
@@ -90,12 +91,19 @@ export function addPastPoints(
   const consolidatedPastResults = fromRawToConsolidatedRoundResults(
     rawPastResults.flat(),
   );
-  return formattedResults.map((r) => ({
-    ...r,
-    pastPoints: consolidatedPastResults
-      .find((cpr) => cpr.player.id === r.player.id)
-      .points.reduce((prev, curr) => prev + curr, 0),
-  }));
+  return formattedResults.map((r) => {
+    const playerPastResults = consolidatedPastResults.find(
+      (cpr) => cpr.player.id === r.player.id,
+    );
+    return {
+      ...r,
+      pastPoints: playerPastResults.points.reduce(
+        (prev, curr) => prev + curr,
+        0,
+      ),
+      pastPositions: playerPastResults.positions,
+    };
+  });
 }
 
 export function formatLobbyResults(

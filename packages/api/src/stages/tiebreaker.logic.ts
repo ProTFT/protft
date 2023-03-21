@@ -74,6 +74,10 @@ const tiebreakerMap: { [key in SortingMethods]: Tiebreaker } = {
     id: 17,
     description: "Most Top 2",
   },
+  [SortingMethods.TOTAL_EVENT_AVG_POS]: {
+    id: 18,
+    description: "Total Event Average Position",
+  },
 };
 
 export const getAll = () => Object.values(tiebreakerMap);

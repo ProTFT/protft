@@ -288,6 +288,7 @@ describe("RoundResults service", () => {
         fromRawToConsolidatedRoundResults([mockRawResults]).map((r) => ({
           ...r,
           pastPoints: 5,
+          pastPositions: [1],
         })),
       );
     });

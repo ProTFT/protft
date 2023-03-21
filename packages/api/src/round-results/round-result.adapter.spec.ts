@@ -33,6 +33,7 @@ const consolidatedResults: PlayerResultsWithPast[] = [
     tiebreakerRanking: 0,
     lobbyPlayerId: 1,
     pastPoints: 0,
+    pastPositions: [],
   },
   {
     player: {
@@ -44,6 +45,7 @@ const consolidatedResults: PlayerResultsWithPast[] = [
     tiebreakerRanking: 0,
     lobbyPlayerId: 2,
     pastPoints: 0,
+    pastPositions: [],
   },
 ];
 describe("Round Results Adapter", () => {
@@ -55,12 +57,13 @@ describe("Round Results Adapter", () => {
     });
   });
 
-  describe("add past points", () => {
-    it("should add past points to results", () => {
+  describe("add past results", () => {
+    it("should add past points and positions to results", () => {
       const response = addPastPoints(consolidatedResults, [rawRoundResults]);
       const expectedResponse = consolidatedResults.map((r) => ({
         ...r,
         pastPoints: 8 + 7,
+        pastPositions: r.positions,
       }));
       expect(response).toStrictEqual(expectedResponse);
     });

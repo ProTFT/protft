@@ -20,6 +20,7 @@ import {
   sortByTopFour,
   sortByTopThree,
   sortByTopTwo,
+  sortByTotalEventAveragePosition,
   sortByTotalEventPoints,
   SortingMethods,
   sortResults,
@@ -411,6 +412,43 @@ describe("Sorting with tie breakers", () => {
 
     it("should be zero if both players had the same position", () => {
       expect(sortByTotalEventPoints(middle, middle)).toBe(0);
+    });
+  });
+
+  describe("sort by total event average position", () => {
+    const bestNowWorstOverall = generatePlayerWithPastResults(
+      [1, 1, 1],
+      0,
+      [8, 8, 8, 8, 8, 8],
+    );
+    const worstNowBestOverall = generatePlayerWithPastResults(
+      [8, 8, 8],
+      0,
+      [1, 1, 1, 1, 1, 1],
+    );
+    const middle = generatePlayerWithPastResults(
+      [4, 4, 4],
+      0,
+      [4, 4, 4, 4, 4, 4],
+    );
+
+    it("should be negative if a has higher placement than b", () => {
+      expect(
+        sortByTotalEventAveragePosition(
+          worstNowBestOverall,
+          bestNowWorstOverall,
+        ),
+      ).toBeLessThan(0);
+    });
+
+    it("should be positive if b has higher placement than a", () => {
+      expect(
+        sortByTotalEventAveragePosition(bestNowWorstOverall, middle),
+      ).toBeGreaterThan(0);
+    });
+
+    it("should be zero if both players had the same position", () => {
+      expect(sortByTotalEventAveragePosition(middle, middle)).toBe(0);
     });
   });
 
