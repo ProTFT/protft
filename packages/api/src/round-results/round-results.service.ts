@@ -292,6 +292,7 @@ export class RoundResultsService {
     region,
     tournamentIds,
     sort,
+    minimumGames = 0,
   }: Partial<GetStatsArgs>): Promise<PlayersStatsRaw[]> {
     return this.roundResultsRepository.manager
       .createQueryBuilder()
@@ -341,7 +342,7 @@ export class RoundResultsService {
             return query;
           }, "rawStats");
       }, "stats")
-      .where('stats."totalGames" > 0')
+      .where('stats."totalGames" > :minimumGames', { minimumGames })
       .orderBy(
         sort
           ? { [`stats.\"${sort.column}\"`]: sort.asc ? "ASC" : "DESC" }

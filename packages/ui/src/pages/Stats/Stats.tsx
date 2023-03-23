@@ -16,6 +16,9 @@ import { StatRows } from "./StatRows/StatRows";
 import {
   StyledButtonContainer,
   StyledContainer,
+  StyledFilterContainer,
+  StyledFilterLabel,
+  StyledInput,
   StyledPlayerTable,
   StyledPlayerTableContainer,
   StyledPlayerTableHeader,
@@ -37,6 +40,7 @@ const defaultFilter: { [key in Filters]: any } = {
   [Filters.REGION]: "",
   [Filters.SET]: 0,
   [Filters.TOURNAMENTS]: [],
+  [Filters.MINIMUM_GAMES]: 1,
 };
 
 const ITEMS_PER_PAGE = 20;
@@ -59,6 +63,9 @@ export const Stats = () => {
   );
   const [tournamentFilter, setTournamentFilter] = useState<number[]>(
     defaultFilter[Filters.TOURNAMENTS]
+  );
+  const [minimumGamesFilter, setMinimumGamesFilter] = useState<number>(
+    defaultFilter[Filters.MINIMUM_GAMES]
   );
   const [sorting, setSorting] = useState<SortOption>({
     column: SortColumn.AVERAGE_POSITION,
@@ -103,27 +110,49 @@ export const Stats = () => {
   return (
     <StyledContainer>
       <StyledStatsFilters>
-        <TournamentSelect
-          value={tournamentFilter}
-          onValueChange={onValueChange<number[]>(
-            setTournamentFilter,
-            defaultFilter[Filters.TOURNAMENTS]
-          )}
-        />
-        <SetSelect
-          value={setFilter}
-          onValueChange={onValueChange<number>(
-            setSetFilter,
-            defaultFilter[Filters.SET]
-          )}
-        />
-        <RegionSelect
-          value={regionFilter}
-          onValueChange={onValueChange<string>(
-            setRegionFilter,
-            defaultFilter[Filters.REGION]
-          )}
-        />
+        <StyledFilterContainer>
+          <StyledFilterLabel>Tournaments</StyledFilterLabel>
+          <TournamentSelect
+            value={tournamentFilter}
+            onValueChange={onValueChange<number[]>(
+              setTournamentFilter,
+              defaultFilter[Filters.TOURNAMENTS]
+            )}
+          />
+        </StyledFilterContainer>
+        <StyledFilterContainer>
+          <StyledFilterLabel>Set</StyledFilterLabel>
+          <SetSelect
+            value={setFilter}
+            onValueChange={onValueChange<number>(
+              setSetFilter,
+              defaultFilter[Filters.SET]
+            )}
+          />
+        </StyledFilterContainer>
+        <StyledFilterContainer>
+          <StyledFilterLabel>Region</StyledFilterLabel>
+          <RegionSelect
+            value={regionFilter}
+            onValueChange={onValueChange<string>(
+              setRegionFilter,
+              defaultFilter[Filters.REGION]
+            )}
+          />
+        </StyledFilterContainer>
+        <StyledFilterContainer>
+          <StyledFilterLabel>Minimum games</StyledFilterLabel>
+          <StyledInput
+            type="number"
+            value={minimumGamesFilter}
+            onChange={(event) =>
+              onValueChange<number>(
+                setMinimumGamesFilter,
+                defaultFilter[Filters.MINIMUM_GAMES]
+              )(Number(event.target.value))
+            }
+          />
+        </StyledFilterContainer>
       </StyledStatsFilters>
       <StyledPlayerTableContainer>
         <StyledPlayerTable>
@@ -187,6 +216,7 @@ export const Stats = () => {
                 paginationArgs={deferredPagination}
                 regionFilter={regionFilter}
                 setFilter={setFilter}
+                minimumGamesFilter={minimumGamesFilter}
                 sort={sorting}
               />
             </Suspense>

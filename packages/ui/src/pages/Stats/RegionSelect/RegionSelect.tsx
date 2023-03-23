@@ -24,7 +24,7 @@ export const RegionSelect = ({ value, onValueChange }: Props) => {
       value={value}
       onValueChange={onValueChange}
       isLoading={fetching}
-      placeholder="Region filter"
+      placeholder="NA, EMEA, China"
     />
   );
 };

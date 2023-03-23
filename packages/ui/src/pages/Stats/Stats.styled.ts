@@ -3,6 +3,7 @@ import { StyledHorizontalContainer } from "../../components/Layout/HorizontalCon
 import { StyledVerticalContainer } from "../../components/Layout/VerticalContainer/VerticalContainer.styled";
 import { device } from "../../design/breakpoints";
 import { colors } from "../../design/colors";
+import { StyledBody } from "../../design/fonts/Fonts";
 
 export const StyledContainer = styled(StyledVerticalContainer)`
   align-items: center;
@@ -60,10 +61,13 @@ export const StyledStatsFilters = styled(StyledVerticalContainer)`
   gap: 1rem;
   margin-top: 1rem;
   justify-content: start;
+  padding-left: 1rem;
+  padding-right: 1rem;
   width: 100%;
 
   @media ${device.tablet} {
     width: 60%;
+    padding: 0;
   }
 `;
 
@@ -75,4 +79,22 @@ export const StyledButtonContainer = styled(StyledHorizontalContainer)`
 
 export const StyledTitleContainer = styled(StyledHorizontalContainer)`
   justify-content: center;
+`;
+
+export const StyledInput = styled.input`
+  width: 100%;
+  border-radius: 2px;
+  padding: 0.5rem;
+`;
+
+export const StyledFilterContainer = styled(StyledVerticalContainer)`
+  @media ${device.tablet} {
+    flex-direction: row;
+  }
+`;
+
+export const StyledFilterLabel = styled(StyledBody)`
+  @media ${device.tablet} {
+    width: 50%;
+  }
 `;

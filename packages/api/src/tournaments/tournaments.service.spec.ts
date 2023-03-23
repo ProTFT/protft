@@ -120,7 +120,7 @@ describe("TournamentsService", () => {
             visibility: true,
           }),
           order: expect.objectContaining({
-            startDate: "DESC",
+            endDate: "DESC",
           }),
         }),
       );

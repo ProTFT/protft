@@ -32,4 +32,7 @@ export class GetStatsArgs {
 
   @Field(() => Int, { name: "skip", nullable: true })
   skip?: number;
+
+  @Field(() => Int, { name: "minimumGames", nullable: true })
+  minimumGames?: number;
 }

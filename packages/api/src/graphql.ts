@@ -239,7 +239,7 @@ export interface IQuery {
     resultsByStage(stageId: number): PlayerResults[] | Promise<PlayerResults[]>;
     lobbyResultsByStage(stageId: number): LobbyGroupWithLobbies[] | Promise<LobbyGroupWithLobbies[]>;
     resultsByLobbyGroup(lobbyGroupId: number): PlayerResults[] | Promise<PlayerResults[]>;
-    playerStats(setId?: Nullable<number>, tournamentIds?: Nullable<number[]>, region?: Nullable<string>, sort?: Nullable<SortOption>, searchQuery?: Nullable<string>, take?: Nullable<number>, skip?: Nullable<number>): PlayerWithStats[] | Promise<PlayerWithStats[]>;
+    playerStats(setId?: Nullable<number>, tournamentIds?: Nullable<number[]>, region?: Nullable<string>, sort?: Nullable<SortOption>, searchQuery?: Nullable<string>, take?: Nullable<number>, skip?: Nullable<number>, minimumGames?: Nullable<number>): PlayerWithStats[] | Promise<PlayerWithStats[]>;
     resultsOfTournament(tournamentId: number): TournamentResult[] | Promise<TournamentResult[]>;
 }
 

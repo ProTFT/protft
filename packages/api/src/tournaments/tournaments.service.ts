@@ -62,7 +62,7 @@ export class TournamentsService {
         ...searchQueryFilter,
         visibility: true,
       },
-      order: { startDate: "DESC" },
+      order: { endDate: "DESC" },
     });
   }
 

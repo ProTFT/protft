@@ -26,7 +26,7 @@ export const SetSelect = ({ value, onValueChange }: Props) => {
       value={value}
       onValueChange={onValueChange}
       isLoading={fetching}
-      placeholder="Set filter"
+      placeholder="Dragonlands, Reckoning"
       prefix={getPrefix}
     />
   );

@@ -30,7 +30,7 @@ export const TournamentSelect = ({ value, onValueChange }: Props) => {
       onValueChange={onValueChange}
       isLoading={fetching}
       prefix={getPrefix}
-      placeholder="Tournament filter"
+      placeholder="Golden Spatula Cup #1, Mid-set Finale"
       isMulti
     />
   );

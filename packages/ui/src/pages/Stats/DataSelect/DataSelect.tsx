@@ -37,6 +37,7 @@ export const DataSelect = <T, K extends Record<keyof K, T | string | any>>({
 
   return (
     <Select<NonsensicalSelectValue<T>>
+      styles={{ container: (base) => ({ ...base, width: "100%" }) }}
       placeholder={placeholder}
       isLoading={isLoading}
       options={options}

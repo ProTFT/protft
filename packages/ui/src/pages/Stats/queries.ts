@@ -16,6 +16,7 @@ export enum Filters {
   REGION,
   TOURNAMENTS,
   SET,
+  MINIMUM_GAMES,
 }
 
 export const SortDirection = {
@@ -38,6 +39,7 @@ export interface PlayerStatsQueryVariables {
   take?: number;
   skip?: number;
   tournamentIds?: number[];
+  minimumGames?: number;
   sort?: SortOption;
   searchQuery?: string;
 }
@@ -51,6 +53,7 @@ export const PLAYER_STATS_QUERY = gql`
     $tournamentIds: [Int!]
     $sort: SortOption
     $searchQuery: String
+    $minimumGames: Int
   ) {
     playerStats(
       setId: $setId
@@ -60,6 +63,7 @@ export const PLAYER_STATS_QUERY = gql`
       tournamentIds: $tournamentIds
       sort: $sort
       searchQuery: $searchQuery
+      minimumGames: $minimumGames
     ) {
       player {
         id

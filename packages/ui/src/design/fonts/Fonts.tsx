@@ -27,10 +27,9 @@ export const StyledBody = styled.p<CSSProperties>`
 
 interface Props {
   variant: Variant;
-  props: any;
 }
 
-enum Variant {
+export enum Variant {
   Title,
   Body,
 }
@@ -42,7 +41,10 @@ const variantToComponent: {
   [Variant.Body]: StyledBody,
 };
 
-export const Typography = ({ variant, props }: Props) => {
+export const Typography = ({
+  variant,
+  ...props
+}: React.PropsWithChildren<Props>) => {
   return variantToComponent[variant](props);
 };
 
