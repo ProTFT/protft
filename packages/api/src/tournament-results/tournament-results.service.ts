@@ -61,8 +61,8 @@ export class TournamentResultsService {
         for (const lobbyGroup of results) {
           const lobbies = lobbyGroup.lobbies;
           arrayOfLobbyPlayers.forEach((_, positionIndex) => {
+            const offset = finalResults.length + 1;
             lobbies.forEach((lobby, _, allLobbies) => {
-              const offset = positionIndex * allLobbies.length + 1;
               if (
                 !finalResults.find(
                   (result) =>
@@ -81,7 +81,6 @@ export class TournamentResultsService {
           });
         }
       }
-      // console.log(finalResults);
     }
 
     return this.tournamentResultRepository.save(finalResults);

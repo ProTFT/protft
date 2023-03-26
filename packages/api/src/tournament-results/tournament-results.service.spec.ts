@@ -115,6 +115,9 @@ describe("TournamentResultsService", () => {
           { id: 1, stageType: StageType.GROUP_BASED, qualifiedCount: 4 },
           { id: 2, stageType: StageType.GROUP_BASED, qualifiedCount: 2 },
         ]);
+      });
+
+      it("should save results based on calculation", async () => {
         roundResultsService.lobbyResultsByStage = jest
           .fn()
           .mockImplementation((stageId: number) => {
@@ -190,9 +193,6 @@ describe("TournamentResultsService", () => {
               },
             ];
           });
-      });
-
-      it("should save results based on calculation", async () => {
         await service.lockResults(mockTournamentId);
         expect(tournamentResultRepository.save).toHaveBeenCalledWith([
           {
@@ -273,6 +273,225 @@ describe("TournamentResultsService", () => {
           },
           {
             finalPosition: "13th-16th",
+            playerId: 16,
+            tournamentId: mockTournamentId,
+          },
+        ]);
+      });
+
+      it("when new players join on future stage, should be able to calculate", async () => {
+        roundResultsService.lobbyResultsByStage = jest
+          .fn()
+          .mockImplementation((stageId: number) => {
+            if (stageId === 1) {
+              return [
+                {
+                  id: 1,
+                  lobbies: [
+                    {
+                      id: 1,
+                      results: [
+                        playerWithOnlyPosition(1, 1),
+                        playerWithOnlyPosition(2, 2),
+                        playerWithOnlyPosition(9, 3),
+                        playerWithOnlyPosition(10, 4),
+                      ],
+                    },
+                    {
+                      id: 2,
+                      results: [
+                        playerWithOnlyPosition(3, 5),
+                        playerWithOnlyPosition(4, 6),
+                        playerWithOnlyPosition(11, 7),
+                        playerWithOnlyPosition(12, 8),
+                      ],
+                    },
+                    {
+                      id: 3,
+                      results: [
+                        playerWithOnlyPosition(5, 1),
+                        playerWithOnlyPosition(6, 2),
+                        playerWithOnlyPosition(13, 3),
+                        playerWithOnlyPosition(14, 4),
+                      ],
+                    },
+                    {
+                      id: 4,
+                      results: [
+                        playerWithOnlyPosition(7, 5),
+                        playerWithOnlyPosition(8, 6),
+                        playerWithOnlyPosition(15, 7),
+                        playerWithOnlyPosition(16, 8),
+                      ],
+                    },
+                  ],
+                },
+              ];
+            }
+
+            return [
+              {
+                id: 1,
+                lobbies: [
+                  {
+                    id: 1,
+                    results: [
+                      playerWithOnlyPosition(1, 1),
+                      playerWithOnlyPosition(2, 2),
+                      playerWithOnlyPosition(8, 7), // 8
+                      playerWithOnlyPosition(7, 8), // 7
+                    ],
+                  },
+                  {
+                    id: 2,
+                    results: [
+                      playerWithOnlyPosition(3, 1),
+                      playerWithOnlyPosition(4, 2),
+                      playerWithOnlyPosition(6, 7),
+                      playerWithOnlyPosition(5, 8),
+                    ],
+                  },
+                  {
+                    id: 3,
+                    results: [
+                      playerWithOnlyPosition(17, 1),
+                      playerWithOnlyPosition(18, 2),
+                      playerWithOnlyPosition(19, 7),
+                      playerWithOnlyPosition(20, 8),
+                    ],
+                  },
+                  {
+                    id: 4,
+                    results: [
+                      playerWithOnlyPosition(21, 1),
+                      playerWithOnlyPosition(22, 2),
+                      playerWithOnlyPosition(23, 7),
+                      playerWithOnlyPosition(24, 8),
+                    ],
+                  },
+                ],
+              },
+            ];
+          });
+        await service.lockResults(mockTournamentId);
+        expect(tournamentResultRepository.save).toHaveBeenCalledWith([
+          {
+            finalPosition: "1st-4th",
+            playerId: 1,
+            tournamentId: mockTournamentId,
+          },
+          {
+            finalPosition: "1st-4th",
+            playerId: 3,
+            tournamentId: mockTournamentId,
+          },
+          {
+            finalPosition: "1st-4th",
+            playerId: 17,
+            tournamentId: mockTournamentId,
+          },
+          {
+            finalPosition: "1st-4th",
+            playerId: 21,
+            tournamentId: mockTournamentId,
+          },
+          {
+            finalPosition: "5th-8th",
+            playerId: 2,
+            tournamentId: mockTournamentId,
+          },
+          {
+            finalPosition: "5th-8th",
+            playerId: 4,
+            tournamentId: mockTournamentId,
+          },
+          {
+            finalPosition: "5th-8th",
+            playerId: 18,
+            tournamentId: mockTournamentId,
+          },
+          {
+            finalPosition: "5th-8th",
+            playerId: 22,
+            tournamentId: mockTournamentId,
+          },
+          {
+            finalPosition: "9th-12th",
+            playerId: 8,
+            tournamentId: mockTournamentId,
+          },
+          {
+            finalPosition: "9th-12th",
+            playerId: 6,
+            tournamentId: mockTournamentId,
+          },
+          {
+            finalPosition: "9th-12th",
+            playerId: 19,
+            tournamentId: mockTournamentId,
+          },
+          {
+            finalPosition: "9th-12th",
+            playerId: 23,
+            tournamentId: mockTournamentId,
+          },
+          {
+            finalPosition: "13th-16th",
+            playerId: 7,
+            tournamentId: mockTournamentId,
+          },
+          {
+            finalPosition: "13th-16th",
+            playerId: 5,
+            tournamentId: mockTournamentId,
+          },
+          {
+            finalPosition: "13th-16th",
+            playerId: 20,
+            tournamentId: mockTournamentId,
+          },
+          {
+            finalPosition: "13th-16th",
+            playerId: 24,
+            tournamentId: mockTournamentId,
+          },
+          {
+            finalPosition: "17th-20th",
+            playerId: 9,
+            tournamentId: mockTournamentId,
+          },
+          {
+            finalPosition: "17th-20th",
+            playerId: 11,
+            tournamentId: mockTournamentId,
+          },
+          {
+            finalPosition: "17th-20th",
+            playerId: 13,
+            tournamentId: mockTournamentId,
+          },
+          {
+            finalPosition: "17th-20th",
+            playerId: 15,
+            tournamentId: mockTournamentId,
+          },
+          {
+            finalPosition: "21st-24th",
+            playerId: 10,
+            tournamentId: mockTournamentId,
+          },
+          {
+            finalPosition: "21st-24th",
+            playerId: 12,
+            tournamentId: mockTournamentId,
+          },
+          {
+            finalPosition: "21st-24th",
+            playerId: 14,
+            tournamentId: mockTournamentId,
+          },
+          {
+            finalPosition: "21st-24th",
             playerId: 16,
             tournamentId: mockTournamentId,
           },
