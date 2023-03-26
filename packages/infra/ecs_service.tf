@@ -12,13 +12,13 @@ resource "aws_ecs_service" "main" {
   network_configuration {
     subnets          = [aws_subnet.ptft_public_subnet_az1.id, aws_subnet.ptft_public_subnet_az2.id]
     assign_public_ip = true
-    security_groups = [ "${aws_security_group.ptft_ecs_sec_group.id}" ]
+    security_groups  = ["${aws_security_group.ptft_ecs_sec_group.id}"]
   }
 
   load_balancer {
     target_group_arn = aws_alb_target_group.ptft_tg.arn
-    container_name = "ptft_container"
-    container_port = 3001
+    container_name   = "ptft_container"
+    container_port   = 3001
   }
   # desired_count is ignored as it can change due to autoscaling policy
   lifecycle {

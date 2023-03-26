@@ -1,9 +1,9 @@
 resource "aws_security_group" "ptft_alb_sec_group" {
-  name = "ptft-alb-sec-group"
+  name   = "ptft-alb-sec-group"
   vpc_id = aws_vpc.ptft_vpc.id
 
   ingress {
-    protocol = "tcp"
+    protocol         = "tcp"
     from_port        = 80
     to_port          = 80
     cidr_blocks      = ["0.0.0.0/0"]
@@ -25,20 +25,17 @@ resource "aws_security_group" "ptft_alb_sec_group" {
     cidr_blocks      = ["0.0.0.0/0"]
     ipv6_cidr_blocks = ["::/0"]
   }
-
-  tags = var.common_tags
 }
 
 resource "aws_security_group" "ptft_ecs_sec_group" {
-  name = "ptft-ecs-sec-group"
+  name   = "ptft-ecs-sec-group"
   vpc_id = aws_vpc.ptft_vpc.id
 
   ingress {
-    protocol         = "tcp"
-    from_port        = 3001
-    to_port          = 3001
-    cidr_blocks      = ["0.0.0.0/0"]
-    ipv6_cidr_blocks = ["::/0"]
+    protocol        = "tcp"
+    from_port       = 3001
+    to_port         = 3001
+    security_groups = [aws_security_group.ptft_alb_sec_group.id]
   }
 
   egress {
@@ -48,12 +45,10 @@ resource "aws_security_group" "ptft_ecs_sec_group" {
     cidr_blocks      = ["0.0.0.0/0"]
     ipv6_cidr_blocks = ["::/0"]
   }
-
-  tags = var.common_tags
 }
 
 resource "aws_security_group" "ptft_rds_sec_group" {
-  name = "ptft-rds-sec-group"
+  name   = "ptft-rds-sec-group"
   vpc_id = aws_vpc.ptft_vpc.id
 
   ingress {
@@ -69,6 +64,4 @@ resource "aws_security_group" "ptft_rds_sec_group" {
     protocol    = "-1"
     cidr_blocks = ["0.0.0.0/0"]
   }
-
-  tags = var.common_tags
 }
