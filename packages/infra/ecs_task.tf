@@ -7,15 +7,15 @@ resource "aws_ecs_task_definition" "ptft_ecs_task" {
   execution_role_arn       = aws_iam_role.ecs_task_execution_role.arn
   task_role_arn            = aws_iam_role.ecs_task_role.arn
   container_definitions = jsonencode([{
-    name        = "ptft_container"
-    image       = aws_ecr_repository.ptft_ecr.repository_url
-    essential   = true
+    name      = "ptft_container"
+    image     = aws_ecr_repository.ptft_ecr.repository_url
+    essential = true
     environment = [
-        {name = "NODE_ENV", value = "production"},
-        {name = "DATABASE_URL", value = var.db_url},
-        {name = "SIGNIN_KEY", value = var.signin_key},
-        {name = "JWT_SECRET", value = var.jwt_secret},
-        {name = "COOKIE_SECRET", value = var.cookie_secret}
+      { name = "NODE_ENV", value = "production" },
+      { name = "DATABASE_URL", value = var.db_url },
+      { name = "SIGNIN_KEY", value = var.signin_key },
+      { name = "JWT_SECRET", value = var.jwt_secret },
+      { name = "COOKIE_SECRET", value = var.cookie_secret }
     ]
     portMappings = [{
       protocol      = "tcp"
@@ -25,8 +25,8 @@ resource "aws_ecs_task_definition" "ptft_ecs_task" {
     logConfiguration = {
       logDriver = "awslogs"
       options = {
-        "awslogs-group" = "awslogs-ptft-api",
-        "awslogs-region" = "us-east-1",
+        "awslogs-group"         = "awslogs-ptft-api",
+        "awslogs-region"        = "us-east-1",
         "awslogs-stream-prefix" = "awslogs-ptft-api"
       }
     }
