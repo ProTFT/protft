@@ -6,8 +6,6 @@ resource "aws_lb" "ptft_lb" {
   subnets            = ["${aws_subnet.ptft_public_subnet_az1.id}", "${aws_subnet.ptft_public_subnet_az2.id}"]
 
   enable_deletion_protection = false
-
-  tags = var.common_tags
 }
 
 resource "aws_alb_target_group" "ptft_tg" {
@@ -26,8 +24,6 @@ resource "aws_alb_target_group" "ptft_tg" {
     path                = "/"
     unhealthy_threshold = "2"
   }
-
-  tags = var.common_tags
 
   depends_on = [aws_lb.ptft_lb]
 }

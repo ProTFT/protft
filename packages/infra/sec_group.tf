@@ -25,8 +25,6 @@ resource "aws_security_group" "ptft_alb_sec_group" {
     cidr_blocks      = ["0.0.0.0/0"]
     ipv6_cidr_blocks = ["::/0"]
   }
-
-  tags = var.common_tags
 }
 
 resource "aws_security_group" "ptft_ecs_sec_group" {
@@ -47,8 +45,6 @@ resource "aws_security_group" "ptft_ecs_sec_group" {
     cidr_blocks      = ["0.0.0.0/0"]
     ipv6_cidr_blocks = ["::/0"]
   }
-
-  tags = var.common_tags
 }
 
 resource "aws_security_group" "ptft_rds_sec_group" {
@@ -68,6 +64,4 @@ resource "aws_security_group" "ptft_rds_sec_group" {
     protocol    = "-1"
     cidr_blocks = ["0.0.0.0/0"]
   }
-
-  tags = var.common_tags
 }

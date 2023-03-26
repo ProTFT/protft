@@ -19,6 +19,13 @@ resource "aws_cloudfront_distribution" "www_s3_distribution" {
     response_page_path    = "/index.html"
   }
 
+  custom_error_response {
+    error_caching_min_ttl = 0
+    error_code            = 403
+    response_code         = 200
+    response_page_path    = "/index.html"
+  }
+
   default_cache_behavior {
     allowed_methods  = ["GET", "HEAD"]
     cached_methods   = ["GET", "HEAD"]
@@ -50,8 +57,6 @@ resource "aws_cloudfront_distribution" "www_s3_distribution" {
     ssl_support_method       = "sni-only"
     minimum_protocol_version = "TLSv1.1_2016"
   }
-
-  tags = var.common_tags
 }
 
 resource "aws_cloudfront_origin_access_control" "s3_oac" {

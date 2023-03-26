@@ -31,6 +31,4 @@ resource "aws_ecs_task_definition" "ptft_ecs_task" {
       }
     }
   }])
-
-  tags = var.common_tags
 }

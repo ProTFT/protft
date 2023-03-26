@@ -4,8 +4,6 @@ resource "aws_acm_certificate" "ssl_certificate" {
   subject_alternative_names = ["*.${var.domain_name}"]
   validation_method         = "EMAIL"
 
-  tags = var.common_tags
-
   lifecycle {
     create_before_destroy = true
   }

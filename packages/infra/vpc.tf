@@ -1,12 +1,10 @@
 resource "aws_vpc" "ptft_vpc" {
   cidr_block           = "10.0.0.0/16"
   enable_dns_hostnames = true
-  tags                 = var.common_tags
 }
 
 resource "aws_internet_gateway" "ptft_internet_gateway" {
   vpc_id = aws_vpc.ptft_vpc.id
-  tags   = var.common_tags
 }
 
 resource "aws_subnet" "ptft_public_subnet_az1" {
@@ -14,7 +12,6 @@ resource "aws_subnet" "ptft_public_subnet_az1" {
   cidr_block              = "10.0.16.0/20"
   availability_zone       = "us-east-1a"
   map_public_ip_on_launch = true
-  tags                    = var.common_tags
 }
 
 resource "aws_subnet" "ptft_public_subnet_az2" {
@@ -22,12 +19,10 @@ resource "aws_subnet" "ptft_public_subnet_az2" {
   cidr_block              = "10.0.48.0/20"
   availability_zone       = "us-east-1b"
   map_public_ip_on_launch = true
-  tags                    = var.common_tags
 }
 
 resource "aws_route_table" "ptft_route_table" {
   vpc_id = aws_vpc.ptft_vpc.id
-  tags   = var.common_tags
 }
 
 resource "aws_route" "ptft_route" {

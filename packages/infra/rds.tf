@@ -1,8 +1,6 @@
 resource "aws_db_subnet_group" "ptft_db_subnet_group" {
   name       = "ptft-db-subnet-group"
   subnet_ids = [aws_subnet.ptft_public_subnet_az1.id, aws_subnet.ptft_public_subnet_az2.id]
-
-  tags = var.common_tags
 }
 
 resource "aws_db_instance" "ptft_db" {
@@ -19,5 +17,4 @@ resource "aws_db_instance" "ptft_db" {
   publicly_accessible     = true
   skip_final_snapshot     = true
   vpc_security_group_ids  = ["${aws_security_group.ptft_rds_sec_group.id}"]
-  tags                    = var.common_tags
 }
