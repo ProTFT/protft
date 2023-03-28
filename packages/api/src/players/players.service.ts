@@ -11,8 +11,12 @@ import { isEqualName } from "../lib/DBRawFilter";
 import { PaginationArgs } from "../lib/dto/pagination.args";
 import { parseFileString } from "../lib/FileParser";
 import { getSearchQueryFilter } from "../lib/SearchQuery";
+import { LobbyPlayerInfosService } from "../lobby-player-infos/lobby-player-infos.service";
 import { PlayerStatsRaw } from "../round-results/dto/get-player-stats.raw";
 import { RoundResultsService } from "../round-results/round-results.service";
+import { StagePlayerInfosService } from "../stage-player-infos/stage-player-infos.service";
+import { TournamentResultsService } from "../tournament-results/tournament-results.service";
+import { TournamentsService } from "../tournaments/tournaments.service";
 import { CreatePlayerArgs } from "./dto/create-player.args";
 import { BaseGetPlayerArgs } from "./dto/get-players.args";
 import { TournamentsPlayed } from "./dto/get-tournaments-played.out";
@@ -34,6 +38,10 @@ export class PlayersService {
     @InjectRepository(Player)
     private playerRepository: Repository<Player>,
     private roundResultsService: RoundResultsService,
+    private tournamentResultsService: TournamentResultsService,
+    private tournamentsService: TournamentsService,
+    private lobbyPlayerInfosService: LobbyPlayerInfosService,
+    private stagePlayersInfosService: StagePlayerInfosService,
   ) {}
 
   async findAll(
@@ -225,6 +233,28 @@ export class PlayersService {
         tournamentId,
       );
     return formatStats(rawStats || ({} as PlayerStatsRaw));
+  }
+
+  async merge(playerIdToMaintain: number, playerIdToRemove: number) {
+    await Promise.all([
+      this.tournamentResultsService.updatePlayer(
+        playerIdToRemove,
+        playerIdToMaintain,
+      ),
+      this.tournamentsService.updatePlayer(
+        playerIdToRemove,
+        playerIdToMaintain,
+      ),
+      this.stagePlayersInfosService.updatePlayer(
+        playerIdToRemove,
+        playerIdToMaintain,
+      ),
+      this.lobbyPlayerInfosService.updatePlayer(
+        playerIdToRemove,
+        playerIdToMaintain,
+      ),
+    ]);
+    return this.deleteOne(playerIdToRemove);
   }
 
   private createSlug(player: Pick<Player, "id" | "name" | "region">): string {

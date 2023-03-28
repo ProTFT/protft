@@ -30,6 +30,7 @@ describe("LobbyPlayerInfos Service", () => {
       save: jest.fn(),
       find: jest.fn().mockResolvedValue(existingPlayers),
       delete: jest.fn(),
+      update: jest.fn(),
     } as unknown as Repository<LobbyPlayerInfo>;
     service = new LobbyPlayerInfosService(lobbyPlayerInfoRepository);
   });
@@ -79,6 +80,16 @@ describe("LobbyPlayerInfos Service", () => {
             playerId: 13,
           },
         ]),
+      );
+    });
+  });
+
+  describe("update player", () => {
+    it("should update in repo", async () => {
+      await service.updatePlayer(10, 11);
+      expect(lobbyPlayerInfoRepository.update).toHaveBeenCalledWith(
+        { playerId: 10 },
+        { playerId: 11 },
       );
     });
   });

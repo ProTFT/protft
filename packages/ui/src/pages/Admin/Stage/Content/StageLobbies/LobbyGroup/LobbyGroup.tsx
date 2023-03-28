@@ -35,8 +35,8 @@ import {
 } from "./queries";
 import { useToast } from "../../../../Components/Toast/Toast";
 import { StyledTitle } from "../../../../Components/Title/Title.styled";
-import { LobbyGroupDialog } from "../../../../Components/LobbyGroupDialog/LobbyGroupDialog";
-import { LobbyDialog } from "../../../../Components/LobbyDialog/LobbyDialog";
+import { LobbyGroupDialog } from "../../../../Components/Dialogs/LobbyGroupDialog/LobbyGroupDialog";
+import { LobbyDialog } from "../../../../Components/Dialogs/LobbyDialog/LobbyDialog";
 
 interface Props {
   hasLobbieGroups: boolean;

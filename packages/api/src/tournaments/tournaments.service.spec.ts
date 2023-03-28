@@ -21,6 +21,11 @@ describe("TournamentsService", () => {
       update: jest.fn(),
       delete: jest.fn(),
       save: jest.fn(),
+      createQueryBuilder: jest.fn().mockReturnThis(),
+      select: jest.fn().mockReturnThis(),
+      innerJoinAndSelect: jest.fn().mockReturnThis(),
+      where: jest.fn().mockReturnThis(),
+      getMany: jest.fn().mockResolvedValue([{}]),
       manager: {
         createQueryBuilder: jest.fn().mockReturnThis(),
         select: jest.fn().mockReturnThis(),
@@ -396,6 +401,41 @@ describe("TournamentsService", () => {
       await service.createMissingSlugs();
 
       expect(tournamentRepository.update).toHaveBeenCalledTimes(3);
+    });
+  });
+
+  describe("updatePlayer", () => {
+    it("should not save if player is not in a tournament", async () => {
+      const playerToBeRemoved = { id: 10 };
+      const playerToBeAdded = { id: 11 };
+
+      (tournamentRepository as any).getMany = jest.fn().mockResolvedValue([]);
+
+      await service.updatePlayer(playerToBeRemoved.id, playerToBeAdded.id);
+
+      expect(tournamentRepository.save).toHaveBeenCalledTimes(0);
+    });
+
+    it("should call save updating the player ID", async () => {
+      const tournamentData = {
+        id: 1,
+        name: "Test",
+      };
+      const playerToBeRemoved = { id: 10 };
+      const playerToBeAdded = { id: 11 };
+      const randomPlayer = { id: 2 };
+      tournamentRepository.find = jest.fn().mockResolvedValue([
+        {
+          ...tournamentData,
+          players: [playerToBeRemoved, randomPlayer],
+        },
+      ]);
+      await service.updatePlayer(playerToBeRemoved.id, playerToBeAdded.id);
+
+      expect(tournamentRepository.save).toHaveBeenCalledWith({
+        ...tournamentData,
+        players: [randomPlayer, playerToBeAdded],
+      });
     });
   });
 });

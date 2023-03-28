@@ -9,7 +9,7 @@ import {
   RoundResult,
 } from "../../../../../../graphql/schema";
 import { client } from "../../../../../../hooks/useAuth";
-import { BulkPlayerDialog } from "../../../../Components/BulkPlayerDialog/BulkPlayerDialog";
+import { BulkPlayerDialog } from "../../../../Components/Dialogs/BulkPlayerDialog/BulkPlayerDialog";
 import { StyledTitle } from "../../../../Components/Title/Title.styled";
 import { useToast } from "../../../../Components/Toast/Toast";
 import { LobbyContainer } from "../LobbyContainer/LobbyContainer";

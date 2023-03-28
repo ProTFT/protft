@@ -1,6 +1,6 @@
 import { Injectable } from "@nestjs/common";
 import { InjectRepository } from "@nestjs/typeorm";
-import { Repository } from "typeorm";
+import { Repository, UpdateResult } from "typeorm";
 import { DeleteResponse } from "../lib/dto/delete-return";
 import { getOrdinal } from "../lib/Number";
 import { RoundResultsService } from "../round-results/round-results.service";
@@ -89,5 +89,15 @@ export class TournamentResultsService {
   async deleteResults(tournamentId: number): Promise<DeleteResponse> {
     await this.tournamentResultRepository.delete({ tournamentId });
     return { id: tournamentId };
+  }
+
+  async updatePlayer(
+    fromPlayerId: number,
+    toPlayerId: number,
+  ): Promise<UpdateResult> {
+    return this.tournamentResultRepository.update(
+      { playerId: fromPlayerId },
+      { playerId: toPlayerId },
+    );
   }
 }

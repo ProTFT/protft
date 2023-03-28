@@ -1,7 +1,7 @@
 import React from "react";
-import { Player } from "../../../../graphql/schema";
-import { DialogForm } from "../DialogForm/DialogForm";
-import { FormField } from "../DialogForm/FormField";
+import { Player } from "../../../../../graphql/schema";
+import { DialogForm } from "../../DialogForm/DialogForm";
+import { FormField } from "../../DialogForm/FormField";
 import * as lookup from "country-code-lookup";
 
 export interface Props {

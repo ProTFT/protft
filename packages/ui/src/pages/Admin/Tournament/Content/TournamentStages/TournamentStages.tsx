@@ -9,7 +9,7 @@ import {
 import { useMutation, useQuery } from "urql";
 import { ProTFTButton } from "../../../../../components/Button/Button";
 import { useRef, useCallback } from "react";
-import { StageDialog } from "../../../Components/StageDialog/StageDialog";
+import { StageDialog } from "../../../Components/Dialogs/StageDialog/StageDialog";
 import { Stage } from "../../../../../graphql/schema";
 import {
   StyledButtonBar,

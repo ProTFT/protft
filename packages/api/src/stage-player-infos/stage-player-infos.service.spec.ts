@@ -177,4 +177,14 @@ describe("StagePlayerInfos service", () => {
       );
     });
   });
+
+  describe("updatePlayer", () => {
+    it("should call repository", async () => {
+      await service.updatePlayer(10, 11);
+      expect(stagePlayerInfoRepository.update).toHaveBeenCalledWith(
+        { playerId: 10 },
+        { playerId: 11 },
+      );
+    });
+  });
 });

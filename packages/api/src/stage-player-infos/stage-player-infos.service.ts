@@ -1,6 +1,6 @@
 import { BadRequestException, Injectable } from "@nestjs/common";
 import { InjectRepository } from "@nestjs/typeorm";
-import { Repository } from "typeorm";
+import { Repository, UpdateResult } from "typeorm";
 import { parseFileString } from "../lib/FileParser";
 import { GetStagePlayerArgs } from "../stages/dto/get-stage-player.args";
 import { UpdateStagePlayerArgs } from "../stages/dto/update-stage-player.args";
@@ -103,5 +103,15 @@ export class StagePlayerInfosService {
     );
 
     return Promise.all(updates);
+  }
+
+  updatePlayer(
+    fromPlayerId: number,
+    toPlayerId: number,
+  ): Promise<UpdateResult> {
+    return this.stagePlayerInfoRepository.update(
+      { playerId: fromPlayerId },
+      { playerId: toPlayerId },
+    );
   }
 }

@@ -24,7 +24,7 @@ import { StagePlayers } from "./Content/StagePlayers/StagePlayers";
 import { StageLobbies } from "./Content/StageLobbies/StageLobbies";
 import { StageResults } from "./Content/StageResults/StageResults";
 import { StyledActionsContainer } from "../Tournament/AdminTournament.styled";
-import { StageDialog } from "../Components/StageDialog/StageDialog";
+import { StageDialog } from "../Components/Dialogs/StageDialog/StageDialog";
 import {
   StageDeleteResult,
   DELETE_STAGE_MUTATION,

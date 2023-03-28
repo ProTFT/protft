@@ -6,7 +6,7 @@ import { TournamentContent } from "../../../components/TournamentContent/Tournam
 import { Tournament } from "../../../graphql/schema";
 import { StyledHeaderContainer } from "../../Tournament/Tournament.styled";
 import { useToast } from "../Components/Toast/Toast";
-import { TournamentDialog } from "../Components/TournamentDialog/TournamentDialog";
+import { TournamentDialog } from "../Components/Dialogs/TournamentDialog/TournamentDialog";
 import { ADMIN_TOURNAMENTS_PATH } from "../Tournaments/AdminTournaments";
 import { StyledActionsContainer, StyledBar } from "./AdminTournament.styled";
 import { AdminTournamentContent } from "./Content/Content";

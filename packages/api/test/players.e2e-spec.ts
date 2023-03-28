@@ -58,6 +58,7 @@ const fakePlayersService = {
   findUniqueRegions: jest
     .fn()
     .mockResolvedValue(mockPlayerFilterMeta.possibleRegions),
+  merge: jest.fn().mockResolvedValue(mockPlayers[0]),
 };
 
 const fakeRoundResultsService = {};
@@ -316,6 +317,25 @@ describe("Player (e2e)", () => {
         "test\n",
         false,
       );
+    });
+  });
+
+  describe("mergePlayer", () => {
+    it("should call service", async () => {
+      const response = await request(app.getHttpServer())
+        .post(graphql)
+        .send({
+          query: `
+          mutation {
+            mergePlayer(playerIdToMaintain: 10, playerIdToRemove: 11) {
+              id
+            }
+          }`,
+        })
+        .expect(HttpStatus.OK);
+      expect(response.body).toStrictEqual({
+        data: { mergePlayer: { id: mockPlayers[0].id } },
+      });
     });
   });
 });

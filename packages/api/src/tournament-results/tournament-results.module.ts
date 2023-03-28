@@ -13,5 +13,6 @@ import { TournamentResultsService } from "./tournament-results.service";
     RoundResultsModule,
   ],
   providers: [TournamentResultsService, TournamentResultsResolver],
+  exports: [TournamentResultsService],
 })
 export class TournamentResultsModule {}

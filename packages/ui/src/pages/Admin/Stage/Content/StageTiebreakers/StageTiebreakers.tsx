@@ -4,7 +4,7 @@ import { useQuery, useMutation } from "urql";
 import { ProTFTButton } from "../../../../../components/Button/Button";
 import { Tiebreaker } from "../../../../../graphql/schema";
 import { client } from "../../../../../hooks/useAuth";
-import { BulkPlayerDialog } from "../../../Components/BulkPlayerDialog/BulkPlayerDialog";
+import { BulkPlayerDialog } from "../../../Components/Dialogs/BulkPlayerDialog/BulkPlayerDialog";
 import { DeleteButton } from "../../../Components/DeleteButton/DeleteButton";
 import {
   StyledLeftSide,

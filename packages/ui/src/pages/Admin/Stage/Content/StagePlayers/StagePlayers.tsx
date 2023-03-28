@@ -4,7 +4,7 @@ import { useMutation, useQuery } from "urql";
 import { Player, StagePlayerInfo } from "../../../../../graphql/schema";
 import { ProTFTButton } from "../../../../../components/Button/Button";
 import { SearchInput } from "../../../../../components/SearchInput/SearchInput";
-import { BulkPlayerTournamentDialog } from "../../../Components/BulkPlayerTournamentDialog/BulkPlayerTournamentDialog";
+import { BulkPlayerTournamentDialog } from "../../../Components/Dialogs/BulkPlayerTournamentDialog/BulkPlayerTournamentDialog";
 import { DroppableContainer } from "../../../Components/DroppableContainer/DroppableContainer";
 import {
   StyledLeftSide,
@@ -35,7 +35,7 @@ import {
   StyledButtonContainer,
   StyledContainer,
 } from "./StagePlayers.styled";
-import { StagePlayerDialog } from "../../../Components/StagePlayerDialog/StagePlayerDialog";
+import { StagePlayerDialog } from "../../../Components/Dialogs/StagePlayerDialog/StagePlayerDialog";
 
 export const StagePlayers = () => {
   const { id: tournamentId, stageId } = useParams();

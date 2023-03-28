@@ -1,6 +1,6 @@
 import { Injectable, NotFoundException } from "@nestjs/common";
 import { InjectRepository } from "@nestjs/typeorm";
-import { Raw, Repository } from "typeorm";
+import { In, Raw, Repository, UpdateResult } from "typeorm";
 import { DeleteResponse } from "../lib/dto/delete-return";
 import { Player } from "../players/player.entity";
 import { SetsService } from "../sets/sets.service";
@@ -154,6 +154,44 @@ export class TournamentsService {
     );
     await Promise.all(payloads);
     return allTournaments;
+  }
+
+  async updatePlayer(
+    fromPlayerId: number,
+    toPlayerId: number,
+  ): Promise<Tournament[]> {
+    const tournamentIdsWithPlayer = await this.tournamentRepository
+      .createQueryBuilder("t")
+      .select("t.id")
+      .innerJoinAndSelect("t.players", "p")
+      .where("p.id = :fromPlayerId", { fromPlayerId })
+      .getMany();
+
+    if (!tournamentIdsWithPlayer.length) {
+      return;
+    }
+
+    const tournamentsWithPlayer = await this.tournamentRepository.find({
+      relations: ["players"],
+      where: {
+        id: In(tournamentIdsWithPlayer.map((t) => t.id)),
+      },
+    });
+    return Promise.all(
+      tournamentsWithPlayer.map((tournament) => {
+        const players = tournament.players;
+        const updatedPlayers = players
+          .map((player) => ({ id: player.id }))
+          .filter((playerIdObject) => playerIdObject.id !== fromPlayerId);
+
+        const updatedTournament = {
+          ...tournament,
+          players: [...updatedPlayers, { id: toPlayerId }],
+        };
+
+        return this.tournamentRepository.save(updatedTournament);
+      }),
+    );
   }
 
   private async createSlug(

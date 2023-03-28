@@ -5,13 +5,13 @@ import { ProTFTButton } from "../../../../../components/Button/Button";
 import { TextIconHorizontalContainer } from "../../../../../components/Layout/HorizontalContainer/TextIconHorizontalContainer.styled";
 import { SearchInput } from "../../../../../components/SearchInput/SearchInput";
 import { Player } from "../../../../../graphql/schema";
-import { BulkPlayerTournamentDialog } from "../../../Components/BulkPlayerTournamentDialog/BulkPlayerTournamentDialog";
+import { BulkPlayerTournamentDialog } from "../../../Components/Dialogs/BulkPlayerTournamentDialog/BulkPlayerTournamentDialog";
 import { DroppableContainer } from "../../../Components/DroppableContainer/DroppableContainer";
 import {
   StyledLeftSide,
   StyledRightSide,
 } from "../../../Components/Layout/TwoSided.styled";
-import { PlayerDialog } from "../../../Components/PlayerDialog/PlayerDialog";
+import { PlayerDialog } from "../../../Components/Dialogs/PlayerDialog/PlayerDialog";
 import { DraggablePlayer } from "../../../Components/PlayerItem/PlayerItem";
 import { StyledTitle } from "../../../Components/Title/Title.styled";
 import { useToast } from "../../../Components/Toast/Toast";

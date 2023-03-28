@@ -179,6 +179,14 @@ export interface LobbyWithResults {
     results: PlayerResults[];
 }
 
+export interface TournamentResult {
+    tournamentId: number;
+    playerId: number;
+    finalPosition: string;
+    prize: number;
+    otherRewards: string;
+}
+
 export interface PlayerFilterMeta {
     possibleCountries: string[];
     possibleRegions: string[];
@@ -201,14 +209,6 @@ export interface TournamentsPlayed {
     stages?: Nullable<Stage[]>;
     players?: Nullable<Player[]>;
     finalPosition?: Nullable<string>;
-}
-
-export interface TournamentResult {
-    tournamentId: number;
-    playerId: number;
-    finalPosition: string;
-    prize: number;
-    otherRewards: string;
 }
 
 export interface IQuery {
@@ -267,6 +267,7 @@ export interface IMutation {
     createPlayer(name: string, country: string, region: string): Player | Promise<Player>;
     createPlayerSlugs(): Player[] | Promise<Player[]>;
     deletePlayer(id: number): Player | Promise<Player>;
+    mergePlayer(playerIdToMaintain: number, playerIdToRemove: number): Player | Promise<Player>;
     createLobbyGroupResult(lobbyGroupId: number, results: CreateLobbyGroupResults[]): RoundResult[] | Promise<RoundResult[]>;
     lockTournament(id: number): TournamentResult[] | Promise<TournamentResult[]>;
     deleteTournamentResults(id: number): DeleteResponse | Promise<DeleteResponse>;

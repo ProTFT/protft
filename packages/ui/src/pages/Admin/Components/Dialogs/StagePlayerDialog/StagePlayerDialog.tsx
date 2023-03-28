@@ -1,7 +1,7 @@
 import React from "react";
-import { StagePlayerInfo } from "../../../../graphql/schema";
-import { DialogForm } from "../DialogForm/DialogForm";
-import { FormField } from "../DialogForm/FormField";
+import { StagePlayerInfo } from "../../../../../graphql/schema";
+import { DialogForm } from "../../DialogForm/DialogForm";
+import { FormField } from "../../DialogForm/FormField";
 
 export interface Props {
   dialogRef: React.RefObject<HTMLDialogElement>;

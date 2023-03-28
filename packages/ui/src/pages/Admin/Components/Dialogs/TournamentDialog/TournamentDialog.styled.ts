@@ -1,7 +1,7 @@
 import styled from "styled-components";
-import { ProTFTButton } from "../../../../components/Button/Button";
-import { StyledHorizontalContainer } from "../../../../components/Layout/HorizontalContainer/HorizontalContainer.styled";
-import { colors } from "../../../../design/colors";
+import { ProTFTButton } from "../../../../../components/Button/Button";
+import { StyledHorizontalContainer } from "../../../../../components/Layout/HorizontalContainer/HorizontalContainer.styled";
+import { colors } from "../../../../../design/colors";
 
 export const StyledAddTournamentDialog = styled.dialog`
   background-color: ${colors.darkPurple};

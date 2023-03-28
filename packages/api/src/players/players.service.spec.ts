@@ -1,7 +1,11 @@
 import { BadRequestException } from "@nestjs/common";
 import { ILike, Repository } from "typeorm";
 import { formatString } from "../../test/helpers/File";
+import { LobbyPlayerInfosService } from "../lobby-player-infos/lobby-player-infos.service";
 import { RoundResultsService } from "../round-results/round-results.service";
+import { StagePlayerInfosService } from "../stage-player-infos/stage-player-infos.service";
+import { TournamentResultsService } from "../tournament-results/tournament-results.service";
+import { TournamentsService } from "../tournaments/tournaments.service";
 import { Player } from "./player.entity";
 import { PlayersService } from "./players.service";
 
@@ -41,8 +45,28 @@ describe("PlayersService", () => {
     findStatsByPlayer: jest.fn(),
   } as unknown as RoundResultsService;
 
+  const tournamentResultsService = {
+    updatePlayer: jest.fn(),
+  } as unknown as TournamentResultsService;
+  const tournamentsService = {
+    updatePlayer: jest.fn(),
+  } as unknown as TournamentsService;
+  const lobbyPlayerInfosService = {
+    updatePlayer: jest.fn(),
+  } as unknown as LobbyPlayerInfosService;
+  const stagePlayersInfosService = {
+    updatePlayer: jest.fn(),
+  } as unknown as StagePlayerInfosService;
+
   beforeEach(async () => {
-    service = new PlayersService(playerRepository, roundResultsService);
+    service = new PlayersService(
+      playerRepository,
+      roundResultsService,
+      tournamentResultsService,
+      tournamentsService,
+      lobbyPlayerInfosService,
+      stagePlayersInfosService,
+    );
   });
 
   afterEach(() => {
@@ -342,6 +366,21 @@ describe("PlayersService", () => {
       const response = await service.getPlayerStats({} as Player, 1, 1);
 
       expect(response).toStrictEqual(formattedStats);
+    });
+  });
+
+  describe("merge", () => {
+    it("should call all different services and then delete", async () => {
+      const player = { id: 1 };
+      playerRepository.findOne = jest.fn().mockResolvedValue(player);
+
+      await service.merge(1, 1);
+
+      expect(tournamentResultsService.updatePlayer).toHaveBeenCalled();
+      expect(tournamentsService.updatePlayer).toHaveBeenCalled();
+      expect(stagePlayersInfosService.updatePlayer).toHaveBeenCalled();
+      expect(lobbyPlayerInfosService.updatePlayer).toHaveBeenCalled();
+      expect(playerRepository.delete).toHaveBeenCalled();
     });
   });
 });

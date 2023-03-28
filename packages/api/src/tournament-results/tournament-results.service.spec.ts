@@ -28,6 +28,7 @@ describe("TournamentResultsService", () => {
     save: jest.fn(),
     find: jest.fn(),
     delete: jest.fn(),
+    update: jest.fn(),
   } as unknown as Repository<TournamentResult>;
 
   const stagesService = {
@@ -843,6 +844,16 @@ describe("TournamentResultsService", () => {
           },
         ]);
       });
+    });
+  });
+
+  describe("updatePlayer", () => {
+    it("should call repository", async () => {
+      await service.updatePlayer(10, 11);
+      expect(tournamentResultRepository.update).toHaveBeenCalledWith(
+        { playerId: 10 },
+        { playerId: 11 },
+      );
     });
   });
 });

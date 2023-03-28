@@ -9,5 +9,6 @@ import { TournamentsService } from "./tournaments.service";
 @Module({
   imports: [TypeOrmModule.forFeature([Tournament]), SetsModule, StagesModule],
   providers: [TournamentsService, TournamentsResolver],
+  exports: [TournamentsService],
 })
 export class TournamentsModule {}

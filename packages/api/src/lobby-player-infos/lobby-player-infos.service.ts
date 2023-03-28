@@ -1,6 +1,6 @@
 import { Injectable } from "@nestjs/common";
 import { InjectRepository } from "@nestjs/typeorm";
-import { In, Repository } from "typeorm";
+import { In, Repository, UpdateResult } from "typeorm";
 import {
   CreateManyLobbyPlayerInfoArgs,
   CreateOneLobbyPlayerInfoArgs,
@@ -42,6 +42,16 @@ export class LobbyPlayerInfosService {
         lobbyId,
         playerId,
       })),
+    );
+  }
+
+  updatePlayer(
+    fromPlayerId: number,
+    toPlayerId: number,
+  ): Promise<UpdateResult> {
+    return this.lobbyPlayerInfoRepository.update(
+      { playerId: fromPlayerId },
+      { playerId: toPlayerId },
     );
   }
 

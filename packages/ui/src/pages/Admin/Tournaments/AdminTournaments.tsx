@@ -6,7 +6,7 @@ import { Tournament } from "../../../graphql/schema";
 import { TournamentListItem } from "../../Tournaments/TournamentListItem/TournamentListItem";
 import { StyledAdminBar } from "../Components/AdminBar/AdminBar.styled";
 import { useToast } from "../Components/Toast/Toast";
-import { TournamentDialog } from "../Components/TournamentDialog/TournamentDialog";
+import { TournamentDialog } from "../Components/Dialogs/TournamentDialog/TournamentDialog";
 import {
   StyledContainer,
   StyledTournamentList,

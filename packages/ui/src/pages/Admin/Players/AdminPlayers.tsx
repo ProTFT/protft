@@ -1,19 +1,37 @@
 import { Suspense, useCallback, useRef, useState } from "react";
+import { useMutation } from "urql";
 import { ProTFTButton } from "../../../components/Button/Button";
 import { StyledHorizontalContainer } from "../../../components/Layout/HorizontalContainer/HorizontalContainer.styled";
+import { TextIconHorizontalContainer } from "../../../components/Layout/HorizontalContainer/TextIconHorizontalContainer.styled";
 import { StyledSearchFilterBar } from "../../../components/SearchFilterBar/SearchFilterBar";
 import { client } from "../../../hooks/useAuth";
 import { PlayersListSkeleton } from "../../Players/PlayersList/PlayersList.skeleton";
-import { BulkPlayerDialog } from "../Components/BulkPlayerDialog/BulkPlayerDialog";
+import { BulkPlayerDialog } from "../Components/Dialogs/BulkPlayerDialog/BulkPlayerDialog";
+import {
+  MergePlayerDialog,
+  MergePlayerParameters,
+} from "../Components/Dialogs/MergePlayerDialog/MergePlayerDialog";
 import { useToast } from "../Components/Toast/Toast";
 import { StyledContainer } from "./AdminPlayers.styled";
 import { PlayerList } from "./PlayerList/PlayerList";
+import {
+  MergePlayerResult,
+  MergePlayerVariables,
+  MERGE_PLAYER_MUTATION,
+} from "./queries";
 
 export const AdminPlayers = () => {
   const [searchQuery, setSearchQuery] = useState("");
   const { show } = useToast();
-  const dialogRef = useRef<HTMLDialogElement>(null);
-  const formRef = useRef<HTMLFormElement>(null);
+  const playerDialogRef = useRef<HTMLDialogElement>(null);
+  const playerFormRef = useRef<HTMLFormElement>(null);
+
+  const mergeDialogRef = useRef<HTMLDialogElement>(null);
+  const mergeFormRef = useRef<HTMLFormElement>(null);
+
+  const [, mergePlayer] = useMutation<MergePlayerResult, MergePlayerVariables>(
+    MERGE_PLAYER_MUTATION
+  );
 
   const onBulkAdd = useCallback(async (file: FileList, dryRun: boolean) => {
     if (!file?.item(0)) {
@@ -26,7 +44,21 @@ export const AdminPlayers = () => {
     return response;
   }, []);
 
-  const onSubmit = useCallback(
+  const onSubmitMergePlayer = useCallback(
+    async ({ playerIdToMaintain, playerIdToRemove }: MergePlayerParameters) => {
+      const result = await mergePlayer({
+        playerIdToMaintain,
+        playerIdToRemove,
+      });
+      if (result.error) {
+        return alert(result.error);
+      }
+      show();
+    },
+    [mergePlayer, show]
+  );
+
+  const onSubmitBulkAddPlayer = useCallback(
     async ({ file, dryRun }: { file: FileList; dryRun: boolean }) => {
       const result = await onBulkAdd(file, dryRun);
       if (dryRun) {
@@ -36,14 +68,18 @@ export const AdminPlayers = () => {
         return alert(result?.statusText);
       }
       show();
-      formRef.current?.reset();
-      dialogRef.current?.close();
+      playerFormRef.current?.reset();
+      playerDialogRef.current?.close();
     },
     [onBulkAdd, show]
   );
 
   const onClickAddBulkPlayer = useCallback(() => {
-    dialogRef.current?.showModal();
+    playerDialogRef.current?.showModal();
+  }, []);
+
+  const onClickMergePlayer = useCallback(() => {
+    mergeDialogRef.current?.showModal();
   }, []);
 
   return (
@@ -53,11 +89,19 @@ export const AdminPlayers = () => {
           placeholder="Search players"
           setSearchQuery={setSearchQuery}
         />
-        <ProTFTButton onClick={onClickAddBulkPlayer}>Bulk Add</ProTFTButton>
+        <TextIconHorizontalContainer>
+          <ProTFTButton onClick={onClickAddBulkPlayer}>Bulk Add</ProTFTButton>
+          <ProTFTButton onClick={onClickMergePlayer}>Merge</ProTFTButton>
+        </TextIconHorizontalContainer>
         <BulkPlayerDialog
-          dialogRef={dialogRef}
-          formRef={formRef}
-          onSubmit={onSubmit}
+          dialogRef={playerDialogRef}
+          formRef={playerFormRef}
+          onSubmit={onSubmitBulkAddPlayer}
+        />
+        <MergePlayerDialog
+          dialogRef={mergeDialogRef}
+          formRef={mergeFormRef}
+          onSubmit={onSubmitMergePlayer}
         />
       </StyledHorizontalContainer>
       <Suspense fallback={<PlayersListSkeleton />}>

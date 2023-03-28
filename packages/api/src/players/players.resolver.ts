@@ -94,4 +94,13 @@ export class PlayersResolver extends BaseResolver {
   async deletePlayer(@Args("id", { type: () => Int }) id: number) {
     return this.playersService.deleteOne(id);
   }
+
+  // @UseGuards(GqlJwtAuthGuard)
+  @Mutation(() => Player)
+  async mergePlayer(
+    @Args("playerIdToMaintain", { type: () => Int }) playerIdToMaintain: number,
+    @Args("playerIdToRemove", { type: () => Int }) playerIdToRemove: number,
+  ) {
+    return this.playersService.merge(playerIdToMaintain, playerIdToRemove);
+  }
 }

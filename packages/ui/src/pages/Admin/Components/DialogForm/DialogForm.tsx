@@ -8,7 +8,7 @@ import {
   StyledAddTournamentDialog,
   StyledForm,
   StyledActionButtons,
-} from "../TournamentDialog/TournamentDialog.styled";
+} from "../Dialogs/TournamentDialog/TournamentDialog.styled";
 import { dbDateToHTML } from "./Dialog.formatter";
 
 export interface Props<T, K> {
