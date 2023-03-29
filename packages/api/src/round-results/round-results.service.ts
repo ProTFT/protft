@@ -14,7 +14,6 @@ import {
   fromRawToConsolidatedRoundResults,
 } from "./round-result.adapter";
 import {
-  SortingMethods,
   SortingMethodsNeedPastResults,
   sortResults,
 } from "./round-result.logic";
@@ -30,6 +29,7 @@ import {
   sortLobbies,
 } from "./bulk-creation.logic";
 import { LobbyGroupWithLobbies } from "./dto/get-lobby-results.out";
+import { RoundsService } from "../rounds/rounds.service";
 
 interface FileLineWithPlayerLobby {
   lobbyPlayerId: number;
@@ -45,6 +45,7 @@ export class RoundResultsService {
     private stagesService: StagesService,
     private lobbyPlayerInfosService: LobbyPlayerInfosService,
     private lobbiesService: LobbiesService,
+    private roundsService: RoundsService,
   ) {}
 
   public async createResults({
@@ -73,17 +74,17 @@ export class RoundResultsService {
     if (player !== "Player" || position !== "Position") {
       throw new BadRequestException(`${player} - ${position}`);
     }
-    const {
-      players: allStagePlayers,
-      rounds: allStageRounds,
-      lobbies: allStageLobbies,
-      lobbyGroups: allStageLobbyGroups,
-    } = await this.stagesService.findOne(stageId, [
-      "players",
-      "players.player",
-      "rounds",
-      "lobbies",
-      "lobbyGroups",
+
+    const [
+      allStageLobbies,
+      allStageLobbyGroups,
+      allStageRounds,
+      { players: allStagePlayers },
+    ] = await Promise.all([
+      this.lobbiesService.findAllByStage(stageId),
+      this.lobbiesService.findAllLobbyGroupsByStage(stageId),
+      this.roundsService.findByStage(stageId),
+      this.stagesService.findOne(stageId, ["players", "players.player"]),
     ]);
 
     if (!ignorePlayerNumber && lines.length % allStagePlayers.length !== 0) {
@@ -123,9 +124,7 @@ export class RoundResultsService {
       lobbyPlayers,
     );
 
-    const results = this.roundResultsRepository.save(finalPayload);
-
-    return results;
+    return this.roundResultsRepository.save(finalPayload);
   }
 
   public async overviewResultsByStage(stageId: number) {

@@ -5,6 +5,7 @@ import { stage } from "../../test/generators/stage";
 import { formatString } from "../../test/helpers/File";
 import { LobbiesService } from "../lobbies/lobbies.service";
 import { LobbyPlayerInfosService } from "../lobby-player-infos/lobby-player-infos.service";
+import { RoundsService } from "../rounds/rounds.service";
 import { StagesService } from "../stages/stages.service";
 import { tiebreakerMap } from "../stages/tiebreaker.logic";
 import { CreateLobbyGroupResultArgs } from "./dto/create-lobby-group-result.args";
@@ -116,6 +117,7 @@ describe("RoundResults service", () => {
   let stagesService: StagesService;
   let lobbyPlayerInfosService: LobbyPlayerInfosService;
   let lobbiesService: LobbiesService;
+  let roundsService: RoundsService;
   const fakeQueryBuilder = new FakeQueryBuilder();
 
   beforeEach(() => {
@@ -134,9 +136,14 @@ describe("RoundResults service", () => {
         sequence: 1,
         stageId: 1,
       }),
-      findAllLobbyGroupsByStage: jest.fn(),
+      findAllLobbyGroupsByStage: jest.fn().mockResolvedValue([lobbyGroup({})]),
       findAllByLobbyGroup: jest.fn(),
+      findAllByStage: jest.fn(),
     } as unknown as LobbiesService;
+
+    roundsService = {
+      findByStage: jest.fn(),
+    } as unknown as RoundsService;
 
     roundResultsRepository = {
       save: jest.fn(),
@@ -150,6 +157,7 @@ describe("RoundResults service", () => {
       stagesService,
       lobbyPlayerInfosService,
       lobbiesService,
+      roundsService,
     );
   });
 
