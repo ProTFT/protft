@@ -50,6 +50,7 @@ const fakePlayersService = {
   createOne: jest.fn().mockResolvedValue(mockPlayers[0]),
   createMissingSlugs: jest.fn().mockResolvedValue(mockPlayers),
   deleteOne: jest.fn().mockResolvedValue({ id: 1 }),
+  updateOne: jest.fn().mockResolvedValue({ id: 1 }),
   createBulk: jest.fn(),
   findOneBySlug: jest.fn().mockResolvedValue(mockPlayers[0]),
   findUniqueCountries: jest
@@ -294,6 +295,24 @@ describe("Player (e2e)", () => {
         .expect(HttpStatus.OK);
       expect(response.body).toStrictEqual({
         data: { deletePlayer: { id: 1 } },
+      });
+    });
+  });
+
+  describe("updatePlayer", () => {
+    it("should update", async () => {
+      const response = await request(app.getHttpServer())
+        .post(graphql)
+        .send({
+          query: `
+          mutation {
+            updatePlayer(id: 1, name: "newName") {
+              id
+            }
+          }`,
+        });
+      expect(response.body).toStrictEqual({
+        data: { updatePlayer: { id: 1 } },
       });
     });
   });

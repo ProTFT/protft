@@ -78,6 +78,18 @@ export class PlayersService {
     });
   }
 
+  async updateOne(id: number, payload: Partial<Omit<Player, "id">>) {
+    const player = await this.findOne(id);
+    if (!player) {
+      throw new NotFoundException("Player not found");
+    }
+    await this.playerRepository.update({ id }, payload);
+    return {
+      ...player,
+      ...payload,
+    };
+  }
+
   async createOne({
     name,
     country,

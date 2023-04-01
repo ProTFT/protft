@@ -329,6 +329,30 @@ describe("PlayersService", () => {
     });
   });
 
+  describe("update one", () => {
+    it("should throw if player does not exist", async () => {
+      playerRepository.findOne = jest.fn().mockResolvedValue(undefined);
+
+      expect(async () => await service.updateOne(1, {})).rejects.toThrow();
+    });
+
+    it("should call repository", async () => {
+      const player = { id: 1 };
+      const newName = "newName";
+      playerRepository.findOne = jest.fn().mockResolvedValue(player);
+
+      const response = await service.updateOne(1, { name: newName });
+
+      expect(playerRepository.update).toHaveBeenCalledWith(
+        {
+          id: 1,
+        },
+        { name: newName },
+      );
+      expect(response).toStrictEqual({ ...player, name: newName });
+    });
+  });
+
   describe("get player stats", () => {
     it("should return stats", async () => {
       const statsRaw = {

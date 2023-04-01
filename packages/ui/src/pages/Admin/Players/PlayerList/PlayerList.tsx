@@ -16,7 +16,7 @@ export const PlayerList = ({ searchQuery }: Props) => {
     },
   });
 
-  const onAfterDelete = useCallback(() => refetch(), [refetch]);
+  const triggerRefetch = useCallback(() => refetch(), [refetch]);
 
   return (
     <StyledPlayerList>
@@ -24,7 +24,8 @@ export const PlayerList = ({ searchQuery }: Props) => {
         <PlayerListItem
           key={player.id}
           player={player}
-          afterDelete={onAfterDelete}
+          afterUpdate={triggerRefetch}
+          afterDelete={triggerRefetch}
         />
       ))}
     </StyledPlayerList>

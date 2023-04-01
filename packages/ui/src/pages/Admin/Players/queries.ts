@@ -30,6 +30,32 @@ export const DELETE_PLAYER_MUTATION = gql`
   }
 `;
 
+export interface UpdatePlayerResult {
+  deletePlayer: { id: Pick<Player, "id"> };
+}
+
+export type UpdatePlayerVariables = Pick<Player, "id">;
+
+export const UPDATE_PLAYER_MUTATION = gql`
+  mutation updatePlayer(
+    $id: Int!
+    $name: String
+    $country: String
+    $region: String
+    $slug: String
+  ) {
+    updatePlayer(
+      id: $id
+      name: $name
+      country: $country
+      region: $region
+      slug: $slug
+    ) {
+      id
+    }
+  }
+`;
+
 export interface MergePlayerResult {
   mergePlayer: { id: Pick<Player, "id"> };
 }
