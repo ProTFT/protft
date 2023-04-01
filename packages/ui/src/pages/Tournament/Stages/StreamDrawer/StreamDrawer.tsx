@@ -29,6 +29,9 @@ export const StreamDrawer = ({ isOpen, onClose, tournamentId }: Props) => {
 
   return (
     <Drawer isOpen={isOpen} onClose={onClose}>
+      {!data?.streamsOfTournament.length && (
+        <VideoList title="No streams available" videos={[]} />
+      )}
       {streams?.length && <VideoList title="Streams" videos={streams} />}
       {vods?.length && <VideoList title="VODs" videos={vods} />}
     </Drawer>

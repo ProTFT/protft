@@ -18,7 +18,7 @@ export const VideoList = ({
   <>
     <StyledDrawerTitle>{title}</StyledDrawerTitle>
     {videos?.map((stream) => (
-      <VideoListItem {...stream} />
+      <VideoListItem key={stream.name} {...stream} />
     ))}
   </>
 );
