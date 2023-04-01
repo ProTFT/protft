@@ -43,6 +43,7 @@ export const ADD_STREAM_MUTATION = gql`
     $platform: String!
     $language: String!
     $isLive: Boolean!
+    $isVOD: Boolean!
   ) {
     addTournamentStream(
       tournamentId: $tournamentId
@@ -51,6 +52,7 @@ export const ADD_STREAM_MUTATION = gql`
       platform: $platform
       language: $language
       isLive: $isLive
+      isVOD: $isVOD
     ) {
       tournamentId
       name
