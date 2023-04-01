@@ -11,7 +11,9 @@ export class TournamentStreamsService {
   ) {}
 
   public findStreamsByTournament(tournamentId: number) {
-    return this.tournamentStreamRepository.find({ where: { tournamentId } });
+    return this.tournamentStreamRepository.find({
+      where: { tournamentId, isVOD: false },
+    });
   }
 
   public findVodsByTournament(tournamentId: number) {

@@ -28,6 +28,7 @@ describe("TournamentStreamsService", () => {
       await service.findStreamsByTournament(mockTournamentId);
       expect(tournamentStreamRepository.find).toHaveBeenCalledWith({
         where: {
+          isVOD: false,
           tournamentId: mockTournamentId,
         },
       });
