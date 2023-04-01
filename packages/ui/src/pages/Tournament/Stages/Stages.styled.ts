@@ -1,4 +1,5 @@
 import styled from "styled-components";
+import { StyledHorizontalContainer } from "../../../components/Layout/HorizontalContainer/HorizontalContainer.styled";
 import { StyledVerticalContainer } from "../../../components/Layout/VerticalContainer/VerticalContainer.styled";
 import { device } from "../../../design/breakpoints";
 import { colors } from "../../../design/colors";
@@ -79,6 +80,7 @@ export const StyledSubsectionTitle = styled.p`
 `;
 
 export const StyledSubsectionContainer = styled(StyledVerticalContainer)`
+  width: 100%;
   justify-content: space-between;
 
   @media ${device.tablet} {
@@ -135,4 +137,38 @@ export const StyledDaySubtitle = styled.p`
 export const StyledArrowContainer = styled.div`
   display: flex;
   justify-content: end;
+`;
+
+export const StyledStreamContainer = styled(StyledHorizontalContainer)<{
+  animate: boolean;
+}>`
+  ${({ theme, animate }) => `
+    align-items: center;
+    align-self: end;
+    gap: 0.5rem;
+    margin-top: 1rem;
+
+    ${
+      animate &&
+      `path {
+        animation-duration: 500ms;
+        animation-name: blink;
+        animation-iteration-count: 6;
+        animation-direction: alternate;
+
+        @keyframes blink {
+          from {
+            fill: ${theme.colors.yellow};
+          }
+          to {
+            fill: ${theme.colors.purple};
+          }
+        }
+      }`
+    }
+
+    @media ${device.tablet} {
+      margin-top: 0;
+    }
+  `}
 `;

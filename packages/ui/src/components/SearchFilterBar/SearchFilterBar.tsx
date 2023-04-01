@@ -9,9 +9,9 @@ import {
   StyledFilterText,
 } from "./SearchFilterBar.styled";
 
-const Drawer = React.lazy(() =>
-  import("../Drawer/Drawer").then((m) => ({
-    default: m.Drawer,
+const FilterDrawer = React.lazy(() =>
+  import("../Drawer/FilterDrawer").then((m) => ({
+    default: m.FilterDrawer,
   }))
 );
 
@@ -46,7 +46,7 @@ export const StyledSearchFilterBar = ({
 
   return (
     <StyledContainer>
-      <Drawer isOpen={isDrawerOpen} toggleDrawer={toggleDrawer} />
+      <FilterDrawer isOpen={isDrawerOpen} toggleDrawer={toggleDrawer} />
       <SearchInput placeholder={placeholder} onChange={onChangeSearchInput} />
       {isDrawerAvailable ?? (
         <StyledFilterBar>

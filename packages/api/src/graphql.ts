@@ -211,6 +211,16 @@ export interface TournamentsPlayed {
     finalPosition?: Nullable<string>;
 }
 
+export interface TournamentStream {
+    tournamentId: number;
+    name: string;
+    link: string;
+    platform: string;
+    language: string;
+    isLive: boolean;
+    isVOD: boolean;
+}
+
 export interface IQuery {
     sets(): Set[] | Promise<Set[]>;
     set(id: number): Nullable<Set> | Promise<Nullable<Set>>;
@@ -241,6 +251,8 @@ export interface IQuery {
     resultsByLobbyGroup(lobbyGroupId: number): PlayerResults[] | Promise<PlayerResults[]>;
     playerStats(setId?: Nullable<number>, tournamentIds?: Nullable<number[]>, region?: Nullable<string>, sort?: Nullable<SortOption>, searchQuery?: Nullable<string>, take?: Nullable<number>, skip?: Nullable<number>, minimumGames?: Nullable<number>): PlayerWithStats[] | Promise<PlayerWithStats[]>;
     resultsOfTournament(tournamentId: number): TournamentResult[] | Promise<TournamentResult[]>;
+    streamsOfTournament(tournamentId: number): TournamentStream[] | Promise<TournamentStream[]>;
+    vodsOfTournament(tournamentId: number): TournamentStream[] | Promise<TournamentStream[]>;
 }
 
 export interface IMutation {
@@ -271,6 +283,8 @@ export interface IMutation {
     createLobbyGroupResult(lobbyGroupId: number, results: CreateLobbyGroupResults[]): RoundResult[] | Promise<RoundResult[]>;
     lockTournament(id: number): TournamentResult[] | Promise<TournamentResult[]>;
     deleteTournamentResults(id: number): DeleteResponse | Promise<DeleteResponse>;
+    addTournamentStream(tournamentId: number, name: string, link: string, platform: string, language: string, isLive: boolean, isVOD: boolean): TournamentStream | Promise<TournamentStream>;
+    deleteTournamentStream(tournamentId: number, name: string): DeleteResponse | Promise<DeleteResponse>;
 }
 
 export type DateTime = any;

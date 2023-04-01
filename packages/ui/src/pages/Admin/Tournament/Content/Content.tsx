@@ -8,10 +8,12 @@ import {
 } from "./Content.styled";
 import { TournamentPlayers } from "./TournamentPlayers/TournamentPlayers";
 import { TournamentStages } from "./TournamentStages/TournamentStages";
+import { TournamentStreams } from "./TournamentStreams/TournamentStreams";
 
 enum ContentPath {
   PLAYERS = "players",
   STAGES = "stages",
+  STREAMS = "streams",
 }
 
 export const AdminTournamentContent = () => {
@@ -35,6 +37,11 @@ export const AdminTournamentContent = () => {
             Stages
           </StyledTabButton>
         </Link>
+        <Link to="streams">
+          <StyledTabButton selected={isTabSelected(ContentPath.STREAMS)}>
+            Streams
+          </StyledTabButton>
+        </Link>
       </StyledTabContainer>
       <Routes>
         <Route
@@ -44,6 +51,10 @@ export const AdminTournamentContent = () => {
         <Route
           path={ContentPath.STAGES}
           element={<SuspenseElement element={<TournamentStages />} />}
+        />
+        <Route
+          path={ContentPath.STREAMS}
+          element={<SuspenseElement element={<TournamentStreams />} />}
         />
       </Routes>
     </StyledContainer>

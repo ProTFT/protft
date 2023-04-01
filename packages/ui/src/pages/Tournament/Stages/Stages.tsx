@@ -1,7 +1,9 @@
-import { useCallback } from "react";
+import { lazy, Suspense, useCallback, useState } from "react";
 import { StyledHorizontalContainer } from "../../../components/Layout/HorizontalContainer/HorizontalContainer.styled";
 import { colors } from "../../../design/colors";
+import { StyledBody } from "../../../design/fonts/Fonts";
 import { ArrowRightIcon } from "../../../design/icons/ArrowRight";
+import { Stream } from "../../../design/icons/Stream";
 import { Stage, Tournament } from "../../../graphql/schema";
 import {
   StyledArrowContainer,
@@ -14,10 +16,17 @@ import {
   StyledStageInfoValue,
   StyledStagesBottom,
   StyledStagesSection,
+  StyledStreamContainer,
   StyledSubsectionContainer,
   StyledSubsectionTitle,
   StyledTitle,
 } from "./Stages.styled";
+
+const StreamDrawer = lazy(() =>
+  import("./StreamDrawer/StreamDrawer").then((m) => ({
+    default: m.StreamDrawer,
+  }))
+);
 
 interface Props {
   tournament?: Tournament;
@@ -26,6 +35,12 @@ interface Props {
 }
 
 export const Stages = ({ tournament, onSelectStage, openStage }: Props) => {
+  const [streamDrawerOpen, setStreamDrawerOpen] = useState(false);
+
+  const toggleStreamDrawer = useCallback(() => {
+    setStreamDrawerOpen((curr) => !curr);
+  }, []);
+
   const onClickDay = useCallback(
     (stage: Stage) => () => {
       onSelectStage(stage);
@@ -40,6 +55,15 @@ export const Stages = ({ tournament, onSelectStage, openStage }: Props) => {
 
   return (
     <>
+      {streamDrawerOpen && (
+        <Suspense>
+          <StreamDrawer
+            tournamentId={tournament?.id}
+            isOpen={streamDrawerOpen}
+            onClose={toggleStreamDrawer}
+          />
+        </Suspense>
+      )}
       <StyledStagesSection>
         <StyledHorizontalContainer>
           <StyledBattleIcon />
@@ -54,6 +78,10 @@ export const Stages = ({ tournament, onSelectStage, openStage }: Props) => {
             <StyledSubsectionTitle>SET</StyledSubsectionTitle>
             <StyledStageInfoValue>{`${tournament?.set.id} - ${tournament?.set.name}`}</StyledStageInfoValue>
           </StyledStageInfoContainer>
+          <StyledStreamContainer animate={false}>
+            <Stream size={32} onClick={toggleStreamDrawer} />
+            <StyledBody>Streams</StyledBody>
+          </StyledStreamContainer>
         </StyledSubsectionContainer>
       </StyledStagesSection>
       <StyledStagesBottom>

@@ -178,6 +178,14 @@ export interface LobbyWithResults {
   results: PlayerResults[];
 }
 
+export interface TournamentResult {
+  tournamentId: number;
+  playerId: number;
+  finalPosition: string;
+  prize: number;
+  otherRewards: string;
+}
+
 export interface PlayerFilterMeta {
   possibleCountries: string[];
   possibleRegions: string[];
@@ -202,12 +210,14 @@ export interface TournamentsPlayed {
   finalPosition?: Nullable<string>;
 }
 
-export interface TournamentResult {
+export interface TournamentStream {
   tournamentId: number;
-  playerId: number;
-  finalPosition: string;
-  prize: number;
-  otherRewards: string;
+  name: string;
+  link: string;
+  platform: string;
+  language: string;
+  isLive: boolean;
+  isVOD: boolean;
 }
 
 export interface IQuery {
@@ -278,11 +288,15 @@ export interface IQuery {
     sort?: Nullable<SortOption>,
     searchQuery?: Nullable<string>,
     take?: Nullable<number>,
-    skip?: Nullable<number>
+    skip?: Nullable<number>,
+    minimumGames?: Nullable<number>
   ): PlayerWithStats[] | Promise<PlayerWithStats[]>;
   resultsOfTournament(
     tournamentId: number
   ): TournamentResult[] | Promise<TournamentResult[]>;
+  streamsOfTournament(
+    tournamentId: number
+  ): TournamentStream[] | Promise<TournamentStream[]>;
 }
 
 export interface IMutation {
@@ -395,11 +409,28 @@ export interface IMutation {
   ): Player | Promise<Player>;
   createPlayerSlugs(): Player[] | Promise<Player[]>;
   deletePlayer(id: number): Player | Promise<Player>;
+  mergePlayer(
+    playerIdToMaintain: number,
+    playerIdToRemove: number
+  ): Player | Promise<Player>;
   createLobbyGroupResult(
     lobbyGroupId: number,
     results: CreateLobbyGroupResults[]
   ): RoundResult[] | Promise<RoundResult[]>;
   lockTournament(id: number): TournamentResult[] | Promise<TournamentResult[]>;
+  deleteTournamentResults(id: number): DeleteResponse | Promise<DeleteResponse>;
+  addTournamentStream(
+    tournamentId: number,
+    name: string,
+    link: string,
+    platform: string,
+    language: string,
+    isLive: boolean
+  ): TournamentStream | Promise<TournamentStream>;
+  deleteTournamentStream(
+    tournamentId: number,
+    name: string
+  ): DeleteResponse | Promise<DeleteResponse>;
 }
 
 export type DateTime = any;

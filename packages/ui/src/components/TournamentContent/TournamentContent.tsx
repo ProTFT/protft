@@ -7,10 +7,10 @@ import { useIsDesktop } from "../../hooks/useIsDesktop";
 import { TournamentWithMaybePlayerResult } from "../../pages/Tournaments/Tournaments.types";
 import { DateIndicator } from "../DateIndicator/DateIndicator";
 import { TextIconHorizontalContainer } from "../Layout/HorizontalContainer/TextIconHorizontalContainer.styled";
+import { LiveIndicator } from "../LiveIndicator/LiveIndicator";
 import { RegionsIndicator } from "../RegionIndicator/RegionIndicator";
 import {
   StyledExtraInfo,
-  StyledLiveContainer,
   StyledPlayerPosition,
   StyledPlayerPositionContainer,
   StyledRegionDateContainer,
@@ -67,7 +67,7 @@ export const TournamentContent = ({
           <StyledTournamentSet>{set.name}</StyledTournamentSet>
           <StyledTournamentTitle>{name}</StyledTournamentTitle>
         </StyledTitleContainer>
-        {isLive && <StyledLiveContainer>LIVE</StyledLiveContainer>}
+        {isLive && <LiveIndicator />}
         {finalPosition && <PlayerPositionLabel position={finalPosition} />}
         <StyledTournamentInfoInnerContainer>
           <StyledRegionDateContainer>

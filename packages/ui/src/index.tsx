@@ -32,6 +32,7 @@ const graphqlClient = createClient({
         PlayerCalculatedStats: () => null,
         PlayerWithStats: () => null,
         StagePlayerInfo: () => null,
+        TournamentStream: () => null,
       },
       resolvers: {
         Query: {

@@ -22,6 +22,7 @@ import { isProd } from "./config/environment";
 import { getDatabaseInfo } from "./config/dbConfig";
 import { getOrigin } from "./config/cors";
 import { TournamentResultsModule } from "./tournament-results/tournament-results.module";
+import { TournamentStreamsModule } from "./tournament-streams/tournament-streams.module";
 
 @Module({
   imports: [
@@ -78,6 +79,7 @@ import { TournamentResultsModule } from "./tournament-results/tournament-results
     UsersModule,
     LobbyPlayerInfosModule,
     TournamentResultsModule,
+    TournamentStreamsModule,
   ],
   controllers: [AppController],
   providers: [AppService],
