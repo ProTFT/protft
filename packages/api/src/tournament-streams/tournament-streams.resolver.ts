@@ -18,13 +18,6 @@ export class TournamentStreamsResolver {
     return this.tournamentStreamsService.findStreamsByTournament(tournamentId);
   }
 
-  @Query(() => [TournamentStream])
-  async vodsOfTournament(
-    @Args({ name: "tournamentId", type: () => Int }) tournamentId: number,
-  ) {
-    return this.tournamentStreamsService.findVodsByTournament(tournamentId);
-  }
-
   @UseGuards(GqlJwtAuthGuard)
   @Mutation(() => TournamentStream)
   async addTournamentStream(

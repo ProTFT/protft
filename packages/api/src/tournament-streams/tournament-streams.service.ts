@@ -12,13 +12,7 @@ export class TournamentStreamsService {
 
   public findStreamsByTournament(tournamentId: number) {
     return this.tournamentStreamRepository.find({
-      where: { tournamentId, isVOD: false },
-    });
-  }
-
-  public findVodsByTournament(tournamentId: number) {
-    return this.tournamentStreamRepository.find({
-      where: { tournamentId, isVOD: true },
+      where: { tournamentId },
     });
   }
 

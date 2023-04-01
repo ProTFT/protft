@@ -252,7 +252,6 @@ export interface IQuery {
     playerStats(setId?: Nullable<number>, tournamentIds?: Nullable<number[]>, region?: Nullable<string>, sort?: Nullable<SortOption>, searchQuery?: Nullable<string>, take?: Nullable<number>, skip?: Nullable<number>, minimumGames?: Nullable<number>): PlayerWithStats[] | Promise<PlayerWithStats[]>;
     resultsOfTournament(tournamentId: number): TournamentResult[] | Promise<TournamentResult[]>;
     streamsOfTournament(tournamentId: number): TournamentStream[] | Promise<TournamentStream[]>;
-    vodsOfTournament(tournamentId: number): TournamentStream[] | Promise<TournamentStream[]>;
 }
 
 export interface IMutation {

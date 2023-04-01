@@ -1,24 +1,11 @@
-import { lazy, Suspense } from "react";
+import { useMemo } from "react";
 import { useQuery } from "urql";
 import { Drawer } from "../../../../components/Drawer/Drawer";
-import { LiveIndicator } from "../../../../components/LiveIndicator/LiveIndicator";
-import { colors } from "../../../../design/colors";
 import {
   TournamentStreamQueryResponse,
   TOURNAMENT_STREAM_QUERY,
 } from "./queries";
-import {
-  StyledDrawerTitle,
-  StyledStreamContainer,
-  StyledStreamName,
-} from "./StreamDrawer.styled";
-import { getStreamLanguage, getStreamLogo } from "./StreamDrawer.utils";
-
-const VodsSection = lazy(() =>
-  import("./VodsSection").then((m) => ({
-    default: m.VodsSection,
-  }))
-);
+import { VideoList } from "./VideoList";
 
 interface Props {
   isOpen: boolean;
@@ -32,26 +19,18 @@ export const StreamDrawer = ({ isOpen, onClose, tournamentId }: Props) => {
     variables: { tournamentId: Number(tournamentId) },
   });
 
+  const { streams, vods } = useMemo(
+    () => ({
+      streams: data?.streamsOfTournament.filter((s) => !s.isVOD),
+      vods: data?.streamsOfTournament.filter((s) => s.isVOD),
+    }),
+    [data?.streamsOfTournament]
+  );
+
   return (
     <Drawer isOpen={isOpen} onClose={onClose}>
-      <StyledDrawerTitle>Streams</StyledDrawerTitle>
-      {data?.streamsOfTournament.map(
-        ({ link: url, name, platform, language, isLive }) => (
-          <a href={url} key={name} target="blank">
-            <StyledStreamContainer>
-              {getStreamLogo(platform)({
-                color: colors.yellow,
-              })}
-              <StyledStreamName>{name}</StyledStreamName>
-              {getStreamLanguage(language)}
-              {isLive && <LiveIndicator />}
-            </StyledStreamContainer>
-          </a>
-        )
-      )}
-      <Suspense>
-        <VodsSection tournamentId={tournamentId} />
-      </Suspense>
+      {streams?.length && <VideoList title="Streams" videos={streams} />}
+      {vods?.length && <VideoList title="VODs" videos={vods} />}
     </Drawer>
   );
 };

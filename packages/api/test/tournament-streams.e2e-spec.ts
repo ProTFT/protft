@@ -57,25 +57,6 @@ describe("Tournament Result Infos (e2e)", () => {
     });
   });
 
-  describe("vodsOfTournament", () => {
-    it("should call service", async () => {
-      await request(app.getHttpServer())
-        .post("/graphql")
-        .send({
-          query: `
-            query {
-              vodsOfTournament(tournamentId: 1) {
-                tournamentId
-              }
-            }`,
-        });
-
-      expect(
-        fakeTournamentStreamsService.findVodsByTournament,
-      ).toHaveBeenCalledWith(1);
-    });
-  });
-
   describe("addTournamentStream", () => {
     it("should call service", async () => {
       await request(app.getHttpServer())
