@@ -1,6 +1,5 @@
 import { Injectable, NotFoundException } from "@nestjs/common";
-import { InjectRepository } from "@nestjs/typeorm";
-import { In, Raw, Repository, UpdateResult } from "typeorm";
+import { In, Raw, Repository } from "typeorm";
 import { DeleteResponse } from "../lib/dto/delete-return";
 import { Player } from "../players/player.entity";
 import { SetsService } from "../sets/sets.service";
@@ -12,7 +11,6 @@ import { CreateTournamentArgs } from "./dto/create-tournament.args";
 import { UpdateTournamentArgs } from "./dto/update-tournament.args";
 import { Tournament } from "./tournament.entity";
 import slugify from "slugify";
-import { getSearchQueryFilter } from "../lib/SearchQuery";
 import { parseMultilinePlayerNamesFromAll } from "../lib/MultilineInput";
 import {
   afterOrToday,
@@ -20,22 +18,38 @@ import {
   beforeOrToday,
   beforeToday,
 } from "../lib/DBRawFilter";
+import { PaginationArgs } from "../lib/dto/pagination.args";
+import {
+  BaseGetTournamentArgs,
+  GetTournamentsArgs,
+} from "./dto/get-tournaments.args";
+import { TournamentRepository } from "./tournament.repository";
+import { InjectRepository } from "@nestjs/typeorm";
 
 @Injectable()
 export class TournamentsService {
+  private customRepository: TournamentRepository;
   constructor(
     @InjectRepository(Tournament)
     private tournamentRepository: Repository<Tournament>,
     private setsService: SetsService,
-  ) {}
+  ) {
+    this.customRepository = new TournamentRepository(this.tournamentRepository);
+  }
 
-  findAll(searchQuery?: string, onlyVisible = true): Promise<Tournament[]> {
-    const searchQueryFilter = getSearchQueryFilter(searchQuery);
-    const visibilityFilter = onlyVisible ? { visibility: true } : {};
-    return this.tournamentRepository.find({
-      where: { ...searchQueryFilter, ...visibilityFilter },
-      order: { startDate: "DESC" },
-    });
+  findAll(
+    tournamentArgs?: GetTournamentsArgs,
+    paginationArgs?: PaginationArgs,
+    onlyVisible = true,
+  ): Promise<Tournament[]> {
+    return this.customRepository.findWithPagination(
+      tournamentArgs,
+      paginationArgs,
+      {
+        sorting: { startDate: "DESC" },
+        onlyVisible: onlyVisible,
+      },
+    );
   }
 
   findOne(id: number, relations?: string[]): Promise<Tournament> {
@@ -54,16 +68,18 @@ export class TournamentsService {
     return [...current, ...past];
   }
 
-  findPast(searchQuery?: string): Promise<Tournament[]> {
-    const searchQueryFilter = getSearchQueryFilter(searchQuery);
-    return this.tournamentRepository.find({
-      where: {
-        endDate: Raw(beforeToday),
-        ...searchQueryFilter,
-        visibility: true,
+  findPast(
+    tournamentArgs?: BaseGetTournamentArgs,
+    paginationArgs?: PaginationArgs,
+  ): Promise<Tournament[]> {
+    return this.customRepository.findWithPagination(
+      tournamentArgs,
+      paginationArgs,
+      {
+        condition: { endDate: Raw(beforeToday) },
+        sorting: { endDate: "DESC" },
       },
-      order: { endDate: "DESC" },
-    });
+    );
   }
 
   findOngoing(): Promise<Tournament[]> {
@@ -77,16 +93,18 @@ export class TournamentsService {
     });
   }
 
-  findUpcoming(searchQuery?: string): Promise<Tournament[]> {
-    const searchQueryFilter = getSearchQueryFilter(searchQuery);
-    return this.tournamentRepository.find({
-      where: {
-        startDate: Raw(afterToday),
-        ...searchQueryFilter,
-        visibility: true,
+  findUpcoming(
+    tournamentArgs?: BaseGetTournamentArgs,
+    paginationArgs?: PaginationArgs,
+  ): Promise<Tournament[]> {
+    return this.customRepository.findWithPagination(
+      tournamentArgs,
+      paginationArgs,
+      {
+        condition: { startDate: Raw(afterToday) },
+        sorting: { startDate: "ASC" },
       },
-      order: { startDate: "ASC" },
-    });
+    );
   }
 
   async createOne(payload: CreateTournamentArgs): Promise<Tournament> {

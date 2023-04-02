@@ -29,8 +29,17 @@ const buttons = [
   },
 ];
 
+export interface TournamentFilters {
+  region: string[];
+  setId: number[];
+}
+
 export const Tournaments = () => {
   const [searchQuery, setSearchQuery] = useState("");
+  const [filters, setFilters] = useState<TournamentFilters>({
+    region: [],
+    setId: [],
+  });
   const [selectedTab, setSelectedTab] = useState(Tabs.Upcoming);
 
   useDocumentTitle("Tourneys");
@@ -47,6 +56,8 @@ export const Tournaments = () => {
         <StyledSearchFilterBar
           placeholder="Search events"
           setSearchQuery={setSearchQuery}
+          filters={filters}
+          setFilters={setFilters}
         />
         <SegmentedButton<Tabs>
           buttons={buttons}
@@ -54,7 +65,11 @@ export const Tournaments = () => {
         />
       </StyledBar>
       <Suspense fallback={<TournamentListSkeleton />}>
-        <TournamentList selected={selectedTab} searchQuery={searchQuery} />
+        <TournamentList
+          selected={selectedTab}
+          searchQuery={searchQuery}
+          filters={filters}
+        />
       </Suspense>
     </StyledContainer>
   );

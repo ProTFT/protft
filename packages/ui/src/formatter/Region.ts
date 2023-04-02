@@ -1,14 +1,14 @@
 export enum RegionCode {
   BR = "BR",
-  EMEA = "EMEA",
-  NA = "NA",
   CN = "CN",
+  EMEA = "EMEA",
   JP = "JP",
   KR = "KR",
-  OCE = "OCE",
   LA = "LA",
-  WO = "WO",
+  NA = "NA",
+  OCE = "OCE",
   SEA = "SEA",
+  WO = "WO",
 }
 
 const regionCodeMap: { [key in RegionCode]: string } = {

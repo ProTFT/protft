@@ -20,6 +20,7 @@ export const StyledContainer = styled.div<StyledContainerProps>`
   flex-direction: column;
   overflow-y: scroll;
   gap: 3rem;
+  z-index: 1;
 
   @media ${device.tablet} {
     width: 50%;
@@ -41,7 +42,6 @@ export const StyledTitle = styled.p`
   letter-spacing: 0.25em;
   text-align: left;
   color: ${colors.yellow};
-  align-self: center;
 `;
 
 export const StyledDrawerBody = styled.div`
@@ -50,6 +50,7 @@ export const StyledDrawerBody = styled.div`
   align-items: flex-start;
   gap: 2rem;
   margin-top: 1rem;
+  height: 100%;
 
   @media ${device.tablet} {
     padding-left: 2rem;

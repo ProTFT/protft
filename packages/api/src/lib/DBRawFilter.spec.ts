@@ -3,6 +3,7 @@ import {
   afterToday,
   beforeOrToday,
   beforeToday,
+  includes,
   isEqualName,
 } from "./DBRawFilter";
 
@@ -28,5 +29,14 @@ describe("DB Raw Filters", () => {
 
     it("isEqualName", () =>
       expect(isEqualName(alias)).toBe("slugField = name"));
+  });
+
+  describe("Comparing string arrays", () => {
+    const alias = "field";
+
+    it("includes", () =>
+      expect(includes(["a", "b"])(alias)).toBe(
+        "field && array['a','b']::character varying []",
+      ));
   });
 });

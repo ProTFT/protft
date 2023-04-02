@@ -29,17 +29,6 @@ export const StyledFilterBar = styled(StyledHorizontalContainer)`
   }
 `;
 
-export const StyledFilterText = styled.p`
-  font-family: Roboto;
-  font-size: 10px;
-  font-weight: 700;
-  line-height: 12px;
-  letter-spacing: 0.15em;
-  text-align: center;
-  color: ${colors.anotherGray};
-  text-transform: uppercase;
-`;
-
 export const StyledAppliedFilter = styled(StyledHorizontalContainer)`
   background-color: ${colors.fiftyShadesOfGray};
   border-radius: 4px;
