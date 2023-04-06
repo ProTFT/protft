@@ -1,3 +1,4 @@
+import { forwardRef } from "react";
 import { Link } from "react-router-dom";
 import { TournamentListItem } from "../TournamentListItem/TournamentListItem";
 import { TournamentWithMaybePlayerResult } from "../Tournaments.types";
@@ -10,22 +11,21 @@ interface BaseListProps {
   isLive?: boolean;
 }
 
-export const TournamentBaseList = ({
-  tournaments,
-  color,
-  isLive,
-}: BaseListProps) => {
-  return (
-    <StyledTournamentList>
-      {tournaments?.map((tournament) => (
-        <Link key={tournament.id} to={`/tournaments/${tournament.slug}`}>
-          <TournamentListItem
-            tournament={tournament}
-            color={color}
-            isLive={isLive}
-          />
-        </Link>
-      ))}
-    </StyledTournamentList>
-  );
-};
+export const TournamentBaseList = forwardRef<HTMLDivElement, BaseListProps>(
+  ({ tournaments, color, isLive }, listEndRef) => {
+    return (
+      <StyledTournamentList>
+        {tournaments?.map((tournament) => (
+          <Link key={tournament.id} to={`/tournaments/${tournament.slug}`}>
+            <TournamentListItem
+              tournament={tournament}
+              color={color}
+              isLive={isLive}
+            />
+          </Link>
+        ))}
+        <div ref={listEndRef} />
+      </StyledTournamentList>
+    );
+  }
+);

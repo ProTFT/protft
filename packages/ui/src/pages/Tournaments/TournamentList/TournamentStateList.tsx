@@ -1,5 +1,8 @@
+import { useRef } from "react";
 import { useQuery } from "urql";
 import { colors } from "../../../design/colors";
+import { useObserver } from "../../../hooks/useObserver";
+import { Pagination } from "../../../hooks/usePagination";
 import {
   OngoingTournamentsQueryResult,
   ONGOING_TOURNAMENTS_QUERY,
@@ -7,13 +10,16 @@ import {
   UPCOMING_TOURNAMENTS_QUERY,
   PastTournamentsQueryResult,
   PAST_TOURNAMENTS_QUERY,
+  FilteredTournamentArgs,
 } from "../queries";
-import { TournamentFilters } from "../Tournaments";
+import { TournamentFilters } from "../TournamentsContext";
 import { TournamentBaseList } from "./TournamentBaseList";
 
 interface StateListProps {
   searchQuery: string;
+  pagination: Pagination;
   filters: TournamentFilters;
+  onLoadMore: () => void;
 }
 
 export const OngoingTournamentList = () => {
@@ -36,30 +42,54 @@ export const OngoingTournamentList = () => {
 
 export const UpcomingTournamentList = ({
   searchQuery,
+  pagination,
   filters,
+  onLoadMore,
 }: StateListProps) => {
-  const [{ data }] = useQuery<UpcomingTournamentsQueryResult>({
+  const [{ data }] = useQuery<
+    UpcomingTournamentsQueryResult,
+    FilteredTournamentArgs
+  >({
     query: UPCOMING_TOURNAMENTS_QUERY,
     variables: {
       searchQuery,
+      ...pagination,
       ...filters,
     },
   });
 
-  return <TournamentBaseList tournaments={data?.upcomingTournaments} />;
+  const bottomRef = useRef<HTMLDivElement>(null);
+
+  useObserver(bottomRef, onLoadMore);
+
+  return (
+    <TournamentBaseList
+      ref={bottomRef}
+      tournaments={data?.upcomingTournaments}
+    />
+  );
 };
 
 export const PastTournamentList = ({
   searchQuery,
   filters,
+  pagination,
+  onLoadMore,
 }: StateListProps) => {
   const [{ data }] = useQuery<PastTournamentsQueryResult>({
     query: PAST_TOURNAMENTS_QUERY,
     variables: {
       searchQuery,
       ...filters,
+      ...pagination,
     },
   });
 
-  return <TournamentBaseList tournaments={data?.pastTournaments} />;
+  const bottomRef = useRef<HTMLDivElement>(null);
+
+  useObserver(bottomRef, onLoadMore);
+
+  return (
+    <TournamentBaseList ref={bottomRef} tournaments={data?.pastTournaments} />
+  );
 };

@@ -9,7 +9,7 @@ export const StyledPlayersList = styled.div`
   gap: 1rem;
 
   @media ${device.tablet} {
-    padding: 2rem;
+    padding-top: 2rem;
   }
 `;
 

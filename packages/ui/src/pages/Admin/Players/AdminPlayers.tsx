@@ -3,10 +3,9 @@ import { useMutation } from "urql";
 import { ProTFTButton } from "../../../components/Button/Button";
 import { StyledHorizontalContainer } from "../../../components/Layout/HorizontalContainer/HorizontalContainer.styled";
 import { TextIconHorizontalContainer } from "../../../components/Layout/HorizontalContainer/TextIconHorizontalContainer.styled";
-import { StyledSearchFilterBar } from "../../../components/SearchFilterBar/SearchFilterBar";
+import { SearchField } from "../../../components/SearchFilterBar/SearchField";
 import { client } from "../../../hooks/useAuth";
 import { PlayersListSkeleton } from "../../Players/PlayersList/PlayersList.skeleton";
-import { TournamentFilters } from "../../Tournaments/Tournaments";
 import { BulkPlayerDialog } from "../Components/Dialogs/BulkPlayerDialog/BulkPlayerDialog";
 import {
   MergePlayerDialog,
@@ -86,11 +85,9 @@ export const AdminPlayers = () => {
   return (
     <StyledContainer>
       <StyledHorizontalContainer>
-        <StyledSearchFilterBar
+        <SearchField
           placeholder="Search players"
           setSearchQuery={setSearchQuery}
-          filters={{} as TournamentFilters}
-          setFilters={() => {}}
         />
         <TextIconHorizontalContainer>
           <ProTFTButton onClick={onClickAddBulkPlayer}>Bulk Add</ProTFTButton>

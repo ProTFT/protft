@@ -1,13 +1,7 @@
-import React, {
-  ChangeEvent,
-  Suspense,
-  useCallback,
-  useRef,
-  useState,
-} from "react";
-import { TournamentFilters } from "../../pages/Tournaments/Tournaments";
-import { SearchInput } from "../SearchInput/SearchInput";
+import React, { Suspense, useCallback, useState } from "react";
+import { useTournamentsContext } from "../../pages/Tournaments/TournamentsContext";
 import { FilterButton } from "./FilterButton";
+import { SearchField } from "./SearchField";
 import {
   StyledAppliedFilter,
   StyledAppliedFilterContainer,
@@ -24,54 +18,57 @@ const FilterDrawer = React.lazy(() =>
 interface Props {
   placeholder: string;
   setSearchQuery?: (query: string) => void;
-  filters: TournamentFilters;
-  setFilters: React.Dispatch<React.SetStateAction<TournamentFilters>>;
 }
 
-export const StyledSearchFilterBar = ({
+export const TournamentSearchFilterBar = ({
   placeholder,
   setSearchQuery,
-  filters,
-  setFilters,
 }: Props) => {
   const [isDrawerOpen, setIsDrawerOpen] = useState(false);
-  let timeout = useRef<ReturnType<typeof setTimeout>>();
+  const { filters, setFilters, resetPagination } = useTournamentsContext();
 
-  const handleSetFilter = useCallback(
+  const applySetFilter = useCallback(
     (selectedSets: number[]) => {
       setFilters((current) => ({
         ...current,
         setId: selectedSets,
       }));
+      resetPagination();
     },
-    [setFilters]
+    [resetPagination, setFilters]
   );
 
-  const handleRegionFilter = useCallback(
+  const applyRegionFilter = useCallback(
     (selectedRegions: string[]) => {
       setFilters((current) => ({
         ...current,
         region: selectedRegions,
       }));
+      resetPagination();
     },
-    [setFilters]
+    [resetPagination, setFilters]
   );
 
   const toggleDrawer = useCallback(() => {
     setIsDrawerOpen((current) => !current);
   }, []);
 
-  const onChangeSearchInput = useCallback(
-    (event: ChangeEvent<HTMLInputElement>) => {
-      if (timeout.current) {
-        clearTimeout(timeout.current);
-      }
-      timeout.current = setTimeout(() => {
-        setSearchQuery!(event.target.value);
-      }, 1000);
+  const onSubmitFilter = useCallback(
+    (selectedRegions: string[], selectedSets: number[]) => {
+      resetPagination();
+      applySetFilter(selectedSets);
+      applyRegionFilter(selectedRegions);
+      toggleDrawer();
     },
-    [setSearchQuery]
+    [applyRegionFilter, applySetFilter, resetPagination, toggleDrawer]
   );
+
+  const onClearFilters = useCallback(() => {
+    resetPagination();
+    applySetFilter([]);
+    applyRegionFilter([]);
+    toggleDrawer();
+  }, [applyRegionFilter, applySetFilter, resetPagination, toggleDrawer]);
 
   return (
     <StyledContainer>
@@ -82,12 +79,12 @@ export const StyledSearchFilterBar = ({
             toggleDrawer={toggleDrawer}
             selectedRegions={filters.region}
             selectedSets={filters.setId}
-            setSelectedRegions={handleRegionFilter}
-            setSelectedSets={handleSetFilter}
+            onSubmitFilter={onSubmitFilter}
+            onClearFilters={onClearFilters}
           />
         </Suspense>
       )}
-      <SearchInput placeholder={placeholder} onChange={onChangeSearchInput} />
+      <SearchField placeholder={placeholder} setSearchQuery={setSearchQuery} />
       <StyledFilterBar>
         <FilterButton onClick={toggleDrawer} />
         <StyledAppliedFilterContainer>

@@ -73,6 +73,10 @@ class FakeQueryBuilder {
     return this;
   }
 
+  public addOrderBy() {
+    return this;
+  }
+
   public take(quantity: number) {
     this.takeSpy = quantity;
     return this;

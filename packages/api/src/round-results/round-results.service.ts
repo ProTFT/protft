@@ -344,9 +344,12 @@ export class RoundResultsService {
       .where('stats."totalGames" > :minimumGames', { minimumGames })
       .orderBy(
         sort
-          ? { [`stats.\"${sort.column}\"`]: sort.asc ? "ASC" : "DESC" }
+          ? {
+              [`stats.\"${sort.column}\"`]: sort.asc ? "ASC" : "DESC",
+            }
           : { [`stats.\"averagePosition\"`]: "ASC" },
       )
+      .addOrderBy("stats.id", "ASC")
       .take(take)
       .skip(skip)
       .getRawMany<PlayersStatsRaw>();

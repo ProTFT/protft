@@ -13,8 +13,8 @@ interface Props {
   toggleDrawer: () => void;
   selectedSets: number[];
   selectedRegions: string[];
-  setSelectedSets: (value: number[]) => void;
-  setSelectedRegions: (value: string[]) => void;
+  onSubmitFilter: (selectedRegions: string[], selectedSets: number[]) => void;
+  onClearFilters: () => void;
 }
 
 export const FilterDrawer = ({
@@ -22,8 +22,8 @@ export const FilterDrawer = ({
   toggleDrawer,
   selectedRegions,
   selectedSets,
-  setSelectedSets,
-  setSelectedRegions,
+  onSubmitFilter,
+  onClearFilters,
 }: Props) => {
   const [{ data }] = useQuery<SetsQueryResponse>({
     query: SETS_QUERY,
@@ -51,23 +51,13 @@ export const FilterDrawer = ({
     );
   }, [data?.sets]);
 
-  const onSubmitFilters = useCallback(() => {
-    setSelectedSets(localSelectedSets);
-    setSelectedRegions(localSelectedRegions);
-    toggleDrawer();
-  }, [
-    localSelectedRegions,
-    localSelectedSets,
-    setSelectedRegions,
-    setSelectedSets,
-    toggleDrawer,
-  ]);
+  const handleSubmitFilters = useCallback(() => {
+    onSubmitFilter(localSelectedRegions, localSelectedSets);
+  }, [localSelectedRegions, localSelectedSets, onSubmitFilter]);
 
-  const onClearFilters = useCallback(() => {
-    setSelectedRegions([]);
-    setSelectedSets([]);
-    toggleDrawer();
-  }, [setSelectedRegions, setSelectedSets, toggleDrawer]);
+  const handleClearFilters = useCallback(() => {
+    onClearFilters();
+  }, [onClearFilters]);
 
   return (
     <Drawer isOpen={isOpen} onClose={toggleDrawer}>
@@ -92,11 +82,11 @@ export const FilterDrawer = ({
           textColor="white"
           variant={ButtonVariant.Transparent}
           width="100%"
-          onClick={onClearFilters}
+          onClick={handleClearFilters}
         >
           Clear
         </ProTFTButton>
-        <ProTFTButton width="100%" onClick={onSubmitFilters}>
+        <ProTFTButton width="100%" onClick={handleSubmitFilters}>
           Filter
         </ProTFTButton>
       </StyledDrawerFooter>
