@@ -58,6 +58,21 @@ export class LobbiesService {
     });
   }
 
+  async createN(stageId: number, lobbyGroupId: number, quantity: number) {
+    const { sequence: lobbyGroupSequence } = await this.findOneLobbyGroup(
+      lobbyGroupId,
+    );
+    const lobbies: CreateLobbyArgs[] = new Array(quantity)
+      .fill(1)
+      .map((_, index) => ({
+        sequence: index + 1,
+        stageId,
+        lobbyGroupId,
+        name: createLobbyName(lobbyGroupSequence, index + 1),
+      }));
+    return this.createMany(lobbies);
+  }
+
   createMany(lobbies: CreateLobbyArgs[]) {
     return this.lobbiesRepository.save(lobbies);
   }
@@ -97,6 +112,17 @@ export class LobbiesService {
       sequence,
       stageId,
     });
+  }
+
+  createNLobbyGroup(stageId: number, quantity: number, roundsPlayed: number) {
+    const lobbyGroups: CreateLobbyGroupArgs[] = new Array(quantity)
+      .fill(1)
+      .map((_, index) => ({
+        roundsPlayed,
+        sequence: index + 1,
+        stageId,
+      }));
+    return this.createManyLobbyGroup(lobbyGroups);
   }
 
   createManyLobbyGroup(

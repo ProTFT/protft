@@ -1,4 +1,4 @@
-import { useCallback, useRef } from "react";
+import { useCallback } from "react";
 import { useNavigate, useParams } from "react-router-dom";
 import { useMutation, useQuery } from "urql";
 import { ProTFTButton } from "../../../components/Button/Button";
@@ -6,7 +6,7 @@ import { TournamentContent } from "../../../components/TournamentContent/Tournam
 import { Tournament } from "../../../graphql/schema";
 import { StyledHeaderContainer } from "../../Tournament/Tournament.styled";
 import { useToast } from "../Components/Toast/Toast";
-import { TournamentDialog } from "../Components/Dialogs/TournamentDialog/TournamentDialog";
+import { useTournamentDialog } from "../Components/Dialogs/TournamentDialog/TournamentDialog";
 import { ADMIN_TOURNAMENTS_PATH } from "../Tournaments/AdminTournaments";
 import { StyledActionsContainer, StyledBar } from "./AdminTournament.styled";
 import { AdminTournamentContent } from "./Content/Content";
@@ -28,8 +28,6 @@ import {
 
 export const AdminTournament = () => {
   const { id: tournamentId } = useParams();
-  const dialogRef = useRef<HTMLDialogElement>(null);
-  const formRef = useRef<HTMLFormElement>(null);
 
   const navigate = useNavigate();
   const { show } = useToast();
@@ -67,26 +65,13 @@ export const AdminTournament = () => {
   }, [deleteTournament, tournamentId, navigate]);
 
   const onSubmitUpdateTournament = useCallback(
-    async (tournament: Omit<Tournament, "id" | "set">) => {
-      const result = await updateTournament({
+    (tournament: Omit<Tournament, "id" | "set">) =>
+      updateTournament({
         ...tournament,
         id: Number(tournamentId),
-      });
-
-      if (result.error) {
-        return alert(result.error);
-      }
-      show();
-      formRef.current?.reset();
-      dialogRef.current?.close();
-      refetch();
-    },
-    [refetch, show, tournamentId, updateTournament]
+      }),
+    [tournamentId, updateTournament]
   );
-
-  const onUpdateTournament = useCallback(() => {
-    dialogRef.current?.showModal();
-  }, []);
 
   const onToggleVisibility = useCallback(async () => {
     const result = await updateTournament({
@@ -133,14 +118,19 @@ export const AdminTournament = () => {
     navigate(ADMIN_TOURNAMENTS_PATH);
   }, [navigate]);
 
+  const { dialog: tournamentDialog, openDialog } = useTournamentDialog({
+    onSubmit: onSubmitUpdateTournament,
+    onSuccess: refetch,
+    tournament: data?.tournament,
+  });
+
+  const onUpdateTournament = useCallback(() => {
+    openDialog();
+  }, [openDialog]);
+
   return (
     <div>
-      <TournamentDialog
-        dialogRef={dialogRef}
-        formRef={formRef}
-        onSubmit={onSubmitUpdateTournament}
-        tournament={data?.tournament}
-      />
+      {tournamentDialog}
       <StyledBar>
         <StyledActionsContainer>
           <ProTFTButton onClick={onBackToList}>Back to list</ProTFTButton>

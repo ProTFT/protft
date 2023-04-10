@@ -15,7 +15,6 @@ export interface Props<T, K> {
   dialogRef: React.RefObject<HTMLDialogElement>;
   formRef: React.RefObject<HTMLFormElement>;
   onSubmit: (formEntity: K) => void;
-  //   onConfirm: React.FormEventHandler<HTMLFormElement>;
   entity?: T;
 }
 
@@ -66,7 +65,6 @@ export const DialogForm = <T extends object, K extends object>({
   formRef,
   onSubmit,
   entity,
-  //   onConfirm,
   children,
 }: React.PropsWithChildren<Props<T, K>>) => {
   const [localEntity, setLocalEntity] = useState<T>((entity as T) || {});
@@ -129,7 +127,9 @@ export const DialogForm = <T extends object, K extends object>({
             buttonColor="transparent"
             textColor="white"
             onClick={() => {
-              setLocalEntity({} as T);
+              if (Object.keys(entity || {}).length === 0) {
+                setLocalEntity({} as T);
+              }
               formRef.current?.reset();
               dialogRef.current?.close();
             }}

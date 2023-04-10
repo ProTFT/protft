@@ -22,6 +22,8 @@ import { LobbyPlayerInfo } from "../lobby-player-infos/lobby-player-info.entity"
 import { CreatePlayerLobbyGroupArgs } from "./dto/create-player-lobby-group.args";
 import { LobbyGroup } from "./lobby-group.entity";
 import { CreateLobbyGroupArgs } from "./dto/create-lobby-group.args";
+import { CreateNLobbyArgs } from "./dto/create-n-lobby.args";
+import { CreateNLobbyGroupArgs } from "./dto/create-n-lobby-group.args";
 
 @Resolver(() => Lobby)
 export class LobbiesResolver {
@@ -54,6 +56,14 @@ export class LobbiesResolver {
   }
 
   @UseGuards(GqlJwtAuthGuard)
+  @Mutation(() => [Lobby])
+  async createNLobby(
+    @Args() { stageId, lobbyGroupId, quantity }: CreateNLobbyArgs,
+  ) {
+    return this.lobbiesService.createN(stageId, lobbyGroupId, quantity);
+  }
+
+  @UseGuards(GqlJwtAuthGuard)
   @Mutation(() => Lobby)
   async updateLobby(@Args() payload: UpdateLobbyArgs) {
     return this.lobbiesService.updateOne(payload);
@@ -79,6 +89,18 @@ export class LobbiesResolver {
   ) {
     const payload = { stageId, sequence, roundsPlayed };
     return this.lobbiesService.createOneLobbyGroup(payload);
+  }
+
+  @UseGuards(GqlJwtAuthGuard)
+  @Mutation(() => [LobbyGroup])
+  async createNLobbyGroup(
+    @Args() { stageId, quantity, roundsPlayed }: CreateNLobbyGroupArgs,
+  ) {
+    return this.lobbiesService.createNLobbyGroup(
+      stageId,
+      quantity,
+      roundsPlayed,
+    );
   }
 
   @UseGuards(GqlJwtAuthGuard)

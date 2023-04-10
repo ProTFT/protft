@@ -1,50 +1,99 @@
-import React from "react";
 import { Tournament } from "../../../../../graphql/schema";
-import { DialogForm } from "../../DialogForm/DialogForm";
-import { FormField } from "../../DialogForm/FormField";
+import { FormFieldProps } from "../../DialogForm/FormField";
+import { BaseDialogProps } from "../Dialogs.types";
+import { useEntityDialog } from "../useEntityDialog";
 
-export interface Props {
-  dialogRef: React.RefObject<HTMLDialogElement>;
-  formRef: React.RefObject<HTMLFormElement>;
-  onSubmit: (tournament: Omit<Tournament, "id" | "set">) => void;
+const SET_OPTIONS = [
+  {
+    value: "1",
+    name: "1 - Beta",
+  },
+  {
+    value: "2",
+    name: "2 - Rise of the Elements",
+  },
+  {
+    value: "3",
+    name: "3 - Galaxies",
+  },
+  {
+    value: "4",
+    name: "4 - Fates",
+  },
+  {
+    value: "5",
+    name: "5 - Reckoning",
+  },
+  {
+    value: "6",
+    name: "6 - Gizmos and Gadgets",
+  },
+  {
+    value: "7",
+    name: "7 - Dragonlands",
+  },
+  {
+    value: "8",
+    name: "8 - Monsters Attack!",
+  },
+];
+
+const TOURNAMENT_FORM_FIELDS: FormFieldProps[] = [
+  {
+    label: "Name",
+    name: "name",
+  },
+  {
+    label: "Region",
+    name: "region",
+    type: "text",
+    specialType: "array",
+  },
+  {
+    label: "# of Participants",
+    name: "participantsNumber",
+    type: "number",
+  },
+  {
+    label: "Set",
+    name: "setId",
+    type: "select",
+    specialType: "number",
+    options: SET_OPTIONS,
+  },
+  {
+    label: "Prize Pool",
+    name: "prizePool",
+    type: "number",
+  },
+  {
+    label: "Currency",
+    name: "currency",
+  },
+  {
+    label: "Start Date",
+    name: "startDate",
+    type: "date",
+  },
+  {
+    label: "End Date",
+    name: "endDate",
+    type: "date",
+  },
+];
+
+export interface Props extends BaseDialogProps<any> {
   tournament?: Tournament;
 }
 
-export const TournamentDialog = ({
-  dialogRef,
-  formRef,
-  onSubmit,
+export const useTournamentDialog = ({
   tournament,
-}: Props) => {
-  return (
-    <DialogForm
-      dialogRef={dialogRef}
-      formRef={formRef}
-      entity={tournament}
-      onSubmit={onSubmit}
-    >
-      <FormField label="Name" name="name" />
-      <FormField label="Region" type="text" name="region" specialType="array" />
-      <FormField label="Host" name="host" />
-      <FormField
-        label="# of Participants"
-        name="participantsNumber"
-        type="number"
-      />
-      <FormField label="Set" type="select" name="setId" specialType="number">
-        <option value="1">1 - Beta</option>
-        <option value="2">2 - Rise of the Elements</option>
-        <option value="3">3 - Galaxies</option>
-        <option value="4">4 - Fates</option>
-        <option value="5">5 - Reckoning</option>
-        <option value="6">6 - Gizmos and Gadgets</option>
-        <option value="7">7 - Dragonlands</option>
-        <option value="8">8 - Monsters Attack!</option>
-      </FormField>
-      <FormField label="Prize Pool" type="number" name="prizePool" />
-      <FormField label="Currency" name="currency" />
-      <FormField label="Start Date" type="date" name="startDate" />
-      <FormField label="End Date" type="date" name="endDate" />
-    </DialogForm>
-  );
-};
+  onSubmit,
+  onSuccess,
+}: Props) =>
+  useEntityDialog({
+    entity: tournament,
+    formFields: TOURNAMENT_FORM_FIELDS,
+    onSubmit,
+    onSuccess,
+  });

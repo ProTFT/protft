@@ -1,13 +1,7 @@
 import { useMemo } from "react";
-import {
-  StyledField,
-  StyledCheckboxGroup,
-  StyledInput,
-  StyledOptionContainer,
-  StyledSelect,
-} from "./FormField.styled";
+import { StyledField, StyledInput, StyledSelect } from "./FormField.styled";
 
-interface Props {
+export interface FormFieldProps {
   label: string;
   name: string;
   type?: React.HTMLInputTypeAttribute;
@@ -27,7 +21,8 @@ export const SelectFormContent = ({
   value,
   children,
   specialType,
-}: React.PropsWithChildren<Props>) => {
+  options,
+}: React.PropsWithChildren<FormFieldProps>) => {
   return (
     <StyledSelect
       name={name}
@@ -35,7 +30,13 @@ export const SelectFormContent = ({
       value={value}
       data-sptype={specialType}
     >
-      {children}
+      {options
+        ? options.map(({ name, value }) => (
+            <option key={value} value={value}>
+              {name}
+            </option>
+          ))
+        : children}
     </StyledSelect>
   );
 };
@@ -46,7 +47,7 @@ export const InputFormContent = ({
   value,
   onChange,
   specialType,
-}: React.PropsWithChildren<Props>) => {
+}: React.PropsWithChildren<FormFieldProps>) => {
   return (
     <StyledInput
       id={name}
@@ -59,35 +60,10 @@ export const InputFormContent = ({
   );
 };
 
-export const MultiSelectFormContent = ({
-  name,
-  children,
-  options,
-}: React.PropsWithChildren<Props>) => {
-  return (
-    <StyledCheckboxGroup>
-      {options?.map((option) => (
-        <StyledOptionContainer key={option.value}>
-          <input
-            id={option.value}
-            type="checkbox"
-            name={name}
-            value={option.value}
-          />
-          <label htmlFor={option.value}>{option.name}</label>
-        </StyledOptionContainer>
-      ))}
-    </StyledCheckboxGroup>
-  );
-};
-
-export const FormField = (props: React.PropsWithChildren<Props>) => {
+export const FormField = (props: React.PropsWithChildren<FormFieldProps>) => {
   const contentElement = useMemo(() => {
     if (props.type === "select") {
       return <SelectFormContent {...props} />;
-    }
-    if (props.type === "multiselect") {
-      return <MultiSelectFormContent {...props} />;
     }
     if (props.type === "file") {
       return <input {...props} />;

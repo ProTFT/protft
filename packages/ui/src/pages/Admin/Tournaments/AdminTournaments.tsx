@@ -1,4 +1,4 @@
-import { useCallback, useRef } from "react";
+import { useCallback } from "react";
 import { Link } from "react-router-dom";
 import { useMutation, useQuery } from "urql";
 import { ProTFTButton } from "../../../components/Button/Button";
@@ -6,7 +6,7 @@ import { Tournament } from "../../../graphql/schema";
 import { TournamentListItem } from "../../Tournaments/TournamentListItem/TournamentListItem";
 import { StyledAdminBar } from "../Components/AdminBar/AdminBar.styled";
 import { useToast } from "../Components/Toast/Toast";
-import { TournamentDialog } from "../Components/Dialogs/TournamentDialog/TournamentDialog";
+import { useTournamentDialog } from "../Components/Dialogs/TournamentDialog/TournamentDialog";
 import {
   StyledContainer,
   StyledTournamentList,
@@ -23,8 +23,6 @@ import {
 export const ADMIN_TOURNAMENTS_PATH = "/admin/tournaments";
 
 export const AdminTournaments = () => {
-  const dialogRef = useRef<HTMLDialogElement>(null);
-  const formRef = useRef<HTMLFormElement>(null);
   const { show } = useToast();
 
   const [{ data }, refetch] = useQuery<TournamentsQueryResult>({
@@ -38,16 +36,13 @@ export const AdminTournaments = () => {
 
   const [, createPlayerSlugs] = useMutation(CREATE_PLAYER_SLUGS_MUTATION);
 
-  const onSubmit = async (tournament: Omit<Tournament, "id" | "set">) => {
-    const result = await createTournament(tournament);
-    if (result.error) {
-      return alert(result.error);
-    }
-    show();
-    formRef.current?.reset();
-    dialogRef.current?.close();
-    refetch();
-  };
+  const onSubmit = useCallback(
+    (tournament: Omit<Tournament, "id" | "set">) =>
+      createTournament({
+        ...tournament,
+      }),
+    [createTournament]
+  );
 
   const onCreatePlayerSlugs = useCallback(async () => {
     const result = await createPlayerSlugs({});
@@ -57,17 +52,18 @@ export const AdminTournaments = () => {
     show();
   }, [createPlayerSlugs, show]);
 
+  const { dialog, openDialog } = useTournamentDialog({
+    onSubmit,
+    onSuccess: refetch,
+  });
+
   const onAddTournament = useCallback(() => {
-    dialogRef.current?.showModal();
-  }, []);
+    openDialog();
+  }, [openDialog]);
 
   return (
     <StyledContainer>
-      <TournamentDialog
-        dialogRef={dialogRef}
-        formRef={formRef}
-        onSubmit={onSubmit}
-      />
+      {dialog}
       <StyledAdminBar>
         <ProTFTButton onClick={onCreatePlayerSlugs}>
           Create Player Slugs

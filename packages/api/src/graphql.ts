@@ -270,10 +270,12 @@ export interface IMutation {
     createStagePlayersByName(stageId: number, playerNames: string): Stage | Promise<Stage>;
     updateStagePlayer(stageId: number, playerId: number, extraPoints?: Nullable<number>, tiebreakerRanking?: Nullable<number>): StagePlayerInfo | Promise<StagePlayerInfo>;
     createLobby(stageId: number, sequence: number, lobbyGroupId: number, name?: Nullable<string>): Lobby | Promise<Lobby>;
+    createNLobby(stageId: number, lobbyGroupId: number, quantity: number): Lobby[] | Promise<Lobby[]>;
     updateLobby(id: number, stageId: number, sequence: number, lobbyGroupId: number, name?: Nullable<string>): Lobby | Promise<Lobby>;
     deleteLobby(id: number): DeleteResponse | Promise<DeleteResponse>;
     createRound(stageId: number, sequence: number): Round | Promise<Round>;
     createLobbyGroup(stageId: number, sequence: number, roundsPlayed: number): LobbyGroup | Promise<LobbyGroup>;
+    createNLobbyGroup(stageId: number, quantity: number, roundsPlayed: number): LobbyGroup[] | Promise<LobbyGroup[]>;
     createLobbyPlayers(lobbies: CreatePlayerLobbyArgs[]): LobbyPlayerInfo[] | Promise<LobbyPlayerInfo[]>;
     createPlayer(name: string, country: string, region: string): Player | Promise<Player>;
     updatePlayer(id: number, name?: Nullable<string>, country?: Nullable<string>, region?: Nullable<string>, slug?: Nullable<string>): Player | Promise<Player>;
