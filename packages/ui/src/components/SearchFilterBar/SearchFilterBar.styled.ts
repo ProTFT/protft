@@ -23,7 +23,6 @@ export const StyledFilterBar = styled(StyledHorizontalContainer)`
   gap: 0.5rem;
 
   @media ${device.tablet} {
-    flex-direction: row-reverse;
     justify-content: space-between;
     width: 50%;
   }

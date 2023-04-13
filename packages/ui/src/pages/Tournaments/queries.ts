@@ -1,16 +1,32 @@
 import { gql } from "urql";
 import { Tournament } from "../../graphql/schema";
 
+export interface FilteredTournamentArgs {
+  searchQuery?: string;
+  setId: number[];
+  region: string[];
+  take?: number;
+  skip?: number;
+}
+
 export interface UpcomingTournamentsQueryResult {
   upcomingTournaments: Tournament[];
 }
 
 export const UPCOMING_TOURNAMENTS_QUERY = gql`
-  query tournaments($searchQuery: String, $setId: [Int!], $region: [String!]) {
+  query tournaments(
+    $searchQuery: String
+    $setId: [Int!]
+    $region: [String!]
+    $take: Int
+    $skip: Int
+  ) {
     upcomingTournaments(
       searchQuery: $searchQuery
       setId: $setId
       region: $region
+      take: $take
+      skip: $skip
     ) {
       id
       name
@@ -58,8 +74,20 @@ export interface PastTournamentsQueryResult {
 }
 
 export const PAST_TOURNAMENTS_QUERY = gql`
-  query tournaments($searchQuery: String, $setId: [Int!], $region: [String!]) {
-    pastTournaments(searchQuery: $searchQuery, setId: $setId, region: $region) {
+  query tournaments(
+    $searchQuery: String
+    $setId: [Int!]
+    $region: [String!]
+    $take: Int
+    $skip: Int
+  ) {
+    pastTournaments(
+      searchQuery: $searchQuery
+      setId: $setId
+      region: $region
+      take: $take
+      skip: $skip
+    ) {
       id
       name
       participantsNumber

@@ -1,20 +1,13 @@
-import {
-  Suspense,
-  useCallback,
-  useDeferredValue,
-  useMemo,
-  useState,
-} from "react";
-import { ProTFTButton } from "../../components/Button/Button";
+import { Suspense, useCallback, useState } from "react";
 import { colors } from "../../design/colors";
 import { ArrowRightSimpleIcon } from "../../design/icons/ArrowRightSimple";
 import { useDocumentTitle } from "../../hooks/useDocumentTitle";
+import { usePagination } from "../../hooks/usePagination";
 import { Filters, SortColumn, SortDirection, SortOption } from "./queries";
 import { RegionSelect } from "./RegionSelect/RegionSelect";
 import { SetSelect } from "./SetSelect/SetSelect";
 import { StatRows } from "./StatRows/StatRows";
 import {
-  StyledButtonContainer,
   StyledContainer,
   StyledFilterContainer,
   StyledFilterLabel,
@@ -47,13 +40,6 @@ const ITEMS_PER_PAGE = 20;
 
 export const Stats = () => {
   const [page, setPage] = useState(0);
-  const paginationArgs = useMemo(
-    () => ({
-      skip: page * ITEMS_PER_PAGE,
-      take: ITEMS_PER_PAGE,
-    }),
-    [page]
-  );
 
   const [regionFilter, setRegionFilter] = useState(
     defaultFilter[Filters.REGION]
@@ -103,7 +89,7 @@ export const Stats = () => {
     setPage((curr) => curr + 1);
   }, []);
 
-  const deferredPagination = useDeferredValue(paginationArgs);
+  const { paginationArgs } = usePagination(page, ITEMS_PER_PAGE);
 
   useDocumentTitle("Stats");
 
@@ -213,18 +199,16 @@ export const Stats = () => {
             <Suspense fallback={null}>
               <StatRows
                 tournamentFilter={tournamentFilter}
-                paginationArgs={deferredPagination}
+                paginationArgs={paginationArgs}
                 regionFilter={regionFilter}
                 setFilter={setFilter}
                 minimumGamesFilter={minimumGamesFilter}
                 sort={sorting}
+                onLoadMore={onLoadMore}
               />
             </Suspense>
           </tbody>
         </StyledPlayerTable>
-        <StyledButtonContainer>
-          <ProTFTButton onClick={onLoadMore}>Load more</ProTFTButton>
-        </StyledButtonContainer>
       </StyledPlayerTableContainer>
     </StyledContainer>
   );

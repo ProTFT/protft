@@ -39,6 +39,15 @@ const graphqlClient = createClient({
           playerStats: simplePagination({
             limitArgument: "take",
           }),
+          upcomingTournaments: simplePagination({
+            limitArgument: "take",
+          }),
+          pastTournaments: simplePagination({
+            limitArgument: "take",
+          }),
+          players: simplePagination({
+            limitArgument: "take",
+          }),
         },
       },
     }),

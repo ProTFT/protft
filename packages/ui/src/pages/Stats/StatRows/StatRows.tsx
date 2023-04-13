@@ -1,7 +1,9 @@
+import { useRef } from "react";
 import { Link } from "react-router-dom";
 import { useQuery } from "urql";
 import { TextIconHorizontalContainer } from "../../../components/Layout/HorizontalContainer/TextIconHorizontalContainer.styled";
 import { CountryIndicator } from "../../../components/RegionIndicator/RegionIndicator";
+import { useObserver } from "../../../hooks/useObserver";
 import {
   SortOption,
   PlayersStatsQueryResult,
@@ -17,6 +19,7 @@ interface Props {
   minimumGamesFilter: number;
   paginationArgs: object;
   sort: SortOption;
+  onLoadMore: () => void;
 }
 
 export const StatRows = ({
@@ -26,6 +29,7 @@ export const StatRows = ({
   paginationArgs,
   minimumGamesFilter,
   sort,
+  onLoadMore,
 }: Props) => {
   const [{ data: stats }] = useQuery<
     PlayersStatsQueryResult,
@@ -41,6 +45,10 @@ export const StatRows = ({
       ...paginationArgs,
     },
   });
+
+  const bottomRef = useRef<HTMLDivElement>(null);
+
+  useObserver(bottomRef, onLoadMore);
 
   return (
     <>
@@ -68,6 +76,7 @@ export const StatRows = ({
           </tr>
         )
       )}
+      <div ref={bottomRef} />
     </>
   );
 };
