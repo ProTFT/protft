@@ -27,16 +27,30 @@ import {
   CreateLobbyGroupVariables,
   CreateLobbyResult,
   CreateLobbyVariables,
+  CreateNLobbyGroupResult,
+  CreateNLobbyGroupVariables,
+  CreateNLobbyResult,
+  CreateNLobbyVariables,
   CreatePlayerLobbyGroupResult,
   CreatePlayerLobbyGroupVariables,
   CREATE_LOBBY_GROUP_MUTATION,
   CREATE_LOBBY_MUTATION,
   CREATE_LOBBY_PLAYERS_MUTATION,
+  CREATE_N_LOBBY_GROUP_MUTATION,
+  CREATE_N_LOBBY_MUTATION,
 } from "./queries";
 import { useToast } from "../../../../Components/Toast/Toast";
 import { StyledTitle } from "../../../../Components/Title/Title.styled";
 import { LobbyGroupDialog } from "../../../../Components/Dialogs/LobbyGroupDialog/LobbyGroupDialog";
 import { LobbyDialog } from "../../../../Components/Dialogs/LobbyDialog/LobbyDialog";
+import {
+  NLobbyGroupDialogFields,
+  useNLobbyGroupDialog,
+} from "../../../../Components/Dialogs/NLobbyGroupDialog/NLobbyGroupDialog";
+import {
+  NLobbyDialogFields,
+  useNLobbyDialog,
+} from "../../../../Components/Dialogs/NLobbyDialog/NLobbyDialog";
 
 interface Props {
   hasLobbieGroups: boolean;
@@ -70,7 +84,7 @@ export const LobbyGroup = ({
   const addLobbyDialogRef = useRef<HTMLDialogElement>(null);
   const addLobbyFormRef = useRef<HTMLFormElement>(null);
 
-  const [{ data: lobbyPlayersData }, refetch] = useQuery<
+  const [{ data: lobbyPlayersData }, refetchLobbies] = useQuery<
     LobbyPlayersQueryResult,
     LobbyPlayersQueryVariables
   >({
@@ -88,6 +102,16 @@ export const LobbyGroup = ({
     CreateLobbyGroupResult,
     CreateLobbyGroupVariables
   >(CREATE_LOBBY_GROUP_MUTATION);
+
+  const [, createNLobbyGroup] = useMutation<
+    CreateNLobbyGroupResult,
+    CreateNLobbyGroupVariables
+  >(CREATE_N_LOBBY_GROUP_MUTATION);
+
+  const [, createNLobby] = useMutation<
+    CreateNLobbyResult,
+    CreateNLobbyVariables
+  >(CREATE_N_LOBBY_MUTATION);
 
   const [, createLobby] = useMutation<CreateLobbyResult, CreateLobbyVariables>(
     CREATE_LOBBY_MUTATION
@@ -122,9 +146,45 @@ export const LobbyGroup = ({
     onChangeSelectedPlayers(playerIds);
   }, [allLobbiesWithPlayers, onChangeSelectedPlayers]);
 
-  const onCreateLobbyGroup = useCallback(async () => {
+  const onCreateLobbyGroup = useCallback(() => {
     addLobbyGroupDialogRef.current?.showModal();
   }, []);
+
+  const onSubmitNLobbyGroup = useCallback(
+    ({ quantity, roundsPlayed }: NLobbyGroupDialogFields) =>
+      createNLobbyGroup({ quantity, stageId: Number(stageId), roundsPlayed }),
+    [createNLobbyGroup, stageId]
+  );
+
+  const { dialog: NLobbyGroupDialog, openDialog: openNLobbyGroupDialog } =
+    useNLobbyGroupDialog({
+      onSubmit: onSubmitNLobbyGroup,
+      onSuccess: refetchLobbyGroups,
+    });
+
+  const onCreateNLobbyGroup = useCallback(() => {
+    openNLobbyGroupDialog();
+  }, [openNLobbyGroupDialog]);
+
+  const onSubmitNLobby = useCallback(
+    ({ quantity }: NLobbyDialogFields) =>
+      createNLobby({
+        quantity,
+        stageId: Number(stageId),
+        lobbyGroupId: selectedLobbyGroup!,
+      }),
+    [createNLobby, selectedLobbyGroup, stageId]
+  );
+
+  const { dialog: NLobbyDialog, openDialog: openNLobbyDialog } =
+    useNLobbyDialog({
+      onSubmit: onSubmitNLobby,
+      onSuccess: refetchLobbies,
+    });
+
+  const onCreateNLobby = useCallback(() => {
+    openNLobbyDialog();
+  }, [openNLobbyDialog]);
 
   const onSubmitCreateLobbyGroup = useCallback(
     async ({
@@ -162,11 +222,11 @@ export const LobbyGroup = ({
         return alert(result.error);
       }
       show();
-      refetch();
+      refetchLobbies();
       addLobbyFormRef.current?.reset();
       addLobbyDialogRef.current?.close();
     },
-    [createLobby, selectedLobbyGroup, show, stageId, refetch]
+    [createLobby, selectedLobbyGroup, show, stageId, refetchLobbies]
   );
 
   const onSave = useCallback(async () => {
@@ -226,11 +286,11 @@ export const LobbyGroup = ({
     []
   );
 
-  const onGoToNextLobbyGroup = useCallback(() => {
+  const goToNextLobbyGroup = useCallback(() => {
     onChangeLobbyGroup(1);
   }, [onChangeLobbyGroup]);
 
-  const onGoToPreviousLobbyGroup = useCallback(() => {
+  const goToPreviousLobbyGroup = useCallback(() => {
     onChangeLobbyGroup(-1);
   }, [onChangeLobbyGroup]);
 
@@ -265,14 +325,20 @@ export const LobbyGroup = ({
         onSubmit={onSubmitCreateLobby}
         lobby={{} as Lobby}
       />
+      {NLobbyGroupDialog}
+      {NLobbyDialog}
       <StyledBar>
         <StyledTitleContainer>
-          <BigArrowLeft onClick={onGoToPreviousLobbyGroup} />
+          <BigArrowLeft onClick={goToPreviousLobbyGroup} />
           <StyledTitle>{`Lobby Group ${lobbyGroupName}`}</StyledTitle>
-          <BigArrowRight onClick={onGoToNextLobbyGroup} />
+          <BigArrowRight onClick={goToNextLobbyGroup} />
         </StyledTitleContainer>
         <StyledButtonContainer>
           <ProTFTButton onClick={onSave}>Save</ProTFTButton>
+          <ProTFTButton onClick={onCreateNLobbyGroup}>
+            Create N Lobby Group
+          </ProTFTButton>
+          <ProTFTButton onClick={onCreateNLobby}>Create N Lobby</ProTFTButton>
           <ProTFTButton onClick={onCreateLobbyGroup}>
             Create Lobby Group
           </ProTFTButton>

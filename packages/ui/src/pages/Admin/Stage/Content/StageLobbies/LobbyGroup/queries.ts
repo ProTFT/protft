@@ -52,6 +52,54 @@ export const CREATE_LOBBY_GROUP_MUTATION = gql`
   }
 `;
 
+export interface CreateNLobbyGroupResult {
+  createNLobbyGroup: LobbyGroup[];
+}
+
+export type CreateNLobbyGroupVariables = {
+  stageId: number;
+  quantity: number;
+  roundsPlayed: number;
+};
+
+export const CREATE_N_LOBBY_GROUP_MUTATION = gql`
+  mutation createNLobbyGroup(
+    $stageId: Int!
+    $quantity: Int!
+    $roundsPlayed: Int!
+  ) {
+    createNLobbyGroup(
+      stageId: $stageId
+      quantity: $quantity
+      roundsPlayed: $roundsPlayed
+    ) {
+      id
+    }
+  }
+`;
+
+export interface CreateNLobbyResult {
+  createNLobby: Lobby[];
+}
+
+export type CreateNLobbyVariables = {
+  stageId: number;
+  lobbyGroupId: number;
+  quantity: number;
+};
+
+export const CREATE_N_LOBBY_MUTATION = gql`
+  mutation createNLobby($stageId: Int!, $quantity: Int!, $lobbyGroupId: Int!) {
+    createNLobby(
+      stageId: $stageId
+      quantity: $quantity
+      lobbyGroupId: $lobbyGroupId
+    ) {
+      id
+    }
+  }
+`;
+
 export interface CreateLobbyResult {
   createLobby: Lobby;
 }

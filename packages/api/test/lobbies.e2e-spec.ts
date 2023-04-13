@@ -54,10 +54,12 @@ const fakeLobbiesService = {
   findAllLobbyGroupsByStage: jest.fn().mockResolvedValue(mockLobbyGroups),
   findAllByLobbyGroup: jest.fn().mockResolvedValue(mockLobbies),
   createOne: jest.fn().mockResolvedValue(mockLobbies[0]),
+  createN: jest.fn().mockResolvedValue(mockLobbies),
   updateOne: jest.fn().mockResolvedValue(mockLobbies[0]),
   deleteOne: jest.fn().mockResolvedValue({ id: 1 }),
   createPlayerLobbyGroup: jest.fn().mockResolvedValue(mockLobbyPlayerInfo),
   createOneLobbyGroup: jest.fn().mockResolvedValue({ id: 1 }),
+  createNLobbyGroup: jest.fn().mockResolvedValue(mockLobbyGroups),
   findOneWithRelations: jest
     .fn()
     .mockResolvedValue({ ...mockLobbies[0], players: [{ player: { id: 1 } }] }),
@@ -152,6 +154,26 @@ describe("Lobby (e2e)", () => {
 
       expect(response.body).toStrictEqual({
         data: { createLobby: mockLobbies[0] },
+      });
+    });
+  });
+
+  describe("createNLobby", () => {
+    it("should create", async () => {
+      const response = await request(app.getHttpServer())
+        .post(graphql)
+        .send({
+          query: `
+          mutation {
+            createNLobby(stageId: 1, lobbyGroupId: 1, quantity: 5) {
+              id
+              sequence
+            }
+          }`,
+        });
+
+      expect(response.body).toStrictEqual({
+        data: { createNLobby: mockLobbies },
       });
     });
   });
@@ -256,6 +278,25 @@ describe("Lobby (e2e)", () => {
 
       expect(response.body).toStrictEqual({
         data: { createLobbyGroup: { id: 1 } },
+      });
+    });
+  });
+
+  describe("createNLobbyGroup", () => {
+    it("should create", async () => {
+      const response = await request(app.getHttpServer())
+        .post(graphql)
+        .send({
+          query: `
+          mutation {
+            createNLobbyGroup(stageId: 1, roundsPlayed: 3, quantity: 5) {
+              id
+            }
+          }`,
+        });
+
+      expect(response.body).toStrictEqual({
+        data: { createNLobbyGroup: mockLobbyGroups },
       });
     });
   });

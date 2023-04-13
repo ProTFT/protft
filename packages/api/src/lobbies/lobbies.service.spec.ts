@@ -92,6 +92,19 @@ describe("LobbiesService", () => {
       });
     });
 
+    describe("create N", () => {
+      it("should call repository with several lobbies", async () => {
+        const lobbyQuantity = 2;
+        await service.createN(mockId, mockId, lobbyQuantity);
+        expect(lobbyRepository.save).toHaveBeenCalledWith(
+          expect.arrayContaining([
+            { stageId: mockId, lobbyGroupId: mockId, sequence: 1, name: "A1" },
+            { stageId: mockId, lobbyGroupId: mockId, sequence: 2, name: "B1" },
+          ]),
+        );
+      });
+    });
+
     describe("update one", () => {
       it("if lobby does not exist, should throw error", async () => {
         lobbyRepository.findOne = jest.fn().mockResolvedValueOnce(undefined);
@@ -156,6 +169,24 @@ describe("LobbiesService", () => {
       it("should call repository", async () => {
         await service.createManyLobbyGroup([{}, {}] as CreateLobbyGroupArgs[]);
         expect(lobbyGroupsRepository.save).toHaveBeenCalled();
+      });
+    });
+
+    describe("create N", () => {
+      it("should call repository with several lobby groups", async () => {
+        const lobbyGroupQuantity = 2;
+        const roundsPlayed = 5;
+        await service.createNLobbyGroup(
+          mockId,
+          lobbyGroupQuantity,
+          roundsPlayed,
+        );
+        expect(lobbyGroupsRepository.save).toHaveBeenCalledWith(
+          expect.arrayContaining([
+            { stageId: mockId, roundsPlayed, sequence: 1 },
+            { stageId: mockId, roundsPlayed, sequence: 2 },
+          ]),
+        );
       });
     });
   });
