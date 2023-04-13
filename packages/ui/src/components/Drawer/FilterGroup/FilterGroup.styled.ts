@@ -4,8 +4,8 @@ import { StyledHorizontalContainer } from "../../Layout/HorizontalContainer/Hori
 
 export const StyledOptionText = styled.p`
   font-family: Roboto;
-  font-size: 12px;
-  font-weight: 600;
+  font-size: 14px;
+  font-weight: 400;
   line-height: 38px;
   letter-spacing: 0.4em;
   text-align: left;
@@ -14,13 +14,14 @@ export const StyledOptionText = styled.p`
 
 export const StyledSubTitle = styled.p`
   font-family: VTF Redzone Classic;
-  font-size: 20px;
+  font-size: 32px;
   font-weight: 400;
   line-height: 38px;
   letter-spacing: 0.25em;
   text-align: left;
   color: ${colors.white};
   align-self: start;
+  margin-bottom: 1rem;
 `;
 
 export const StyledOptionContainer = styled(StyledHorizontalContainer)`

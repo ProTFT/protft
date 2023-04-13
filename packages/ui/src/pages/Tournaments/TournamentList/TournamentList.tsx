@@ -1,5 +1,5 @@
 import React, { Suspense } from "react";
-import { Tabs } from "../Tournaments";
+import { Tabs, TournamentFilters } from "../Tournaments";
 import { UpcomingTournamentList } from "./TournamentStateList";
 
 const PastTournamentList = React.lazy(() =>
@@ -11,14 +11,15 @@ const PastTournamentList = React.lazy(() =>
 interface Props {
   searchQuery: string;
   selected: Tabs;
+  filters: TournamentFilters;
 }
 
-export const TournamentList = ({ searchQuery, selected }: Props) => {
+export const TournamentList = ({ searchQuery, selected, filters }: Props) => {
   return selected === Tabs.Upcoming ? (
-    <UpcomingTournamentList searchQuery={searchQuery} />
+    <UpcomingTournamentList searchQuery={searchQuery} filters={filters} />
   ) : (
     <Suspense fallback={null}>
-      <PastTournamentList searchQuery={searchQuery} />
+      <PastTournamentList searchQuery={searchQuery} filters={filters} />
     </Suspense>
   );
 };

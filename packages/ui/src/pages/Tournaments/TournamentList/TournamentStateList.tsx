@@ -8,10 +8,12 @@ import {
   PastTournamentsQueryResult,
   PAST_TOURNAMENTS_QUERY,
 } from "../queries";
+import { TournamentFilters } from "../Tournaments";
 import { TournamentBaseList } from "./TournamentBaseList";
 
 interface StateListProps {
   searchQuery: string;
+  filters: TournamentFilters;
 }
 
 export const OngoingTournamentList = () => {
@@ -32,22 +34,30 @@ export const OngoingTournamentList = () => {
   );
 };
 
-export const UpcomingTournamentList = ({ searchQuery }: StateListProps) => {
+export const UpcomingTournamentList = ({
+  searchQuery,
+  filters,
+}: StateListProps) => {
   const [{ data }] = useQuery<UpcomingTournamentsQueryResult>({
     query: UPCOMING_TOURNAMENTS_QUERY,
     variables: {
       searchQuery,
+      ...filters,
     },
   });
 
   return <TournamentBaseList tournaments={data?.upcomingTournaments} />;
 };
 
-export const PastTournamentList = ({ searchQuery }: StateListProps) => {
+export const PastTournamentList = ({
+  searchQuery,
+  filters,
+}: StateListProps) => {
   const [{ data }] = useQuery<PastTournamentsQueryResult>({
     query: PAST_TOURNAMENTS_QUERY,
     variables: {
       searchQuery,
+      ...filters,
     },
   });
 

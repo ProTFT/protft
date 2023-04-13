@@ -6,27 +6,33 @@ import {
   StyledSubTitle,
 } from "./FilterGroup.styled";
 
-interface Props {
+interface Props<T> {
   title: string;
-  setSelected: React.Dispatch<React.SetStateAction<string[]>>;
-  options: FilterOptions[];
+  setSelected: (values: T[]) => void;
+  options: FilterOptions<T>[];
+  selectedOptions: T[];
 }
 
-interface FilterOptions {
-  value: string;
+interface FilterOptions<T> {
+  value: T;
   label: string;
 }
 
-export const FilterGroup = ({ title, setSelected, options }: Props) => {
+export const FilterGroup = <T extends Object>({
+  title,
+  setSelected,
+  options,
+  selectedOptions,
+}: Props<T>) => {
   const onSelect = useCallback(
-    (changeEvent: [string, boolean]) => {
+    (changeEvent: [T, boolean]) => {
       const [field, value] = changeEvent;
-      setSelected((curr) => [
-        ...curr.filter((v) => v !== field),
+      setSelected([
+        ...selectedOptions.filter((v) => v !== field),
         ...(value ? [field] : []),
       ]);
     },
-    [setSelected]
+    [selectedOptions, setSelected]
   );
 
   return (
@@ -34,8 +40,12 @@ export const FilterGroup = ({ title, setSelected, options }: Props) => {
       <StyledSubTitle>{title}</StyledSubTitle>
       <div>
         {options.map(({ value, label }) => (
-          <StyledOptionContainer key={value}>
-            <Checkbox field={value} onChange={onSelect} />
+          <StyledOptionContainer key={String(value)}>
+            <Checkbox
+              checked={selectedOptions.includes(value)}
+              field={value}
+              onChange={onSelect}
+            />
             <StyledOptionText>{label}</StyledOptionText>
           </StyledOptionContainer>
         ))}

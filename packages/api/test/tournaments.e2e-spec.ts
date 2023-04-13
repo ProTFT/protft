@@ -121,6 +121,28 @@ describe("Tournament (e2e)", () => {
         data: { tournaments: mockTournaments },
       });
     });
+
+    it("should apply filters and pagination", async () => {
+      const response = await request(app.getHttpServer())
+        .post(graphql)
+        .send({
+          query: `
+          query {
+            tournaments(searchQuery: "Test", region: ["WO", "NA"], setId: [1, 2], take: 20, skip: 20) {
+              id
+              name
+            }
+          }`,
+        });
+
+      expect(fakeTournamentService.findAll).toHaveBeenCalledWith(
+        { searchQuery: "Test", region: ["WO", "NA"], setId: [1, 2] },
+        { take: 20, skip: 20 },
+      );
+      expect(response.body).toStrictEqual({
+        data: { tournaments: mockTournaments },
+      });
+    });
   });
 
   describe("adminTournaments", () => {
@@ -278,6 +300,28 @@ describe("Tournament (e2e)", () => {
         data: { upcomingTournaments: mockTournaments },
       });
     });
+
+    it("should apply filters and pagination", async () => {
+      const response = await request(app.getHttpServer())
+        .post(graphql)
+        .send({
+          query: `
+          query {
+            upcomingTournaments(searchQuery: "Test", region: ["WO", "NA"], setId: [1, 2], take: 20, skip: 20) {
+              id
+              name
+            }
+          }`,
+        });
+
+      expect(fakeTournamentService.findUpcoming).toHaveBeenCalledWith(
+        { searchQuery: "Test", region: ["WO", "NA"], setId: [1, 2] },
+        { take: 20, skip: 20 },
+      );
+      expect(response.body).toStrictEqual({
+        data: { upcomingTournaments: mockTournaments },
+      });
+    });
   });
 
   describe("pastTournaments", () => {
@@ -295,6 +339,28 @@ describe("Tournament (e2e)", () => {
         })
         .expect(HttpStatus.OK);
 
+      expect(response.body).toStrictEqual({
+        data: { pastTournaments: mockTournaments },
+      });
+    });
+
+    it("should apply filters and pagination", async () => {
+      const response = await request(app.getHttpServer())
+        .post(graphql)
+        .send({
+          query: `
+          query {
+            pastTournaments(searchQuery: "Test", region: ["WO", "NA"], setId: [1, 2], take: 20, skip: 20) {
+              id
+              name
+            }
+          }`,
+        });
+
+      expect(fakeTournamentService.findPast).toHaveBeenCalledWith(
+        { searchQuery: "Test", region: ["WO", "NA"], setId: [1, 2] },
+        { take: 20, skip: 20 },
+      );
       expect(response.body).toStrictEqual({
         data: { pastTournaments: mockTournaments },
       });

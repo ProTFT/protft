@@ -1,4 +1,5 @@
 import { CloseButtonIcon } from "../../design/icons/CloseButton";
+import { useScrollLock } from "../../hooks/useScrollLock";
 import {
   StyledContainer,
   StyledDrawerBody,
@@ -15,6 +16,8 @@ export const Drawer = ({
   onClose,
   children,
 }: React.PropsWithChildren<Props>) => {
+  useScrollLock(true);
+
   return (
     <StyledContainer isOpen={isOpen}>
       <div>
