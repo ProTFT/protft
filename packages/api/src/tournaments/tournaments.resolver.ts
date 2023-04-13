@@ -21,28 +21,38 @@ import {
   CreateTournamentPlayerByNameArgs,
 } from "./dto/create-tournament-player.args";
 import { Player } from "../players/player.entity";
+import { GetTournamentsArgs } from "./dto/get-tournaments.args";
+import { BaseResolver } from "../lib/BaseResolver";
 
 @Resolver(() => Tournament)
-export class TournamentsResolver {
+export class TournamentsResolver extends BaseResolver {
   constructor(
     private tournamentsService: TournamentsService,
     private setService: SetsService,
     private stagesService: StagesService,
-  ) {}
+  ) {
+    super();
+  }
 
   @Query(() => [Tournament])
   async tournaments(
-    @Args("searchQuery", { nullable: true }) searchQuery?: string,
+    @Args() { region, setId, take, skip, searchQuery }: GetTournamentsArgs,
   ) {
-    return this.tournamentsService.findAll(searchQuery);
+    const filters = this.cleanGraphQLFilters({ region, setId, searchQuery });
+    return this.tournamentsService.findAll({ ...filters }, { take, skip });
   }
 
   @UseGuards(GqlJwtAuthGuard)
   @Query(() => [Tournament])
   async adminTournaments(
-    @Args("searchQuery", { nullable: true }) searchQuery?: string,
+    @Args() { region, setId, take, skip, searchQuery }: GetTournamentsArgs,
   ) {
-    return this.tournamentsService.findAll(searchQuery, false);
+    const filters = this.cleanGraphQLFilters({ region, setId, searchQuery });
+    return this.tournamentsService.findAll(
+      { ...filters },
+      { take, skip },
+      false,
+    );
   }
 
   @Query(() => Tournament)
@@ -62,16 +72,18 @@ export class TournamentsResolver {
 
   @Query(() => [Tournament])
   async upcomingTournaments(
-    @Args("searchQuery", { nullable: true }) searchQuery?: string,
+    @Args() { region, setId, take, skip, searchQuery }: GetTournamentsArgs,
   ) {
-    return this.tournamentsService.findUpcoming(searchQuery);
+    const filters = this.cleanGraphQLFilters({ region, setId, searchQuery });
+    return this.tournamentsService.findUpcoming({ ...filters }, { take, skip });
   }
 
   @Query(() => [Tournament])
   async pastTournaments(
-    @Args("searchQuery", { nullable: true }) searchQuery?: string,
+    @Args() { region, setId, take, skip, searchQuery }: GetTournamentsArgs,
   ) {
-    return this.tournamentsService.findPast(searchQuery);
+    const filters = this.cleanGraphQLFilters({ region, setId, searchQuery });
+    return this.tournamentsService.findPast({ ...filters }, { take, skip });
   }
 
   @Query(() => [Tournament])

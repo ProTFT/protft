@@ -1,12 +1,18 @@
-import React, { ChangeEvent, useCallback, useRef, useState } from "react";
-import { TextIconHorizontalContainer } from "../Layout/HorizontalContainer/TextIconHorizontalContainer.styled";
+import React, {
+  ChangeEvent,
+  Suspense,
+  useCallback,
+  useRef,
+  useState,
+} from "react";
+import { TournamentFilters } from "../../pages/Tournaments/Tournaments";
 import { SearchInput } from "../SearchInput/SearchInput";
+import { FilterButton } from "./FilterButton";
 import {
   StyledAppliedFilter,
   StyledAppliedFilterContainer,
   StyledContainer,
   StyledFilterBar,
-  StyledFilterText,
 } from "./SearchFilterBar.styled";
 
 const FilterDrawer = React.lazy(() =>
@@ -18,15 +24,38 @@ const FilterDrawer = React.lazy(() =>
 interface Props {
   placeholder: string;
   setSearchQuery?: (query: string) => void;
+  filters: TournamentFilters;
+  setFilters: React.Dispatch<React.SetStateAction<TournamentFilters>>;
 }
 
 export const StyledSearchFilterBar = ({
   placeholder,
   setSearchQuery,
+  filters,
+  setFilters,
 }: Props) => {
   const [isDrawerOpen, setIsDrawerOpen] = useState(false);
   let timeout = useRef<ReturnType<typeof setTimeout>>();
-  const isDrawerAvailable = false;
+
+  const handleSetFilter = useCallback(
+    (selectedSets: number[]) => {
+      setFilters((current) => ({
+        ...current,
+        setId: selectedSets,
+      }));
+    },
+    [setFilters]
+  );
+
+  const handleRegionFilter = useCallback(
+    (selectedRegions: string[]) => {
+      setFilters((current) => ({
+        ...current,
+        region: selectedRegions,
+      }));
+    },
+    [setFilters]
+  );
 
   const toggleDrawer = useCallback(() => {
     setIsDrawerOpen((current) => !current);
@@ -46,20 +75,34 @@ export const StyledSearchFilterBar = ({
 
   return (
     <StyledContainer>
-      <FilterDrawer isOpen={isDrawerOpen} toggleDrawer={toggleDrawer} />
-      <SearchInput placeholder={placeholder} onChange={onChangeSearchInput} />
-      {isDrawerAvailable ?? (
-        <StyledFilterBar>
-          <TextIconHorizontalContainer onClick={toggleDrawer}>
-            <img src="/filter.png" alt="filter" />
-            <StyledFilterText>Filter</StyledFilterText>
-          </TextIconHorizontalContainer>
-          <StyledAppliedFilterContainer>
-            <StyledAppliedFilter>Brazil</StyledAppliedFilter>
-            <StyledAppliedFilter>Brazil</StyledAppliedFilter>
-          </StyledAppliedFilterContainer>
-        </StyledFilterBar>
+      {isDrawerOpen && (
+        <Suspense>
+          <FilterDrawer
+            isOpen={isDrawerOpen}
+            toggleDrawer={toggleDrawer}
+            selectedRegions={filters.region}
+            selectedSets={filters.setId}
+            setSelectedRegions={handleRegionFilter}
+            setSelectedSets={handleSetFilter}
+          />
+        </Suspense>
       )}
+      <SearchInput placeholder={placeholder} onChange={onChangeSearchInput} />
+      <StyledFilterBar>
+        <FilterButton onClick={toggleDrawer} />
+        <StyledAppliedFilterContainer>
+          {filters.region.map((selectedFilter) => (
+            <StyledAppliedFilter key={selectedFilter}>
+              {selectedFilter}
+            </StyledAppliedFilter>
+          ))}
+          {filters.setId.map((selectedFilter) => (
+            <StyledAppliedFilter key={selectedFilter}>
+              Set {selectedFilter}
+            </StyledAppliedFilter>
+          ))}
+        </StyledAppliedFilterContainer>
+      </StyledFilterBar>
     </StyledContainer>
   );
 };

@@ -7,6 +7,7 @@
 
 /* tslint:disable */
 /* eslint-disable */
+
 export enum StageType {
     RANKING = "RANKING",
     GROUP_BASED = "GROUP_BASED"
@@ -224,13 +225,13 @@ export interface TournamentStream {
 export interface IQuery {
     sets(): Set[] | Promise<Set[]>;
     set(id: number): Nullable<Set> | Promise<Nullable<Set>>;
-    tournaments(searchQuery?: Nullable<string>): Tournament[] | Promise<Tournament[]>;
-    adminTournaments(searchQuery?: Nullable<string>): Tournament[] | Promise<Tournament[]>;
+    tournaments(region?: Nullable<string[]>, setId?: Nullable<number[]>, searchQuery?: Nullable<string>, take?: Nullable<number>, skip?: Nullable<number>): Tournament[] | Promise<Tournament[]>;
+    adminTournaments(region?: Nullable<string[]>, setId?: Nullable<number[]>, searchQuery?: Nullable<string>, take?: Nullable<number>, skip?: Nullable<number>): Tournament[] | Promise<Tournament[]>;
     tournament(id: number): Tournament | Promise<Tournament>;
     tournamentBySlug(slug: string): Tournament | Promise<Tournament>;
     ongoingTournaments(): Tournament[] | Promise<Tournament[]>;
-    upcomingTournaments(searchQuery?: Nullable<string>): Tournament[] | Promise<Tournament[]>;
-    pastTournaments(searchQuery?: Nullable<string>): Tournament[] | Promise<Tournament[]>;
+    upcomingTournaments(region?: Nullable<string[]>, setId?: Nullable<number[]>, searchQuery?: Nullable<string>, take?: Nullable<number>, skip?: Nullable<number>): Tournament[] | Promise<Tournament[]>;
+    pastTournaments(region?: Nullable<string[]>, setId?: Nullable<number[]>, searchQuery?: Nullable<string>, take?: Nullable<number>, skip?: Nullable<number>): Tournament[] | Promise<Tournament[]>;
     tournamentsWithStats(): Tournament[] | Promise<Tournament[]>;
     stages(tournamentId: number): Stage[] | Promise<Stage[]>;
     stage(id: number): Stage | Promise<Stage>;

@@ -5,16 +5,27 @@ import { SetsService } from "../sets/sets.service";
 import { CreateTournamentArgs } from "./dto/create-tournament.args";
 import { UpdateTournamentArgs } from "./dto/update-tournament.args";
 import { Tournament } from "./tournament.entity";
+import {
+  TOURNAMENT_INITIAL_PAGE,
+  TOURNAMENT_PAGE_SIZE,
+  TournamentRepository,
+} from "./tournament.repository";
 import { TournamentsService } from "./tournaments.service";
+jest.mock("./tournament.repository");
 
 describe("TournamentsService", () => {
   let service: TournamentsService;
   let tournamentRepository: Repository<Tournament>;
   let setsService: SetsService;
+  let findWithPaginationSpy: jest.SpyInstance;
   const mockTournamentId = 1;
   const searchQuery = "test";
 
   beforeEach(() => {
+    findWithPaginationSpy = jest.spyOn(
+      TournamentRepository.prototype,
+      "findWithPagination",
+    );
     tournamentRepository = {
       find: jest.fn(),
       findOne: jest.fn(),
@@ -51,34 +62,16 @@ describe("TournamentsService", () => {
   });
 
   describe("findAll", () => {
-    it("should get only visible tournaments by default", async () => {
-      await service.findAll(searchQuery);
+    it("should get only visible tournaments ordered by startDate", async () => {
+      await service.findAll({ searchQuery });
 
-      expect(tournamentRepository.find).toHaveBeenCalledWith(
-        expect.objectContaining({
-          where: expect.objectContaining({
-            visibility: true,
-            name: expect.anything(),
-          }),
-          order: expect.objectContaining({
-            startDate: "DESC",
-          }),
-        }),
-      );
-    });
-
-    it("should get all tournaments based on parameter", async () => {
-      await service.findAll(searchQuery, false);
-
-      expect(tournamentRepository.find).toHaveBeenCalledWith(
-        expect.objectContaining({
-          where: expect.objectContaining({
-            name: expect.anything(),
-          }),
-          order: expect.objectContaining({
-            startDate: "DESC",
-          }),
-        }),
+      expect(findWithPaginationSpy).toHaveBeenCalledWith(
+        { searchQuery },
+        undefined,
+        {
+          onlyVisible: true,
+          sorting: { startDate: "DESC" },
+        },
       );
     });
   });
@@ -114,20 +107,18 @@ describe("TournamentsService", () => {
   });
 
   describe("findPast", () => {
-    it("should call repository", async () => {
-      await service.findPast(searchQuery);
+    it("should call get only visible tournaments sorted by end date", async () => {
+      await service.findPast({ searchQuery });
 
-      expect(tournamentRepository.find).toHaveBeenCalledWith(
-        expect.objectContaining({
-          where: expect.objectContaining({
-            name: expect.anything(),
+      expect(findWithPaginationSpy).toHaveBeenCalledWith(
+        { searchQuery },
+        undefined,
+        {
+          condition: {
             endDate: expect.anything(),
-            visibility: true,
-          }),
-          order: expect.objectContaining({
-            endDate: "DESC",
-          }),
-        }),
+          },
+          sorting: { endDate: "DESC" },
+        },
       );
     });
   });
@@ -147,9 +138,11 @@ describe("TournamentsService", () => {
         },
       ];
       tournamentRepository.find = jest.fn().mockResolvedValue(tournaments);
+      findWithPaginationSpy.mockResolvedValueOnce(tournaments);
       const response = await service.findWithStats();
 
-      expect(tournamentRepository.find).toHaveBeenCalledTimes(2);
+      expect(tournamentRepository.find).toHaveBeenCalled();
+      expect(findWithPaginationSpy).toHaveBeenCalled();
       expect(response).toStrictEqual([...tournaments, ...tournaments]);
     });
   });
@@ -174,20 +167,18 @@ describe("TournamentsService", () => {
   });
 
   describe("findUpcoming", () => {
-    it("should call repository", async () => {
-      await service.findUpcoming(searchQuery);
+    it("should filter by start date and sort by start date ASC", async () => {
+      await service.findUpcoming({ searchQuery });
 
-      expect(tournamentRepository.find).toHaveBeenCalledWith(
-        expect.objectContaining({
-          where: expect.objectContaining({
-            name: expect.anything(),
+      expect(findWithPaginationSpy).toHaveBeenCalledWith(
+        { searchQuery },
+        undefined,
+        {
+          condition: {
             startDate: expect.anything(),
-            visibility: true,
-          }),
-          order: expect.objectContaining({
-            startDate: "ASC",
-          }),
-        }),
+          },
+          sorting: { startDate: "ASC" },
+        },
       );
     });
   });

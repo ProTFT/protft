@@ -6,8 +6,12 @@ export interface UpcomingTournamentsQueryResult {
 }
 
 export const UPCOMING_TOURNAMENTS_QUERY = gql`
-  query tournaments($searchQuery: String) {
-    upcomingTournaments(searchQuery: $searchQuery) {
+  query tournaments($searchQuery: String, $setId: [Int!], $region: [String!]) {
+    upcomingTournaments(
+      searchQuery: $searchQuery
+      setId: $setId
+      region: $region
+    ) {
       id
       name
       participantsNumber
@@ -54,8 +58,8 @@ export interface PastTournamentsQueryResult {
 }
 
 export const PAST_TOURNAMENTS_QUERY = gql`
-  query tournaments($searchQuery: String) {
-    pastTournaments(searchQuery: $searchQuery) {
+  query tournaments($searchQuery: String, $setId: [Int!], $region: [String!]) {
+    pastTournaments(searchQuery: $searchQuery, setId: $setId, region: $region) {
       id
       name
       participantsNumber

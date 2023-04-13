@@ -6,3 +6,8 @@ export const afterOrToday = (alias: string) => `${alias} >= ${TODAY_IN_SQL}`;
 export const afterToday = (alias: string) => `${alias} > ${TODAY_IN_SQL}`;
 
 export const isEqualName = (alias: string) => `${alias} = name`;
+
+export const includes = (values: string[]) => (alias: string) =>
+  `${alias} && array[${values
+    .map((r) => `'${r}'`)
+    .join(",")}]::character varying []`;
