@@ -34,7 +34,6 @@ export const StyledStagesBottom = styled.div`
 
 export const StyledDaysContainer = styled.div`
   display: flex;
-  justify-content: space-between;
   gap: 1rem;
 `;
 
@@ -49,6 +48,7 @@ export const StyledDay = styled(StyledVerticalContainer)<
     gap: 0.5rem;
     justify-content: space-between;
     cursor: pointer;
+    margin: auto;
 
     svg {
       rotate: ${clicked ? "90deg" : "0"};
