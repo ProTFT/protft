@@ -29,17 +29,13 @@ export const StyledStagesBottom = styled.div`
   width: 100%;
   background-color: #1e1c35;
   padding: 1rem;
+  overflow: auto;
 `;
 
 export const StyledDaysContainer = styled.div`
   display: flex;
   justify-content: space-between;
-  overflow: auto;
   gap: 1rem;
-
-  @media ${device.tablet} {
-    justify-content: space-around;
-  }
 `;
 
 export const StyledDay = styled(StyledVerticalContainer)<
