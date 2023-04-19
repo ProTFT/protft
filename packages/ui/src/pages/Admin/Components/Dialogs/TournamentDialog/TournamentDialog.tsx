@@ -50,6 +50,10 @@ const TOURNAMENT_FORM_FIELDS: FormFieldProps[] = [
     specialType: "array",
   },
   {
+    label: "Host",
+    name: "host",
+  },
+  {
     label: "# of Participants",
     name: "participantsNumber",
     type: "number",

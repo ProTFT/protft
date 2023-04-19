@@ -41,7 +41,7 @@ export function fromRawToConsolidatedRoundResults(
           pastPositions: [],
         };
       }
-      if (position && points) {
+      if (position) {
         consolidatedResults[playerId].positions.push(position);
         consolidatedResults[playerId].points.push(points);
       }
