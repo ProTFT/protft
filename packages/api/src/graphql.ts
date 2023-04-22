@@ -48,6 +48,7 @@ export interface Player {
     region?: Nullable<string>;
     country?: Nullable<string>;
     slug: string;
+    alias: string[];
 }
 
 export interface RoundResult {
@@ -278,8 +279,8 @@ export interface IMutation {
     createLobbyGroup(stageId: number, sequence: number, roundsPlayed: number): LobbyGroup | Promise<LobbyGroup>;
     createNLobbyGroup(stageId: number, quantity: number, roundsPlayed: number): LobbyGroup[] | Promise<LobbyGroup[]>;
     createLobbyPlayers(lobbies: CreatePlayerLobbyArgs[]): LobbyPlayerInfo[] | Promise<LobbyPlayerInfo[]>;
-    createPlayer(name: string, country: string, region: string): Player | Promise<Player>;
-    updatePlayer(id: number, name?: Nullable<string>, country?: Nullable<string>, region?: Nullable<string>, slug?: Nullable<string>): Player | Promise<Player>;
+    createPlayer(name: string, country: string, region: string, alias?: Nullable<string[]>): Player | Promise<Player>;
+    updatePlayer(id: number, name?: Nullable<string>, country?: Nullable<string>, region?: Nullable<string>, slug?: Nullable<string>, alias?: Nullable<string[]>): Player | Promise<Player>;
     createPlayerSlugs(): Player[] | Promise<Player[]>;
     deletePlayer(id: number): Player | Promise<Player>;
     mergePlayer(playerIdToMaintain: number, playerIdToRemove: number): Player | Promise<Player>;

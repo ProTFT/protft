@@ -1,7 +1,8 @@
 import { BadRequestException } from "@nestjs/common";
-import { Brackets, EntityManager, SelectQueryBuilder } from "typeorm";
+import { Brackets, EntityManager, Raw, SelectQueryBuilder } from "typeorm";
 import { Player } from "../players/player.entity";
-import { createOrWhereConditions } from "./DBOrFilter";
+import { createOrWhereConditions } from "./DBCompositeFilters";
+import { includes } from "./DBRawFilter";
 
 export const parseMultilinePlayerNamesFromAll = async (
   playerNames: string,
@@ -44,7 +45,7 @@ const queryPlayers = async (
 ): Promise<number[]> => {
   const namesToFind = playerNames.replace(/\r/g, "").split("\n");
   const searchConditions = namesToFind.map(
-    (name) => `p.name ILIKE '%${name}%'`,
+    (name) => `p.name ILIKE '${name}' or ${includes([name])("alias")}`,
   );
 
   const queryWithAllConditions = baseQuery.andWhere(

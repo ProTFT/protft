@@ -6,6 +6,7 @@
 
 /* tslint:disable */
 /* eslint-disable */
+
 export enum StageType {
   RANKING = "RANKING",
   GROUP_BASED = "GROUP_BASED",
@@ -46,6 +47,7 @@ export interface Player {
   region?: Nullable<string>;
   country?: Nullable<string>;
   slug: string;
+  alias: string[];
 }
 
 export interface RoundResult {
@@ -224,19 +226,35 @@ export interface IQuery {
   sets(): Set[] | Promise<Set[]>;
   set(id: number): Nullable<Set> | Promise<Nullable<Set>>;
   tournaments(
-    searchQuery?: Nullable<string>
+    region?: Nullable<string[]>,
+    setId?: Nullable<number[]>,
+    searchQuery?: Nullable<string>,
+    take?: Nullable<number>,
+    skip?: Nullable<number>
   ): Tournament[] | Promise<Tournament[]>;
   adminTournaments(
-    searchQuery?: Nullable<string>
+    region?: Nullable<string[]>,
+    setId?: Nullable<number[]>,
+    searchQuery?: Nullable<string>,
+    take?: Nullable<number>,
+    skip?: Nullable<number>
   ): Tournament[] | Promise<Tournament[]>;
   tournament(id: number): Tournament | Promise<Tournament>;
   tournamentBySlug(slug: string): Tournament | Promise<Tournament>;
   ongoingTournaments(): Tournament[] | Promise<Tournament[]>;
   upcomingTournaments(
-    searchQuery?: Nullable<string>
+    region?: Nullable<string[]>,
+    setId?: Nullable<number[]>,
+    searchQuery?: Nullable<string>,
+    take?: Nullable<number>,
+    skip?: Nullable<number>
   ): Tournament[] | Promise<Tournament[]>;
   pastTournaments(
-    searchQuery?: Nullable<string>
+    region?: Nullable<string[]>,
+    setId?: Nullable<number[]>,
+    searchQuery?: Nullable<string>,
+    take?: Nullable<number>,
+    skip?: Nullable<number>
   ): Tournament[] | Promise<Tournament[]>;
   tournamentsWithStats(): Tournament[] | Promise<Tournament[]>;
   stages(tournamentId: number): Stage[] | Promise<Stage[]>;
@@ -385,6 +403,11 @@ export interface IMutation {
     lobbyGroupId: number,
     name?: Nullable<string>
   ): Lobby | Promise<Lobby>;
+  createNLobby(
+    stageId: number,
+    lobbyGroupId: number,
+    quantity: number
+  ): Lobby[] | Promise<Lobby[]>;
   updateLobby(
     id: number,
     stageId: number,
@@ -399,6 +422,11 @@ export interface IMutation {
     sequence: number,
     roundsPlayed: number
   ): LobbyGroup | Promise<LobbyGroup>;
+  createNLobbyGroup(
+    stageId: number,
+    quantity: number,
+    roundsPlayed: number
+  ): LobbyGroup[] | Promise<LobbyGroup[]>;
   createLobbyPlayers(
     lobbies: CreatePlayerLobbyArgs[]
   ): LobbyPlayerInfo[] | Promise<LobbyPlayerInfo[]>;
@@ -406,6 +434,13 @@ export interface IMutation {
     name: string,
     country: string,
     region: string
+  ): Player | Promise<Player>;
+  updatePlayer(
+    id: number,
+    name?: Nullable<string>,
+    country?: Nullable<string>,
+    region?: Nullable<string>,
+    slug?: Nullable<string>
   ): Player | Promise<Player>;
   createPlayerSlugs(): Player[] | Promise<Player[]>;
   deletePlayer(id: number): Player | Promise<Player>;
@@ -425,7 +460,8 @@ export interface IMutation {
     link: string,
     platform: string,
     language: string,
-    isLive: boolean
+    isLive: boolean,
+    isVOD: boolean
   ): TournamentStream | Promise<TournamentStream>;
   deleteTournamentStream(
     tournamentId: number,

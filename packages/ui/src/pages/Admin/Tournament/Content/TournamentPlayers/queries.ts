@@ -13,7 +13,13 @@ export interface PlayersQueryVariables {
 
 export const PLAYERS_QUERY = gql`
   query players($region: String, $country: String, $searchQuery: String) {
-    players(region: $region, country: $country, searchQuery: $searchQuery) {
+    players(
+      region: $region
+      country: $country
+      searchQuery: $searchQuery
+      take: 10
+      skip: 0
+    ) {
       id
       name
       country
@@ -82,11 +88,24 @@ export interface CreatePlayerResult {
   createPlayer: { id: Pick<Player, "id"> };
 }
 
-export type CreatePlayerVariables = Pick<Player, "name" | "country" | "region">;
+export type CreatePlayerVariables = Pick<
+  Player,
+  "name" | "country" | "region" | "alias"
+>;
 
 export const CREATE_PLAYER_QUERY = gql`
-  mutation ($name: String!, $country: String!, $region: String!) {
-    createPlayer(name: $name, country: $country, region: $region) {
+  mutation (
+    $name: String!
+    $country: String!
+    $region: String!
+    $alias: [String!]
+  ) {
+    createPlayer(
+      name: $name
+      country: $country
+      region: $region
+      alias: $alias
+    ) {
       id
     }
   }

@@ -1,10 +1,10 @@
-import { ChangeEvent, useCallback, useMemo, useRef, useState } from "react";
+import { ChangeEvent, useCallback, useMemo, useState } from "react";
 import { useParams } from "react-router-dom";
 import { useMutation, useQuery } from "urql";
 import { Player, StagePlayerInfo } from "../../../../../graphql/schema";
 import { ProTFTButton } from "../../../../../components/Button/Button";
 import { SearchInput } from "../../../../../components/SearchInput/SearchInput";
-import { BulkPlayerTournamentDialog } from "../../../Components/Dialogs/BulkPlayerTournamentDialog/BulkPlayerTournamentDialog";
+import { useBulkPlayerListDialog } from "../../../Components/Dialogs/BulkPlayerListDialog/BulkPlayerListDialog";
 import { DroppableContainer } from "../../../Components/DroppableContainer/DroppableContainer";
 import {
   StyledLeftSide,
@@ -35,7 +35,8 @@ import {
   StyledButtonContainer,
   StyledContainer,
 } from "./StagePlayers.styled";
-import { StagePlayerDialog } from "../../../Components/Dialogs/StagePlayerDialog/StagePlayerDialog";
+import { useStagePlayerInfoDialog } from "../../../Components/Dialogs/StagePlayerInfoDialog/StagePlayerInfoDialog";
+import { useSyncedState } from "../../../../../hooks/useSyncedState";
 
 export const StagePlayers = () => {
   const { id: tournamentId, stageId } = useParams();
@@ -44,20 +45,17 @@ export const StagePlayers = () => {
 
   const [editedPlayerId, setEditedPlayerId] = useState(0);
   const { show } = useToast();
-  const bulkPlayerDialogRef = useRef<HTMLDialogElement>(null);
-  const bulkPlayerFormRef = useRef<HTMLFormElement>(null);
-  const editStagePlayerDialogRef = useRef<HTMLDialogElement>(null);
-  const editStagePlayerFormRef = useRef<HTMLFormElement>(null);
 
   const [{ data }] = useQuery<TournamentPlayersResponse>({
     query: TOURNAMENT_PLAYERS_QUERY,
     variables: { id: Number(tournamentId) },
   });
 
-  const [{ data: stagePlayersData }] = useQuery<StagePlayersResponse>({
-    query: STAGE_PLAYERS_QUERY,
-    variables: { id: Number(stageId) },
-  });
+  const [{ data: stagePlayersData }, refetchStagePlayers] =
+    useQuery<StagePlayersResponse>({
+      query: STAGE_PLAYERS_QUERY,
+      variables: { id: Number(stageId) },
+    });
 
   const [{ data: stagePlayerData }] = useQuery<
     GetStagePlayerResult,
@@ -90,25 +88,33 @@ export const StagePlayers = () => {
     [setSearchQuery]
   );
 
-  const [stagePlayers, setStagePlayers] = useState<Player[]>(() => {
-    const stagePlayerInfo = stagePlayersData?.stage?.players;
-    return stagePlayerInfo?.map((spi) => spi.player) || [];
-  });
+  const transformerCallback = useCallback(
+    (players?: StagePlayerInfo[]) => players?.map((p) => p.player) ?? [],
+    []
+  );
+
+  const [stagePlayers, setStagePlayers] = useSyncedState<
+    Player[],
+    StagePlayerInfo[] | undefined
+  >(stagePlayersData?.stage?.players, transformerCallback);
 
   const playersCount = useMemo(() => stagePlayers.length, [stagePlayers]);
 
-  const onAdd = useCallback(({ id, name, region, slug }: Player) => {
-    setStagePlayers((players) => {
-      const allPlayers = [...players, { id, name, region, slug }];
-      const allPlayerIds = allPlayers.map((i) => i.id);
-      const uniqueIds = new Set(allPlayerIds);
-      return Array.from(uniqueIds)
-        .map((id) => allPlayers.find((p) => p.id === id)!)
-        .sort((a, b) => a.name.localeCompare(b.name));
-    });
-  }, []);
+  const onAdd = useCallback(
+    (newPlayer: Player) => {
+      setStagePlayers((players) => {
+        const allPlayers = [...players, newPlayer];
+        const allPlayerIds = allPlayers.map((i) => i.id);
+        const uniqueIds = new Set(allPlayerIds);
+        return Array.from(uniqueIds)
+          .map((id) => allPlayers.find((p) => p.id === id)!)
+          .sort((a, b) => a.name.localeCompare(b.name));
+      });
+    },
+    [setStagePlayers]
+  );
 
-  const onSave = useCallback(async () => {
+  const onSaveStagePlayers = useCallback(async () => {
     const result = await createStagePlayers({
       stageId: Number(stageId!),
       playerIds: stagePlayers.map((p) => p.id),
@@ -131,71 +137,59 @@ export const StagePlayers = () => {
         .map((id) => tournamentPlayers?.find((p) => p.id === id)!)
         .sort((a, b) => a.name.localeCompare(b.name));
     });
-  }, [data?.tournament.players]);
+  }, [data?.tournament.players, setStagePlayers]);
 
   // const onCopyLast = useCallback(async () => {}, []);
 
   const onSubmitBulkPlayer = useCallback(
-    async ({ playerNames }: { playerNames: string }) => {
-      const result = await createStagePlayersByName({
+    async ({ playerNames }: { playerNames: string }) =>
+      createStagePlayersByName({
         stageId: Number(stageId),
         playerNames,
-      });
-
-      if (result.error) {
-        return alert(result.error);
-      }
-      show();
-      bulkPlayerFormRef.current?.reset();
-      bulkPlayerDialogRef.current?.close();
-    },
-    [createStagePlayersByName, show, stageId]
+      }),
+    [createStagePlayersByName, stageId]
   );
 
-  const onSubmitStagePlayer = useCallback(
+  const onSubmitStagePlayerInfo = useCallback(
     async ({
       tiebreakerRanking,
       extraPoints,
-    }: Pick<StagePlayerInfo, "tiebreakerRanking" | "extraPoints">) => {
-      const result = await updateStagePlayer({
+    }: Pick<StagePlayerInfo, "tiebreakerRanking" | "extraPoints">) =>
+      updateStagePlayer({
         stageId: Number(stageId),
         playerId: editedPlayerId,
         tiebreakerRanking,
         extraPoints,
-      });
-
-      if (result.error) {
-        return alert(result.error);
-      }
-      show();
-      editStagePlayerFormRef.current?.reset();
-      editStagePlayerDialogRef.current?.close();
-    },
-    [editedPlayerId, show, stageId, updateStagePlayer]
+      }),
+    [editedPlayerId, stageId, updateStagePlayer]
   );
 
-  const onBulkAdd = useCallback(() => {
-    bulkPlayerDialogRef.current?.showModal();
-  }, []);
+  const { dialog: bulkPlayerDialog, openDialog: openBulkPlayerDialog } =
+    useBulkPlayerListDialog({
+      onSubmit: onSubmitBulkPlayer,
+      onSuccess: refetchStagePlayers,
+    });
 
-  const onEditClick = useCallback(async (player: Player) => {
-    setEditedPlayerId(player.id);
-    editStagePlayerDialogRef.current?.showModal();
-  }, []);
+  const {
+    dialog: stagePlayerInfoDialog,
+    openDialog: openStagePlayerInfoDialog,
+  } = useStagePlayerInfoDialog({
+    stagePlayerInfo: stagePlayerData?.stagePlayer,
+    onSubmit: onSubmitStagePlayerInfo,
+  });
+
+  const onEditClick = useCallback(
+    async (player: Player) => {
+      setEditedPlayerId(player.id);
+      openStagePlayerInfoDialog();
+    },
+    [openStagePlayerInfoDialog]
+  );
 
   return (
     <StyledContainer>
-      <BulkPlayerTournamentDialog
-        dialogRef={bulkPlayerDialogRef}
-        formRef={bulkPlayerFormRef}
-        onSubmit={onSubmitBulkPlayer}
-      />
-      <StagePlayerDialog
-        dialogRef={editStagePlayerDialogRef}
-        formRef={editStagePlayerFormRef}
-        onSubmit={onSubmitStagePlayer}
-        stagePlayerInfo={stagePlayerData?.stagePlayer}
-      />
+      {bulkPlayerDialog}
+      {stagePlayerInfoDialog}
       <StyledLeftSide>
         <StyledBar>
           <SearchInput
@@ -219,8 +213,8 @@ export const StagePlayers = () => {
           <StyledButtonContainer>
             {/* <ProTFTButton onClick={onCopyLast}>Copy last stage</ProTFTButton> */}
             <ProTFTButton onClick={onAddAll}>Add all</ProTFTButton>
-            <ProTFTButton onClick={onBulkAdd}>Add bulk</ProTFTButton>
-            <ProTFTButton onClick={onSave}>Save</ProTFTButton>
+            <ProTFTButton onClick={openBulkPlayerDialog}>Add bulk</ProTFTButton>
+            <ProTFTButton onClick={onSaveStagePlayers}>Save</ProTFTButton>
           </StyledButtonContainer>
         </StyledBar>
         <DroppableContainer

@@ -3,7 +3,10 @@ import { PaginationArgs } from "../../graphql/pagination";
 import { Player } from "../../graphql/schema";
 
 export interface PlayersQueryResult {
-  players: Pick<Player, "id" | "name" | "country" | "region" | "slug">[];
+  players: Pick<
+    Player,
+    "id" | "name" | "country" | "region" | "slug" | "alias"
+  >[];
 }
 
 export interface PlayersQueryVariables extends PaginationArgs {
@@ -32,6 +35,7 @@ export const PLAYERS_QUERY = gql`
       country
       region
       slug
+      alias
     }
   }
 `;

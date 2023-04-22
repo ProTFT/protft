@@ -29,7 +29,7 @@ export const PLAYER_TOURNAMENT_QUERY = gql`
 export interface PlayerBySlugQueryResult {
   playerBySlug: Pick<
     Player,
-    "id" | "name" | "region" | "country" | "playerStats"
+    "id" | "name" | "region" | "country" | "playerStats" | "alias"
   >;
 }
 
@@ -40,6 +40,7 @@ export const PLAYER_BY_SLUG_QUERY = gql`
       name
       region
       country
+      alias
       playerStats {
         averagePosition
         totalGames

@@ -16,4 +16,7 @@ export class UpdatePlayerArgs {
 
   @Field({ name: "slug", nullable: true })
   slug?: string;
+
+  @Field(() => [String], { name: "alias", nullable: true })
+  alias?: string[];
 }

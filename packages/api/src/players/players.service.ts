@@ -5,8 +5,9 @@ import {
 } from "@nestjs/common";
 import { InjectRepository } from "@nestjs/typeorm";
 import slugify from "slugify";
-import { ILike, Raw, Repository } from "typeorm";
+import { Brackets, ILike, Raw, Repository } from "typeorm";
 import { EntityFieldsNames } from "typeorm/common/EntityFieldsNames";
+import { likeNameOrAlias } from "../lib/DBCompositeFilters";
 import { isEqualName } from "../lib/DBRawFilter";
 import { PaginationArgs } from "../lib/dto/pagination.args";
 import { parseFileString } from "../lib/FileParser";
@@ -73,9 +74,11 @@ export class PlayersService {
     name: string,
     region: string,
   ): Promise<Player | undefined> {
-    return this.playerRepository.findOne({
-      where: { region, name: ILike(`%${name}%`) },
-    });
+    return this.playerRepository
+      .createQueryBuilder()
+      .where({ region })
+      .andWhere(new Brackets(likeNameOrAlias(name)))
+      .execute();
   }
 
   async updateOne(id: number, payload: Partial<Omit<Player, "id">>) {
@@ -94,6 +97,7 @@ export class PlayersService {
     name,
     country,
     region,
+    alias,
   }: CreatePlayerArgs): Promise<Player> {
     if (!name || !region) {
       throw new BadRequestException("Name and Region are mandatory");
@@ -102,6 +106,7 @@ export class PlayersService {
       name,
       country,
       region,
+      alias,
     });
     await this.playerRepository.update(
       { id: savedPlayer.id },

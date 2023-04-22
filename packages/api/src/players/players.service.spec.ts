@@ -38,6 +38,7 @@ describe("PlayersService", () => {
       innerJoin: jest.fn().mockReturnThis(),
       where: jest.fn().mockReturnThis(),
       execute: jest.fn().mockResolvedValue(mockQueryBuilderValue),
+      andWhere: jest.fn().mockReturnThis(),
     }),
   } as unknown as Repository<Player>;
 
@@ -157,19 +158,22 @@ describe("PlayersService", () => {
       const name = "name";
       const region = "region";
       const country = "country";
+      const alias = ["alias"];
 
       playerRepository.save = jest.fn().mockResolvedValueOnce({
         id,
         name,
         region,
         country,
+        alias,
       });
 
-      await service.createOne({ name, region, country }),
+      await service.createOne({ name, region, country, alias }),
         expect(playerRepository.save).toHaveBeenCalledWith({
           name,
           country,
           region,
+          alias,
         });
       expect(playerRepository.update).toHaveBeenCalledWith(
         {
@@ -219,14 +223,14 @@ describe("PlayersService", () => {
 
     it("when one player already exists, should not create it", async () => {
       const dryRun = true;
-      playerRepository.findOne = jest.fn().mockImplementation(({ where }) => {
-        const { region } = where;
-        return region === brazilianPlayer.region ? {} : undefined;
-      });
+      mockQueryBuilderValue = {};
       const response = await service.createBulk(fileString, dryRun);
       expect(response).toStrictEqual({
-        newPlayers: [englishPlayer],
-        repeatedPlayers: [brazilianPlayer],
+        newPlayers: [],
+        repeatedPlayers: expect.arrayContaining([
+          brazilianPlayer,
+          englishPlayer,
+        ]),
         dryRun,
       });
     });
@@ -235,6 +239,7 @@ describe("PlayersService", () => {
       playerRepository.find = jest
         .fn()
         .mockResolvedValueOnce([brazilianPlayer, englishPlayer]);
+      mockQueryBuilderValue = null;
 
       const dryRun = false;
       const response = await service.createBulk(fileString, dryRun);

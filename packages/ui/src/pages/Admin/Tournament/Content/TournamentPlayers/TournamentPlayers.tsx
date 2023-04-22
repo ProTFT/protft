@@ -1,11 +1,18 @@
-import { ChangeEvent, useCallback, useMemo, useRef, useState } from "react";
+import {
+  ChangeEvent,
+  useCallback,
+  useEffect,
+  useMemo,
+  useRef,
+  useState,
+} from "react";
 import { useParams } from "react-router-dom";
 import { useMutation, useQuery } from "urql";
 import { ProTFTButton } from "../../../../../components/Button/Button";
 import { TextIconHorizontalContainer } from "../../../../../components/Layout/HorizontalContainer/TextIconHorizontalContainer.styled";
 import { SearchInput } from "../../../../../components/SearchInput/SearchInput";
 import { Player } from "../../../../../graphql/schema";
-import { BulkPlayerTournamentDialog } from "../../../Components/Dialogs/BulkPlayerTournamentDialog/BulkPlayerTournamentDialog";
+import { useBulkPlayerListDialog } from "../../../Components/Dialogs/BulkPlayerListDialog/BulkPlayerListDialog";
 import { DroppableContainer } from "../../../Components/DroppableContainer/DroppableContainer";
 import {
   StyledLeftSide,
@@ -38,14 +45,28 @@ export const TournamentPlayers = () => {
   let timeout = useRef<ReturnType<typeof setTimeout>>();
   const { show } = useToast();
 
-  const [{ data: tournamentPlayersData }] = useQuery<TournamentQueryResponse>({
-    query: TOURNAMENT_PLAYERS_QUERY,
-    variables: { id: Number(tournamentId) },
+  const [{ data: tournamentPlayersData }, refetchTournamentPlayers] =
+    useQuery<TournamentQueryResponse>({
+      query: TOURNAMENT_PLAYERS_QUERY,
+      variables: { id: Number(tournamentId) },
+    });
+
+  const [{ data: allPlayersData }, refetch] = useQuery<
+    PlayersQueryResult,
+    PlayersQueryVariables
+  >({
+    query: PLAYERS_QUERY,
+    variables: { searchQuery },
   });
 
   const [tournamentPlayers, setTournamentPlayers] = useState<Player[]>(
-    () => tournamentPlayersData?.tournament.players || []
+    () => tournamentPlayersData?.tournament.players ?? []
   );
+
+  useEffect(() => {
+    setTournamentPlayers(tournamentPlayersData?.tournament.players ?? []);
+  }, [tournamentPlayersData?.tournament.players]);
+
   const playersCount = useMemo(
     () => tournamentPlayers.length,
     [tournamentPlayers]
@@ -53,17 +74,6 @@ export const TournamentPlayers = () => {
 
   const dialogRef = useRef<HTMLDialogElement>(null);
   const formRef = useRef<HTMLFormElement>(null);
-
-  const bulkPlayerDialogRef = useRef<HTMLDialogElement>(null);
-  const bulkPlayerFormRef = useRef<HTMLFormElement>(null);
-
-  const [{ data }, refetch] = useQuery<
-    PlayersQueryResult,
-    PlayersQueryVariables
-  >({
-    query: PLAYERS_QUERY,
-    variables: { searchQuery },
-  });
 
   const [, createTournamentPlayers] = useMutation<
     CreateTournamentPlayerResult,
@@ -92,9 +102,9 @@ export const TournamentPlayers = () => {
     [setSearchQuery]
   );
 
-  const onAdd = useCallback(({ id, name, region, slug }: Player) => {
+  const onAdd = useCallback((newPlayer: Player) => {
     setTournamentPlayers((players) => {
-      const allPlayers = [...players, { id, name, region, slug }];
+      const allPlayers = [...players, newPlayer];
       const allPlayerIds = allPlayers.map((i) => i.id);
       const uniqueIds = new Set(allPlayerIds);
       return Array.from(uniqueIds)
@@ -112,7 +122,14 @@ export const TournamentPlayers = () => {
       return alert(result.error);
     }
     show();
-  }, [createTournamentPlayers, tournamentId, tournamentPlayers, show]);
+    refetchTournamentPlayers();
+  }, [
+    createTournamentPlayers,
+    tournamentId,
+    tournamentPlayers,
+    show,
+    refetchTournamentPlayers,
+  ]);
 
   const onSubmit = useCallback(
     async (player: Omit<Player, "id" | "playerStats">) => {
@@ -129,30 +146,25 @@ export const TournamentPlayers = () => {
   );
 
   const onSubmitBulkPlayer = useCallback(
-    async ({ playerNames }: { playerNames: string }) => {
-      const result = await createTournamentPlayersByName({
+    async ({ playerNames }: { playerNames: string }) =>
+      createTournamentPlayersByName({
         tournamentId: Number(tournamentId),
         playerNames,
-      });
-
-      if (result.error) {
-        return alert(result.error);
-      }
-      show();
-      bulkPlayerFormRef.current?.reset();
-      bulkPlayerDialogRef.current?.close();
-      refetch();
-    },
-    [createTournamentPlayersByName, refetch, show, tournamentId]
+      }),
+    [createTournamentPlayersByName, tournamentId]
   );
 
   const onClickNewPlayer = useCallback(() => {
     dialogRef.current?.showModal();
   }, []);
 
-  const onBulkAdd = useCallback(() => {
-    bulkPlayerDialogRef.current?.showModal();
-  }, []);
+  const {
+    dialog: bulkPlayerTournamentDialog,
+    openDialog: openBulkPlayerTournamentDialog,
+  } = useBulkPlayerListDialog({
+    onSubmit: onSubmitBulkPlayer,
+    onSuccess: refetchTournamentPlayers,
+  });
 
   return (
     <StyledContainer>
@@ -161,11 +173,7 @@ export const TournamentPlayers = () => {
         formRef={formRef}
         onSubmit={onSubmit}
       />
-      <BulkPlayerTournamentDialog
-        dialogRef={bulkPlayerDialogRef}
-        formRef={bulkPlayerFormRef}
-        onSubmit={onSubmitBulkPlayer}
-      />
+      {bulkPlayerTournamentDialog}
       <StyledLeftSide>
         <StyledBar>
           <SearchInput
@@ -174,7 +182,7 @@ export const TournamentPlayers = () => {
           />
           <ProTFTButton onClick={onClickNewPlayer}>New Player</ProTFTButton>
         </StyledBar>
-        {data?.players.map((player) => (
+        {allPlayersData?.players.map((player) => (
           <DraggablePlayer
             key={player.id}
             player={player}
@@ -186,7 +194,9 @@ export const TournamentPlayers = () => {
         <StyledBar>
           <StyledTitle>{`Tournament Players (${playersCount})`}</StyledTitle>
           <TextIconHorizontalContainer>
-            <ProTFTButton onClick={onBulkAdd}>Bulk Add</ProTFTButton>
+            <ProTFTButton onClick={openBulkPlayerTournamentDialog}>
+              Bulk Add
+            </ProTFTButton>
             <ProTFTButton onClick={onSave}>Save</ProTFTButton>
           </TextIconHorizontalContainer>
         </StyledBar>

@@ -46,4 +46,8 @@ export class Player {
   @Field()
   @Column({ default: "" })
   slug?: string;
+
+  @Field(() => [String])
+  @Column("varchar", { array: true, default: [] })
+  alias: string[];
 }

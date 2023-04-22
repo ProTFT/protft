@@ -43,6 +43,7 @@ export const UPDATE_PLAYER_MUTATION = gql`
     $country: String
     $region: String
     $slug: String
+    $alias: [String!]
   ) {
     updatePlayer(
       id: $id
@@ -50,6 +51,7 @@ export const UPDATE_PLAYER_MUTATION = gql`
       country: $country
       region: $region
       slug: $slug
+      alias: $alias
     ) {
       id
     }

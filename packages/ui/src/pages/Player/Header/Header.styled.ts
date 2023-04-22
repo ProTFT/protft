@@ -59,6 +59,18 @@ export const StyledPlayerName = styled.p`
   }
 `;
 
+export const PlayerAlias = styled.p`
+  font-family: Roboto;
+  font-size: 12px;
+  font-weight: 700;
+  letter-spacing: 0.3em;
+  text-align: left;
+  text-transform: uppercase;
+  color: ${colors.white};
+  margin-bottom: 2rem;
+  margin-top: 1rem;
+`;
+
 export const StyledSocialMediaContainer = styled(StyledHorizontalContainer)`
   align-self: end;
 `;

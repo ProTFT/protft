@@ -79,8 +79,10 @@ export class PlayersResolver extends BaseResolver {
 
   @UseGuards(GqlJwtAuthGuard)
   @Mutation(() => Player)
-  async createPlayer(@Args() { name, country, region }: CreatePlayerArgs) {
-    const payload = { name, country, region };
+  async createPlayer(
+    @Args() { name, country, region, alias }: CreatePlayerArgs,
+  ) {
+    const payload = { name, country, region, alias };
     return this.playersService.createOne(payload);
   }
 

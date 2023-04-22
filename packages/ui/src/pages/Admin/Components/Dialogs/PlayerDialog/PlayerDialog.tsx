@@ -25,6 +25,7 @@ export const PlayerDialog = ({
       onSubmit={onSubmit}
     >
       <FormField label="Name" name="name" />
+      <FormField label="Alias" name="alias" type="text" specialType="array" />
       <FormField label="Region" name="region" />
       <FormField label="Country" type="select" name="country">
         {lookup.countries.map((country) => (

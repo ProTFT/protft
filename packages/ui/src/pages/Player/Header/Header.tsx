@@ -1,3 +1,4 @@
+import { useMemo } from "react";
 import {
   CountryIndicator,
   RegionsIndicator,
@@ -6,6 +7,7 @@ import {
 // import { Twitter } from "../../../design/icons/Twitter";
 import { Player } from "../../../graphql/schema";
 import {
+  PlayerAlias,
   StyledHeaderContainer,
   StyledPlayerImage,
   StyledPlayerInfo,
@@ -14,15 +16,22 @@ import {
 } from "./Header.styled";
 
 interface Props {
-  player?: Pick<Player, "name" | "region" | "country">;
+  player?: Pick<Player, "name" | "region" | "country" | "alias">;
 }
 
 export const Header = ({ player }: Props) => {
+  const formattedAlias = useMemo(
+    () => player?.alias.join(", "),
+    [player?.alias]
+  );
   return (
     <StyledHeaderContainer>
       <StyledPlayerImage />
       <StyledPlayerInfo>
         <StyledPlayerName>{player?.name}</StyledPlayerName>
+        {player?.alias.length && (
+          <PlayerAlias>AKA: {formattedAlias}</PlayerAlias>
+        )}
         <RegionsIndicator regionCodes={[player?.region || ""]} />
         <CountryIndicator countryCode={player?.country} showName />
         <StyledSocialMediaContainer>

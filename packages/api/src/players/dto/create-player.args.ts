@@ -10,4 +10,7 @@ export class CreatePlayerArgs {
 
   @Field({ name: "region" })
   region: string;
+
+  @Field(() => [String], { name: "alias", nullable: true })
+  alias?: string[];
 }
