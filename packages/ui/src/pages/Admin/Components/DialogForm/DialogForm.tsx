@@ -35,7 +35,7 @@ const formValueToAPI = ({
     return checked;
   }
   if (dataset.sptype === "array") {
-    const splitValue = value.replaceAll(" ", "").split(",");
+    const splitValue = value.replaceAll(", ", ",").split(",");
     return [...splitValue];
   }
   if (dataset.sptype === "numberArray") {

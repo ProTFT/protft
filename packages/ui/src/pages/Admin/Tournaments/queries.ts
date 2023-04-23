@@ -6,8 +6,8 @@ export interface TournamentsQueryResult {
 }
 
 export const TOURNAMENTS_QUERY = gql`
-  query tournaments($searchQuery: String) {
-    adminTournaments(searchQuery: $searchQuery) {
+  query tournaments($searchQuery: String, $skip: Int, $take: Int) {
+    adminTournaments(searchQuery: $searchQuery, skip: $skip, take: $take) {
       id
       name
       participantsNumber

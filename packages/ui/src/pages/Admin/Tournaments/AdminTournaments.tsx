@@ -1,4 +1,4 @@
-import { useCallback } from "react";
+import { useCallback, useRef, useState } from "react";
 import { Link } from "react-router-dom";
 import { useMutation, useQuery } from "urql";
 import { ProTFTButton } from "../../../components/Button/Button";
@@ -19,14 +19,24 @@ import {
   TournamentsQueryResult,
   TOURNAMENTS_QUERY,
 } from "./queries";
+import { useObserver } from "../../../hooks/useObserver";
+import { usePagination } from "../../../hooks/usePagination";
+import { SearchField } from "../../../components/SearchFilterBar/SearchField";
 
 export const ADMIN_TOURNAMENTS_PATH = "/admin/tournaments";
 
+const ITEMS_PER_PAGE = 20;
+
 export const AdminTournaments = () => {
   const { show } = useToast();
+  const [page, setPage] = useState(0);
+  const [searchQuery, setSearchQuery] = useState("");
+
+  const { paginationArgs } = usePagination(page, ITEMS_PER_PAGE);
 
   const [{ data }, refetch] = useQuery<TournamentsQueryResult>({
     query: TOURNAMENTS_QUERY,
+    variables: { searchQuery, ...paginationArgs },
   });
 
   const [, createTournament] = useMutation<
@@ -43,6 +53,10 @@ export const AdminTournaments = () => {
       }),
     [createTournament]
   );
+
+  const onLoadMore = useCallback(() => {
+    setPage((curr) => curr + 1);
+  }, []);
 
   const onCreatePlayerSlugs = useCallback(async () => {
     const result = await createPlayerSlugs({});
@@ -61,9 +75,17 @@ export const AdminTournaments = () => {
     openDialog();
   }, [openDialog]);
 
+  const bottomRef = useRef<HTMLDivElement>(null);
+
+  useObserver(bottomRef, onLoadMore);
+
   return (
     <StyledContainer>
       {dialog}
+      <SearchField
+        placeholder="Search players"
+        setSearchQuery={setSearchQuery}
+      />
       <StyledAdminBar>
         <ProTFTButton onClick={onCreatePlayerSlugs}>
           Create Player Slugs
@@ -76,6 +98,7 @@ export const AdminTournaments = () => {
             <TournamentListItem tournament={tournament} />
           </Link>
         ))}
+        <div ref={bottomRef} />
       </StyledTournamentList>
     </StyledContainer>
   );

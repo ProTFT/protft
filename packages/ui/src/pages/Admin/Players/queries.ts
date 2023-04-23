@@ -12,6 +12,7 @@ export const PLAYERS_ADMIN_QUERY = gql`
       name
       region
       country
+      alias
     }
   }
 `;
