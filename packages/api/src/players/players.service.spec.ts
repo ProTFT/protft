@@ -211,6 +211,7 @@ describe("PlayersService", () => {
     });
 
     it("when dry run, should return results but not save", async () => {
+      mockQueryBuilderValue = [];
       const response = await service.createBulk(fileString);
       expect(response).toStrictEqual({
         newPlayers: [brazilianPlayer, englishPlayer],
@@ -223,7 +224,7 @@ describe("PlayersService", () => {
 
     it("when one player already exists, should not create it", async () => {
       const dryRun = true;
-      mockQueryBuilderValue = {};
+      mockQueryBuilderValue = [{}];
       const response = await service.createBulk(fileString, dryRun);
       expect(response).toStrictEqual({
         newPlayers: [],
@@ -239,7 +240,7 @@ describe("PlayersService", () => {
       playerRepository.find = jest
         .fn()
         .mockResolvedValueOnce([brazilianPlayer, englishPlayer]);
-      mockQueryBuilderValue = null;
+      mockQueryBuilderValue = [];
 
       const dryRun = false;
       const response = await service.createBulk(fileString, dryRun);

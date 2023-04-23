@@ -1,5 +1,6 @@
 import { ILike, SelectQueryBuilder } from "typeorm";
 import { Player } from "../players/player.entity";
+import { includes } from "./DBRawFilter";
 
 export const createOrWhereConditions =
   (whereConditions: string[]) => (qb: SelectQueryBuilder<unknown>) =>
@@ -7,4 +8,4 @@ export const createOrWhereConditions =
 
 export const likeNameOrAlias =
   (query: string) => (qb: SelectQueryBuilder<Player>) =>
-    qb.orWhere({ name: ILike(query) }).orWhere({ alias: ILike(query) });
+    qb.orWhere({ name: ILike(query) }).orWhere(includes([query])("alias"));

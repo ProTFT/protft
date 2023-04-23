@@ -70,15 +70,17 @@ export class PlayersService {
     return this.playerRepository.findOne({ slug });
   }
 
-  async findOneByName(
+  private async findOneByName(
     name: string,
     region: string,
   ): Promise<Player | undefined> {
-    return this.playerRepository
+    const result = (await this.playerRepository
       .createQueryBuilder()
       .where({ region })
       .andWhere(new Brackets(likeNameOrAlias(name)))
-      .execute();
+      .execute()) as Player[];
+
+    return result[0];
   }
 
   async updateOne(id: number, payload: Partial<Omit<Player, "id">>) {
