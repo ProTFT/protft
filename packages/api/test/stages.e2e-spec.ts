@@ -466,6 +466,7 @@ describe("Stages (e2e)", () => {
               player {
                 id
                 name
+                alias
               }
             }
           }`,
@@ -489,6 +490,7 @@ describe("Stages (e2e)", () => {
               player {
                 id
                 name
+                alias
               }
             }
           }`,

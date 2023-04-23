@@ -86,8 +86,8 @@ describe("StagePlayerInfos service", () => {
       stagePlayerInfoRepository.find = jest
         .fn()
         .mockResolvedValue([
-          { player: { name: "lele" } },
-          { player: { name: "pedro" } },
+          { player: { name: "lele", alias: [] } },
+          { player: { name: "pedro", alias: [] } },
         ]);
       const fileString = formatString(`
             Name,Ranking,ExtraPoints
@@ -104,8 +104,25 @@ describe("StagePlayerInfos service", () => {
       stagePlayerInfoRepository.find = jest
         .fn()
         .mockResolvedValue([
-          { player: { name: "lucas" } },
-          { player: { name: "pedro" } },
+          { player: { name: "lucas", alias: [] } },
+          { player: { name: "pedro", alias: [] } },
+        ]);
+      const fileString = formatString(`
+            Name,Ranking,ExtraPoints
+            Lucas,1
+            Pedro,2
+          `);
+      await service.createTiebreakerBulk(fileString, mockPlayerId);
+
+      expect(stagePlayerInfoRepository.update).toHaveBeenCalled();
+    });
+
+    it("should update if name does not match but alias does", async () => {
+      stagePlayerInfoRepository.find = jest
+        .fn()
+        .mockResolvedValue([
+          { player: { name: "lukinhas2023", alias: ["lucas"] } },
+          { player: { name: "pedro", alias: [] } },
         ]);
       const fileString = formatString(`
             Name,Ranking,ExtraPoints
@@ -121,8 +138,8 @@ describe("StagePlayerInfos service", () => {
       stagePlayerInfoRepository.find = jest
         .fn()
         .mockResolvedValue([
-          { player: { id: 1, name: "lucas" } },
-          { player: { id: 2, name: "pedro" } },
+          { player: { id: 1, name: "lucas", alias: [] } },
+          { player: { id: 2, name: "pedro", alias: [] } },
         ]);
       const fileString = formatString(`
             Name,Ranking,ExtraPoints
@@ -151,8 +168,8 @@ describe("StagePlayerInfos service", () => {
       stagePlayerInfoRepository.find = jest
         .fn()
         .mockResolvedValue([
-          { player: { id: 1, name: "lucas" } },
-          { player: { id: 2, name: "pedro" } },
+          { player: { id: 1, name: "lucas", alias: [] } },
+          { player: { id: 2, name: "pedro", alias: [] } },
         ]);
       const fileString = formatString(`
             Name,Ranking,ExtraPoints

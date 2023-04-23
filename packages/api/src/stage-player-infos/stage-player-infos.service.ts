@@ -2,6 +2,7 @@ import { BadRequestException, Injectable } from "@nestjs/common";
 import { InjectRepository } from "@nestjs/typeorm";
 import { Repository, UpdateResult } from "typeorm";
 import { parseFileString } from "../lib/FileParser";
+import { findTextByPlayer } from "../players/player.utils";
 import { GetStagePlayerArgs } from "../stages/dto/get-stage-player.args";
 import { UpdateStagePlayerArgs } from "../stages/dto/update-stage-player.args";
 import { StagePlayerInfo } from "./stage-player-info.entity";
@@ -55,7 +56,7 @@ export class StagePlayerInfosService {
       );
     }
 
-    const stagePlayers = await this.findAllByStage(stageId);
+    const stagePlayerInfos = await this.findAllByStage(stageId);
 
     const fileData = lines.map((line) => {
       const [name, tiebreakerRanking, extraPoints] = line.split(",");
@@ -66,12 +67,14 @@ export class StagePlayerInfosService {
       };
     });
 
+    const stagePlayers = stagePlayerInfos.map(
+      (stagePlayer) => stagePlayer.player,
+    );
+
     const resolvedInfo = stagePlayers.map((sp) => {
-      const entry = fileData.find(
-        (p) => p.name.toLowerCase() === sp.player.name.toLowerCase(),
-      );
+      const entry = findTextByPlayer(sp, fileData);
       return {
-        player: sp.player,
+        player: sp,
         name: entry?.name,
         tiebreakerRanking: entry?.tiebreakerRanking,
         extraPoints: entry?.extraPoints,

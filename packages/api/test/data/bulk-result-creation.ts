@@ -36,6 +36,7 @@ export const mockStagePlayers = Object.entries(players).map(([key, value]) => ({
   player: {
     id: Number(key),
     name: value,
+    alias: [`${value}Alias`],
   },
 })) as unknown as StagePlayerInfo[];
 

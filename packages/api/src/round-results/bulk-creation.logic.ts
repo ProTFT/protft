@@ -3,6 +3,7 @@ import chunk from "lodash.chunk";
 import { LobbyGroup } from "../lobbies/lobby-group.entity";
 import { Lobby } from "../lobbies/lobby.entity";
 import { LobbyPlayerInfo } from "../lobby-player-infos/lobby-player-info.entity";
+import { findPlayerByText } from "../players/player.utils";
 import { Round } from "../rounds/round.entity";
 import { StagePlayerInfo } from "../stage-player-infos/stage-player-info.entity";
 import { PLAYERS_IN_TFT_LOBBY } from "../stages/stages.service";
@@ -124,14 +125,15 @@ function parseFileLine(
 ): BaseFileLine[] {
   return lines.map((line) => {
     const [playerName, ...positions] = line.split(",");
-    const player = allStagePlayers.find(
-      (p) => p.player.name.toLowerCase() === playerName.toLowerCase(),
+    const possiblePlayers = allStagePlayers.map(
+      (stagePlayer) => stagePlayer.player,
     );
+    const player = findPlayerByText(playerName, possiblePlayers);
     if (!player) {
       throw new BadRequestException(`Player ${playerName} not found`);
     }
     return {
-      playerId: player.player.id,
+      playerId: player.id,
       playerPositions: positions.filter(Boolean).map((p) => Number(p)),
     };
   });

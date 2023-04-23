@@ -18,7 +18,7 @@ describe("Bulk result creation", () => {
   describe("buildResults", () => {
     it("should cross data and generate results for each player and round", () => {
       const lines = [
-        "Ana,1,2",
+        "AnaAlias,1,2",
         "Boris,1,2",
         "Camila,1,2",
         "Denis,1,2",
@@ -34,7 +34,7 @@ describe("Bulk result creation", () => {
         "Natalia,1,2",
         "orfeu,1,2",
         "Pedro,1,2",
-        "Ana,3,4",
+        "AnaAlias,3,4",
         "Boris,3,4",
         "Camila,3,4",
         "Denis,3,4",
@@ -50,7 +50,7 @@ describe("Bulk result creation", () => {
         "Natalia,3,4",
         "orfeu,3,4",
         "Pedro,3,4",
-        "Ana,5,6",
+        "AnaAlias,5,6",
         "Boris,5,6",
         "Camila,5,6",
         "Denis,5,6",
