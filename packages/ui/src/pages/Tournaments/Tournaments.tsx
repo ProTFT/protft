@@ -35,6 +35,14 @@ export const Tournaments = () => {
   const [selectedTab, setSelectedTab] = useState(Tabs.Upcoming);
   const { resetPagination } = useTournamentsContext();
 
+  const onSetSearchQuery = useCallback(
+    (query: string) => {
+      setSearchQuery(query);
+      resetPagination();
+    },
+    [resetPagination]
+  );
+
   const onChangeSelection = useCallback(
     (selected: Tabs) => {
       setSelectedTab(selected);
@@ -52,7 +60,7 @@ export const Tournaments = () => {
       <StyledBar>
         <TournamentSearchFilterBar
           placeholder="Search events"
-          setSearchQuery={setSearchQuery}
+          setSearchQuery={onSetSearchQuery}
         />
         <SegmentedButton<Tabs>
           buttons={buttons}
