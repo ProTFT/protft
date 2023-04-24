@@ -1,6 +1,6 @@
 import { Suspense, useCallback, useState } from "react";
+import { Helmet } from "react-helmet";
 import { SearchField } from "../../components/SearchFilterBar/SearchField";
-import { useDocumentTitle } from "../../hooks/useDocumentTitle";
 import { usePagination } from "../../hooks/usePagination";
 import { StyledContainer } from "./Players.styled";
 import { PlayersList } from "./PlayersList/PlayersList";
@@ -17,10 +17,11 @@ export const Players = () => {
     setPage((curr) => curr + 1);
   }, []);
 
-  useDocumentTitle("Players");
-
   return (
     <StyledContainer>
+      <Helmet>
+        <title>Players</title>
+      </Helmet>
       <SearchField
         placeholder="Search players"
         setSearchQuery={setSearchQuery}

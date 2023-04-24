@@ -1,4 +1,3 @@
-import { useDocumentTitle } from "../../hooks/useDocumentTitle";
 import { StyledBar, StyledContainer } from "./Tournaments.styled";
 import { TournamentSearchFilterBar } from "../../components/SearchFilterBar/TournamentSearchFilterBar";
 import { Suspense, useCallback, useState } from "react";
@@ -7,6 +6,7 @@ import { TournamentListSkeleton } from "./TournamentList/TournamentList.skeleton
 import { SegmentedButton } from "../../components/SegmentedButton/SegmentedButton";
 import React from "react";
 import { useTournamentsContext } from "./TournamentsContext";
+import { Helmet } from "react-helmet";
 
 const OngoingTournamentList = React.lazy(() =>
   import("./TournamentList/TournamentStateList").then((m) => ({
@@ -35,8 +35,6 @@ export const Tournaments = () => {
   const [selectedTab, setSelectedTab] = useState(Tabs.Upcoming);
   const { resetPagination } = useTournamentsContext();
 
-  useDocumentTitle("Tourneys");
-
   const onChangeSelection = useCallback(
     (selected: Tabs) => {
       setSelectedTab(selected);
@@ -47,6 +45,9 @@ export const Tournaments = () => {
 
   return (
     <StyledContainer>
+      <Helmet>
+        <title>Tourneys</title>
+      </Helmet>
       <OngoingTournamentList />
       <StyledBar>
         <TournamentSearchFilterBar

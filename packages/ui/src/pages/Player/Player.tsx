@@ -7,10 +7,10 @@ import {
   PLAYER_TOURNAMENT_QUERY,
 } from "./queries";
 import { StyledPageContainer } from "./Player.styled";
-import { useDocumentTitle } from "../../hooks/useDocumentTitle";
 import { Header } from "./Header/Header";
 import { Stats } from "./Stats/Stats";
 import { TourneyStats } from "./TourneyStats/TourneyStats";
+import { Helmet } from "react-helmet";
 
 export const Player = () => {
   const { playerSlug } = useParams();
@@ -24,10 +24,11 @@ export const Player = () => {
     variables: { playerId: Number(playerSlug?.split("-")[0]) },
   });
 
-  useDocumentTitle(data?.playerBySlug.name || "Loading");
-
   return (
     <StyledPageContainer>
+      <Helmet>
+        <title>{data?.playerBySlug.name || "Loading"}</title>
+      </Helmet>
       <Header player={data?.playerBySlug} />
       <Stats player={data?.playerBySlug} />
       <TourneyStats tournaments={tournamentData?.tournamentsPlayed} />

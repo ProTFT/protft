@@ -1,10 +1,11 @@
-import React, { useCallback, Suspense, useState } from "react";
+import React, { useCallback, Suspense, useState, useMemo } from "react";
+import { Helmet } from "react-helmet";
 import { useParams } from "react-router-dom";
 import { useQuery } from "urql";
 import { TournamentContent } from "../../components/TournamentContent/TournamentContent";
 import { Stage } from "../../graphql/schema";
-import { useDocumentTitle } from "../../hooks/useDocumentTitle";
 import { useIsMobile } from "../../hooks/useIsMobile";
+import { getEventMetadata } from "../../seo/Event";
 import { InfoBar } from "./InfoBar/InfoBar";
 import {
   TournamentBySlugQueryResponse,
@@ -29,7 +30,10 @@ export const Tournament = () => {
     variables: { slug: tournamentSlug },
   });
 
-  useDocumentTitle(`${data?.tournamentBySlug.name}`);
+  const description = useMemo(() => {
+    const tournament = data?.tournamentBySlug;
+    return `${tournament?.name} is a competitive Teamfight Tactics (TFT) tournament in the ${tournament?.region} region. ${tournament?.participantsNumber} players will face off to win a prize of ${tournament?.prizePool} ${tournament?.currency}.`;
+  }, [data?.tournamentBySlug]);
 
   const [open, setOpen] = useState(false);
   const [openStage, setOpenStage] = useState<Stage | null>(null);
@@ -50,6 +54,22 @@ export const Tournament = () => {
 
   return (
     <>
+      <Helmet>
+        <title>{data?.tournamentBySlug.name}</title>
+        <script type="application/ld+json">
+          {getEventMetadata({
+            name: data!.tournamentBySlug.name,
+            description,
+            startDateTime: data!.tournamentBySlug.startDate,
+            endDateTime: data!.tournamentBySlug.endDate,
+            image: `https://www.protft.com/sets/${
+              data!.tournamentBySlug.setId
+            }.webp`,
+            host: data!.tournamentBySlug.host || "",
+            streamLink: "https://www.twitch.tv/teamfighttactics",
+          })}
+        </script>
+      </Helmet>
       <StyledHeaderContainer>
         <TournamentContent tournament={data!.tournamentBySlug} />
       </StyledHeaderContainer>

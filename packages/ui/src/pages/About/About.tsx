@@ -1,4 +1,4 @@
-import { useDocumentTitle } from "../../hooks/useDocumentTitle";
+import { Helmet } from "react-helmet";
 import { useIsMobile } from "../../hooks/useIsMobile";
 import {
   StyledContainer,
@@ -15,10 +15,11 @@ import {
 export const About = () => {
   const isMobile = useIsMobile();
 
-  useDocumentTitle("About");
-
   return (
     <StyledContainer>
+      <Helmet>
+        <title>About</title>
+      </Helmet>
       <StyledHeader>
         {!isMobile && (
           <StyledTournamentImage src={`/sets/7.webp`} alt={"TFT"} />

@@ -1,7 +1,7 @@
 import { Suspense, useCallback, useState } from "react";
+import { Helmet } from "react-helmet";
 import { colors } from "../../design/colors";
 import { ArrowRightSimpleIcon } from "../../design/icons/ArrowRightSimple";
-import { useDocumentTitle } from "../../hooks/useDocumentTitle";
 import { usePagination } from "../../hooks/usePagination";
 import { Filters, SortColumn, SortDirection, SortOption } from "./queries";
 import { RegionSelect } from "./RegionSelect/RegionSelect";
@@ -91,10 +91,11 @@ export const Stats = () => {
 
   const { paginationArgs } = usePagination(page, ITEMS_PER_PAGE);
 
-  useDocumentTitle("Stats");
-
   return (
     <StyledContainer>
+      <Helmet>
+        <title>Stats</title>
+      </Helmet>
       <StyledStatsFilters>
         <StyledFilterContainer>
           <StyledFilterLabel>Tournaments</StyledFilterLabel>
