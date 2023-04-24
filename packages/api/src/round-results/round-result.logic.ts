@@ -22,6 +22,8 @@ export enum SortingMethods {
   TOTAL_EVENT_AVG_POS = 18,
   TOTAL_EVENT_FIRST_PLACE = 19,
   TOTAL_EVENT_SECOND_PLACE = 20,
+  TOTAL_EVENT_TOP_FOUR = 21,
+  TOTAL_EVENT_LESS_TOP_EIGTH = 22,
 }
 
 export const SortingMethodsNeedPastResults = [
@@ -29,6 +31,8 @@ export const SortingMethodsNeedPastResults = [
   SortingMethods.TOTAL_EVENT_AVG_POS,
   SortingMethods.TOTAL_EVENT_FIRST_PLACE,
   SortingMethods.TOTAL_EVENT_SECOND_PLACE,
+  SortingMethods.TOTAL_EVENT_TOP_FOUR,
+  SortingMethods.TOTAL_EVENT_LESS_TOP_EIGTH,
 ];
 
 // b - a, if MORE = highest position
@@ -169,6 +173,36 @@ export const sortByTotalEventSecondPosition = (
   return sortBySecondPlaces(aWithAllPositions, bWithAllPositions);
 };
 
+export const sortByTotalEventTopFour = (
+  a: PlayerResultsWithPast,
+  b: PlayerResultsWithPast,
+) => {
+  const aWithAllPositions = {
+    ...a,
+    positions: [...a.pastPositions, ...a.positions],
+  };
+  const bWithAllPositions = {
+    ...b,
+    positions: [...b.pastPositions, ...b.positions],
+  };
+  return sortByTopFour(aWithAllPositions, bWithAllPositions);
+};
+
+export const sortByTotalEventLessTopEigth = (
+  a: PlayerResultsWithPast,
+  b: PlayerResultsWithPast,
+) => {
+  const aWithAllPositions = {
+    ...a,
+    positions: [...a.pastPositions, ...a.positions],
+  };
+  const bWithAllPositions = {
+    ...b,
+    positions: [...b.pastPositions, ...b.positions],
+  };
+  return sortByLessTopEigth(aWithAllPositions, bWithAllPositions);
+};
+
 interface PastPoints {
   a: number;
   b: number;
@@ -202,6 +236,8 @@ export const sortingMethods: {
   [SortingMethods.TOTAL_EVENT_AVG_POS]: sortByTotalEventAveragePosition,
   [SortingMethods.TOTAL_EVENT_FIRST_PLACE]: sortByTotalEventFirstPosition,
   [SortingMethods.TOTAL_EVENT_SECOND_PLACE]: sortByTotalEventSecondPosition,
+  [SortingMethods.TOTAL_EVENT_TOP_FOUR]: sortByTotalEventTopFour,
+  [SortingMethods.TOTAL_EVENT_LESS_TOP_EIGTH]: sortByTotalEventLessTopEigth,
 };
 
 export interface PlayerResultsWithPast extends PlayerResults {
