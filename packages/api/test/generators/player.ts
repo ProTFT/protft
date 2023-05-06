@@ -7,6 +7,7 @@ export function player({
   name,
   region,
   country,
+  alias,
 }: PlayerGeneratorParams): Player {
   const randomId = Math.random() * 999;
   return {
@@ -14,6 +15,7 @@ export function player({
     name: name || "",
     region: region || "",
     country: country || "",
+    alias: alias || [],
     playerStats: null,
   };
 }
