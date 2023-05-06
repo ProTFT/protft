@@ -94,6 +94,10 @@ export const tiebreakerMap: { [key in SortingMethods]: Tiebreaker } = {
     id: 22,
     description: "Total Event Less Top Eigth",
   },
+  [SortingMethods.DIRECT_COMBAT]: {
+    id: 23,
+    description: "Direct Combat",
+  },
 };
 
 export const getAll = () => Object.values(tiebreakerMap);

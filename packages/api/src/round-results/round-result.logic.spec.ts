@@ -4,6 +4,7 @@ import {
 } from "../../test/data/result-tiebreakers";
 import {
   sortByAveragePosition,
+  sortByDirectCombat,
   sortByExternalTiebreaker,
   sortByFifthPlaces,
   sortByFirstPlaces,
@@ -592,6 +593,23 @@ describe("Sorting with tie breakers", () => {
 
     it("should be zero if both players had the same position", () => {
       expect(sortByTotalEventLessTopEigth(middle, middle)).toBe(0);
+    });
+  });
+
+  describe("sort by direct combat", () => {
+    const best = generatePlayer([1, 8, 1]);
+    const worst = generatePlayer([2, 3, 2]);
+
+    it("should be negative if a has higher placement than b", () => {
+      expect(sortByDirectCombat(best, worst)).toBeLessThan(0);
+    });
+
+    it("should be positive if b has higher placement than a", () => {
+      expect(sortByDirectCombat(worst, best)).toBeGreaterThan(0);
+    });
+
+    it("should be zero if a = b", () => {
+      expect(sortByDirectCombat(worst, worst)).toBe(0);
     });
   });
 
