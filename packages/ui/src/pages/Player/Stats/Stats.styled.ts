@@ -25,6 +25,6 @@ export const StyledStatsSection = styled(StyledVerticalContainer)(
   ({ theme }) => ({})
 );
 
-export const SetFilterContainer = styled.div(({}) => ({
+export const SetFilterContainer = styled.div(({ theme }) => ({
   paddingTop: "1rem",
 }));
