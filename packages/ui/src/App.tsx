@@ -21,6 +21,7 @@ import { Logout } from "./pages/Auth/Logout/Logout";
 import { useToast } from "./pages/Admin/Components/Toast/Toast";
 import { AdminPlayers } from "./pages/Admin/Players/AdminPlayers";
 import { TournamentsProvider } from "./pages/Tournaments/TournamentsContext";
+import { PlayersProvider } from "./pages/Players/PlayersContext";
 
 const ProtectedRoutes = (props: any) => {
   const location = useLocation();
@@ -60,7 +61,18 @@ export const App = () => {
           />
         </Route>
         <Route path="players">
-          <Route index element={<SuspenseElement element={<Players />} />} />
+          <Route
+            index
+            element={
+              <SuspenseElement
+                element={
+                  <PlayersProvider>
+                    <Players />
+                  </PlayersProvider>
+                }
+              />
+            }
+          />
           <Route
             path=":playerSlug"
             element={<SuspenseElement element={<Player />} />}

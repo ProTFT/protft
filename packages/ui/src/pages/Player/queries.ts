@@ -27,10 +27,7 @@ export const PLAYER_TOURNAMENT_QUERY = gql`
 `;
 
 export interface PlayerBySlugQueryResult {
-  playerBySlug: Pick<
-    Player,
-    "id" | "name" | "region" | "country" | "playerStats" | "alias"
-  >;
+  playerBySlug: Pick<Player, "id" | "name" | "region" | "country" | "alias">;
 }
 
 export const PLAYER_BY_SLUG_QUERY = gql`
@@ -41,7 +38,19 @@ export const PLAYER_BY_SLUG_QUERY = gql`
       region
       country
       alias
-      playerStats {
+    }
+  }
+`;
+
+export interface PlayerStatsBySlugQueryResult {
+  player: Pick<Player, "id" | "playerStats">;
+}
+
+export const PLAYER_STATS_QUERY = gql`
+  query player($id: Int!, $setId: Int) {
+    player(id: $id) {
+      id
+      playerStats(setId: $setId) {
         averagePosition
         totalGames
         topFourCount

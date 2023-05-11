@@ -9,3 +9,4 @@ export const createOrWhereConditions =
 export const likeNameOrAlias =
   (query: string) => (qb: SelectQueryBuilder<Player>) =>
     qb.orWhere({ name: ILike(query) }).orWhere(includes([query])("alias"));
+// should get lower here

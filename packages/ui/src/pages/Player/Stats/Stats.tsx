@@ -1,18 +1,54 @@
+import { useState } from "react";
+import { useQuery } from "urql";
 import { Stat } from "../../../components/Stat/Stat";
-import { Player } from "../../../graphql/schema";
-import { StyledStatsContainer } from "./Stats.styled";
+import { useIsDesktop } from "../../../hooks/useIsDesktop";
+import { PlayerStatsBySlugQueryResult, PLAYER_STATS_QUERY } from "../queries";
+import { SetDropdown } from "./SetDropdown";
+import {
+  SetFilterContainer,
+  StyledStatsContainer,
+  StyledStatsSection,
+} from "./Stats.styled";
 
 interface Props {
-  player?: Pick<Player, "playerStats">;
+  playerId?: number;
 }
 
-export const Stats = ({ player }: Props) => {
+export const Stats = ({ playerId }: Props) => {
+  const [setFilter, setSetFilter] = useState<number>(0);
+
+  const [{ data }] = useQuery<PlayerStatsBySlugQueryResult>({
+    query: PLAYER_STATS_QUERY,
+    variables: { id: playerId, setId: setFilter },
+  });
+
+  const isDesktop = useIsDesktop();
+
   return (
-    <StyledStatsContainer>
-      <Stat title="Matches" value={player?.playerStats?.totalGames} />
-      <Stat title="Avg Pos" value={player?.playerStats?.averagePosition} />
-      <Stat title="Top 4 %" value={player?.playerStats?.topFourCount} />
-      <Stat title="Top 1 %" value={player?.playerStats?.topOneCount} />
-    </StyledStatsContainer>
+    <StyledStatsSection>
+      {!isDesktop && (
+        <SetFilterContainer>
+          <SetDropdown
+            onSelectOption={setSetFilter}
+            selectedOption={setFilter}
+          />
+        </SetFilterContainer>
+      )}
+      <StyledStatsContainer>
+        <Stat title="Matches" value={data?.player?.playerStats?.totalGames} />
+        <Stat
+          title="Avg Pos"
+          value={data?.player?.playerStats?.averagePosition}
+        />
+        <Stat title="Top 4 %" value={data?.player?.playerStats?.topFourCount} />
+        <Stat title="Top 1 %" value={data?.player?.playerStats?.topOneCount} />
+        {isDesktop && (
+          <SetDropdown
+            onSelectOption={setSetFilter}
+            selectedOption={setFilter}
+          />
+        )}
+      </StyledStatsContainer>
+    </StyledStatsSection>
   );
 };

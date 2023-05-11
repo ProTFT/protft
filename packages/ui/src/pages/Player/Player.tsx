@@ -11,6 +11,8 @@ import { Header } from "./Header/Header";
 import { Stats } from "./Stats/Stats";
 import { TourneyStats } from "./TourneyStats/TourneyStats";
 import { Helmet } from "react-helmet";
+import { Suspense } from "react";
+import { StatsSkeleton } from "./Stats/Stats.skeleton";
 
 export const Player = () => {
   const { playerSlug } = useParams();
@@ -30,7 +32,9 @@ export const Player = () => {
         <title>{data?.playerBySlug.name || "Loading"}</title>
       </Helmet>
       <Header player={data?.playerBySlug} />
-      <Stats player={data?.playerBySlug} />
+      <Suspense fallback={<StatsSkeleton />}>
+        <Stats playerId={data?.playerBySlug.id} />
+      </Suspense>
       <TourneyStats tournaments={tournamentData?.tournamentsPlayed} />
     </StyledPageContainer>
   );
