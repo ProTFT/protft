@@ -72,6 +72,9 @@ export class Tournament {
   @Column({ default: true })
   visibility: boolean;
 
+  @Field(() => Int, { nullable: true })
+  nextStartTime?: number;
+
   @Field(() => Set)
   @ManyToOne(() => Set)
   @JoinColumn({ name: "setId" })

@@ -32,6 +32,7 @@ export type UpdateStageVariables = {
   description: string;
   qualifiedCount: number;
   stageType: StageType;
+  startDateTime?: string;
 };
 
 export const UPDATE_STAGE_MUTATION = gql`
@@ -46,6 +47,7 @@ export const UPDATE_STAGE_MUTATION = gql`
     $description: String
     $qualifiedCount: Int!
     $stageType: StageType!
+    $startDateTime: String
   ) {
     updateStage(
       id: $id
@@ -58,6 +60,7 @@ export const UPDATE_STAGE_MUTATION = gql`
       roundCount: $roundCount
       qualifiedCount: $qualifiedCount
       stageType: $stageType
+      startDateTime: $startDateTime
     ) {
       id
     }

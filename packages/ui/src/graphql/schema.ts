@@ -80,6 +80,7 @@ export interface Tournament {
   setId: number;
   slug: string;
   visibility: boolean;
+  nextStartTime?: Nullable<number>;
   set: Set;
   stages?: Nullable<Stage[]>;
   players?: Nullable<Player[]>;
@@ -112,6 +113,7 @@ export interface Stage {
   stageType: StageType;
   qualifiedCount: number;
   roundCount: number;
+  startDateTime?: Nullable<string>;
   players: StagePlayerInfo[];
   lobbies?: Nullable<Lobby[]>;
   lobbyGroups: LobbyGroup[];
@@ -206,6 +208,7 @@ export interface TournamentsPlayed {
   setId: number;
   slug: string;
   visibility: boolean;
+  nextStartTime?: Nullable<number>;
   set: Set;
   stages?: Nullable<Stage[]>;
   players?: Nullable<Player[]>;
@@ -362,7 +365,8 @@ export interface IMutation {
     stageType: StageType,
     roundCount: number,
     tiebreakers?: Nullable<number[]>,
-    description?: Nullable<string>
+    description?: Nullable<string>,
+    startDateTime?: Nullable<string>
   ): Stage | Promise<Stage>;
   updateStage(
     id: number,
@@ -375,7 +379,8 @@ export interface IMutation {
     stageType: StageType,
     roundCount: number,
     tiebreakers?: Nullable<number[]>,
-    description?: Nullable<string>
+    description?: Nullable<string>,
+    startDateTime?: Nullable<string>
   ): Stage | Promise<Stage>;
   updateTiebreakers(id: number, tiebreakers: number[]): Stage | Promise<Stage>;
   deleteStage(id: number): DeleteResponse | Promise<DeleteResponse>;
@@ -433,14 +438,16 @@ export interface IMutation {
   createPlayer(
     name: string,
     country: string,
-    region: string
+    region: string,
+    alias?: Nullable<string[]>
   ): Player | Promise<Player>;
   updatePlayer(
     id: number,
     name?: Nullable<string>,
     country?: Nullable<string>,
     region?: Nullable<string>,
-    slug?: Nullable<string>
+    slug?: Nullable<string>,
+    alias?: Nullable<string[]>
   ): Player | Promise<Player>;
   createPlayerSlugs(): Player[] | Promise<Player[]>;
   deletePlayer(id: number): Player | Promise<Player>;

@@ -40,6 +40,7 @@ export type CreateStageVariables = {
   description: string;
   qualifiedCount: number;
   stageType: StageType;
+  startDateTime?: string;
 };
 
 export const CREATE_STAGE_MUTATION = gql`
@@ -53,6 +54,7 @@ export const CREATE_STAGE_MUTATION = gql`
     $description: String
     $qualifiedCount: Int!
     $stageType: StageType!
+    $startDateTime: String
   ) {
     createStage(
       tournamentId: $tournamentId
@@ -64,6 +66,7 @@ export const CREATE_STAGE_MUTATION = gql`
       roundCount: $roundCount
       qualifiedCount: $qualifiedCount
       stageType: $stageType
+      startDateTime: $startDateTime
     ) {
       id
     }

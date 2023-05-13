@@ -32,4 +32,7 @@ export class CreateStageArgs {
 
   @Field({ name: "description", nullable: true })
   description?: string;
+
+  @Field({ name: "startDateTime", nullable: true })
+  startDateTime?: string;
 }

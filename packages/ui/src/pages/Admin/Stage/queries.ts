@@ -16,6 +16,7 @@ export const STAGE_QUERY = gql`
       roundCount
       qualifiedCount
       stageType
+      startDateTime
     }
   }
 `;

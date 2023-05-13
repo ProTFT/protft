@@ -41,6 +41,7 @@ export const TournamentStages = () => {
     async (stage: Omit<Stage, "id" | "rounds" | "lobbies">) => {
       const result = await createStage({
         ...stage,
+        startDateTime: stage.startDateTime ?? undefined,
         tournamentId: Number(tournamentId),
         isFinal: false,
       });

@@ -36,10 +36,14 @@ export class StagesService {
     });
   }
 
-  findAllByTournament(tournamentId: number): Promise<Stage[]> {
+  findAllByTournament(
+    tournamentId: number,
+    relations?: string[],
+  ): Promise<Stage[]> {
     return this.stageRepository.find({
       where: { tournamentId },
       order: { sequence: "ASC" },
+      relations,
     });
   }
 

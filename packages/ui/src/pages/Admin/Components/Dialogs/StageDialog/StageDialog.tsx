@@ -36,6 +36,7 @@ export const StageDialog = ({ dialogRef, formRef, onSubmit, stage }: Props) => {
         <option value={StageType.RANKING}>Ranking</option>
         <option value={StageType.GROUP_BASED}>Group based</option>
       </FormField>
+      <FormField label="Time" type="datetime-local" name="startDateTime" />
       <FormField label="Qualified #" name="qualifiedCount" type="number" />
     </DialogForm>
   );

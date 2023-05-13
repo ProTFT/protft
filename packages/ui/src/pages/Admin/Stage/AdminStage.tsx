@@ -95,6 +95,7 @@ export const AdminStage = () => {
   ) => {
     const result = await updateStage({
       ...formStage,
+      startDateTime: formStage.startDateTime ?? undefined,
       id: Number(stageId),
       tournamentId: Number(id),
       isFinal: false,

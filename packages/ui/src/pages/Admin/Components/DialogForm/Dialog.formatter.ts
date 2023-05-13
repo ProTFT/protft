@@ -1,6 +1,26 @@
-export const dbDateToHTML = (dbDateTimeString?: string): string => {
+export const dbDateToHTML = (
+  dbDateTimeString?: string,
+  includeTime: boolean = false
+): string => {
   if (!dbDateTimeString) {
     return "";
   }
-  return new Date(dbDateTimeString).toISOString().slice(0, 10);
+  const slice = includeTime ? 16 : 10;
+  return new Date(dbDateTimeString).toISOString().slice(0, slice);
+};
+
+export const dbUTCDateTimeToHTML = (dbDateTimeString?: string): string => {
+  if (!dbDateTimeString) {
+    return "";
+  }
+
+  const date = new Date(dbDateTimeString);
+  const utcValue = Date.UTC(
+    date.getFullYear(),
+    date.getMonth(),
+    date.getDate(),
+    date.getHours(),
+    date.getMinutes()
+  );
+  return new Date(utcValue).toISOString().slice(0, -1);
 };

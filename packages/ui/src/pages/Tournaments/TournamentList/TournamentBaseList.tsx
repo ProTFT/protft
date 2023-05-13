@@ -8,11 +8,11 @@ interface BaseListProps {
   tournaments: TournamentWithMaybePlayerResult[] | undefined;
   searchQuery?: string;
   color?: string;
-  isLive?: boolean;
+  isOngoing?: boolean;
 }
 
 export const TournamentBaseList = forwardRef<HTMLDivElement, BaseListProps>(
-  ({ tournaments, color, isLive }, listEndRef) => {
+  ({ tournaments, color, isOngoing }, listEndRef) => {
     return (
       <StyledTournamentList>
         {tournaments?.map((tournament) => (
@@ -20,7 +20,7 @@ export const TournamentBaseList = forwardRef<HTMLDivElement, BaseListProps>(
             <TournamentListItem
               tournament={tournament}
               color={color}
-              isLive={isLive}
+              isOngoing={isOngoing}
             />
           </Link>
         ))}

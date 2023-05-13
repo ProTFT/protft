@@ -35,7 +35,7 @@ export const OngoingTournamentList = () => {
     <TournamentBaseList
       tournaments={data?.ongoingTournaments}
       color={colors.darkPurple}
-      isLive
+      isOngoing
     />
   );
 };

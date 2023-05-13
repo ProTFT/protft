@@ -65,6 +65,7 @@ export const ONGOING_TOURNAMENTS_QUERY = gql`
         id
         name
       }
+      nextStartTime
     }
   }
 `;

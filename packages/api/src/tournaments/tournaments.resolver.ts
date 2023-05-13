@@ -112,6 +112,11 @@ export class TournamentsResolver extends BaseResolver {
     return tournamentWithPlayers.players;
   }
 
+  @ResolveField()
+  async nextStartTime(@Parent() tournament: Tournament): Promise<number> {
+    return this.tournamentsService.findNextStageStartTime(tournament);
+  }
+
   @UseGuards(GqlJwtAuthGuard)
   @Mutation(() => Tournament)
   async createTournament(@Args() payload: CreateTournamentArgs) {

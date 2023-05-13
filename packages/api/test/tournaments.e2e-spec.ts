@@ -44,6 +44,8 @@ const mockTournamentWithResolvedFields = {
   players: [mockPlayer],
 };
 
+const mockStartTime = 5;
+
 const fakeTournamentService = {
   findAll: jest.fn().mockResolvedValue(mockTournaments),
   findOne: jest.fn().mockResolvedValue(mockTournamentWithResolvedFields),
@@ -60,6 +62,7 @@ const fakeTournamentService = {
     .mockResolvedValue(mockTournaments[0]),
   createMissingSlugs: jest.fn().mockResolvedValue(mockTournaments),
   findWithStats: jest.fn().mockResolvedValue(mockTournaments),
+  findNextStageStartTime: jest.fn().mockResolvedValue(mockStartTime),
 };
 
 const fakeSetsService = {
@@ -119,6 +122,33 @@ describe("Tournament (e2e)", () => {
 
       expect(response.body).toStrictEqual({
         data: { tournaments: mockTournaments },
+      });
+    });
+
+    it("should get nextStartTime resolved", async () => {
+      const response = await request(app.getHttpServer())
+        .post(graphql)
+        .send({
+          query: `
+          query {
+            tournaments {
+              id
+              name
+              nextStartTime
+            }
+          }`,
+        });
+
+      const tournamentsWithStartTime = mockTournaments.map((tournament) => ({
+        ...tournament,
+        nextStartTime: mockStartTime,
+      }));
+
+      expect(response.status).toBe(HttpStatus.OK);
+      expect(response.body).toStrictEqual({
+        data: {
+          tournaments: tournamentsWithStartTime,
+        },
       });
     });
 

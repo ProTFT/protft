@@ -69,6 +69,10 @@ export class Stage {
   @Field(() => Int)
   roundCount: number;
 
+  @Field({ nullable: true })
+  @Column({ nullable: true })
+  startDateTime?: string;
+
   @Field(() => [StagePlayerInfo])
   @OneToMany(
     () => StagePlayerInfo,

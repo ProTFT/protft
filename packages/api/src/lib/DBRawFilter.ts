@@ -1,6 +1,3 @@
-import { ILike, QueryBuilder, SelectQueryBuilder } from "typeorm";
-import { Player } from "../players/player.entity";
-
 const TODAY_IN_SQL = "CURRENT_DATE";
 
 export const beforeToday = (alias: string) => `${alias} < ${TODAY_IN_SQL}`;

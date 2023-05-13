@@ -1,5 +1,6 @@
 import { Injectable, NotFoundException } from "@nestjs/common";
 import { In, Raw, Repository } from "typeorm";
+import { DateTime } from "luxon";
 import { DeleteResponse } from "../lib/dto/delete-return";
 import { Player } from "../players/player.entity";
 import { SetsService } from "../sets/sets.service";
@@ -25,6 +26,7 @@ import {
 } from "./dto/get-tournaments.args";
 import { TournamentRepository } from "./tournament.repository";
 import { InjectRepository } from "@nestjs/typeorm";
+import { StagesService } from "../stages/stages.service";
 
 @Injectable()
 export class TournamentsService {
@@ -33,6 +35,7 @@ export class TournamentsService {
     @InjectRepository(Tournament)
     private tournamentRepository: Repository<Tournament>,
     private setsService: SetsService,
+    private stagesService: StagesService,
   ) {
     this.customRepository = new TournamentRepository(this.tournamentRepository);
   }
@@ -105,6 +108,34 @@ export class TournamentsService {
         sorting: { startDate: "ASC" },
       },
     );
+  }
+
+  async findNextStageStartTime({ id, endDate }: Tournament): Promise<number> {
+    const currentDate = DateTime.now().toUTC();
+    const tournamentEndDate = DateTime.fromISO(endDate.toISOString()).set({
+      hour: 23,
+      minute: 59,
+    });
+    if (currentDate > tournamentEndDate) {
+      return 0;
+    }
+    const stages = await this.stagesService.findAllByTournament(id, ["rounds"]);
+    const nextStage = stages.find((stage) => {
+      const stageDateTime = DateTime.fromISO(stage.startDateTime);
+      const stageDateTimeWithDuration = stageDateTime.plus({
+        hour: stage.rounds.length,
+      });
+      if (stageDateTimeWithDuration < currentDate) {
+        return false;
+      }
+      return true;
+    });
+    if (!nextStage) {
+      return 0;
+    }
+    const nextStageDateTime = DateTime.fromISO(nextStage.startDateTime);
+    const diff = nextStageDateTime.diff(currentDate, "milliseconds");
+    return diff.milliseconds;
   }
 
   async createOne(payload: CreateTournamentArgs): Promise<Tournament> {

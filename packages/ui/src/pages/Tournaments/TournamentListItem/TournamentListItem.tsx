@@ -5,17 +5,17 @@ import { TournamentWithMaybePlayerResult } from "../Tournaments.types";
 interface Props {
   tournament: TournamentWithMaybePlayerResult;
   color?: string;
-  isLive?: boolean;
+  isOngoing?: boolean;
 }
 
 export const TournamentListItem = ({
   tournament,
   color,
-  isLive = false,
+  isOngoing = false,
 }: Props) => {
   return (
     <StyledListItem bgColor={color}>
-      <TournamentContent tournament={tournament} isLive={isLive} />
+      <TournamentContent tournament={tournament} isOngoing={isOngoing} />
     </StyledListItem>
   );
 };

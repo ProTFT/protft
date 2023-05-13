@@ -81,6 +81,7 @@ export interface Tournament {
     setId: number;
     slug: string;
     visibility: boolean;
+    nextStartTime?: Nullable<number>;
     set: Set;
     stages?: Nullable<Stage[]>;
     players?: Nullable<Player[]>;
@@ -113,6 +114,7 @@ export interface Stage {
     stageType: StageType;
     qualifiedCount: number;
     roundCount: number;
+    startDateTime?: Nullable<string>;
     players: StagePlayerInfo[];
     lobbies?: Nullable<Lobby[]>;
     lobbyGroups: LobbyGroup[];
@@ -207,6 +209,7 @@ export interface TournamentsPlayed {
     setId: number;
     slug: string;
     visibility: boolean;
+    nextStartTime?: Nullable<number>;
     set: Set;
     stages?: Nullable<Stage[]>;
     players?: Nullable<Player[]>;
@@ -263,8 +266,8 @@ export interface IMutation {
     createTournamentPlayers(tournamentId: number, playerIds: number[]): Tournament | Promise<Tournament>;
     createTournamentPlayersByName(tournamentId: number, playerNames: string): Tournament | Promise<Tournament>;
     createTournamentSlugs(): Tournament[] | Promise<Tournament[]>;
-    createStage(tournamentId: number, pointSchemaId: number, name: string, sequence: number, isFinal: boolean, qualifiedCount: number, stageType: StageType, roundCount: number, tiebreakers?: Nullable<number[]>, description?: Nullable<string>): Stage | Promise<Stage>;
-    updateStage(id: number, tournamentId: number, pointSchemaId: number, name: string, sequence: number, isFinal: boolean, qualifiedCount: number, stageType: StageType, roundCount: number, tiebreakers?: Nullable<number[]>, description?: Nullable<string>): Stage | Promise<Stage>;
+    createStage(tournamentId: number, pointSchemaId: number, name: string, sequence: number, isFinal: boolean, qualifiedCount: number, stageType: StageType, roundCount: number, tiebreakers?: Nullable<number[]>, description?: Nullable<string>, startDateTime?: Nullable<string>): Stage | Promise<Stage>;
+    updateStage(id: number, tournamentId: number, pointSchemaId: number, name: string, sequence: number, isFinal: boolean, qualifiedCount: number, stageType: StageType, roundCount: number, tiebreakers?: Nullable<number[]>, description?: Nullable<string>, startDateTime?: Nullable<string>): Stage | Promise<Stage>;
     updateTiebreakers(id: number, tiebreakers: number[]): Stage | Promise<Stage>;
     deleteStage(id: number): DeleteResponse | Promise<DeleteResponse>;
     createStagePlayers(stageId: number, playerIds: number[]): Stage | Promise<Stage>;

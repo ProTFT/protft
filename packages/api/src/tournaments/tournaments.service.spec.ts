@@ -2,21 +2,20 @@ import { NotFoundException } from "@nestjs/common";
 import { Repository } from "typeorm";
 import { DeleteResponse } from "../lib/dto/delete-return";
 import { SetsService } from "../sets/sets.service";
+import { StagesService } from "../stages/stages.service";
 import { CreateTournamentArgs } from "./dto/create-tournament.args";
 import { UpdateTournamentArgs } from "./dto/update-tournament.args";
 import { Tournament } from "./tournament.entity";
-import {
-  TOURNAMENT_INITIAL_PAGE,
-  TOURNAMENT_PAGE_SIZE,
-  TournamentRepository,
-} from "./tournament.repository";
+import { TournamentRepository } from "./tournament.repository";
 import { TournamentsService } from "./tournaments.service";
+import { Settings } from "luxon";
 jest.mock("./tournament.repository");
 
 describe("TournamentsService", () => {
   let service: TournamentsService;
   let tournamentRepository: Repository<Tournament>;
   let setsService: SetsService;
+  let stagesService: StagesService;
   let findWithPaginationSpy: jest.SpyInstance;
   const mockTournamentId = 1;
   const searchQuery = "test";
@@ -54,7 +53,12 @@ describe("TournamentsService", () => {
     setsService = {
       findOne: jest.fn().mockResolvedValue({ id: 1, name: "setName" }),
     } as unknown as SetsService;
-    service = new TournamentsService(tournamentRepository, setsService);
+    stagesService = {} as unknown as StagesService;
+    service = new TournamentsService(
+      tournamentRepository,
+      setsService,
+      stagesService,
+    );
   });
 
   afterEach(() => {
@@ -180,6 +184,147 @@ describe("TournamentsService", () => {
           sorting: { startDate: "ASC" },
         },
       );
+    });
+  });
+
+  describe("findNextStageStartTime", () => {
+    const hoursToMs = (hours: number) => minutesToMs(hours * 60);
+    const minutesToMs = (minutes: number) => minutes * 60 * 1000;
+    const dateIn2022 = new Date(2022, 1, 1);
+    const dateIn2023 = new Date(2023, 5, 31);
+
+    it("if now() is past tournament date, should return 0", async () => {
+      const tournament = {
+        id: 1,
+        endDate: dateIn2022,
+      } as Tournament;
+      Settings.now = () => dateIn2023.valueOf();
+
+      const response = await service.findNextStageStartTime(tournament);
+
+      expect(response).toBe(0);
+    });
+
+    it("if now() is 23 hours before, should return 23 hours in ms", async () => {
+      const tournament = {
+        id: 1,
+        endDate: new Date(2023, 5, 2, 13),
+      } as Tournament;
+      Settings.now = () => new Date(2023, 5, 1, 12, 0, 0).valueOf();
+
+      stagesService.findAllByTournament = jest.fn().mockResolvedValue([
+        {
+          startDateTime: new Date(2023, 5, 2, 11, 0, 0).toISOString(),
+          rounds: [{}],
+        },
+      ]);
+
+      const response = await service.findNextStageStartTime(tournament);
+
+      expect(response).toBe(hoursToMs(23));
+    });
+
+    it("if now() is 30 minutes before, should return 30 minutes in ms", async () => {
+      const tournament = {
+        id: 1,
+        endDate: new Date(2023, 5, 2, 13),
+      } as Tournament;
+      Settings.now = () => new Date(2023, 5, 1, 12, 0, 0).valueOf();
+
+      stagesService.findAllByTournament = jest.fn().mockResolvedValue([
+        {
+          startDateTime: new Date(2023, 5, 1, 12, 30, 0).toISOString(),
+          rounds: [{}],
+        },
+      ]);
+
+      const response = await service.findNextStageStartTime(tournament);
+
+      expect(response).toBe(minutesToMs(30));
+    });
+
+    it("if now() is 30 minutes after, should return negative", async () => {
+      const tournament = {
+        id: 1,
+        endDate: new Date(2023, 5, 2, 13),
+      } as Tournament;
+      Settings.now = () => new Date(2023, 5, 1, 13, 0, 0).valueOf();
+
+      stagesService.findAllByTournament = jest.fn().mockResolvedValue([
+        {
+          startDateTime: new Date(2023, 5, 1, 12, 30, 0).toISOString(),
+          rounds: [{}],
+        },
+      ]);
+
+      const response = await service.findNextStageStartTime(tournament);
+
+      expect(response).toBeLessThan(0);
+    });
+
+    it("if now() is 1h30 after, has one round but no next stage, should return 0", async () => {
+      const tournament = {
+        id: 1,
+        endDate: new Date(2023, 5, 2, 13),
+      } as Tournament;
+      Settings.now = () => new Date(2023, 5, 1, 14, 0, 0).valueOf();
+
+      stagesService.findAllByTournament = jest.fn().mockResolvedValue([
+        {
+          startDateTime: new Date(2023, 5, 1, 12, 30, 0).toISOString(),
+          rounds: [{}],
+        },
+      ]);
+
+      const response = await service.findNextStageStartTime(tournament);
+
+      expect(response).toBe(0);
+    });
+
+    it("if now() is 1h30 after, has one round, and has next stage should return the next stage countdown", async () => {
+      const tournament = {
+        id: 1,
+        endDate: new Date(2023, 5, 2, 13),
+      } as Tournament;
+      Settings.now = () => new Date(2023, 5, 1, 14, 0, 0).valueOf();
+
+      stagesService.findAllByTournament = jest.fn().mockResolvedValue([
+        {
+          startDateTime: new Date(2023, 5, 1, 12, 30, 0).toISOString(),
+          rounds: [{}],
+        },
+        {
+          startDateTime: new Date(2023, 5, 1, 16, 0, 0).toISOString(),
+          rounds: [{}],
+        },
+      ]);
+
+      const response = await service.findNextStageStartTime(tournament);
+
+      expect(response).toBe(hoursToMs(2));
+    });
+
+    it("if now() is 1h30 after, but has two rounds, should be negative", async () => {
+      const tournament = {
+        id: 1,
+        endDate: new Date(2023, 5, 2, 13),
+      } as Tournament;
+      Settings.now = () => new Date(2023, 5, 1, 14, 0, 0).valueOf();
+
+      stagesService.findAllByTournament = jest.fn().mockResolvedValue([
+        {
+          startDateTime: new Date(2023, 5, 1, 12, 30, 0).toISOString(),
+          rounds: [{}, {}],
+        },
+        {
+          startDateTime: new Date(2023, 5, 1, 16, 0, 0).toISOString(),
+          rounds: [{}],
+        },
+      ]);
+
+      const response = await service.findNextStageStartTime(tournament);
+
+      expect(response).toBeLessThan(0);
     });
   });
 
