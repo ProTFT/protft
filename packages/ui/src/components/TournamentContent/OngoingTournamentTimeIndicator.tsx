@@ -10,13 +10,14 @@ interface Props {
   nextStartTime: number;
 }
 
-const formatRemainingTime = (milliseconds: number) => {
-  const date = new Date(milliseconds);
-  return date.toLocaleTimeString([], {
-    hour: "2-digit",
-    minute: "2-digit",
-    hourCycle: "h24",
-  });
+const formatRemainingTime = (duration: number) => {
+  const minutes = Math.floor((duration / (1000 * 60)) % 60);
+  const hours = Math.floor((duration / (1000 * 60 * 60)) % 24);
+
+  const stringHours = hours < 10 ? "0" + hours : hours;
+  const stringMinutes = minutes < 10 ? "0" + minutes : minutes;
+
+  return stringHours + ":" + stringMinutes;
 };
 
 export const OngoingTournamentTimeIndicator = ({ nextStartTime }: Props) => {
