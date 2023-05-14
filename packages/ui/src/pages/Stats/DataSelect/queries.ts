@@ -18,6 +18,19 @@ export const TOURNAMENTS_WITH_STATS_QUERY = gql`
   }
 `;
 
+export const TOURNAMENTS_WITH_STATS_AND_FILTER_QUERY = gql`
+  query tournaments($searchQuery: String) {
+    tournamentsWithStats(searchQuery: $searchQuery) {
+      id
+      name
+      set {
+        id
+        name
+      }
+    }
+  }
+`;
+
 export interface SetsQueryResponse {
   sets: Set[];
 }

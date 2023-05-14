@@ -63,10 +63,10 @@ export class TournamentsService {
     return this.tournamentRepository.findOne({ slug });
   }
 
-  async findWithStats(): Promise<Tournament[]> {
+  async findWithStats(searchQuery?: string): Promise<Tournament[]> {
     const [past, current] = await Promise.all([
-      this.findPast(),
-      this.findOngoing(),
+      this.findPast({ searchQuery }),
+      this.findOngoing(searchQuery),
     ]);
     return [...current, ...past];
   }
@@ -85,15 +85,18 @@ export class TournamentsService {
     );
   }
 
-  findOngoing(): Promise<Tournament[]> {
-    return this.tournamentRepository.find({
-      where: {
-        startDate: Raw(beforeOrToday),
-        endDate: Raw(afterOrToday),
-        visibility: true,
+  findOngoing(searchQuery?: string): Promise<Tournament[]> {
+    return this.customRepository.findWithPagination(
+      { searchQuery },
+      { skip: 0, take: 100 },
+      {
+        condition: {
+          startDate: Raw(beforeOrToday),
+          endDate: Raw(afterOrToday),
+        },
+        sorting: { startDate: "DESC" },
       },
-      order: { startDate: "DESC" },
-    });
+    );
   }
 
   findUpcoming(

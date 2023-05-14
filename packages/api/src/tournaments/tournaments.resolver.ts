@@ -23,6 +23,7 @@ import {
 import { Player } from "../players/player.entity";
 import { GetTournamentsArgs } from "./dto/get-tournaments.args";
 import { BaseResolver } from "../lib/BaseResolver";
+import { GetTournamentWithStatsArgs } from "./dto/get-tournaments-with-stats.args";
 
 @Resolver(() => Tournament)
 export class TournamentsResolver extends BaseResolver {
@@ -87,8 +88,10 @@ export class TournamentsResolver extends BaseResolver {
   }
 
   @Query(() => [Tournament])
-  async tournamentsWithStats() {
-    return this.tournamentsService.findWithStats();
+  async tournamentsWithStats(
+    @Args() { searchQuery }: GetTournamentWithStatsArgs,
+  ) {
+    return this.tournamentsService.findWithStats(searchQuery);
   }
 
   @ResolveField()

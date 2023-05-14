@@ -1,9 +1,10 @@
 import { useCallback } from "react";
-import { useQuery } from "urql";
+import { useClient, useQuery } from "urql";
 import { Tournament } from "../../../graphql/schema";
-import { DataSelect } from "../DataSelect/DataSelect";
+import { AsyncDataSelect } from "../DataSelect/AsyncDataSelect";
 import {
   TournamentsQueryResponse,
+  TOURNAMENTS_WITH_STATS_AND_FILTER_QUERY,
   TOURNAMENTS_WITH_STATS_QUERY,
 } from "../DataSelect/queries";
 
@@ -19,10 +20,25 @@ export const TournamentSelect = ({ value, onValueChange }: Props) => {
     query: TOURNAMENTS_WITH_STATS_QUERY,
   });
 
+  const { query } = useClient();
+
+  const loadOptions = useCallback(
+    async (input: string): Promise<SelectTournament[]> => {
+      const response = await query<TournamentsQueryResponse>(
+        TOURNAMENTS_WITH_STATS_AND_FILTER_QUERY,
+        {
+          searchQuery: input,
+        }
+      ).toPromise();
+      return response.data?.tournamentsWithStats || [];
+    },
+    [query]
+  );
+
   const getPrefix = useCallback((data: SelectTournament) => data.set.name, []);
 
   return (
-    <DataSelect<number[], SelectTournament>
+    <AsyncDataSelect<number[], SelectTournament>
       data={data?.tournamentsWithStats}
       valueKey="id"
       labelKey="name"
@@ -32,6 +48,7 @@ export const TournamentSelect = ({ value, onValueChange }: Props) => {
       prefix={getPrefix}
       placeholder="Golden Spatula Cup #1, Mid-set Finale"
       isMulti
+      loadOptions={loadOptions}
     />
   );
 };

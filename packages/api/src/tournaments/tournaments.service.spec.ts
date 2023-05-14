@@ -141,28 +141,61 @@ describe("TournamentsService", () => {
           players: [],
         },
       ];
-      tournamentRepository.find = jest.fn().mockResolvedValue(tournaments);
-      findWithPaginationSpy.mockResolvedValueOnce(tournaments);
+      findWithPaginationSpy.mockResolvedValue(tournaments);
       const response = await service.findWithStats();
 
-      expect(tournamentRepository.find).toHaveBeenCalled();
-      expect(findWithPaginationSpy).toHaveBeenCalled();
+      expect(findWithPaginationSpy).toHaveBeenCalledTimes(2);
+      expect(response).toStrictEqual([...tournaments, ...tournaments]);
+    });
+
+    it("should use searchquery on both searches", async () => {
+      const searchQuery = "test";
+      const tournaments = [
+        {
+          id: mockTournamentId,
+          name: "anyName",
+          players: [],
+        },
+        {
+          id: 2,
+          name: "anyName",
+          players: [],
+        },
+      ];
+      findWithPaginationSpy.mockResolvedValue(tournaments);
+      const response = await service.findWithStats(searchQuery);
+
+      expect(findWithPaginationSpy).toHaveBeenCalledTimes(2);
+      expect(findWithPaginationSpy).toHaveBeenNthCalledWith(
+        1,
+        { searchQuery },
+        undefined,
+        expect.anything(),
+      );
+      expect(findWithPaginationSpy).toHaveBeenNthCalledWith(
+        2,
+        { searchQuery },
+        { skip: 0, take: 100 },
+        expect.anything(),
+      );
       expect(response).toStrictEqual([...tournaments, ...tournaments]);
     });
   });
 
   describe("findOngoing", () => {
     it("should call repository", async () => {
-      await service.findOngoing();
+      const searchQuery = "test";
+      await service.findOngoing(searchQuery);
 
-      expect(tournamentRepository.find).toHaveBeenCalledWith(
+      expect(findWithPaginationSpy).toHaveBeenCalledWith(
+        expect.objectContaining({ searchQuery }),
+        expect.anything(),
         expect.objectContaining({
-          where: expect.objectContaining({
+          condition: expect.objectContaining({
             startDate: expect.anything(),
             endDate: expect.anything(),
-            visibility: true,
           }),
-          order: expect.objectContaining({
+          sorting: expect.objectContaining({
             startDate: "DESC",
           }),
         }),

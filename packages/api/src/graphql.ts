@@ -236,7 +236,7 @@ export interface IQuery {
     ongoingTournaments(): Tournament[] | Promise<Tournament[]>;
     upcomingTournaments(region?: Nullable<string[]>, setId?: Nullable<number[]>, searchQuery?: Nullable<string>, take?: Nullable<number>, skip?: Nullable<number>): Tournament[] | Promise<Tournament[]>;
     pastTournaments(region?: Nullable<string[]>, setId?: Nullable<number[]>, searchQuery?: Nullable<string>, take?: Nullable<number>, skip?: Nullable<number>): Tournament[] | Promise<Tournament[]>;
-    tournamentsWithStats(): Tournament[] | Promise<Tournament[]>;
+    tournamentsWithStats(searchQuery?: Nullable<string>): Tournament[] | Promise<Tournament[]>;
     stages(tournamentId: number): Stage[] | Promise<Stage[]>;
     stage(id: number): Stage | Promise<Stage>;
     playersFromPreviousStage(id: number): StagePlayerInfo[] | Promise<StagePlayerInfo[]>;
