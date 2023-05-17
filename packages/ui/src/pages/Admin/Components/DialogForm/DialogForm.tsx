@@ -16,6 +16,7 @@ export interface Props<T, K> {
   formRef: React.RefObject<HTMLFormElement>;
   onSubmit: (formEntity: K) => void;
   entity?: T;
+  defaultValues?: Partial<T>;
 }
 
 const formValueToAPI = ({
@@ -81,8 +82,11 @@ export const DialogForm = <T extends object, K extends object>({
   onSubmit,
   entity,
   children,
+  defaultValues,
 }: React.PropsWithChildren<Props<T, K>>) => {
-  const [localEntity, setLocalEntity] = useState<T>((entity as T) || {});
+  const [localEntity, setLocalEntity] = useState<T>(
+    (entity as T) || defaultValues || {}
+  );
 
   useEffect(() => {
     setLocalEntity((entity as T) || {});

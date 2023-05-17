@@ -1,7 +1,9 @@
 import React from "react";
+import { useQuery } from "urql";
 import { Stage, StageType } from "../../../../../graphql/schema";
 import { DialogForm } from "../../DialogForm/DialogForm";
 import { FormField } from "../../DialogForm/FormField";
+import { PointSchemasResponse, POINT_SCHEMA_IDS_QUERY } from "./queries";
 
 export interface Props {
   dialogRef: React.RefObject<HTMLDialogElement>;
@@ -10,13 +12,20 @@ export interface Props {
   stage?: Stage;
 }
 
+const eightToOnePointSchemaId = 2;
+
 export const StageDialog = ({ dialogRef, formRef, onSubmit, stage }: Props) => {
+  const [{ data }] = useQuery<PointSchemasResponse>({
+    query: POINT_SCHEMA_IDS_QUERY,
+  });
+
   return (
     <DialogForm
       dialogRef={dialogRef}
       formRef={formRef}
       entity={stage}
       onSubmit={onSubmit}
+      defaultValues={{ pointSchemaId: eightToOnePointSchemaId }}
     >
       <FormField label="Name" name="name" />
       <FormField label="Description" name="description" />
@@ -27,9 +36,11 @@ export const StageDialog = ({ dialogRef, formRef, onSubmit, stage }: Props) => {
         name="pointSchemaId"
         specialType="number"
       >
-        <option value="2">8 - 1</option>
-        <option value="1">10 - 8 - 6 - 1</option>
-        <option value="3">9 - 7 - 1</option>
+        {data?.pointSchemas.map(({ id, name }) => (
+          <option key={id} value={id}>
+            {name}
+          </option>
+        ))}
       </FormField>
       <FormField label="Round Count" name="roundCount" type="number" />
       <FormField label="Stage Type" type="select" name="stageType">

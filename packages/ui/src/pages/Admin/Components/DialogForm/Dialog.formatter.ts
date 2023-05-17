@@ -16,11 +16,11 @@ export const dbUTCDateTimeToHTML = (dbDateTimeString?: string): string => {
 
   const date = new Date(dbDateTimeString);
   const utcValue = Date.UTC(
-    date.getFullYear(),
-    date.getMonth(),
-    date.getDate(),
-    date.getHours(),
-    date.getMinutes()
+    date.getUTCFullYear(),
+    date.getUTCMonth(),
+    date.getUTCDate(),
+    date.getUTCHours(),
+    date.getUTCMinutes()
   );
   return new Date(utcValue).toISOString().slice(0, -1);
 };
