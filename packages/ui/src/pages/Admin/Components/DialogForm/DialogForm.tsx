@@ -45,6 +45,9 @@ const formValueToAPI = ({
   }
 
   if (type === "datetime-local") {
+    if (!value) {
+      return "";
+    }
     const dateValue = new Date(value);
     const utcValue = Date.UTC(
       dateValue.getFullYear(),

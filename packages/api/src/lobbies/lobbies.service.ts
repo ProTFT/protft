@@ -91,6 +91,11 @@ export class LobbiesService {
     return new DeleteResponse(id);
   }
 
+  async deleteManyLobbyGroups(stageId: number): Promise<DeleteResponse> {
+    await this.lobbyGroupsRepository.delete({ stageId });
+    return new DeleteResponse(stageId);
+  }
+
   findOneLobbyGroup(lobbyGroupId: number): Promise<LobbyGroup> {
     return this.lobbyGroupsRepository.findOne(lobbyGroupId);
   }

@@ -14,6 +14,7 @@ export const StyledBar = styled(StyledVerticalContainer)`
 
 export const StyledButtonContainer = styled(StyledHorizontalContainer)`
   gap: 1rem;
+  flex-wrap: wrap;
 `;
 
 export const StyledLobbyContainer = styled(StyledHorizontalContainer)`

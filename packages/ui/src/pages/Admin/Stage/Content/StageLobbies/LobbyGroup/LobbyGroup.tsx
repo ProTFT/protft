@@ -29,8 +29,8 @@ import {
   CreateLobbyVariables,
   CreateNLobbyGroupResult,
   CreateNLobbyGroupVariables,
-  CreateNLobbyResult,
-  CreateNLobbyVariables,
+  DeleteLobbyGroupsResult,
+  DeleteLobbyGroupsVariables,
   CreatePlayerLobbyGroupResult,
   CreatePlayerLobbyGroupVariables,
   CREATE_LOBBY_GROUP_MUTATION,
@@ -38,6 +38,9 @@ import {
   CREATE_LOBBY_PLAYERS_MUTATION,
   CREATE_N_LOBBY_GROUP_MUTATION,
   CREATE_N_LOBBY_MUTATION,
+  CreateNLobbyResult,
+  CreateNLobbyVariables,
+  DELETE_LOBBY_GROUPS,
 } from "./queries";
 import { useToast } from "../../../../Components/Toast/Toast";
 import { StyledTitle } from "../../../../Components/Title/Title.styled";
@@ -112,6 +115,11 @@ export const LobbyGroup = ({
     CreateNLobbyResult,
     CreateNLobbyVariables
   >(CREATE_N_LOBBY_MUTATION);
+
+  const [, deleteLobbyGroups] = useMutation<
+    DeleteLobbyGroupsResult,
+    DeleteLobbyGroupsVariables
+  >(DELETE_LOBBY_GROUPS);
 
   const [, createLobby] = useMutation<CreateLobbyResult, CreateLobbyVariables>(
     CREATE_LOBBY_MUTATION
@@ -242,6 +250,17 @@ export const LobbyGroup = ({
     show();
   }, [allLobbiesWithPlayers, createPlayerLobbyGroup, show]);
 
+  const onDeleteLobbyGroups = useCallback(async () => {
+    const result = await deleteLobbyGroups({
+      stageId: Number(stageId),
+    });
+    if (result.error) {
+      return alert(result.error);
+    }
+    show();
+    refetchLobbyGroups();
+  }, [deleteLobbyGroups, refetchLobbyGroups, show, stageId]);
+
   const onAdd = useCallback(
     ({ lobbyId, name: lobbyName }: AllLobbyPlayers) =>
       (newPlayer: Player) => {
@@ -332,16 +351,19 @@ export const LobbyGroup = ({
         </StyledTitleContainer>
         <StyledButtonContainer>
           <ProTFTButton onClick={onSave}>Save</ProTFTButton>
-          <ProTFTButton onClick={onCreateNLobbyGroup}>
-            Create N Lobby Group
-          </ProTFTButton>
-          <ProTFTButton onClick={onCreateNLobby}>Create N Lobby</ProTFTButton>
           <ProTFTButton onClick={onCreateLobbyGroup}>
             Create Lobby Group
           </ProTFTButton>
           {selectedLobbyGroup && (
             <ProTFTButton onClick={onCreateLobby}>Create Lobby</ProTFTButton>
           )}
+          <ProTFTButton onClick={onCreateNLobbyGroup}>
+            Create N Lobby Group
+          </ProTFTButton>
+          <ProTFTButton onClick={onCreateNLobby}>Create N Lobby</ProTFTButton>
+          <ProTFTButton onClick={onDeleteLobbyGroups}>
+            Delete Lobby Groups
+          </ProTFTButton>
         </StyledButtonContainer>
       </StyledBar>
       <StyledLobbyContainer>

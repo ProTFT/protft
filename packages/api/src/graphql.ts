@@ -277,6 +277,7 @@ export interface IMutation {
     createNLobby(stageId: number, lobbyGroupId: number, quantity: number): Lobby[] | Promise<Lobby[]>;
     updateLobby(id: number, stageId: number, sequence: number, lobbyGroupId: number, name?: Nullable<string>): Lobby | Promise<Lobby>;
     deleteLobby(id: number): DeleteResponse | Promise<DeleteResponse>;
+    deleteLobbyGroups(stageId: number): DeleteResponse | Promise<DeleteResponse>;
     createRound(stageId: number, sequence: number): Round | Promise<Round>;
     createLobbyGroup(stageId: number, sequence: number, roundsPlayed: number): LobbyGroup | Promise<LobbyGroup>;
     createNLobbyGroup(stageId: number, quantity: number, roundsPlayed: number): LobbyGroup[] | Promise<LobbyGroup[]>;

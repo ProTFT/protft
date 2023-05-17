@@ -128,3 +128,21 @@ export const CREATE_LOBBY_MUTATION = gql`
     }
   }
 `;
+
+export interface DeleteLobbyGroupsResult {
+  deleteLobbyGroups: {
+    id: number;
+  };
+}
+
+export type DeleteLobbyGroupsVariables = {
+  stageId: number;
+};
+
+export const DELETE_LOBBY_GROUPS = gql`
+  mutation ($stageId: Int!) {
+    deleteLobbyGroups(stageId: $stageId) {
+      id
+    }
+  }
+`;
