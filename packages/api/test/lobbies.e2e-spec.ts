@@ -57,6 +57,7 @@ const fakeLobbiesService = {
   createN: jest.fn().mockResolvedValue(mockLobbies),
   updateOne: jest.fn().mockResolvedValue(mockLobbies[0]),
   deleteOne: jest.fn().mockResolvedValue({ id: 1 }),
+  deleteManyLobbyGroups: jest.fn().mockResolvedValue({ id: 1 }),
   createPlayerLobbyGroup: jest.fn().mockResolvedValue(mockLobbyPlayerInfo),
   createOneLobbyGroup: jest.fn().mockResolvedValue({ id: 1 }),
   createNLobbyGroup: jest.fn().mockResolvedValue(mockLobbyGroups),
@@ -215,6 +216,26 @@ describe("Lobby (e2e)", () => {
 
       expect(response.body).toStrictEqual({
         data: { deleteLobby: { id: 1 } },
+      });
+    });
+  });
+
+  describe("deleteLobbyGroups", () => {
+    it("should delete", async () => {
+      const response = await request(app.getHttpServer())
+        .post(graphql)
+        .send({
+          query: `
+          mutation {
+            deleteLobbyGroups(stageId: 1) {
+              id
+            }
+          }`,
+        });
+
+      expect(response.status).toBe(HttpStatus.OK);
+      expect(response.body).toStrictEqual({
+        data: { deleteLobbyGroups: { id: 1 } },
       });
     });
   });

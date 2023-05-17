@@ -14,6 +14,7 @@ import {
   fromRawToConsolidatedRoundResults,
 } from "./round-result.adapter";
 import {
+  PlayerResultsWithPast,
   SortingMethodsNeedPastResults,
   sortResults,
 } from "./round-result.logic";
@@ -30,6 +31,7 @@ import {
 } from "./bulk-creation.logic";
 import { LobbyGroupWithLobbies } from "./dto/get-lobby-results.out";
 import { RoundsService } from "../rounds/rounds.service";
+import { StagePlayerInfosService } from "../stage-player-infos/stage-player-infos.service";
 
 interface FileLineWithPlayerLobby {
   lobbyPlayerId: number;
@@ -46,6 +48,7 @@ export class RoundResultsService {
     private lobbyPlayerInfosService: LobbyPlayerInfosService,
     private lobbiesService: LobbiesService,
     private roundsService: RoundsService,
+    private stagePlayerInfosService: StagePlayerInfosService,
   ) {}
 
   public async createResults({
@@ -127,9 +130,25 @@ export class RoundResultsService {
     return this.roundResultsRepository.save(finalPayload);
   }
 
-  public async overviewResultsByStage(stageId: number) {
-    const { tiebreakers, tournamentId, sequence } =
-      await this.stagesService.findOne(stageId);
+  public async overviewResultsByStage(
+    stageId: number,
+  ): Promise<PlayerResultsWithPast[]> {
+    const { tiebreakers, tournamentId, sequence, lobbyGroups } =
+      await this.stagesService.findOne(stageId, ["lobbyGroups"]);
+    if (!lobbyGroups.length) {
+      const stagePlayers = await this.stagePlayerInfosService.findAllByStage(
+        stageId,
+      );
+      return stagePlayers.map((stagePlayer) => ({
+        player: stagePlayer.player,
+        positions: [],
+        points: [],
+        tiebreakerRanking: 0,
+        lobbyPlayerId: 0,
+        pastPoints: 0,
+        pastPositions: [],
+      }));
+    }
     const results = await this.findResultsByStage(stageId);
     const formattedResults = fromRawToConsolidatedRoundResults(results);
     if (tiebreakers?.some((t) => SortingMethodsNeedPastResults.includes(t))) {

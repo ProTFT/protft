@@ -11,6 +11,7 @@ import {
   TournamentBySlugQueryResponse,
   TOURNAMENT_BY_SLUG_QUERY,
 } from "./queries";
+import { SkeletonResultTable } from "./Results/ResultTable/SkeletonResultTable";
 import { Stages } from "./Stages/Stages";
 import {
   StyledBodyContainer,
@@ -86,8 +87,12 @@ export const Tournament = () => {
           onSelectStage={onSelectStage}
           openStage={openStage}
         />
-        <Suspense fallback={null}>
-          <Results open={open} selectedStage={openStage} />
+        <Suspense fallback={<SkeletonResultTable />}>
+          <Results
+            open={open}
+            selectedStage={openStage}
+            tournamentEndDate={data?.tournamentBySlug.endDate}
+          />
         </Suspense>
       </StyledBodyContainer>
     </>

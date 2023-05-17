@@ -8,6 +8,7 @@ import { LobbiesModule } from "../lobbies/lobbies.module";
 import { LobbyPlayerInfosModule } from "../lobby-player-infos/lobby-player-infos.module";
 import { RoundResultsController } from "./round-results.controller";
 import { RoundsModule } from "../rounds/rounds.module";
+import { StagePlayerInfosModule } from "../stage-player-infos/stage-player-infos.module";
 
 @Module({
   imports: [
@@ -16,6 +17,7 @@ import { RoundsModule } from "../rounds/rounds.module";
     LobbiesModule,
     LobbyPlayerInfosModule,
     RoundsModule,
+    StagePlayerInfosModule,
   ],
   providers: [RoundResultsService, RoundResultsResolver],
   exports: [RoundResultsService],

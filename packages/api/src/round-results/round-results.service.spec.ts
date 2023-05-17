@@ -1,11 +1,13 @@
 import { Repository } from "typeorm";
 import { lobby } from "../../test/generators/lobby";
 import { lobbyGroup } from "../../test/generators/lobby-group";
+import { player } from "../../test/generators/player";
 import { stage } from "../../test/generators/stage";
 import { formatString } from "../../test/helpers/File";
 import { LobbiesService } from "../lobbies/lobbies.service";
 import { LobbyPlayerInfosService } from "../lobby-player-infos/lobby-player-infos.service";
 import { RoundsService } from "../rounds/rounds.service";
+import { StagePlayerInfosService } from "../stage-player-infos/stage-player-infos.service";
 import { StagesService } from "../stages/stages.service";
 import { tiebreakerMap } from "../stages/tiebreaker.logic";
 import { CreateLobbyGroupResultArgs } from "./dto/create-lobby-group-result.args";
@@ -116,6 +118,27 @@ const mockRawResults = {
   tiebreakerRanking: 1,
 };
 
+const mockStagePlayers = [
+  {
+    player: player({}),
+    positions: [],
+    points: [],
+    lobbyPlayerId: 0,
+    pastPoints: 0,
+    pastPositions: [],
+    tiebreakerRanking: 0,
+  },
+  {
+    player: player({}),
+    positions: [],
+    points: [],
+    lobbyPlayerId: 0,
+    pastPoints: 0,
+    pastPositions: [],
+    tiebreakerRanking: 0,
+  },
+];
+
 describe("RoundResults service", () => {
   let service: RoundResultsService;
   let roundResultsRepository: Repository<RoundResult>;
@@ -123,11 +146,14 @@ describe("RoundResults service", () => {
   let lobbyPlayerInfosService: LobbyPlayerInfosService;
   let lobbiesService: LobbiesService;
   let roundsService: RoundsService;
+  let stagePlayerInfosService: StagePlayerInfosService;
   const fakeQueryBuilder = new FakeQueryBuilder();
 
   beforeEach(() => {
     stagesService = {
-      findOne: jest.fn().mockResolvedValue(stage({})),
+      findOne: jest
+        .fn()
+        .mockResolvedValue(stage({ lobbyGroups: [lobbyGroup({})] })),
       findAllByTournament: jest.fn(),
     } as unknown as StagesService;
 
@@ -157,12 +183,17 @@ describe("RoundResults service", () => {
       },
     } as unknown as Repository<RoundResult>;
 
+    stagePlayerInfosService = {
+      findAllByStage: jest.fn().mockResolvedValue(mockStagePlayers),
+    } as unknown as StagePlayerInfosService;
+
     service = new RoundResultsService(
       roundResultsRepository,
       stagesService,
       lobbyPlayerInfosService,
       lobbiesService,
       roundsService,
+      stagePlayerInfosService,
     );
   });
 
@@ -267,6 +298,7 @@ describe("RoundResults service", () => {
       stagesService.findOne = jest.fn().mockResolvedValue({
         tournamentId: 1,
         sequence: 1,
+        lobbyGroups: [lobbyGroup({})],
       });
       const response = await service.overviewResultsByStage(1);
       expect(response).toStrictEqual(
@@ -274,11 +306,22 @@ describe("RoundResults service", () => {
       );
     });
 
+    it("if there are no lobby groups, should return player list", async () => {
+      stagesService.findOne = jest.fn().mockResolvedValue({
+        tournamentId: 1,
+        sequence: 1,
+        lobbyGroups: [],
+      });
+      const response = await service.overviewResultsByStage(1);
+      expect(response).toStrictEqual(mockStagePlayers);
+    });
+
     it("if tiebreaker has total event points and is not first stage, should add data from previous stages", async () => {
       stagesService.findOne = jest.fn().mockResolvedValue({
         tiebreakers: [SortingMethods.TOTAL_EVENT_POINTS],
         tournamentId: 1,
         sequence: 2,
+        lobbyGroups: [lobbyGroup({})],
       });
       stagesService.findAllByTournament = jest.fn().mockResolvedValue([
         {
@@ -312,6 +355,7 @@ describe("RoundResults service", () => {
         tiebreakers: [SortingMethods.TOTAL_EVENT_POINTS],
         tournamentId: 1,
         sequence: 1,
+        lobbyGroups: [lobbyGroup({})],
       });
       stagesService.findAllByTournament = jest.fn().mockResolvedValue([
         {
@@ -346,6 +390,7 @@ describe("RoundResults service", () => {
           tiebreakers: [method],
           tournamentId: 1,
           sequence: 2,
+          lobbyGroups: [lobbyGroup({})],
         });
         stagesService.findAllByTournament = jest.fn().mockResolvedValue([
           {
