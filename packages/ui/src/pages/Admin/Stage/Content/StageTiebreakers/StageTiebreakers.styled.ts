@@ -27,6 +27,7 @@ export const StyledTiebreakerListItem = styled(StyledHorizontalContainer)<{
 
 export const StyledStageTiebreakerBar = styled(StyledHorizontalContainer)`
   justify-content: space-between;
+  gap: 1rem;
 `;
 
 export const StyledTitle = styled.p`

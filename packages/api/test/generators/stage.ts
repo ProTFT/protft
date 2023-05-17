@@ -17,6 +17,7 @@ export function stage({
   tiebreakers,
   stageType,
   qualifiedCount,
+  startDateTime,
 }: Partial<Stage>): Stage {
   const randomId = Math.random() * 999;
   return {
@@ -36,5 +37,6 @@ export function stage({
     tiebreakers: tiebreakers || [],
     stageType: stageType || StageType.RANKING,
     qualifiedCount: qualifiedCount || 0,
+    startDateTime: startDateTime || "",
   };
 }

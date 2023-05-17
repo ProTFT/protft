@@ -49,6 +49,10 @@ const mockLobbyResults = [
   },
 ];
 
+const mockSuccessResult = {
+  success: true,
+};
+
 const fakeRoundResultsService = {
   overviewResultsByStage: jest.fn().mockResolvedValue(mockResults),
   resultsByLobbyGroup: jest.fn().mockResolvedValue(mockResults),
@@ -56,6 +60,7 @@ const fakeRoundResultsService = {
   createResults: jest.fn().mockResolvedValue(mockRoundResults),
   createBulk: jest.fn(),
   lobbyResultsByStage: jest.fn().mockResolvedValue(mockLobbyResults),
+  carryOverPointsFromLastStage: jest.fn().mockResolvedValue(mockSuccessResult),
 };
 
 describe("Round Result (e2e)", () => {
@@ -194,6 +199,26 @@ describe("Round Result (e2e)", () => {
       expect(response.body).toStrictEqual({
         data: { createLobbyGroupResult: mockRoundResults },
       });
+    });
+  });
+
+  describe("carryOverPointsFromLastStage", () => {
+    it("should call service", async () => {
+      const response = await request(app.getHttpServer())
+        .post(graphql)
+        .send({
+          query: `
+          mutation {
+            carryOverPointsFromLastStage(stageId: 1) {
+              success
+            }
+          }`,
+        });
+
+      expect(response.body).toStrictEqual({
+        data: { carryOverPointsFromLastStage: mockSuccessResult },
+      });
+      expect(response.status).toBe(HttpStatus.OK);
     });
   });
 

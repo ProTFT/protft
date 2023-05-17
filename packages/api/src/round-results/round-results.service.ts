@@ -32,6 +32,9 @@ import {
 import { LobbyGroupWithLobbies } from "./dto/get-lobby-results.out";
 import { RoundsService } from "../rounds/rounds.service";
 import { StagePlayerInfosService } from "../stage-player-infos/stage-player-infos.service";
+import { StagePlayerInfo } from "../stage-player-infos/stage-player-info.entity";
+import { CarryOverPointsArgs } from "./dto/carry-over-points.args";
+import { SuccessResponse } from "../lib/dto/ok-return";
 
 interface FileLineWithPlayerLobby {
   lobbyPlayerId: number;
@@ -50,6 +53,40 @@ export class RoundResultsService {
     private roundsService: RoundsService,
     private stagePlayerInfosService: StagePlayerInfosService,
   ) {}
+
+  public async carryOverPointsFromLastStage({
+    stageId,
+  }: CarryOverPointsArgs): Promise<SuccessResponse> {
+    const { sequence, tournamentId, players } =
+      await this.stagesService.findOne(stageId, ["players"]);
+    const stagePlayerIds = players.map((player) => player.playerId);
+    const stagesFromTournament = await this.stagesService.findAllByTournament(
+      tournamentId,
+    );
+    const lastStage = stagesFromTournament.find(
+      (stage) => stage.sequence === sequence - 1,
+    );
+    if (!lastStage) {
+      throw new BadRequestException("No stage to copy from");
+    }
+    const lastStageResults = await this.overviewResultsByStage(lastStage.id);
+
+    const filteredResults = lastStageResults.filter((result) =>
+      stagePlayerIds.includes(result.player.id),
+    );
+    const playerPoints = filteredResults.map<
+      Omit<StagePlayerInfo, "stage" | "player">
+    >((playerResult) => ({
+      ...players.find(
+        (stagePlayer) => stagePlayer.playerId === playerResult.player.id,
+      ),
+      extraPoints: lastStageResults
+        .find((result) => result.player.id === playerResult.player.id)
+        .points.reduce((a, b) => a + b, 0),
+    }));
+    await this.stagePlayerInfosService.updateMany(playerPoints);
+    return new SuccessResponse(true);
+  }
 
   public async createResults({
     lobbyGroupId,
@@ -135,6 +172,7 @@ export class RoundResultsService {
   ): Promise<PlayerResultsWithPast[]> {
     const { tiebreakers, tournamentId, sequence, lobbyGroups } =
       await this.stagesService.findOne(stageId, ["lobbyGroups"]);
+
     if (!lobbyGroups.length) {
       const stagePlayers = await this.stagePlayerInfosService.findAllByStage(
         stageId,

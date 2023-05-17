@@ -8,6 +8,8 @@ import { StagesService } from "../src/stages/stages.service";
 import { GraphQLModule } from "@nestjs/graphql";
 import { ApolloDriver, ApolloDriverConfig } from "@nestjs/apollo";
 import { GqlJwtAuthGuard } from "../src/auth/jwt-auth.guard";
+import { TournamentsReadService } from "../src/tournaments/services/tournaments-read.service";
+import { TournamentsFieldsService } from "../src/tournaments/services/tournaments-fields.service";
 
 const graphql = "/graphql";
 
@@ -47,12 +49,6 @@ const mockTournamentWithResolvedFields = {
 const mockStartTime = 5;
 
 const fakeTournamentService = {
-  findAll: jest.fn().mockResolvedValue(mockTournaments),
-  findOne: jest.fn().mockResolvedValue(mockTournamentWithResolvedFields),
-  findOneBySlug: jest.fn().mockResolvedValue(mockTournaments[0]),
-  findOngoing: jest.fn().mockResolvedValue(mockTournaments),
-  findUpcoming: jest.fn().mockResolvedValue(mockTournaments),
-  findPast: jest.fn().mockResolvedValue(mockTournaments),
   createOne: jest.fn().mockResolvedValue(mockTournaments[0]),
   updateOne: jest.fn().mockResolvedValue(mockTournaments[0]),
   deleteOne: jest.fn().mockResolvedValue(mockTournaments[0]),
@@ -61,7 +57,19 @@ const fakeTournamentService = {
     .fn()
     .mockResolvedValue(mockTournaments[0]),
   createMissingSlugs: jest.fn().mockResolvedValue(mockTournaments),
+};
+
+const fakeTournamentsReadService = {
+  findAll: jest.fn().mockResolvedValue(mockTournaments),
+  findOne: jest.fn().mockResolvedValue(mockTournamentWithResolvedFields),
+  findOneBySlug: jest.fn().mockResolvedValue(mockTournaments[0]),
+  findOngoing: jest.fn().mockResolvedValue(mockTournaments),
+  findUpcoming: jest.fn().mockResolvedValue(mockTournaments),
+  findPast: jest.fn().mockResolvedValue(mockTournaments),
   findWithStats: jest.fn().mockResolvedValue(mockTournaments),
+};
+
+const fakeTournamentsFieldsService = {
   findNextStageStartTime: jest.fn().mockResolvedValue(mockStartTime),
 };
 
@@ -86,6 +94,8 @@ describe("Tournament (e2e)", () => {
       ],
       providers: [
         TournamentsResolver,
+        TournamentsReadService,
+        TournamentsFieldsService,
         SetsService,
         TournamentsService,
         StagesService,
@@ -95,6 +105,10 @@ describe("Tournament (e2e)", () => {
       .useValue(fakeSetsService)
       .overrideProvider(TournamentsService)
       .useValue(fakeTournamentService)
+      .overrideProvider(TournamentsReadService)
+      .useValue(fakeTournamentsReadService)
+      .overrideProvider(TournamentsFieldsService)
+      .useValue(fakeTournamentsFieldsService)
       .overrideProvider(StagesService)
       .useValue(fakeStagesService)
       .overrideGuard(GqlJwtAuthGuard)
@@ -165,7 +179,7 @@ describe("Tournament (e2e)", () => {
           }`,
         });
 
-      expect(fakeTournamentService.findAll).toHaveBeenCalledWith(
+      expect(fakeTournamentsReadService.findAll).toHaveBeenCalledWith(
         { searchQuery: "Test", region: ["WO", "NA"], setId: [1, 2] },
         { take: 20, skip: 20 },
       );
@@ -344,7 +358,7 @@ describe("Tournament (e2e)", () => {
           }`,
         });
 
-      expect(fakeTournamentService.findUpcoming).toHaveBeenCalledWith(
+      expect(fakeTournamentsReadService.findUpcoming).toHaveBeenCalledWith(
         { searchQuery: "Test", region: ["WO", "NA"], setId: [1, 2] },
         { take: 20, skip: 20 },
       );
@@ -387,7 +401,7 @@ describe("Tournament (e2e)", () => {
           }`,
         });
 
-      expect(fakeTournamentService.findPast).toHaveBeenCalledWith(
+      expect(fakeTournamentsReadService.findPast).toHaveBeenCalledWith(
         { searchQuery: "Test", region: ["WO", "NA"], setId: [1, 2] },
         { take: 20, skip: 20 },
       );

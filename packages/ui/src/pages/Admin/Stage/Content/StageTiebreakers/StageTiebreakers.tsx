@@ -12,6 +12,9 @@ import {
 } from "../../../Components/Layout/TwoSided.styled";
 import { useToast } from "../../../Components/Toast/Toast";
 import {
+  CarryOverPointsResult,
+  CarryOverPointsVariables,
+  CARRY_OVER_POINTS_MUTATION,
   StageQueryResponse,
   STAGE_QUERY,
   TiebreakersQueryResult,
@@ -49,6 +52,11 @@ export const StageTiebreakers = () => {
     UpdateStageTiebreakersResult,
     UpdateStageTiebreakersVariables
   >(UPDATE_STAGE_TIEBREAKERS_MUTATION);
+
+  const [, carryOverPoints] = useMutation<
+    CarryOverPointsResult,
+    CarryOverPointsVariables
+  >(CARRY_OVER_POINTS_MUTATION);
 
   const [localStageTiebreakers, setLocalStageTiebreakers] = useState<number[]>(
     () => stageData?.stage.tiebreakers || []
@@ -109,6 +117,16 @@ export const StageTiebreakers = () => {
     bulkTiebreakerDialogRef.current?.showModal();
   }, []);
 
+  const onCarryOver = useCallback(async () => {
+    const result = await carryOverPoints({
+      stageId: Number(stageId),
+    });
+    if (result.error) {
+      return alert(result.error);
+    }
+    show();
+  }, [carryOverPoints, show, stageId]);
+
   const onBulkAdd = useCallback(
     async (file: FileList) => {
       if (!file?.item(0)) {
@@ -161,6 +179,7 @@ export const StageTiebreakers = () => {
         <StyledStageTiebreakerBar>
           <StyledTitle>{`Stage Tiebreakers`}</StyledTitle>
           <ProTFTButton onClick={onUploadBulk}>Upload Bulk</ProTFTButton>
+          <ProTFTButton onClick={onCarryOver}>Carry over points</ProTFTButton>
           <ProTFTButton onClick={onSave}>Save</ProTFTButton>
         </StyledStageTiebreakerBar>
         <StyledStageTiebreakerList>

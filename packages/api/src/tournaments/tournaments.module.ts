@@ -3,12 +3,19 @@ import { TypeOrmModule } from "@nestjs/typeorm";
 import { SetsModule } from "../sets/sets.module";
 import { StagesModule } from "../stages/stages.module";
 import { Tournament } from "./tournament.entity";
+import { TournamentsReadService } from "./services/tournaments-read.service";
 import { TournamentsResolver } from "./tournaments.resolver";
 import { TournamentsService } from "./tournaments.service";
+import { TournamentsFieldsService } from "./services/tournaments-fields.service";
 
 @Module({
   imports: [TypeOrmModule.forFeature([Tournament]), SetsModule, StagesModule],
-  providers: [TournamentsService, TournamentsResolver],
+  providers: [
+    TournamentsService,
+    TournamentsResolver,
+    TournamentsReadService,
+    TournamentsFieldsService,
+  ],
   exports: [TournamentsService],
 })
 export class TournamentsModule {}

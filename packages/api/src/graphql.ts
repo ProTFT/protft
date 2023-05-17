@@ -149,6 +149,10 @@ export interface Tiebreaker {
     description: string;
 }
 
+export interface SuccessResponse {
+    success: boolean;
+}
+
 export interface PlayerWithStats {
     averagePosition: number;
     totalGames: number;
@@ -288,6 +292,7 @@ export interface IMutation {
     deletePlayer(id: number): Player | Promise<Player>;
     mergePlayer(playerIdToMaintain: number, playerIdToRemove: number): Player | Promise<Player>;
     createLobbyGroupResult(lobbyGroupId: number, results: CreateLobbyGroupResults[]): RoundResult[] | Promise<RoundResult[]>;
+    carryOverPointsFromLastStage(stageId: number): SuccessResponse | Promise<SuccessResponse>;
     lockTournament(id: number): TournamentResult[] | Promise<TournamentResult[]>;
     deleteTournamentResults(id: number): DeleteResponse | Promise<DeleteResponse>;
     addTournamentStream(tournamentId: number, name: string, link: string, platform: string, language: string, isLive: boolean, isVOD: boolean): TournamentStream | Promise<TournamentStream>;

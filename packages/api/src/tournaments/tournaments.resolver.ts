@@ -24,6 +24,8 @@ import { Player } from "../players/player.entity";
 import { GetTournamentsArgs } from "./dto/get-tournaments.args";
 import { BaseResolver } from "../lib/BaseResolver";
 import { GetTournamentWithStatsArgs } from "./dto/get-tournaments-with-stats.args";
+import { TournamentsReadService } from "./services/tournaments-read.service";
+import { TournamentsFieldsService } from "./services/tournaments-fields.service";
 
 @Resolver(() => Tournament)
 export class TournamentsResolver extends BaseResolver {
@@ -31,6 +33,8 @@ export class TournamentsResolver extends BaseResolver {
     private tournamentsService: TournamentsService,
     private setService: SetsService,
     private stagesService: StagesService,
+    private tournamentsReadService: TournamentsReadService,
+    private tournamentsFieldsService: TournamentsFieldsService,
   ) {
     super();
   }
@@ -40,7 +44,7 @@ export class TournamentsResolver extends BaseResolver {
     @Args() { region, setId, take, skip, searchQuery }: GetTournamentsArgs,
   ) {
     const filters = this.cleanGraphQLFilters({ region, setId, searchQuery });
-    return this.tournamentsService.findAll({ ...filters }, { take, skip });
+    return this.tournamentsReadService.findAll({ ...filters }, { take, skip });
   }
 
   @UseGuards(GqlJwtAuthGuard)
@@ -49,7 +53,7 @@ export class TournamentsResolver extends BaseResolver {
     @Args() { region, setId, take, skip, searchQuery }: GetTournamentsArgs,
   ) {
     const filters = this.cleanGraphQLFilters({ region, setId, searchQuery });
-    return this.tournamentsService.findAll(
+    return this.tournamentsReadService.findAll(
       { ...filters },
       { take, skip },
       false,
@@ -58,17 +62,17 @@ export class TournamentsResolver extends BaseResolver {
 
   @Query(() => Tournament)
   async tournament(@Args("id", { type: () => Int }) id: number) {
-    return this.tournamentsService.findOne(id);
+    return this.tournamentsReadService.findOne(id);
   }
 
   @Query(() => Tournament)
   async tournamentBySlug(@Args("slug") slug: string) {
-    return this.tournamentsService.findOneBySlug(slug);
+    return this.tournamentsReadService.findOneBySlug(slug);
   }
 
   @Query(() => [Tournament])
   async ongoingTournaments() {
-    return this.tournamentsService.findOngoing();
+    return this.tournamentsReadService.findOngoing();
   }
 
   @Query(() => [Tournament])
@@ -76,7 +80,10 @@ export class TournamentsResolver extends BaseResolver {
     @Args() { region, setId, take, skip, searchQuery }: GetTournamentsArgs,
   ) {
     const filters = this.cleanGraphQLFilters({ region, setId, searchQuery });
-    return this.tournamentsService.findUpcoming({ ...filters }, { take, skip });
+    return this.tournamentsReadService.findUpcoming(
+      { ...filters },
+      { take, skip },
+    );
   }
 
   @Query(() => [Tournament])
@@ -84,14 +91,14 @@ export class TournamentsResolver extends BaseResolver {
     @Args() { region, setId, take, skip, searchQuery }: GetTournamentsArgs,
   ) {
     const filters = this.cleanGraphQLFilters({ region, setId, searchQuery });
-    return this.tournamentsService.findPast({ ...filters }, { take, skip });
+    return this.tournamentsReadService.findPast({ ...filters }, { take, skip });
   }
 
   @Query(() => [Tournament])
   async tournamentsWithStats(
     @Args() { searchQuery }: GetTournamentWithStatsArgs,
   ) {
-    return this.tournamentsService.findWithStats(searchQuery);
+    return this.tournamentsReadService.findWithStats(searchQuery);
   }
 
   @ResolveField()
@@ -108,7 +115,7 @@ export class TournamentsResolver extends BaseResolver {
 
   @ResolveField()
   async players(@Parent() tournament: Tournament): Promise<Player[]> {
-    const tournamentWithPlayers = await this.tournamentsService.findOne(
+    const tournamentWithPlayers = await this.tournamentsReadService.findOne(
       tournament.id,
       ["players"],
     );
@@ -117,7 +124,7 @@ export class TournamentsResolver extends BaseResolver {
 
   @ResolveField()
   async nextStartTime(@Parent() tournament: Tournament): Promise<number> {
-    return this.tournamentsService.findNextStageStartTime(tournament);
+    return this.tournamentsFieldsService.findNextStageStartTime(tournament);
   }
 
   @UseGuards(GqlJwtAuthGuard)
