@@ -4,10 +4,6 @@ import { StyledVerticalContainer } from "../../../components/Layout/VerticalCont
 import { device } from "../../../design/breakpoints";
 import { colors } from "../../../design/colors";
 
-interface StageProps {
-  isFinal: boolean;
-}
-
 export const StyledStagesSection = styled.div`
   width: 100%;
   background-color: ${colors.purple};
@@ -37,11 +33,9 @@ export const StyledDaysContainer = styled.div`
   gap: 1rem;
 `;
 
-export const StyledDay = styled(StyledVerticalContainer)<
-  StageProps & { clicked?: boolean }
->`
-  ${({ isFinal, clicked }) => `
-    background: ${isFinal ? "#FAAC01" : "#4739b2"};
+export const StyledDay = styled(StyledVerticalContainer)<{ clicked?: boolean }>`
+  ${({ clicked }) => `
+    background: #4739b2;
     padding: 1rem 2rem 1rem 2rem;
     box-shadow: 0px 4px 4px rgba(0, 0, 0, 0.25);
     border-radius: 16px;
@@ -108,7 +102,7 @@ export const StyledBattleIcon = styled.img.attrs({
   height: 44px;
 `;
 
-export const StyledDayTitle = styled.p<StageProps>`
+export const StyledDayTitle = styled.p`
   font-family: VTF Redzone Classic;
   font-size: 36px;
   font-weight: 400;
@@ -116,7 +110,7 @@ export const StyledDayTitle = styled.p<StageProps>`
   letter-spacing: 0.05em;
   text-align: center;
   white-space: nowrap;
-  color: ${({ isFinal }) => (isFinal ? colors.pitchBlack : colors.yellow)};
+  color: ${colors.yellow};
 `;
 
 export const StyledDaySubtitle = styled.p`

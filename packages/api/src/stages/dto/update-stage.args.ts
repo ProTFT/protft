@@ -18,9 +18,6 @@ export class UpdateStageArgs {
   @Field(() => Int, { name: "sequence" })
   sequence: number;
 
-  @Field({ name: "isFinal" })
-  isFinal: boolean;
-
   @Field(() => Int, { name: "qualifiedCount" })
   qualifiedCount: number;
 

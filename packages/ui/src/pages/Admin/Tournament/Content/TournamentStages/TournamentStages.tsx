@@ -43,7 +43,6 @@ export const TournamentStages = () => {
         ...stage,
         startDateTime: stage.startDateTime ?? undefined,
         tournamentId: Number(tournamentId),
-        isFinal: false,
       });
       if (result.error) {
         return alert(result.error);

@@ -98,7 +98,6 @@ export const AdminStage = () => {
       startDateTime: formStage.startDateTime ?? undefined,
       id: Number(stageId),
       tournamentId: Number(id),
-      isFinal: false,
     });
     if (result.error) {
       return alert(result.error);

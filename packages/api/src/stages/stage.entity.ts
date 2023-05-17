@@ -42,10 +42,6 @@ export class Stage {
   @Column()
   sequence: number;
 
-  @Field()
-  @Column({ default: false })
-  isFinal: boolean;
-
   @Field(() => Int)
   @Column()
   tournamentId: number;

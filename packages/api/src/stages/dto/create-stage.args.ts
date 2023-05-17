@@ -15,9 +15,6 @@ export class CreateStageArgs {
   @Field(() => Int, { name: "sequence" })
   sequence: number;
 
-  @Field({ name: "isFinal" })
-  isFinal: boolean;
-
   @Field(() => Int, { name: "qualifiedCount" })
   qualifiedCount: number;
 

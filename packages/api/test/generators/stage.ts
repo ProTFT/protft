@@ -4,7 +4,6 @@ import { tournament as genTournament } from "./tournament";
 export function stage({
   id,
   name,
-  isFinal,
   lobbies,
   pointSchema,
   pointSchemaId,
@@ -23,7 +22,6 @@ export function stage({
   return {
     id: id || randomId,
     name: name || "",
-    isFinal: isFinal || false,
     lobbies: lobbies || [],
     roundCount: rounds?.length || 0,
     pointSchema: pointSchema || { id: randomId, name: "" },

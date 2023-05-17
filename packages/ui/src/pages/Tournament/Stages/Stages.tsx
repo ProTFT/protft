@@ -89,18 +89,13 @@ export const Stages = ({ tournament, onSelectStage, openStage }: Props) => {
           {tournament?.stages?.map((stage) => (
             <StyledDay
               key={stage.id}
-              isFinal={stage.isFinal}
               clicked={isDayClicked(stage)}
               onClick={onClickDay(stage)}
             >
-              <StyledDayTitle isFinal={stage.isFinal}>
-                {stage.name}
-              </StyledDayTitle>
+              <StyledDayTitle>{stage.name}</StyledDayTitle>
               <StyledDaySubtitle>{stage.description}</StyledDaySubtitle>
               <StyledArrowContainer>
-                <ArrowRightIcon
-                  color={stage.isFinal ? colors.pitchBlack : colors.yellow}
-                />
+                <ArrowRightIcon color={colors.yellow} />
               </StyledArrowContainer>
             </StyledDay>
           ))}

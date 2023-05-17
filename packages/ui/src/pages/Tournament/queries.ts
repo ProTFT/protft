@@ -32,7 +32,6 @@ export const TOURNAMENT_BY_SLUG_QUERY = gql`
         name
         sequence
         description
-        isFinal
         roundCount
         stageType
         qualifiedCount

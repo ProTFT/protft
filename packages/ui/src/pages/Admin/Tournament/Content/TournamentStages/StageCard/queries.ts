@@ -27,7 +27,6 @@ export type UpdateStageVariables = {
   pointSchemaId: number;
   name: string;
   sequence: number;
-  isFinal: boolean;
   roundCount: number;
   description: string;
   qualifiedCount: number;
@@ -42,7 +41,6 @@ export const UPDATE_STAGE_MUTATION = gql`
     $pointSchemaId: Int!
     $name: String!
     $sequence: Int!
-    $isFinal: Boolean!
     $roundCount: Int!
     $description: String
     $qualifiedCount: Int!
@@ -55,7 +53,6 @@ export const UPDATE_STAGE_MUTATION = gql`
       pointSchemaId: $pointSchemaId
       name: $name
       sequence: $sequence
-      isFinal: $isFinal
       description: $description
       roundCount: $roundCount
       qualifiedCount: $qualifiedCount

@@ -106,7 +106,6 @@ export interface Stage {
   name: string;
   description: string;
   sequence: number;
-  isFinal: boolean;
   tournamentId: number;
   pointSchemaId: number;
   tiebreakers: number[];
@@ -259,7 +258,9 @@ export interface IQuery {
     take?: Nullable<number>,
     skip?: Nullable<number>
   ): Tournament[] | Promise<Tournament[]>;
-  tournamentsWithStats(): Tournament[] | Promise<Tournament[]>;
+  tournamentsWithStats(
+    searchQuery?: Nullable<string>
+  ): Tournament[] | Promise<Tournament[]>;
   stages(tournamentId: number): Stage[] | Promise<Stage[]>;
   stage(id: number): Stage | Promise<Stage>;
   playersFromPreviousStage(
@@ -360,7 +361,6 @@ export interface IMutation {
     pointSchemaId: number,
     name: string,
     sequence: number,
-    isFinal: boolean,
     qualifiedCount: number,
     stageType: StageType,
     roundCount: number,
@@ -374,7 +374,6 @@ export interface IMutation {
     pointSchemaId: number,
     name: string,
     sequence: number,
-    isFinal: boolean,
     qualifiedCount: number,
     stageType: StageType,
     roundCount: number,
