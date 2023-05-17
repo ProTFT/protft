@@ -190,7 +190,12 @@ export interface TournamentResult {
     tournamentId: number;
     playerId: number;
     finalPosition: string;
+    qualifyTo: number[];
     prize: number;
+    currency: string;
+    prizeInUSD: number;
+    circuitId: number;
+    circuitPointsEarned: number;
     otherRewards: string;
 }
 

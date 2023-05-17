@@ -23,6 +23,7 @@ import { getDatabaseInfo } from "./config/dbConfig";
 import { getOrigin } from "./config/cors";
 import { TournamentResultsModule } from "./tournament-results/tournament-results.module";
 import { TournamentStreamsModule } from "./tournament-streams/tournament-streams.module";
+import { CircuitModule } from "./circuit/circuit.module";
 
 @Module({
   imports: [
@@ -80,6 +81,7 @@ import { TournamentStreamsModule } from "./tournament-streams/tournament-streams
     LobbyPlayerInfosModule,
     TournamentResultsModule,
     TournamentStreamsModule,
+    CircuitModule,
   ],
   controllers: [AppController],
   providers: [AppService],
