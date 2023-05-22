@@ -1,8 +1,9 @@
-import { useRef } from "react";
+import { useEffect, useRef } from "react";
 import { useQuery } from "urql";
 import { colors } from "../../../design/colors";
 import { useObserver } from "../../../hooks/useObserver";
 import { Pagination } from "../../../hooks/usePagination";
+import { usePageVisibility } from "../../../hooks/useWindowFocus";
 import {
   OngoingTournamentsQueryResult,
   ONGOING_TOURNAMENTS_QUERY,
@@ -23,9 +24,16 @@ interface StateListProps {
 }
 
 export const OngoingTournamentList = () => {
-  const [{ data }] = useQuery<OngoingTournamentsQueryResult>({
+  const [{ data }, refetch] = useQuery<OngoingTournamentsQueryResult>({
     query: ONGOING_TOURNAMENTS_QUERY,
   });
+  const isFocused = usePageVisibility();
+
+  useEffect(() => {
+    if (isFocused) {
+      refetch();
+    }
+  }, [isFocused, refetch]);
 
   if (!data?.ongoingTournaments.length) {
     return null;
