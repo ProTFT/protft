@@ -25,6 +25,11 @@ export enum SortingMethods {
   TOTAL_EVENT_TOP_FOUR = 21,
   TOTAL_EVENT_LESS_TOP_EIGTH = 22,
   DIRECT_COMBAT = 23,
+  TOTAL_EVENT_THIRD_PLACE = 24,
+  TOTAL_EVENT_FOURTH_PLACE = 25,
+  TOTAL_EVENT_FIFTH_PLACE = 26,
+  TOTAL_EVENT_SIXTH_PLACE = 27,
+  TOTAL_EVENT_SEVENTH_PLACE = 28,
 }
 
 export const SortingMethodsNeedPastResults = [
@@ -34,6 +39,11 @@ export const SortingMethodsNeedPastResults = [
   SortingMethods.TOTAL_EVENT_SECOND_PLACE,
   SortingMethods.TOTAL_EVENT_TOP_FOUR,
   SortingMethods.TOTAL_EVENT_LESS_TOP_EIGTH,
+  SortingMethods.TOTAL_EVENT_THIRD_PLACE,
+  SortingMethods.TOTAL_EVENT_FOURTH_PLACE,
+  SortingMethods.TOTAL_EVENT_FIFTH_PLACE,
+  SortingMethods.TOTAL_EVENT_SIXTH_PLACE,
+  SortingMethods.TOTAL_EVENT_SEVENTH_PLACE,
 ];
 
 // b - a, if MORE = highest position
@@ -174,6 +184,81 @@ export const sortByTotalEventSecondPosition = (
   return sortBySecondPlaces(aWithAllPositions, bWithAllPositions);
 };
 
+export const sortByTotalEventThirdPosition = (
+  a: PlayerResultsWithPast,
+  b: PlayerResultsWithPast,
+) => {
+  const aWithAllPositions = {
+    ...a,
+    positions: [...a.pastPositions, ...a.positions],
+  };
+  const bWithAllPositions = {
+    ...b,
+    positions: [...b.pastPositions, ...b.positions],
+  };
+  return sortByThirdPlaces(aWithAllPositions, bWithAllPositions);
+};
+
+export const sortByTotalEventFourthPosition = (
+  a: PlayerResultsWithPast,
+  b: PlayerResultsWithPast,
+) => {
+  const aWithAllPositions = {
+    ...a,
+    positions: [...a.pastPositions, ...a.positions],
+  };
+  const bWithAllPositions = {
+    ...b,
+    positions: [...b.pastPositions, ...b.positions],
+  };
+  return sortByFourthPlaces(aWithAllPositions, bWithAllPositions);
+};
+
+export const sortByTotalEventFifthPosition = (
+  a: PlayerResultsWithPast,
+  b: PlayerResultsWithPast,
+) => {
+  const aWithAllPositions = {
+    ...a,
+    positions: [...a.pastPositions, ...a.positions],
+  };
+  const bWithAllPositions = {
+    ...b,
+    positions: [...b.pastPositions, ...b.positions],
+  };
+  return sortByFifthPlaces(aWithAllPositions, bWithAllPositions);
+};
+
+export const sortByTotalEventSixthPosition = (
+  a: PlayerResultsWithPast,
+  b: PlayerResultsWithPast,
+) => {
+  const aWithAllPositions = {
+    ...a,
+    positions: [...a.pastPositions, ...a.positions],
+  };
+  const bWithAllPositions = {
+    ...b,
+    positions: [...b.pastPositions, ...b.positions],
+  };
+  return sortBySixthPlaces(aWithAllPositions, bWithAllPositions);
+};
+
+export const sortByTotalEventSeventhPosition = (
+  a: PlayerResultsWithPast,
+  b: PlayerResultsWithPast,
+) => {
+  const aWithAllPositions = {
+    ...a,
+    positions: [...a.pastPositions, ...a.positions],
+  };
+  const bWithAllPositions = {
+    ...b,
+    positions: [...b.pastPositions, ...b.positions],
+  };
+  return sortBySeventhPlaces(aWithAllPositions, bWithAllPositions);
+};
+
 export const sortByTotalEventTopFour = (
   a: PlayerResultsWithPast,
   b: PlayerResultsWithPast,
@@ -250,6 +335,11 @@ export const sortingMethods: {
   [SortingMethods.TOTAL_EVENT_TOP_FOUR]: sortByTotalEventTopFour,
   [SortingMethods.TOTAL_EVENT_LESS_TOP_EIGTH]: sortByTotalEventLessTopEigth,
   [SortingMethods.DIRECT_COMBAT]: sortByDirectCombat,
+  [SortingMethods.TOTAL_EVENT_THIRD_PLACE]: sortByTotalEventThirdPosition,
+  [SortingMethods.TOTAL_EVENT_FOURTH_PLACE]: sortByTotalEventFourthPosition,
+  [SortingMethods.TOTAL_EVENT_FIFTH_PLACE]: sortByTotalEventFifthPosition,
+  [SortingMethods.TOTAL_EVENT_SIXTH_PLACE]: sortByTotalEventSixthPosition,
+  [SortingMethods.TOTAL_EVENT_SEVENTH_PLACE]: sortByTotalEventSeventhPosition,
 };
 
 export interface PlayerResultsWithPast extends PlayerResults {
