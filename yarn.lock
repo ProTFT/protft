@@ -17910,6 +17910,13 @@ __metadata:
   languageName: node
   linkType: hard
 
+"plausible-tracker@npm:^0.3.8":
+  version: 0.3.8
+  resolution: "plausible-tracker@npm:0.3.8"
+  checksum: 066dd51586922fabbd70e4cfdeff77356669bf57852cd3cbc00d813938ed6637669ee615a1d7b865090550de61fc58bffb6e7c3e6d99f361ec7312d316033194
+  languageName: node
+  linkType: hard
+
 "pluralize@npm:8.0.0":
   version: 8.0.0
   resolution: "pluralize@npm:8.0.0"
@@ -19217,6 +19224,7 @@ __metadata:
     graphql: ^16.5.0
     lodash.chunk: ^4.2.0
     lodash.groupby: ^4.6.0
+    plausible-tracker: ^0.3.8
     react: ^18.1.0
     react-dnd: ^16.0.1
     react-dnd-html5-backend: ^16.0.1

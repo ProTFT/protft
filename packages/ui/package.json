@@ -22,6 +22,7 @@
     "graphql": "^16.5.0",
     "lodash.chunk": "^4.2.0",
     "lodash.groupby": "^4.6.0",
+    "plausible-tracker": "^0.3.8",
     "react": "^18.1.0",
     "react-dnd": "^16.0.1",
     "react-dnd-html5-backend": "^16.0.1",

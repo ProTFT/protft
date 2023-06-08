@@ -25003,6 +25003,15 @@ function $$SETUP_STATE(hydrateRuntimeState, basePath) {
           "linkType": "HARD"\
         }]\
       ]],\
+      ["plausible-tracker", [\
+        ["npm:0.3.8", {\
+          "packageLocation": "./.yarn/cache/plausible-tracker-npm-0.3.8-95bc2cdb77-066dd51586.zip/node_modules/plausible-tracker/",\
+          "packageDependencies": [\
+            ["plausible-tracker", "npm:0.3.8"]\
+          ],\
+          "linkType": "HARD"\
+        }]\
+      ]],\
       ["pluralize", [\
         ["npm:8.0.0", {\
           "packageLocation": "./.yarn/cache/pluralize-npm-8.0.0-f5f044ed52-08931d4a6a.zip/node_modules/pluralize/",\
@@ -27203,6 +27212,7 @@ function $$SETUP_STATE(hydrateRuntimeState, basePath) {
             ["graphql", "npm:16.5.0"],\
             ["lodash.chunk", "npm:4.2.0"],\
             ["lodash.groupby", "npm:4.6.0"],\
+            ["plausible-tracker", "npm:0.3.8"],\
             ["react", "npm:18.1.0"],\
             ["react-dnd", "virtual:258f67bfb17ac70f76e552bac762bf306bdba6124c2f4eb9750027eafe0ae10f09ef2722b1c3b436c5e4260ebaad0c93cc4998d2525f2ce7b6d70ee4be5420b2#npm:16.0.1"],\
             ["react-dnd-html5-backend", "npm:16.0.1"],\

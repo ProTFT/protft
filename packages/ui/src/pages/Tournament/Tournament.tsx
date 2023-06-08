@@ -5,7 +5,9 @@ import { useQuery } from "urql";
 import { TournamentContent } from "../../components/TournamentContent/TournamentContent";
 import { Stage } from "../../graphql/schema";
 import { useIsMobile } from "../../hooks/useIsMobile";
+import { useTracking } from "../../hooks/useTracking";
 import { getEventMetadata } from "../../seo/Event";
+import { TrackingEvents } from "../../tracking/Events";
 import { InfoBar } from "./InfoBar/InfoBar";
 import {
   TournamentBySlugQueryResponse,
@@ -40,17 +42,35 @@ export const Tournament = () => {
   const [openStage, setOpenStage] = useState<Stage | null>(null);
 
   const isMobile = useIsMobile();
+  const { trackEvent } = useTracking();
 
   const onSelectStage = useCallback(
     (selectedStage: Stage) => {
+      const hasClickedClosedStage = openStage?.id !== selectedStage.id;
+
+      if (hasClickedClosedStage) {
+        trackEvent(TrackingEvents.TOURNAMENT_STAGE_OPEN, {
+          tournamentId: data?.tournamentBySlug.id || 0,
+          tournamentName: data?.tournamentBySlug.name || "",
+          stageId: selectedStage.id,
+          stageName: selectedStage.name,
+        });
+      }
+
       setOpen((isOpen) =>
         isOpen && openStage?.id !== selectedStage.id ? isOpen : !isOpen
       );
       setOpenStage((openStage) =>
-        open && openStage?.id === selectedStage.id ? null : selectedStage
+        open && openStage?.id !== selectedStage.id ? selectedStage : null
       );
     },
-    [open, openStage?.id]
+    [
+      data?.tournamentBySlug.id,
+      data?.tournamentBySlug.name,
+      open,
+      openStage?.id,
+      trackEvent,
+    ]
   );
 
   return (
