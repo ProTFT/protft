@@ -18,6 +18,7 @@ import { GqlJwtAuthGuard } from "../auth/jwt-auth.guard";
 import { GetPlayerStatsArgs } from "./dto/get-player-stats.args";
 import { TournamentsPlayed } from "./dto/get-tournaments-played.out";
 import { UpdatePlayerArgs } from "./dto/update-player.args";
+import { PlayerLink } from "../player-links/player-link.entity";
 
 @Resolver(() => Player)
 export class PlayersResolver extends BaseResolver {
@@ -70,6 +71,11 @@ export class PlayersResolver extends BaseResolver {
     @Args() { setId, tournamentId }: GetPlayerStatsArgs,
   ): Promise<PlayerCalculatedStats> {
     return this.playersService.getPlayerStats(player, setId, tournamentId);
+  }
+
+  @ResolveField()
+  async links(@Parent() player: Player): Promise<PlayerLink[]> {
+    return this.playersService.findLinks(player.id);
   }
 
   @Query(() => [TournamentsPlayed])

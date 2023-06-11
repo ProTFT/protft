@@ -13,6 +13,8 @@ import { PaginationArgs } from "../lib/dto/pagination.args";
 import { parseFileString } from "../lib/FileParser";
 import { getSearchQueryFilter } from "../lib/SearchQuery";
 import { LobbyPlayerInfosService } from "../lobby-player-infos/lobby-player-infos.service";
+import { PlayerLink } from "../player-links/player-link.entity";
+import { PlayerLinksService } from "../player-links/player-links.service";
 import { PlayerStatsRaw } from "../round-results/dto/get-player-stats.raw";
 import { RoundResultsService } from "../round-results/round-results.service";
 import { StagePlayerInfosService } from "../stage-player-infos/stage-player-infos.service";
@@ -43,6 +45,7 @@ export class PlayersService {
     private tournamentsService: TournamentsService,
     private lobbyPlayerInfosService: LobbyPlayerInfosService,
     private stagePlayersInfosService: StagePlayerInfosService,
+    private playerLinksService: PlayerLinksService,
   ) {}
 
   async findAll(
@@ -222,6 +225,10 @@ export class PlayersService {
         name: raw.setName,
       },
     }));
+  }
+
+  async findLinks(playerId: number): Promise<PlayerLink[]> {
+    return this.playerLinksService.getByPlayerId(playerId);
   }
 
   unpackBy<T>(result: T[], property: keyof T) {

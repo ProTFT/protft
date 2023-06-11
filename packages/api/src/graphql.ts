@@ -33,6 +33,12 @@ export interface Set {
     name: string;
 }
 
+export interface PlayerLink {
+    playerId: number;
+    type: string;
+    link: string;
+}
+
 export interface PlayerCalculatedStats {
     averagePosition: number;
     totalGames: number;
@@ -45,6 +51,7 @@ export interface Player {
     id: number;
     name: string;
     playerStats?: Nullable<PlayerCalculatedStats>;
+    links: PlayerLink[];
     region?: Nullable<string>;
     country?: Nullable<string>;
     slug: string;

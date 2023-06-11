@@ -22,6 +22,7 @@ import { useToast } from "./pages/Admin/Components/Toast/Toast";
 import { AdminPlayers } from "./pages/Admin/Players/AdminPlayers";
 import { TournamentsProvider } from "./pages/Tournaments/TournamentsContext";
 import { PlayersProvider } from "./pages/Players/PlayersContext";
+import { AdminPlayer } from "./pages/Admin/Player/AdminPlayer";
 
 const ProtectedRoutes = (props: any) => {
   const location = useLocation();
@@ -100,6 +101,10 @@ export const App = () => {
           <Route
             index
             element={<SuspenseElement element={<AdminPlayers />} />}
+          />
+          <Route
+            path=":id/*"
+            element={<SuspenseElement element={<AdminPlayer />} />}
           />
         </Route>
       </Routes>
