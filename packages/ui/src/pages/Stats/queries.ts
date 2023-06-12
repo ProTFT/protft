@@ -1,4 +1,4 @@
-import { gql } from "urql";
+import { graphql } from "../../gql";
 import { Player, PlayerCalculatedStats } from "../../graphql/schema";
 
 export interface PlayerQueryResult {
@@ -44,7 +44,7 @@ export interface PlayerStatsQueryVariables {
   searchQuery?: string;
 }
 
-export const PLAYER_STATS_QUERY = gql`
+export const PLAYER_STATS_QUERY = graphql(`
   query stats(
     $setId: Int
     $region: String
@@ -78,4 +78,4 @@ export const PLAYER_STATS_QUERY = gql`
       totalGames
     }
   }
-`;
+`);

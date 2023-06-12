@@ -1,12 +1,12 @@
-import { gql } from "urql";
+import { graphql } from "../../../gql";
 import { Stage, Tournament } from "../../../graphql/schema";
 
 export interface StageQueryResponse {
   stage: Stage;
 }
 
-export const STAGE_QUERY = gql`
-  query stage($id: Int!) {
+export const STAGE_QUERY = graphql(`
+  query oneStage($id: Int!) {
     stage(id: $id) {
       id
       name
@@ -19,14 +19,14 @@ export const STAGE_QUERY = gql`
       startDateTime
     }
   }
-`;
+`);
 
 export interface TournamentQueryResponse {
   tournament: Tournament;
 }
 
-export const TOURNAMENT_QUERY = gql`
-  query tournament($id: Int!) {
+export const TOURNAMENT_QUERY = graphql(`
+  query oneTournamentWithSet($id: Int!) {
     tournament(id: $id) {
       id
       name
@@ -36,4 +36,4 @@ export const TOURNAMENT_QUERY = gql`
       }
     }
   }
-`;
+`);

@@ -1,4 +1,4 @@
-import { gql } from "urql";
+import { graphql } from "../../../../../../gql";
 import {
   Lobby,
   LobbyGroup,
@@ -18,13 +18,13 @@ type CreatePlayerLobbyVariables = {
   playerIds: number[];
 };
 
-export const CREATE_LOBBY_PLAYERS_MUTATION = gql`
+export const CREATE_LOBBY_PLAYERS_MUTATION = graphql(`
   mutation createLobbyPlayers($lobbies: [CreatePlayerLobbyArgs!]!) {
     createLobbyPlayers(lobbies: $lobbies) {
       id
     }
   }
-`;
+`);
 
 export interface CreateLobbyGroupResult {
   createLobbyGroup: LobbyGroup;
@@ -36,7 +36,7 @@ export type CreateLobbyGroupVariables = {
   roundsPlayed: number;
 };
 
-export const CREATE_LOBBY_GROUP_MUTATION = gql`
+export const CREATE_LOBBY_GROUP_MUTATION = graphql(`
   mutation createLobbyGroup(
     $stageId: Int!
     $sequence: Int!
@@ -50,7 +50,7 @@ export const CREATE_LOBBY_GROUP_MUTATION = gql`
       id
     }
   }
-`;
+`);
 
 export interface CreateNLobbyGroupResult {
   createNLobbyGroup: LobbyGroup[];
@@ -62,7 +62,7 @@ export type CreateNLobbyGroupVariables = {
   roundsPlayed: number;
 };
 
-export const CREATE_N_LOBBY_GROUP_MUTATION = gql`
+export const CREATE_N_LOBBY_GROUP_MUTATION = graphql(`
   mutation createNLobbyGroup(
     $stageId: Int!
     $quantity: Int!
@@ -76,7 +76,7 @@ export const CREATE_N_LOBBY_GROUP_MUTATION = gql`
       id
     }
   }
-`;
+`);
 
 export interface CreateNLobbyResult {
   createNLobby: Lobby[];
@@ -88,7 +88,7 @@ export type CreateNLobbyVariables = {
   quantity: number;
 };
 
-export const CREATE_N_LOBBY_MUTATION = gql`
+export const CREATE_N_LOBBY_MUTATION = graphql(`
   mutation createNLobby($stageId: Int!, $quantity: Int!, $lobbyGroupId: Int!) {
     createNLobby(
       stageId: $stageId
@@ -98,7 +98,7 @@ export const CREATE_N_LOBBY_MUTATION = gql`
       id
     }
   }
-`;
+`);
 
 export interface CreateLobbyResult {
   createLobby: Lobby;
@@ -111,7 +111,7 @@ export type CreateLobbyVariables = {
   name?: string;
 };
 
-export const CREATE_LOBBY_MUTATION = gql`
+export const CREATE_LOBBY_MUTATION = graphql(`
   mutation createLobby(
     $stageId: Int!
     $sequence: Int!
@@ -127,7 +127,7 @@ export const CREATE_LOBBY_MUTATION = gql`
       id
     }
   }
-`;
+`);
 
 export interface DeleteLobbyGroupsResult {
   deleteLobbyGroups: {
@@ -139,10 +139,10 @@ export type DeleteLobbyGroupsVariables = {
   stageId: number;
 };
 
-export const DELETE_LOBBY_GROUPS = gql`
-  mutation ($stageId: Int!) {
+export const DELETE_LOBBY_GROUPS = graphql(`
+  mutation deleteLobbyGroups($stageId: Int!) {
     deleteLobbyGroups(stageId: $stageId) {
       id
     }
   }
-`;
+`);

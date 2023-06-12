@@ -1,4 +1,4 @@
-import { gql } from "urql";
+import { graphql } from "../../../gql";
 import { Player, Tournament } from "../../../graphql/schema";
 
 export interface DeleteResult {
@@ -9,13 +9,13 @@ export interface TournamentsDeleteResult {
   deleteTournament: DeleteResult;
 }
 
-export const DELETE_TOURNAMENT_MUTATION = gql`
+export const DELETE_TOURNAMENT_MUTATION = graphql(`
   mutation deleteTournament($id: Int!) {
     deleteTournament(id: $id) {
       id
     }
   }
-`;
+`);
 
 export interface TournamentsUpdateResult {
   updateTournament: Tournament;
@@ -35,7 +35,7 @@ export interface TournamentUpdateVariables {
   visibility?: boolean | null;
 }
 
-export const UPDATE_TOURNAMENT_MUTATION = gql`
+export const UPDATE_TOURNAMENT_MUTATION = graphql(`
   mutation updateTournament(
     $id: Int!
     $name: String
@@ -65,7 +65,7 @@ export const UPDATE_TOURNAMENT_MUTATION = gql`
       id
     }
   }
-`;
+`);
 
 export interface LockResultsResult {
   lockTournament: {
@@ -77,13 +77,13 @@ export interface LockResultsVariables {
   id: number;
 }
 
-export const LOCK_RESULTS_MUTATION = gql`
-  mutation ($id: Int!) {
+export const LOCK_RESULTS_MUTATION = graphql(`
+  mutation lockTournament($id: Int!) {
     lockTournament(id: $id) {
       tournamentId
     }
   }
-`;
+`);
 
 export interface DeleteResultsResult {
   deleteTournamentResults: {
@@ -95,20 +95,20 @@ export interface DeleteResultsVariables {
   id: number;
 }
 
-export const DELETE_RESULTS_MUTATION = gql`
-  mutation ($id: Int!) {
+export const DELETE_RESULTS_MUTATION = graphql(`
+  mutation deleteTournamentResults($id: Int!) {
     deleteTournamentResults(id: $id) {
       id
     }
   }
-`;
+`);
 
 export interface TournamentQueryResponse {
   tournament: Tournament;
 }
 
-export const TOURNAMENT_QUERY = gql`
-  query tournament($id: Int!) {
+export const TOURNAMENT_QUERY = graphql(`
+  query oneTournamentFull($id: Int!) {
     tournament(id: $id) {
       id
       name
@@ -127,7 +127,7 @@ export const TOURNAMENT_QUERY = gql`
       }
     }
   }
-`;
+`);
 
 export interface Results {
   player: Player;

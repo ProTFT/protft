@@ -1,5 +1,15 @@
-import { Tournament } from "../../graphql/schema";
+import {
+  ListPastTournamentsQuery,
+  ListOngoingTournamentsQuery,
+  ListUpcomingTournamentsQuery,
+  ListTournamentsPlayedByPlayerQuery,
+} from "../../gql/graphql";
 
-export type TournamentWithMaybePlayerResult = Tournament & {
-  finalPosition?: string | null;
-};
+type TournamentsWithMaybePlayerResult =
+  ListPastTournamentsQuery["pastTournaments"] &
+    ListOngoingTournamentsQuery["ongoingTournaments"] &
+    ListUpcomingTournamentsQuery["upcomingTournaments"] &
+    ListTournamentsPlayedByPlayerQuery["tournamentsPlayed"];
+
+export type TournamentWithMaybePlayerResult =
+  TournamentsWithMaybePlayerResult[0];

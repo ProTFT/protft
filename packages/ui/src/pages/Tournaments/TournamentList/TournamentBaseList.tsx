@@ -5,7 +5,7 @@ import { TournamentWithMaybePlayerResult } from "../Tournaments.types";
 import { StyledTournamentList } from "./TournamentBaseList.styled";
 
 interface BaseListProps {
-  tournaments: TournamentWithMaybePlayerResult[] | undefined;
+  tournaments?: TournamentWithMaybePlayerResult[];
   searchQuery?: string;
   color?: string;
   isOngoing?: boolean;

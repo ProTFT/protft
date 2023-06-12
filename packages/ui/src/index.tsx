@@ -13,7 +13,6 @@ import { ProvideAuth } from "./hooks/useAuth";
 import { ProvideToast } from "./pages/Admin/Components/Toast/Toast";
 import { ThemeProvider } from "styled-components";
 import { theme } from "./design/theme";
-import Plausible from "plausible-tracker";
 import { ProvideTracking } from "./hooks/useTracking";
 
 const rootElement = document.getElementById("root");

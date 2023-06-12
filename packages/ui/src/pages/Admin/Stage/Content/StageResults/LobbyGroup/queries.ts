@@ -1,4 +1,4 @@
-import { gql } from "urql";
+import { graphql } from "../../../../../../gql";
 import {
   CreateLobbyGroupResults,
   Player,
@@ -16,7 +16,7 @@ export interface ResultsByLobbyGroupQueryResult {
   }[];
 }
 
-export const RESULTS_BY_LOBBY_GROUP_QUERY = gql`
+export const RESULTS_BY_LOBBY_GROUP_QUERY = graphql(`
   query results($lobbyGroupId: Int!) {
     resultsByLobbyGroup(lobbyGroupId: $lobbyGroupId) {
       player {
@@ -27,14 +27,14 @@ export const RESULTS_BY_LOBBY_GROUP_QUERY = gql`
       lobbyPlayerId
     }
   }
-`;
+`);
 
 export interface CreateResultsByLobbyGroupMutationVariables {
   lobbyGroupId: number;
   results: CreateLobbyGroupResults[];
 }
 
-export const CREATE_RESULTS_BY_LOBBY_GROUP_MUTATION = gql`
+export const CREATE_RESULTS_BY_LOBBY_GROUP_MUTATION = graphql(`
   mutation createResults(
     $lobbyGroupId: Int!
     $results: [CreateLobbyGroupResults!]!
@@ -43,4 +43,4 @@ export const CREATE_RESULTS_BY_LOBBY_GROUP_MUTATION = gql`
       roundId
     }
   }
-`;
+`);

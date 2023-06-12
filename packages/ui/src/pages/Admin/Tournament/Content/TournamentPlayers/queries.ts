@@ -1,4 +1,4 @@
-import { gql } from "urql";
+import { graphql } from "../../../../../gql";
 import { Player, Tournament } from "../../../../../graphql/schema";
 
 export interface PlayersQueryResult {
@@ -11,8 +11,12 @@ export interface PlayersQueryVariables {
   searchQuery?: string;
 }
 
-export const PLAYERS_QUERY = gql`
-  query players($region: String, $country: String, $searchQuery: String) {
+export const PLAYERS_QUERY = graphql(`
+  query playersPaginated(
+    $region: String
+    $country: String
+    $searchQuery: String
+  ) {
     players(
       region: $region
       country: $country
@@ -26,14 +30,14 @@ export const PLAYERS_QUERY = gql`
       region
     }
   }
-`;
+`);
 
 export interface TournamentQueryResponse {
   tournament: Tournament;
 }
 
-export const TOURNAMENT_PLAYERS_QUERY = gql`
-  query tournament($id: Int!) {
+export const TOURNAMENT_PLAYERS_QUERY = graphql(`
+  query oneTournamentWithPlayers($id: Int!) {
     tournament(id: $id) {
       id
       players {
@@ -43,7 +47,7 @@ export const TOURNAMENT_PLAYERS_QUERY = gql`
       }
     }
   }
-`;
+`);
 
 export interface CreateTournamentPlayerResult {
   createTournamentPlayers: { id: Pick<Tournament, "id"> };
@@ -54,7 +58,7 @@ export type CreateTournamentPlayerVariables = {
   playerIds: number[];
 };
 
-export const CREATE_TOURNAMENT_PLAYER = gql`
+export const CREATE_TOURNAMENT_PLAYER = graphql(`
   mutation createTournamentPlayers($tournamentId: Int!, $playerIds: [Int!]!) {
     createTournamentPlayers(
       tournamentId: $tournamentId
@@ -63,14 +67,14 @@ export const CREATE_TOURNAMENT_PLAYER = gql`
       id
     }
   }
-`;
+`);
 
 export type CreateTournamentPlayerByNameVariables = {
   tournamentId: number;
   playerNames: string;
 };
 
-export const CREATE_TOURNAMENT_PLAYER_BY_NAME = gql`
+export const CREATE_TOURNAMENT_PLAYER_BY_NAME = graphql(`
   mutation createTournamentPlayersByName(
     $tournamentId: Int!
     $playerNames: String!
@@ -82,7 +86,7 @@ export const CREATE_TOURNAMENT_PLAYER_BY_NAME = gql`
       id
     }
   }
-`;
+`);
 
 export interface CreatePlayerResult {
   createPlayer: { id: Pick<Player, "id"> };
@@ -93,8 +97,8 @@ export type CreatePlayerVariables = Pick<
   "name" | "country" | "region" | "alias"
 >;
 
-export const CREATE_PLAYER_QUERY = gql`
-  mutation (
+export const CREATE_PLAYER_QUERY = graphql(`
+  mutation createPlayer(
     $name: String!
     $country: String!
     $region: String!
@@ -109,4 +113,4 @@ export const CREATE_PLAYER_QUERY = gql`
       id
     }
   }
-`;
+`);
