@@ -57,17 +57,12 @@ export const Tournament = () => {
         });
       }
 
-      setOpen((isOpen) =>
-        isOpen && openStage?.id !== selectedStage.id ? isOpen : !isOpen
-      );
-      setOpenStage((openStage) =>
-        open && openStage?.id !== selectedStage.id ? selectedStage : null
-      );
+      setOpen(hasClickedClosedStage);
+      setOpenStage(hasClickedClosedStage ? selectedStage : null);
     },
     [
       data?.tournamentBySlug.id,
       data?.tournamentBySlug.name,
-      open,
       openStage?.id,
       trackEvent,
     ]
