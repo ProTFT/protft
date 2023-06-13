@@ -49,17 +49,15 @@ export const AdminStage = () => {
     (path: string) => location.pathname.includes(path),
     [location.pathname]
   );
-  const [{ data }] = useQuery<StageQueryResponse>({
+  const [{ data }, stagesRefetch] = useQuery<StageQueryResponse>({
     query: STAGE_QUERY,
     variables: { id: Number(stageId) },
   });
 
-  const [{ data: tournamentData }, refetch] = useQuery<TournamentQueryResponse>(
-    {
-      query: TOURNAMENT_QUERY,
-      variables: { id: Number(id) },
-    }
-  );
+  const [{ data: tournamentData }] = useQuery<TournamentQueryResponse>({
+    query: TOURNAMENT_QUERY,
+    variables: { id: Number(id) },
+  });
 
   const { show } = useToast();
 
@@ -105,7 +103,7 @@ export const AdminStage = () => {
     show();
     formRef.current?.reset();
     dialogRef.current?.close();
-    refetch();
+    stagesRefetch();
   };
 
   return (

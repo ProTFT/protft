@@ -1,5 +1,6 @@
-import React from "react";
+import React, { useMemo } from "react";
 import { useQuery } from "urql";
+import { dbUTCDateTimeToHTML } from "../../../../../formatter/Date";
 import { Stage, StageType } from "../../../../../graphql/schema";
 import { DialogForm } from "../../DialogForm/DialogForm";
 import { FormField } from "../../DialogForm/FormField";
@@ -19,11 +20,19 @@ export const StageDialog = ({ dialogRef, formRef, onSubmit, stage }: Props) => {
     query: POINT_SCHEMA_IDS_QUERY,
   });
 
+  const formattedStageData = useMemo(
+    () => ({
+      ...stage,
+      startDateTime: dbUTCDateTimeToHTML(stage?.startDateTime || undefined),
+    }),
+    [stage]
+  );
+
   return (
     <DialogForm
       dialogRef={dialogRef}
       formRef={formRef}
-      entity={stage}
+      entity={formattedStageData}
       onSubmit={onSubmit}
       defaultValues={{ pointSchemaId: eightToOnePointSchemaId }}
     >
