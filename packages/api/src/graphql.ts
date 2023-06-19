@@ -234,6 +234,15 @@ export interface TournamentStream {
     isVOD: boolean;
 }
 
+export interface Circuit {
+    id: number;
+    name: string;
+    region: string[];
+    setId: number;
+    slug: string;
+    set: Set;
+}
+
 export interface IQuery {
     sets(): Set[] | Promise<Set[]>;
     set(id: number): Nullable<Set> | Promise<Nullable<Set>>;
@@ -265,6 +274,8 @@ export interface IQuery {
     playerStats(setId?: Nullable<number>, tournamentIds?: Nullable<number[]>, region?: Nullable<string>, sort?: Nullable<SortOption>, searchQuery?: Nullable<string>, take?: Nullable<number>, skip?: Nullable<number>, minimumGames?: Nullable<number>): PlayerWithStats[] | Promise<PlayerWithStats[]>;
     resultsOfTournament(tournamentId: number): TournamentResult[] | Promise<TournamentResult[]>;
     streamsOfTournament(tournamentId: number): TournamentStream[] | Promise<TournamentStream[]>;
+    circuits(): Circuit[] | Promise<Circuit[]>;
+    circuit(id: number): Nullable<Circuit> | Promise<Nullable<Circuit>>;
 }
 
 export interface IMutation {
@@ -302,6 +313,9 @@ export interface IMutation {
     deleteTournamentResults(id: number): DeleteResponse | Promise<DeleteResponse>;
     addTournamentStream(tournamentId: number, name: string, link: string, platform: string, language: string, isLive: boolean, isVOD: boolean): TournamentStream | Promise<TournamentStream>;
     deleteTournamentStream(tournamentId: number, name: string): DeleteResponse | Promise<DeleteResponse>;
+    createCircuit(name: string, setId: number, region: string[]): Circuit | Promise<Circuit>;
+    updateCircuit(id: number, name?: Nullable<string>, setId?: Nullable<number>, region?: Nullable<string[]>): Circuit | Promise<Circuit>;
+    deleteCircuit(id: number): DeleteResponse | Promise<DeleteResponse>;
 }
 
 export type DateTime = any;

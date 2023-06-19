@@ -40,7 +40,7 @@ export class Circuit {
   slug: string;
 
   @Field(() => Set)
-  @ManyToOne(() => Set)
+  @ManyToOne(() => Set, (set) => set.id, { onDelete: "CASCADE" })
   @JoinColumn({ name: "setId" })
   set: Set;
 }
