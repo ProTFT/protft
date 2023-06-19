@@ -1,11 +1,11 @@
-import { gql } from "urql";
+import { graphql } from "../../../../gql";
 import { TournamentStream } from "../../../../graphql/schema";
 
 export interface TournamentStreamQueryResponse {
   streamsOfTournament: TournamentStream[];
 }
 
-export const TOURNAMENT_STREAM_QUERY = gql`
+export const TOURNAMENT_STREAM_QUERY = graphql(`
   query streams($tournamentId: Int!) {
     streamsOfTournament(tournamentId: $tournamentId) {
       tournamentId
@@ -17,4 +17,4 @@ export const TOURNAMENT_STREAM_QUERY = gql`
       isVOD
     }
   }
-`;
+`);

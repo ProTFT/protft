@@ -1,11 +1,11 @@
-import { gql } from "urql";
+import { graphql } from "../../../../../gql";
 import { TournamentStream } from "../../../../../graphql/schema";
 
 export interface TournamentStreamQueryResponse {
   streamsOfTournament: TournamentStream[];
 }
 
-export const TOURNAMENT_STREAM_QUERY = gql`
+export const TOURNAMENT_STREAM_QUERY = graphql(`
   query streams($tournamentId: Int!) {
     streamsOfTournament(tournamentId: $tournamentId) {
       tournamentId
@@ -17,7 +17,7 @@ export const TOURNAMENT_STREAM_QUERY = gql`
       isVOD
     }
   }
-`;
+`);
 
 export interface CreateStreamResult {
   addTournamentStream: {
@@ -35,7 +35,7 @@ export type CreateStreamVariables = {
   isLive: boolean;
 };
 
-export const ADD_STREAM_MUTATION = gql`
+export const ADD_STREAM_MUTATION = graphql(`
   mutation addTournamentStream(
     $tournamentId: Int!
     $name: String!
@@ -58,7 +58,7 @@ export const ADD_STREAM_MUTATION = gql`
       name
     }
   }
-`;
+`);
 
 export interface DeleteStreamResult {
   deleteTournamentStream: {
@@ -71,10 +71,10 @@ export type DeleteStreamVariables = {
   name: string;
 };
 
-export const DELETE_STREAM_MUTATION = gql`
+export const DELETE_STREAM_MUTATION = graphql(`
   mutation deleteTournamentStream($tournamentId: Int!, $name: String!) {
     deleteTournamentStream(tournamentId: $tournamentId, name: $name) {
       id
     }
   }
-`;
+`);

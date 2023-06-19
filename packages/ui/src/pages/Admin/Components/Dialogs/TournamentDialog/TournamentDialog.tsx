@@ -36,6 +36,10 @@ const SET_OPTIONS = [
     value: "8",
     name: "8 - Monsters Attack!",
   },
+  {
+    value: "9",
+    name: "9 - Runeterra Reforged",
+  },
 ];
 
 const TOURNAMENT_FORM_FIELDS: FormFieldProps[] = [

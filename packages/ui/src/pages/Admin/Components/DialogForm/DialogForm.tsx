@@ -9,7 +9,7 @@ import {
   StyledForm,
   StyledActionButtons,
 } from "../Dialogs/TournamentDialog/TournamentDialog.styled";
-import { dbDateToHTML, dbUTCDateTimeToHTML } from "./Dialog.formatter";
+import { dbDateToHTML } from "./Dialog.formatter";
 
 export interface Props<T, K> {
   dialogRef: React.RefObject<HTMLDialogElement>;
@@ -69,9 +69,6 @@ const APIValueToForm = (
 ) => {
   if (node.props.type === "date") {
     return dbDateToHTML(value);
-  }
-  if (node.props.type === "datetime-local") {
-    return dbUTCDateTimeToHTML(value);
   }
   if (node.props.type === "file") {
     return undefined;

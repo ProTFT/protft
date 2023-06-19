@@ -9,7 +9,6 @@ import {
   ONGOING_TOURNAMENTS_QUERY,
   UpcomingTournamentsQueryResult,
   UPCOMING_TOURNAMENTS_QUERY,
-  PastTournamentsQueryResult,
   PAST_TOURNAMENTS_QUERY,
   FilteredTournamentArgs,
 } from "../queries";
@@ -84,7 +83,7 @@ export const PastTournamentList = ({
   pagination,
   onLoadMore,
 }: StateListProps) => {
-  const [{ data }] = useQuery<PastTournamentsQueryResult>({
+  const [{ data }] = useQuery({
     query: PAST_TOURNAMENTS_QUERY,
     variables: {
       searchQuery,

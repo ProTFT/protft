@@ -1,4 +1,4 @@
-import { gql } from "urql";
+import { graphql } from "../../../../../../gql";
 import { Stage, StageType } from "../../../../../../graphql/schema";
 
 export interface DeleteResult {
@@ -9,13 +9,13 @@ export interface StageDeleteResult {
   deleteStage: DeleteResult;
 }
 
-export const DELETE_STAGE_MUTATION = gql`
+export const DELETE_STAGE_MUTATION = graphql(`
   mutation deleteStage($id: Int!) {
     deleteStage(id: $id) {
       id
     }
   }
-`;
+`);
 
 export interface UpdateStageResult {
   updateStage: { id: Pick<Stage, "id"> };
@@ -34,7 +34,7 @@ export type UpdateStageVariables = {
   startDateTime?: string;
 };
 
-export const UPDATE_STAGE_MUTATION = gql`
+export const UPDATE_STAGE_MUTATION = graphql(`
   mutation updateStage(
     $id: Int!
     $tournamentId: Int!
@@ -62,4 +62,4 @@ export const UPDATE_STAGE_MUTATION = gql`
       id
     }
   }
-`;
+`);

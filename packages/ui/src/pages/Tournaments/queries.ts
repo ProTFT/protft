@@ -1,4 +1,4 @@
-import { gql } from "urql";
+import { graphql } from "../../gql";
 import { Tournament } from "../../graphql/schema";
 
 export interface FilteredTournamentArgs {
@@ -13,8 +13,8 @@ export interface UpcomingTournamentsQueryResult {
   upcomingTournaments: Tournament[];
 }
 
-export const UPCOMING_TOURNAMENTS_QUERY = gql`
-  query tournaments(
+export const UPCOMING_TOURNAMENTS_QUERY = graphql(`
+  query listUpcomingTournaments(
     $searchQuery: String
     $setId: [Int!]
     $region: [String!]
@@ -43,14 +43,14 @@ export const UPCOMING_TOURNAMENTS_QUERY = gql`
       }
     }
   }
-`;
+`);
 
 export interface OngoingTournamentsQueryResult {
   ongoingTournaments: Tournament[];
 }
 
-export const ONGOING_TOURNAMENTS_QUERY = gql`
-  query tournaments {
+export const ONGOING_TOURNAMENTS_QUERY = graphql(`
+  query listOngoingTournaments {
     ongoingTournaments {
       id
       name
@@ -68,14 +68,14 @@ export const ONGOING_TOURNAMENTS_QUERY = gql`
       nextStartTime
     }
   }
-`;
+`);
 
 export interface PastTournamentsQueryResult {
   pastTournaments: Tournament[];
 }
 
-export const PAST_TOURNAMENTS_QUERY = gql`
-  query tournaments(
+export const PAST_TOURNAMENTS_QUERY = graphql(`
+  query listPastTournaments(
     $searchQuery: String
     $setId: [Int!]
     $region: [String!]
@@ -104,4 +104,4 @@ export const PAST_TOURNAMENTS_QUERY = gql`
       }
     }
   }
-`;
+`);

@@ -1,12 +1,12 @@
-import { gql } from "urql";
+import { graphql } from "../../../../../gql";
 import { Stage, StageType, Tournament } from "../../../../../graphql/schema";
 
 export interface TournamentStageQueryResponse {
   tournament: Tournament;
 }
 
-export const TOURNAMENT_STAGES_QUERY = gql`
-  query tournament($id: Int!) {
+export const TOURNAMENT_STAGES_QUERY = graphql(`
+  query oneTournamentWithStagesAndPointSchema($id: Int!) {
     tournament(id: $id) {
       id
       stages {
@@ -23,7 +23,7 @@ export const TOURNAMENT_STAGES_QUERY = gql`
       }
     }
   }
-`;
+`);
 
 export interface CreateStageResult {
   createStage: { id: Pick<Stage, "id"> };
@@ -41,7 +41,7 @@ export type CreateStageVariables = {
   startDateTime?: string;
 };
 
-export const CREATE_STAGE_MUTATION = gql`
+export const CREATE_STAGE_MUTATION = graphql(`
   mutation createStage(
     $tournamentId: Int!
     $pointSchemaId: Int!
@@ -67,4 +67,4 @@ export const CREATE_STAGE_MUTATION = gql`
       id
     }
   }
-`;
+`);

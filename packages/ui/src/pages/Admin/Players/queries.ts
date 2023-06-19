@@ -1,12 +1,12 @@
-import { gql } from "urql";
+import { graphql } from "../../../gql";
 import { Player } from "../../../graphql/schema";
 
 export interface PlayersQueryResult {
   adminPlayers: Player[];
 }
 
-export const PLAYERS_ADMIN_QUERY = gql`
-  query players($searchQuery: String) {
+export const PLAYERS_ADMIN_QUERY = graphql(`
+  query listAdminPlayers($searchQuery: String) {
     adminPlayers(searchQuery: $searchQuery, take: 20) {
       id
       name
@@ -15,7 +15,7 @@ export const PLAYERS_ADMIN_QUERY = gql`
       alias
     }
   }
-`;
+`);
 
 export interface DeletePlayerResult {
   deletePlayer: { id: Pick<Player, "id"> };
@@ -23,13 +23,13 @@ export interface DeletePlayerResult {
 
 export type DeletePlayerVariables = Pick<Player, "id">;
 
-export const DELETE_PLAYER_MUTATION = gql`
+export const DELETE_PLAYER_MUTATION = graphql(`
   mutation deletePlayer($id: Int!) {
     deletePlayer(id: $id) {
       id
     }
   }
-`;
+`);
 
 export interface UpdatePlayerResult {
   deletePlayer: { id: Pick<Player, "id"> };
@@ -37,7 +37,7 @@ export interface UpdatePlayerResult {
 
 export type UpdatePlayerVariables = Pick<Player, "id">;
 
-export const UPDATE_PLAYER_MUTATION = gql`
+export const UPDATE_PLAYER_MUTATION = graphql(`
   mutation updatePlayer(
     $id: Int!
     $name: String
@@ -57,7 +57,7 @@ export const UPDATE_PLAYER_MUTATION = gql`
       id
     }
   }
-`;
+`);
 
 export interface MergePlayerResult {
   mergePlayer: { id: Pick<Player, "id"> };
@@ -68,7 +68,7 @@ export interface MergePlayerVariables {
   playerIdToRemove: number;
 }
 
-export const MERGE_PLAYER_MUTATION = gql`
+export const MERGE_PLAYER_MUTATION = graphql(`
   mutation mergePlayer($playerIdToMaintain: Int!, $playerIdToRemove: Int!) {
     mergePlayer(
       playerIdToMaintain: $playerIdToMaintain
@@ -77,4 +77,4 @@ export const MERGE_PLAYER_MUTATION = gql`
       id
     }
   }
-`;
+`);
