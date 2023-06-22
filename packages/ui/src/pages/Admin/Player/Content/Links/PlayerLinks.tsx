@@ -55,7 +55,7 @@ export const PlayerLinks = () => {
     [createPlayerLink, playerId]
   );
 
-  const onDeleteStream = useCallback(
+  const onDeleteLink = useCallback(
     (id: number) => async () => {
       const result = await deleteLink({
         id,
@@ -74,7 +74,7 @@ export const PlayerLinks = () => {
     onSuccess: refetch,
   });
 
-  const onClickNewStream = useCallback(() => {
+  const onClickNewLink = useCallback(() => {
     openDialog();
   }, [openDialog]);
 
@@ -82,8 +82,8 @@ export const PlayerLinks = () => {
     <StyledVerticalContainer>
       {dialog}
       <ButtonBar>
-        <ProTFTButton width="20%" onClick={onClickNewStream}>
-          Add stream
+        <ProTFTButton width="20%" onClick={onClickNewLink}>
+          Add link
         </ProTFTButton>
       </ButtonBar>
       <ListContainer>
@@ -92,7 +92,7 @@ export const PlayerLinks = () => {
             <StreamListItem>
               <StyledBody>{type}</StyledBody>
               <StyledBody>{link}</StyledBody>
-              <DeleteButton onClick={onDeleteStream(id)} />
+              <DeleteButton onClick={onDeleteLink(id)} />
             </StreamListItem>
           ))}
         </StreamList>
