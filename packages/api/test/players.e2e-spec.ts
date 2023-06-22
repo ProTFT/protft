@@ -37,6 +37,8 @@ const mockTournaments = [
   },
 ];
 
+const mockLinks = [{ id: 1, type: "test" }];
+
 const mockPlayerFilterMeta = {
   possibleCountries: ["Brazil", "Germany"],
   possibleRegions: ["EMEA", "BR"],
@@ -59,6 +61,7 @@ const fakePlayersService = {
   findUniqueRegions: jest
     .fn()
     .mockResolvedValue(mockPlayerFilterMeta.possibleRegions),
+  findLinks: jest.fn().mockResolvedValue(mockLinks),
   merge: jest.fn().mockResolvedValue(mockPlayers[0]),
 };
 
@@ -171,13 +174,22 @@ describe("Player (e2e)", () => {
                 topOneCount
                 eigthCount
               }
+              links {
+                id
+                type
+              }
             }
           }`,
-        })
-        .expect(HttpStatus.OK);
+        });
 
       expect(response.body).toStrictEqual({
-        data: { player: { ...mockPlayers[0], playerStats: mockPlayerStats } },
+        data: {
+          player: {
+            ...mockPlayers[0],
+            playerStats: mockPlayerStats,
+            links: mockLinks,
+          },
+        },
       });
     });
   });

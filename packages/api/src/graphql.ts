@@ -34,6 +34,7 @@ export interface Set {
 }
 
 export interface PlayerLink {
+    id: number;
     playerId: number;
     type: string;
     link: string;
@@ -280,6 +281,7 @@ export interface IQuery {
     resultsByLobbyGroup(lobbyGroupId: number): PlayerResults[] | Promise<PlayerResults[]>;
     playerStats(setId?: Nullable<number>, tournamentIds?: Nullable<number[]>, region?: Nullable<string>, sort?: Nullable<SortOption>, searchQuery?: Nullable<string>, take?: Nullable<number>, skip?: Nullable<number>, minimumGames?: Nullable<number>): PlayerWithStats[] | Promise<PlayerWithStats[]>;
     resultsOfTournament(tournamentId: number): TournamentResult[] | Promise<TournamentResult[]>;
+    playerLink(id: number): PlayerLink | Promise<PlayerLink>;
     streamsOfTournament(tournamentId: number): TournamentStream[] | Promise<TournamentStream[]>;
     circuits(): Circuit[] | Promise<Circuit[]>;
     circuit(id: number): Nullable<Circuit> | Promise<Nullable<Circuit>>;
@@ -318,6 +320,9 @@ export interface IMutation {
     carryOverPointsFromLastStage(stageId: number): SuccessResponse | Promise<SuccessResponse>;
     lockTournament(id: number): TournamentResult[] | Promise<TournamentResult[]>;
     deleteTournamentResults(id: number): DeleteResponse | Promise<DeleteResponse>;
+    createPlayerLink(playerId: number, type: string, link: string): PlayerLink | Promise<PlayerLink>;
+    updatePlayerLink(id: number, type?: Nullable<string>, link?: Nullable<string>): PlayerLink | Promise<PlayerLink>;
+    deletePlayerLink(id: number): DeleteResponse | Promise<DeleteResponse>;
     addTournamentStream(tournamentId: number, name: string, link: string, platform: string, language: string, isLive: boolean, isVOD: boolean): TournamentStream | Promise<TournamentStream>;
     deleteTournamentStream(tournamentId: number, name: string): DeleteResponse | Promise<DeleteResponse>;
     createCircuit(name: string, setId: number, region: string[]): Circuit | Promise<Circuit>;

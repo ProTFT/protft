@@ -1,20 +1,31 @@
 import { Field, Int, ObjectType } from "@nestjs/graphql";
-import { Column, Entity, ManyToOne, PrimaryColumn } from "typeorm";
+import {
+  Column,
+  Entity,
+  Index,
+  ManyToOne,
+  PrimaryGeneratedColumn,
+} from "typeorm";
 import { Player } from "../players/player.entity";
 
 @Entity()
 @ObjectType()
+@Index(["playerId", "type"], { unique: true })
 export class PlayerLink {
-  @PrimaryColumn()
+  @PrimaryGeneratedColumn()
   @Field(() => Int)
+  id: number;
+
+  @Field(() => Int)
+  @Column()
   playerId: number;
 
-  @Column()
   @Field()
+  @Column()
   type: string;
 
-  @Column()
   @Field()
+  @Column()
   link: string;
 
   @ManyToOne(() => Player, (player) => player.id, {

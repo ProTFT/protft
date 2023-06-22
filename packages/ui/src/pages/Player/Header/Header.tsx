@@ -3,8 +3,6 @@ import {
   CountryIndicator,
   RegionsIndicator,
 } from "../../../components/RegionIndicator/RegionIndicator";
-// import { colors } from "../../../design/colors";
-// import { Twitter } from "../../../design/icons/Twitter";
 import { Player } from "../../../graphql/schema";
 import {
   PlayerAlias,
@@ -12,11 +10,11 @@ import {
   StyledPlayerImage,
   StyledPlayerInfo,
   StyledPlayerName,
-  StyledSocialMediaContainer,
 } from "./Header.styled";
+import { SocialMedia } from "./SocialMedia";
 
 interface Props {
-  player?: Pick<Player, "name" | "region" | "country" | "alias">;
+  player?: Pick<Player, "id" | "name" | "region" | "country" | "alias">;
 }
 
 export const Header = ({ player }: Props) => {
@@ -34,9 +32,7 @@ export const Header = ({ player }: Props) => {
         )}
         <RegionsIndicator regionCodes={[player?.region || ""]} />
         <CountryIndicator countryCode={player?.country} showName />
-        <StyledSocialMediaContainer>
-          {/* <Twitter color={colors.white} onClick={() => {}} size={24} /> */}
-        </StyledSocialMediaContainer>
+        <SocialMedia id={player?.id} />
       </StyledPlayerInfo>
     </StyledHeaderContainer>
   );

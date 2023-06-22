@@ -2,152 +2,119 @@ import { useCallback } from "react";
 import { useNavigate, useParams } from "react-router-dom";
 import { useMutation, useQuery } from "urql";
 import { ProTFTButton } from "../../../components/Button/Button";
-import { TournamentContent } from "../../../components/TournamentContent/TournamentContent";
-import { Tournament } from "../../../graphql/schema";
-import { StyledHeaderContainer } from "../../Tournament/Tournament.styled";
 import { useToast } from "../Components/Toast/Toast";
-import { useTournamentDialog } from "../Components/Dialogs/TournamentDialog/TournamentDialog";
-import { ADMIN_TOURNAMENTS_PATH } from "../Tournaments/AdminTournaments";
 import { StyledActionsContainer, StyledBar } from "./AdminPlayer.styled";
-import { AdminTournamentContent } from "./Content/Content";
+import { AdminPlayerContent } from "./Content/Content";
 import {
-  DeleteResultsResult,
-  DeleteResultsVariables,
-  DELETE_RESULTS_MUTATION,
-  DELETE_TOURNAMENT_MUTATION,
-  LockResultsResult,
-  LockResultsVariables,
-  LOCK_RESULTS_MUTATION,
-  TournamentQueryResponse,
-  TournamentsDeleteResult,
-  TournamentsUpdateResult,
-  TournamentUpdateVariables,
-  TOURNAMENT_QUERY,
-  UPDATE_TOURNAMENT_MUTATION,
-} from "./queries";
+  AdminPlayerQuery,
+  AdminPlayerQueryVariables,
+  DeletePlayerMutation,
+  DeletePlayerMutationVariables,
+  Player,
+  UpdatePlayerMutation,
+  UpdatePlayerMutationVariables,
+} from "../../../gql/graphql";
+import { PLAYER_QUERY } from "./queries";
+import { ADMIN_PLAYERS_PATH } from "../Players/AdminPlayers";
+import { usePlayerDialog } from "../Components/Dialogs/PlayerDialog/PlayerDialogNew";
+import {
+  DELETE_PLAYER_MUTATION,
+  UPDATE_PLAYER_MUTATION,
+} from "../Players/queries";
+import { Header } from "../Components/Header/Header";
+import { StyledTitle } from "../../../design/fonts/Fonts";
+import {
+  CountryIndicator,
+  RegionsIndicator,
+} from "../../../components/RegionIndicator/RegionIndicator";
 
 export const AdminPlayer = () => {
-  const { id: tournamentId } = useParams();
+  const { id: playerId } = useParams();
 
   const navigate = useNavigate();
   const { show } = useToast();
 
-  const [{ data }, refetch] = useQuery<TournamentQueryResponse>({
-    query: TOURNAMENT_QUERY,
-    variables: { id: Number(tournamentId) },
+  const [{ data }, refetch] = useQuery<
+    AdminPlayerQuery,
+    AdminPlayerQueryVariables
+  >({
+    query: PLAYER_QUERY,
+    variables: { id: Number(playerId) },
   });
 
-  const [, deleteTournament] = useMutation<
-    TournamentsDeleteResult,
-    { id: number }
-  >(DELETE_TOURNAMENT_MUTATION);
-
-  const [, updateTournament] = useMutation<
-    TournamentsUpdateResult,
-    TournamentUpdateVariables
-  >(UPDATE_TOURNAMENT_MUTATION);
-
-  const [, lockResults] = useMutation<LockResultsResult, LockResultsVariables>(
-    LOCK_RESULTS_MUTATION
-  );
-
-  const [, deleteResults] = useMutation<
-    DeleteResultsResult,
-    DeleteResultsVariables
-  >(DELETE_RESULTS_MUTATION);
-
-  const onDeleteTournament = useCallback(async () => {
-    const deleteResult = await deleteTournament({ id: Number(tournamentId) });
-    if (deleteResult.error) {
-      return alert(deleteResult.error);
-    }
-    navigate(ADMIN_TOURNAMENTS_PATH);
-  }, [deleteTournament, tournamentId, navigate]);
-
-  const onSubmitUpdateTournament = useCallback(
-    (tournament: Omit<Tournament, "id" | "set">) =>
-      updateTournament({
-        ...tournament,
-        id: Number(tournamentId),
-      }),
-    [tournamentId, updateTournament]
-  );
-
-  const onToggleVisibility = useCallback(async () => {
-    const result = await updateTournament({
-      id: Number(tournamentId),
-      visibility: !Boolean(data?.tournament.visibility),
-    });
-
-    if (result.error) {
-      return alert(result.error);
-    }
-    refetch();
-    show();
-  }, [
-    data?.tournament.visibility,
-    tournamentId,
-    updateTournament,
-    refetch,
-    show,
-  ]);
-
-  const onLockResults = useCallback(async () => {
-    const result = await lockResults({
-      id: Number(tournamentId),
-    });
-
-    if (result.error) {
-      return alert(result.error);
-    }
-    show();
-  }, [lockResults, tournamentId, show]);
-  const onDeleteResults = useCallback(async () => {
-    const result = await deleteResults({
-      id: Number(tournamentId),
-    });
-
-    if (result.error) {
-      return alert(result.error);
-    }
-    show();
-  }, [deleteResults, tournamentId, show]);
-
-  const onBackToList = useCallback(() => {
-    navigate(ADMIN_TOURNAMENTS_PATH);
+  const backToList = useCallback(() => {
+    navigate(ADMIN_PLAYERS_PATH);
   }, [navigate]);
 
-  const { dialog: tournamentDialog, openDialog } = useTournamentDialog({
-    onSubmit: onSubmitUpdateTournament,
+  const [, deletePlayer] = useMutation<
+    DeletePlayerMutation,
+    DeletePlayerMutationVariables
+  >(DELETE_PLAYER_MUTATION);
+
+  const [, updatePlayer] = useMutation<
+    UpdatePlayerMutation,
+    UpdatePlayerMutationVariables
+  >(UPDATE_PLAYER_MUTATION);
+
+  const onDelete = useCallback(
+    (id: number) => async () => {
+      const result = await deletePlayer({ id });
+      if (result.error) {
+        return alert(result.error);
+      }
+      show();
+      backToList();
+    },
+    [deletePlayer, backToList, show]
+  );
+
+  const onSubmitPlayerUpdate = useCallback(
+    (playerId: number) =>
+      async (player: Omit<Player, "id" | "playerStats" | "links">) =>
+        updatePlayer({
+          id: playerId,
+          ...player,
+        }),
+    [updatePlayer]
+  );
+
+  const { dialog, openDialog } = usePlayerDialog({
+    player: data?.player,
+    onSubmit: onSubmitPlayerUpdate(data?.player.id!),
     onSuccess: refetch,
-    tournament: data?.tournament,
   });
 
-  const onUpdateTournament = useCallback(() => {
+  const onUpdate = useCallback(() => {
     openDialog();
   }, [openDialog]);
 
   return (
     <div>
-      {tournamentDialog}
+      {dialog}
       <StyledBar>
         <StyledActionsContainer>
-          <ProTFTButton onClick={onBackToList}>Back to list</ProTFTButton>
+          <ProTFTButton onClick={backToList}>Back to list</ProTFTButton>
         </StyledActionsContainer>
         <StyledActionsContainer>
-          <ProTFTButton onClick={onLockResults}>Lock results</ProTFTButton>
-          <ProTFTButton onClick={onDeleteResults}>Delete results</ProTFTButton>
-          <ProTFTButton onClick={onToggleVisibility}>
-            Make {data?.tournament.visibility ? "invisible" : "visible"}
+          <ProTFTButton onClick={onUpdate}>Update</ProTFTButton>
+          <ProTFTButton onClick={onDelete(data?.player.id!)}>
+            Delete
           </ProTFTButton>
-          <ProTFTButton onClick={onUpdateTournament}>Update</ProTFTButton>
-          <ProTFTButton onClick={onDeleteTournament}>Delete</ProTFTButton>
         </StyledActionsContainer>
       </StyledBar>
-      <StyledHeaderContainer>
-        <TournamentContent tournament={data!.tournament} />
-      </StyledHeaderContainer>
-      <AdminTournamentContent />
+      <Header src="/no_pic.webp" alt={data?.player.name || ""}>
+        <div>
+          <StyledTitle>{data?.player.name}</StyledTitle>
+        </div>
+        <div>
+          <CountryIndicator countryCode={data?.player.country} showName />
+          <RegionsIndicator
+            regionCodes={data?.player.region ? [data?.player.region] : []}
+            showName
+          />
+        </div>
+      </Header>
+      <AdminPlayerContent />
     </div>
   );
 };

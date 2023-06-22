@@ -6,17 +6,13 @@ import {
   StyledTabButton,
   StyledTabContainer,
 } from "./Content.styled";
-import { TournamentPlayers } from "./TournamentPlayers/TournamentPlayers";
-import { TournamentStages } from "./TournamentStages/TournamentStages";
-import { TournamentStreams } from "./TournamentStreams/TournamentStreams";
+import { PlayerLinks } from "./Links/PlayerLinks";
 
 enum ContentPath {
-  PLAYERS = "players",
-  STAGES = "stages",
-  STREAMS = "streams",
+  LINKS = "links",
 }
 
-export const AdminTournamentContent = () => {
+export const AdminPlayerContent = () => {
   const location = useLocation();
 
   const isTabSelected = useCallback(
@@ -27,34 +23,16 @@ export const AdminTournamentContent = () => {
   return (
     <StyledContainer>
       <StyledTabContainer>
-        <Link to="players">
-          <StyledTabButton selected={isTabSelected(ContentPath.PLAYERS)}>
-            Players
-          </StyledTabButton>
-        </Link>
-        <Link to="stages">
-          <StyledTabButton selected={isTabSelected(ContentPath.STAGES)}>
-            Stages
-          </StyledTabButton>
-        </Link>
-        <Link to="streams">
-          <StyledTabButton selected={isTabSelected(ContentPath.STREAMS)}>
-            Streams
+        <Link to="links">
+          <StyledTabButton selected={isTabSelected(ContentPath.LINKS)}>
+            Links
           </StyledTabButton>
         </Link>
       </StyledTabContainer>
       <Routes>
         <Route
-          path={ContentPath.PLAYERS}
-          element={<SuspenseElement element={<TournamentPlayers />} />}
-        />
-        <Route
-          path={ContentPath.STAGES}
-          element={<SuspenseElement element={<TournamentStages />} />}
-        />
-        <Route
-          path={ContentPath.STREAMS}
-          element={<SuspenseElement element={<TournamentStreams />} />}
+          path={ContentPath.LINKS}
+          element={<SuspenseElement element={<PlayerLinks />} />}
         />
       </Routes>
     </StyledContainer>
