@@ -2,6 +2,7 @@ import { BadRequestException } from "@nestjs/common";
 import { ILike, Repository } from "typeorm";
 import { formatString } from "../../test/helpers/File";
 import { LobbyPlayerInfosService } from "../lobby-player-infos/lobby-player-infos.service";
+import { PlayerLinksService } from "../player-links/player-links.service";
 import { RoundResultsService } from "../round-results/round-results.service";
 import { StagePlayerInfosService } from "../stage-player-infos/stage-player-infos.service";
 import { TournamentResultsService } from "../tournament-results/tournament-results.service";
@@ -58,6 +59,9 @@ describe("PlayersService", () => {
   const stagePlayersInfosService = {
     updatePlayer: jest.fn(),
   } as unknown as StagePlayerInfosService;
+  const playerLinksService = {
+    getByPlayerId: jest.fn(),
+  } as unknown as PlayerLinksService;
 
   beforeEach(async () => {
     service = new PlayersService(
@@ -67,6 +71,7 @@ describe("PlayersService", () => {
       tournamentsService,
       lobbyPlayerInfosService,
       stagePlayersInfosService,
+      playerLinksService,
     );
   });
 
@@ -142,6 +147,13 @@ describe("PlayersService", () => {
       expect(playerRepository.findOne).toHaveBeenCalledWith({
         slug: slug,
       });
+    });
+  });
+
+  describe("find links", () => {
+    it("should call other service", async () => {
+      await service.findLinks(1);
+      expect(playerLinksService.getByPlayerId).toHaveBeenCalled();
     });
   });
 

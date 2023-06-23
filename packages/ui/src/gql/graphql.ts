@@ -18,6 +18,15 @@ export type Scalars = {
   DateTime: { input: any; output: any; }
 };
 
+export type Circuit = {
+  id: Scalars['Int']['output'];
+  name: Scalars['String']['output'];
+  region: Array<Scalars['String']['output']>;
+  set: Set;
+  setId: Scalars['Float']['output'];
+  slug: Scalars['String']['output'];
+};
+
 export type CreateLobbiesResponse = {
   createdLobbies: Scalars['Int']['output'];
   createdLobbyGroups: Scalars['Int']['output'];
@@ -78,6 +87,7 @@ export type LobbyWithResults = {
 export type Mutation = {
   addTournamentStream: TournamentStream;
   carryOverPointsFromLastStage: SuccessResponse;
+  createCircuit: Circuit;
   createLobby: Lobby;
   createLobbyGroup: LobbyGroup;
   createLobbyGroupResult: Array<RoundResult>;
@@ -85,6 +95,7 @@ export type Mutation = {
   createNLobby: Array<Lobby>;
   createNLobbyGroup: Array<LobbyGroup>;
   createPlayer: Player;
+  createPlayerLink: PlayerLink;
   createPlayerSlugs: Array<Player>;
   createRound: Round;
   createStage: Stage;
@@ -94,9 +105,11 @@ export type Mutation = {
   createTournamentPlayers: Tournament;
   createTournamentPlayersByName: Tournament;
   createTournamentSlugs: Array<Tournament>;
+  deleteCircuit: DeleteResponse;
   deleteLobby: DeleteResponse;
   deleteLobbyGroups: DeleteResponse;
   deletePlayer: Player;
+  deletePlayerLink: DeleteResponse;
   deleteStage: DeleteResponse;
   deleteTournament: DeleteResponse;
   deleteTournamentResults: DeleteResponse;
@@ -104,8 +117,10 @@ export type Mutation = {
   generateLobbies: CreateLobbiesResponse;
   lockTournament: Array<TournamentResult>;
   mergePlayer: Player;
+  updateCircuit: Circuit;
   updateLobby: Lobby;
   updatePlayer: Player;
+  updatePlayerLink: PlayerLink;
   updateStage: Stage;
   updateStagePlayer: StagePlayerInfo;
   updateTiebreakers: Stage;
@@ -126,6 +141,13 @@ export type MutationAddTournamentStreamArgs = {
 
 export type MutationCarryOverPointsFromLastStageArgs = {
   stageId: Scalars['Int']['input'];
+};
+
+
+export type MutationCreateCircuitArgs = {
+  name: Scalars['String']['input'];
+  region: Array<Scalars['String']['input']>;
+  setId: Scalars['Float']['input'];
 };
 
 
@@ -174,6 +196,13 @@ export type MutationCreatePlayerArgs = {
   country: Scalars['String']['input'];
   name: Scalars['String']['input'];
   region: Scalars['String']['input'];
+};
+
+
+export type MutationCreatePlayerLinkArgs = {
+  link: Scalars['String']['input'];
+  playerId: Scalars['Int']['input'];
+  type: Scalars['String']['input'];
 };
 
 
@@ -234,6 +263,11 @@ export type MutationCreateTournamentPlayersByNameArgs = {
 };
 
 
+export type MutationDeleteCircuitArgs = {
+  id: Scalars['Float']['input'];
+};
+
+
 export type MutationDeleteLobbyArgs = {
   id: Scalars['Int']['input'];
 };
@@ -245,6 +279,11 @@ export type MutationDeleteLobbyGroupsArgs = {
 
 
 export type MutationDeletePlayerArgs = {
+  id: Scalars['Int']['input'];
+};
+
+
+export type MutationDeletePlayerLinkArgs = {
   id: Scalars['Int']['input'];
 };
 
@@ -287,6 +326,14 @@ export type MutationMergePlayerArgs = {
 };
 
 
+export type MutationUpdateCircuitArgs = {
+  id: Scalars['Float']['input'];
+  name?: InputMaybe<Scalars['String']['input']>;
+  region?: InputMaybe<Array<Scalars['String']['input']>>;
+  setId?: InputMaybe<Scalars['Float']['input']>;
+};
+
+
 export type MutationUpdateLobbyArgs = {
   id: Scalars['Int']['input'];
   lobbyGroupId: Scalars['Int']['input'];
@@ -303,6 +350,13 @@ export type MutationUpdatePlayerArgs = {
   name?: InputMaybe<Scalars['String']['input']>;
   region?: InputMaybe<Scalars['String']['input']>;
   slug?: InputMaybe<Scalars['String']['input']>;
+};
+
+
+export type MutationUpdatePlayerLinkArgs = {
+  id: Scalars['Int']['input'];
+  link?: InputMaybe<Scalars['String']['input']>;
+  type?: InputMaybe<Scalars['String']['input']>;
 };
 
 
@@ -353,6 +407,7 @@ export type Player = {
   alias: Array<Scalars['String']['output']>;
   country?: Maybe<Scalars['String']['output']>;
   id: Scalars['Int']['output'];
+  links: Array<PlayerLink>;
   name: Scalars['String']['output'];
   playerStats?: Maybe<PlayerCalculatedStats>;
   region?: Maybe<Scalars['String']['output']>;
@@ -376,6 +431,13 @@ export type PlayerCalculatedStats = {
 export type PlayerFilterMeta = {
   possibleCountries: Array<Scalars['String']['output']>;
   possibleRegions: Array<Scalars['String']['output']>;
+};
+
+export type PlayerLink = {
+  id: Scalars['Int']['output'];
+  link: Scalars['String']['output'];
+  playerId: Scalars['Int']['output'];
+  type: Scalars['String']['output'];
 };
 
 export type PlayerResults = {
@@ -402,6 +464,8 @@ export type PointSchema = {
 export type Query = {
   adminPlayers: Array<Player>;
   adminTournaments: Array<Tournament>;
+  circuit?: Maybe<Circuit>;
+  circuits: Array<Circuit>;
   lobbies: Array<Lobby>;
   lobbyResultsByStage: Array<LobbyGroupWithLobbies>;
   ongoingTournaments: Array<Tournament>;
@@ -409,6 +473,7 @@ export type Query = {
   player: Player;
   playerBySlug: Player;
   playerFilterMeta: PlayerFilterMeta;
+  playerLink: PlayerLink;
   playerStats: Array<PlayerWithStats>;
   players: Array<Player>;
   playersFromPreviousStage: Array<StagePlayerInfo>;
@@ -451,6 +516,11 @@ export type QueryAdminTournamentsArgs = {
 };
 
 
+export type QueryCircuitArgs = {
+  id: Scalars['Int']['input'];
+};
+
+
 export type QueryLobbiesArgs = {
   lobbyGroupId: Scalars['Int']['input'];
 };
@@ -477,6 +547,11 @@ export type QueryPlayerArgs = {
 
 export type QueryPlayerBySlugArgs = {
   slug: Scalars['String']['input'];
+};
+
+
+export type QueryPlayerLinkArgs = {
+  id: Scalars['Int']['input'];
 };
 
 
@@ -672,10 +747,15 @@ export type Tournament = {
 };
 
 export type TournamentResult = {
+  circuitId: Scalars['Int']['output'];
+  circuitPointsEarned: Scalars['Int']['output'];
+  currency: Scalars['String']['output'];
   finalPosition: Scalars['String']['output'];
   otherRewards: Scalars['String']['output'];
   playerId: Scalars['Int']['output'];
-  prize: Scalars['Int']['output'];
+  prize: Scalars['Float']['output'];
+  prizeInUSD: Scalars['Float']['output'];
+  qualifyTo: Array<Scalars['Int']['output']>;
   tournamentId: Scalars['Int']['output'];
 };
 
@@ -718,6 +798,36 @@ export type ListPointSchemasQueryVariables = Exact<{ [key: string]: never; }>;
 
 
 export type ListPointSchemasQuery = { pointSchemas: Array<{ id: number, name: string }> };
+
+export type AdminPlayerLinksQueryVariables = Exact<{
+  playerId: Scalars['Int']['input'];
+}>;
+
+
+export type AdminPlayerLinksQuery = { player: { id: number, links: Array<{ id: number, type: string, link: string }> } };
+
+export type CreatePlayerLinkMutationVariables = Exact<{
+  playerId: Scalars['Int']['input'];
+  link: Scalars['String']['input'];
+  type: Scalars['String']['input'];
+}>;
+
+
+export type CreatePlayerLinkMutation = { createPlayerLink: { id: number } };
+
+export type DeletePlayerLinkMutationVariables = Exact<{
+  id: Scalars['Int']['input'];
+}>;
+
+
+export type DeletePlayerLinkMutation = { deletePlayerLink: { id: number } };
+
+export type AdminPlayerQueryVariables = Exact<{
+  id: Scalars['Int']['input'];
+}>;
+
+
+export type AdminPlayerQuery = { player: { id: number, name: string, country?: string | null, region?: string | null, slug: string, alias: Array<string> } };
 
 export type ListAdminPlayersQueryVariables = Exact<{
   searchQuery?: InputMaybe<Scalars['String']['input']>;
@@ -1138,6 +1248,13 @@ export type CreateTournamentSlugsMutationVariables = Exact<{ [key: string]: neve
 
 export type CreateTournamentSlugsMutation = { createTournamentSlugs: Array<{ id: number, name: string, slug: string }> };
 
+export type PlayerLinksQueryVariables = Exact<{
+  playerId: Scalars['Int']['input'];
+}>;
+
+
+export type PlayerLinksQuery = { player: { id: number, links: Array<{ id: number, type: string, link: string }> } };
+
 export type ListTournamentsPlayedByPlayerQueryVariables = Exact<{
   playerId: Scalars['Int']['input'];
 }>;
@@ -1253,6 +1370,10 @@ export type ListPastTournamentsQuery = { pastTournaments: Array<{ id: number, na
 
 export const SetsDocument = {"kind":"Document","definitions":[{"kind":"OperationDefinition","operation":"query","name":{"kind":"Name","value":"sets"},"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"sets"},"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"id"}},{"kind":"Field","name":{"kind":"Name","value":"name"}}]}}]}}]} as unknown as DocumentNode<SetsQuery, SetsQueryVariables>;
 export const ListPointSchemasDocument = {"kind":"Document","definitions":[{"kind":"OperationDefinition","operation":"query","name":{"kind":"Name","value":"listPointSchemas"},"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"pointSchemas"},"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"id"}},{"kind":"Field","name":{"kind":"Name","value":"name"}}]}}]}}]} as unknown as DocumentNode<ListPointSchemasQuery, ListPointSchemasQueryVariables>;
+export const AdminPlayerLinksDocument = {"kind":"Document","definitions":[{"kind":"OperationDefinition","operation":"query","name":{"kind":"Name","value":"adminPlayerLinks"},"variableDefinitions":[{"kind":"VariableDefinition","variable":{"kind":"Variable","name":{"kind":"Name","value":"playerId"}},"type":{"kind":"NonNullType","type":{"kind":"NamedType","name":{"kind":"Name","value":"Int"}}}}],"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"player"},"arguments":[{"kind":"Argument","name":{"kind":"Name","value":"id"},"value":{"kind":"Variable","name":{"kind":"Name","value":"playerId"}}}],"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"id"}},{"kind":"Field","name":{"kind":"Name","value":"links"},"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"id"}},{"kind":"Field","name":{"kind":"Name","value":"type"}},{"kind":"Field","name":{"kind":"Name","value":"link"}}]}}]}}]}}]} as unknown as DocumentNode<AdminPlayerLinksQuery, AdminPlayerLinksQueryVariables>;
+export const CreatePlayerLinkDocument = {"kind":"Document","definitions":[{"kind":"OperationDefinition","operation":"mutation","name":{"kind":"Name","value":"createPlayerLink"},"variableDefinitions":[{"kind":"VariableDefinition","variable":{"kind":"Variable","name":{"kind":"Name","value":"playerId"}},"type":{"kind":"NonNullType","type":{"kind":"NamedType","name":{"kind":"Name","value":"Int"}}}},{"kind":"VariableDefinition","variable":{"kind":"Variable","name":{"kind":"Name","value":"link"}},"type":{"kind":"NonNullType","type":{"kind":"NamedType","name":{"kind":"Name","value":"String"}}}},{"kind":"VariableDefinition","variable":{"kind":"Variable","name":{"kind":"Name","value":"type"}},"type":{"kind":"NonNullType","type":{"kind":"NamedType","name":{"kind":"Name","value":"String"}}}}],"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"createPlayerLink"},"arguments":[{"kind":"Argument","name":{"kind":"Name","value":"playerId"},"value":{"kind":"Variable","name":{"kind":"Name","value":"playerId"}}},{"kind":"Argument","name":{"kind":"Name","value":"link"},"value":{"kind":"Variable","name":{"kind":"Name","value":"link"}}},{"kind":"Argument","name":{"kind":"Name","value":"type"},"value":{"kind":"Variable","name":{"kind":"Name","value":"type"}}}],"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"id"}}]}}]}}]} as unknown as DocumentNode<CreatePlayerLinkMutation, CreatePlayerLinkMutationVariables>;
+export const DeletePlayerLinkDocument = {"kind":"Document","definitions":[{"kind":"OperationDefinition","operation":"mutation","name":{"kind":"Name","value":"deletePlayerLink"},"variableDefinitions":[{"kind":"VariableDefinition","variable":{"kind":"Variable","name":{"kind":"Name","value":"id"}},"type":{"kind":"NonNullType","type":{"kind":"NamedType","name":{"kind":"Name","value":"Int"}}}}],"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"deletePlayerLink"},"arguments":[{"kind":"Argument","name":{"kind":"Name","value":"id"},"value":{"kind":"Variable","name":{"kind":"Name","value":"id"}}}],"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"id"}}]}}]}}]} as unknown as DocumentNode<DeletePlayerLinkMutation, DeletePlayerLinkMutationVariables>;
+export const AdminPlayerDocument = {"kind":"Document","definitions":[{"kind":"OperationDefinition","operation":"query","name":{"kind":"Name","value":"adminPlayer"},"variableDefinitions":[{"kind":"VariableDefinition","variable":{"kind":"Variable","name":{"kind":"Name","value":"id"}},"type":{"kind":"NonNullType","type":{"kind":"NamedType","name":{"kind":"Name","value":"Int"}}}}],"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"player"},"arguments":[{"kind":"Argument","name":{"kind":"Name","value":"id"},"value":{"kind":"Variable","name":{"kind":"Name","value":"id"}}}],"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"id"}},{"kind":"Field","name":{"kind":"Name","value":"name"}},{"kind":"Field","name":{"kind":"Name","value":"country"}},{"kind":"Field","name":{"kind":"Name","value":"region"}},{"kind":"Field","name":{"kind":"Name","value":"slug"}},{"kind":"Field","name":{"kind":"Name","value":"alias"}}]}}]}}]} as unknown as DocumentNode<AdminPlayerQuery, AdminPlayerQueryVariables>;
 export const ListAdminPlayersDocument = {"kind":"Document","definitions":[{"kind":"OperationDefinition","operation":"query","name":{"kind":"Name","value":"listAdminPlayers"},"variableDefinitions":[{"kind":"VariableDefinition","variable":{"kind":"Variable","name":{"kind":"Name","value":"searchQuery"}},"type":{"kind":"NamedType","name":{"kind":"Name","value":"String"}}}],"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"adminPlayers"},"arguments":[{"kind":"Argument","name":{"kind":"Name","value":"searchQuery"},"value":{"kind":"Variable","name":{"kind":"Name","value":"searchQuery"}}},{"kind":"Argument","name":{"kind":"Name","value":"take"},"value":{"kind":"IntValue","value":"20"}}],"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"id"}},{"kind":"Field","name":{"kind":"Name","value":"name"}},{"kind":"Field","name":{"kind":"Name","value":"region"}},{"kind":"Field","name":{"kind":"Name","value":"country"}},{"kind":"Field","name":{"kind":"Name","value":"alias"}}]}}]}}]} as unknown as DocumentNode<ListAdminPlayersQuery, ListAdminPlayersQueryVariables>;
 export const DeletePlayerDocument = {"kind":"Document","definitions":[{"kind":"OperationDefinition","operation":"mutation","name":{"kind":"Name","value":"deletePlayer"},"variableDefinitions":[{"kind":"VariableDefinition","variable":{"kind":"Variable","name":{"kind":"Name","value":"id"}},"type":{"kind":"NonNullType","type":{"kind":"NamedType","name":{"kind":"Name","value":"Int"}}}}],"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"deletePlayer"},"arguments":[{"kind":"Argument","name":{"kind":"Name","value":"id"},"value":{"kind":"Variable","name":{"kind":"Name","value":"id"}}}],"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"id"}}]}}]}}]} as unknown as DocumentNode<DeletePlayerMutation, DeletePlayerMutationVariables>;
 export const UpdatePlayerDocument = {"kind":"Document","definitions":[{"kind":"OperationDefinition","operation":"mutation","name":{"kind":"Name","value":"updatePlayer"},"variableDefinitions":[{"kind":"VariableDefinition","variable":{"kind":"Variable","name":{"kind":"Name","value":"id"}},"type":{"kind":"NonNullType","type":{"kind":"NamedType","name":{"kind":"Name","value":"Int"}}}},{"kind":"VariableDefinition","variable":{"kind":"Variable","name":{"kind":"Name","value":"name"}},"type":{"kind":"NamedType","name":{"kind":"Name","value":"String"}}},{"kind":"VariableDefinition","variable":{"kind":"Variable","name":{"kind":"Name","value":"country"}},"type":{"kind":"NamedType","name":{"kind":"Name","value":"String"}}},{"kind":"VariableDefinition","variable":{"kind":"Variable","name":{"kind":"Name","value":"region"}},"type":{"kind":"NamedType","name":{"kind":"Name","value":"String"}}},{"kind":"VariableDefinition","variable":{"kind":"Variable","name":{"kind":"Name","value":"slug"}},"type":{"kind":"NamedType","name":{"kind":"Name","value":"String"}}},{"kind":"VariableDefinition","variable":{"kind":"Variable","name":{"kind":"Name","value":"alias"}},"type":{"kind":"ListType","type":{"kind":"NonNullType","type":{"kind":"NamedType","name":{"kind":"Name","value":"String"}}}}}],"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"updatePlayer"},"arguments":[{"kind":"Argument","name":{"kind":"Name","value":"id"},"value":{"kind":"Variable","name":{"kind":"Name","value":"id"}}},{"kind":"Argument","name":{"kind":"Name","value":"name"},"value":{"kind":"Variable","name":{"kind":"Name","value":"name"}}},{"kind":"Argument","name":{"kind":"Name","value":"country"},"value":{"kind":"Variable","name":{"kind":"Name","value":"country"}}},{"kind":"Argument","name":{"kind":"Name","value":"region"},"value":{"kind":"Variable","name":{"kind":"Name","value":"region"}}},{"kind":"Argument","name":{"kind":"Name","value":"slug"},"value":{"kind":"Variable","name":{"kind":"Name","value":"slug"}}},{"kind":"Argument","name":{"kind":"Name","value":"alias"},"value":{"kind":"Variable","name":{"kind":"Name","value":"alias"}}}],"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"id"}}]}}]}}]} as unknown as DocumentNode<UpdatePlayerMutation, UpdatePlayerMutationVariables>;
@@ -1303,6 +1424,7 @@ export const ListAdminTournamentsPaginatedDocument = {"kind":"Document","definit
 export const CreateTournamentDocument = {"kind":"Document","definitions":[{"kind":"OperationDefinition","operation":"mutation","name":{"kind":"Name","value":"createTournament"},"variableDefinitions":[{"kind":"VariableDefinition","variable":{"kind":"Variable","name":{"kind":"Name","value":"name"}},"type":{"kind":"NonNullType","type":{"kind":"NamedType","name":{"kind":"Name","value":"String"}}}},{"kind":"VariableDefinition","variable":{"kind":"Variable","name":{"kind":"Name","value":"region"}},"type":{"kind":"ListType","type":{"kind":"NonNullType","type":{"kind":"NamedType","name":{"kind":"Name","value":"String"}}}}},{"kind":"VariableDefinition","variable":{"kind":"Variable","name":{"kind":"Name","value":"host"}},"type":{"kind":"NamedType","name":{"kind":"Name","value":"String"}}},{"kind":"VariableDefinition","variable":{"kind":"Variable","name":{"kind":"Name","value":"participantsNumber"}},"type":{"kind":"NamedType","name":{"kind":"Name","value":"Int"}}},{"kind":"VariableDefinition","variable":{"kind":"Variable","name":{"kind":"Name","value":"prizePool"}},"type":{"kind":"NamedType","name":{"kind":"Name","value":"Float"}}},{"kind":"VariableDefinition","variable":{"kind":"Variable","name":{"kind":"Name","value":"startDate"}},"type":{"kind":"NamedType","name":{"kind":"Name","value":"DateTime"}}},{"kind":"VariableDefinition","variable":{"kind":"Variable","name":{"kind":"Name","value":"endDate"}},"type":{"kind":"NamedType","name":{"kind":"Name","value":"DateTime"}}},{"kind":"VariableDefinition","variable":{"kind":"Variable","name":{"kind":"Name","value":"setId"}},"type":{"kind":"NonNullType","type":{"kind":"NamedType","name":{"kind":"Name","value":"Int"}}}},{"kind":"VariableDefinition","variable":{"kind":"Variable","name":{"kind":"Name","value":"currency"}},"type":{"kind":"NamedType","name":{"kind":"Name","value":"String"}}}],"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"createTournament"},"arguments":[{"kind":"Argument","name":{"kind":"Name","value":"name"},"value":{"kind":"Variable","name":{"kind":"Name","value":"name"}}},{"kind":"Argument","name":{"kind":"Name","value":"region"},"value":{"kind":"Variable","name":{"kind":"Name","value":"region"}}},{"kind":"Argument","name":{"kind":"Name","value":"host"},"value":{"kind":"Variable","name":{"kind":"Name","value":"host"}}},{"kind":"Argument","name":{"kind":"Name","value":"participantsNumber"},"value":{"kind":"Variable","name":{"kind":"Name","value":"participantsNumber"}}},{"kind":"Argument","name":{"kind":"Name","value":"prizePool"},"value":{"kind":"Variable","name":{"kind":"Name","value":"prizePool"}}},{"kind":"Argument","name":{"kind":"Name","value":"startDate"},"value":{"kind":"Variable","name":{"kind":"Name","value":"startDate"}}},{"kind":"Argument","name":{"kind":"Name","value":"endDate"},"value":{"kind":"Variable","name":{"kind":"Name","value":"endDate"}}},{"kind":"Argument","name":{"kind":"Name","value":"setId"},"value":{"kind":"Variable","name":{"kind":"Name","value":"setId"}}},{"kind":"Argument","name":{"kind":"Name","value":"currency"},"value":{"kind":"Variable","name":{"kind":"Name","value":"currency"}}}],"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"id"}}]}}]}}]} as unknown as DocumentNode<CreateTournamentMutation, CreateTournamentMutationVariables>;
 export const CreatePlayerSlugsDocument = {"kind":"Document","definitions":[{"kind":"OperationDefinition","operation":"mutation","name":{"kind":"Name","value":"createPlayerSlugs"},"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"createPlayerSlugs"},"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"id"}},{"kind":"Field","name":{"kind":"Name","value":"name"}},{"kind":"Field","name":{"kind":"Name","value":"slug"}}]}}]}}]} as unknown as DocumentNode<CreatePlayerSlugsMutation, CreatePlayerSlugsMutationVariables>;
 export const CreateTournamentSlugsDocument = {"kind":"Document","definitions":[{"kind":"OperationDefinition","operation":"mutation","name":{"kind":"Name","value":"createTournamentSlugs"},"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"createTournamentSlugs"},"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"id"}},{"kind":"Field","name":{"kind":"Name","value":"name"}},{"kind":"Field","name":{"kind":"Name","value":"slug"}}]}}]}}]} as unknown as DocumentNode<CreateTournamentSlugsMutation, CreateTournamentSlugsMutationVariables>;
+export const PlayerLinksDocument = {"kind":"Document","definitions":[{"kind":"OperationDefinition","operation":"query","name":{"kind":"Name","value":"playerLinks"},"variableDefinitions":[{"kind":"VariableDefinition","variable":{"kind":"Variable","name":{"kind":"Name","value":"playerId"}},"type":{"kind":"NonNullType","type":{"kind":"NamedType","name":{"kind":"Name","value":"Int"}}}}],"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"player"},"arguments":[{"kind":"Argument","name":{"kind":"Name","value":"id"},"value":{"kind":"Variable","name":{"kind":"Name","value":"playerId"}}}],"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"id"}},{"kind":"Field","name":{"kind":"Name","value":"links"},"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"id"}},{"kind":"Field","name":{"kind":"Name","value":"type"}},{"kind":"Field","name":{"kind":"Name","value":"link"}}]}}]}}]}}]} as unknown as DocumentNode<PlayerLinksQuery, PlayerLinksQueryVariables>;
 export const ListTournamentsPlayedByPlayerDocument = {"kind":"Document","definitions":[{"kind":"OperationDefinition","operation":"query","name":{"kind":"Name","value":"listTournamentsPlayedByPlayer"},"variableDefinitions":[{"kind":"VariableDefinition","variable":{"kind":"Variable","name":{"kind":"Name","value":"playerId"}},"type":{"kind":"NonNullType","type":{"kind":"NamedType","name":{"kind":"Name","value":"Int"}}}}],"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"tournamentsPlayed"},"arguments":[{"kind":"Argument","name":{"kind":"Name","value":"playerId"},"value":{"kind":"Variable","name":{"kind":"Name","value":"playerId"}}}],"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"id"}},{"kind":"Field","name":{"kind":"Name","value":"name"}},{"kind":"Field","name":{"kind":"Name","value":"region"}},{"kind":"Field","name":{"kind":"Name","value":"slug"}},{"kind":"Field","name":{"kind":"Name","value":"participantsNumber"}},{"kind":"Field","name":{"kind":"Name","value":"prizePool"}},{"kind":"Field","name":{"kind":"Name","value":"currency"}},{"kind":"Field","name":{"kind":"Name","value":"startDate"}},{"kind":"Field","name":{"kind":"Name","value":"endDate"}},{"kind":"Field","name":{"kind":"Name","value":"set"},"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"id"}},{"kind":"Field","name":{"kind":"Name","value":"name"}}]}},{"kind":"Field","name":{"kind":"Name","value":"finalPosition"}}]}}]}}]} as unknown as DocumentNode<ListTournamentsPlayedByPlayerQuery, ListTournamentsPlayedByPlayerQueryVariables>;
 export const OnePlayerBySlugDocument = {"kind":"Document","definitions":[{"kind":"OperationDefinition","operation":"query","name":{"kind":"Name","value":"onePlayerBySlug"},"variableDefinitions":[{"kind":"VariableDefinition","variable":{"kind":"Variable","name":{"kind":"Name","value":"slug"}},"type":{"kind":"NonNullType","type":{"kind":"NamedType","name":{"kind":"Name","value":"String"}}}}],"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"playerBySlug"},"arguments":[{"kind":"Argument","name":{"kind":"Name","value":"slug"},"value":{"kind":"Variable","name":{"kind":"Name","value":"slug"}}}],"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"id"}},{"kind":"Field","name":{"kind":"Name","value":"name"}},{"kind":"Field","name":{"kind":"Name","value":"region"}},{"kind":"Field","name":{"kind":"Name","value":"country"}},{"kind":"Field","name":{"kind":"Name","value":"alias"}}]}}]}}]} as unknown as DocumentNode<OnePlayerBySlugQuery, OnePlayerBySlugQueryVariables>;
 export const OnePlayerWithStatsDocument = {"kind":"Document","definitions":[{"kind":"OperationDefinition","operation":"query","name":{"kind":"Name","value":"onePlayerWithStats"},"variableDefinitions":[{"kind":"VariableDefinition","variable":{"kind":"Variable","name":{"kind":"Name","value":"id"}},"type":{"kind":"NonNullType","type":{"kind":"NamedType","name":{"kind":"Name","value":"Int"}}}},{"kind":"VariableDefinition","variable":{"kind":"Variable","name":{"kind":"Name","value":"setId"}},"type":{"kind":"NamedType","name":{"kind":"Name","value":"Int"}}}],"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"player"},"arguments":[{"kind":"Argument","name":{"kind":"Name","value":"id"},"value":{"kind":"Variable","name":{"kind":"Name","value":"id"}}}],"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"id"}},{"kind":"Field","name":{"kind":"Name","value":"playerStats"},"arguments":[{"kind":"Argument","name":{"kind":"Name","value":"setId"},"value":{"kind":"Variable","name":{"kind":"Name","value":"setId"}}}],"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"averagePosition"}},{"kind":"Field","name":{"kind":"Name","value":"totalGames"}},{"kind":"Field","name":{"kind":"Name","value":"topFourCount"}},{"kind":"Field","name":{"kind":"Name","value":"topOneCount"}}]}}]}}]}}]} as unknown as DocumentNode<OnePlayerWithStatsQuery, OnePlayerWithStatsQueryVariables>;

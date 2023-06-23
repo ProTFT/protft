@@ -73,4 +73,11 @@ export const PlayerAlias = styled.p`
 
 export const StyledSocialMediaContainer = styled(StyledHorizontalContainer)`
   align-self: end;
+  gap: 2rem;
+  align-items: center;
+  margin-top: 1rem;
+
+  @media ${device.tablet} {
+    margin-top: 0rem;
+  }
 `;

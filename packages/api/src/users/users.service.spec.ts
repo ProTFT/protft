@@ -2,6 +2,11 @@ import { Repository } from "typeorm";
 import { User } from "./user.entity";
 import { UsersService } from "./users.service";
 
+jest.mock("bcrypt", () => ({
+  compare: () => false,
+  hash: () => false,
+}));
+
 describe("Users service", () => {
   let service: UsersService;
 

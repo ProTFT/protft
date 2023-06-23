@@ -15,6 +15,10 @@ import { TypedDocumentNode as DocumentNode } from '@graphql-typed-document-node/
 const documents = {
     "\n  query sets {\n    sets {\n      id\n      name\n    }\n  }\n": types.SetsDocument,
     "\n  query listPointSchemas {\n    pointSchemas {\n      id\n      name\n    }\n  }\n": types.ListPointSchemasDocument,
+    "\n  query adminPlayerLinks($playerId: Int!) {\n    player(id: $playerId) {\n      id\n      links {\n        id\n        type\n        link\n      }\n    }\n  }\n": types.AdminPlayerLinksDocument,
+    "\n  mutation createPlayerLink($playerId: Int!, $link: String!, $type: String!) {\n    createPlayerLink(playerId: $playerId, link: $link, type: $type) {\n      id\n    }\n  }\n": types.CreatePlayerLinkDocument,
+    "\n  mutation deletePlayerLink($id: Int!) {\n    deletePlayerLink(id: $id) {\n      id\n    }\n  }\n": types.DeletePlayerLinkDocument,
+    "\n  query adminPlayer($id: Int!) {\n    player(id: $id) {\n      id\n      name\n      country\n      region\n      slug\n      alias\n    }\n  }\n": types.AdminPlayerDocument,
     "\n  query listAdminPlayers($searchQuery: String) {\n    adminPlayers(searchQuery: $searchQuery, take: 20) {\n      id\n      name\n      region\n      country\n      alias\n    }\n  }\n": types.ListAdminPlayersDocument,
     "\n  mutation deletePlayer($id: Int!) {\n    deletePlayer(id: $id) {\n      id\n    }\n  }\n": types.DeletePlayerDocument,
     "\n  mutation updatePlayer(\n    $id: Int!\n    $name: String\n    $country: String\n    $region: String\n    $slug: String\n    $alias: [String!]\n  ) {\n    updatePlayer(\n      id: $id\n      name: $name\n      country: $country\n      region: $region\n      slug: $slug\n      alias: $alias\n    ) {\n      id\n    }\n  }\n": types.UpdatePlayerDocument,
@@ -65,6 +69,7 @@ const documents = {
     "\n  mutation createTournament(\n    $name: String!\n    $region: [String!]\n    $host: String\n    $participantsNumber: Int\n    $prizePool: Float\n    $startDate: DateTime\n    $endDate: DateTime\n    $setId: Int!\n    $currency: String\n  ) {\n    createTournament(\n      name: $name\n      region: $region\n      host: $host\n      participantsNumber: $participantsNumber\n      prizePool: $prizePool\n      startDate: $startDate\n      endDate: $endDate\n      setId: $setId\n      currency: $currency\n    ) {\n      id\n    }\n  }\n": types.CreateTournamentDocument,
     "\n  mutation createPlayerSlugs {\n    createPlayerSlugs {\n      id\n      name\n      slug\n    }\n  }\n": types.CreatePlayerSlugsDocument,
     "\n  mutation createTournamentSlugs {\n    createTournamentSlugs {\n      id\n      name\n      slug\n    }\n  }\n": types.CreateTournamentSlugsDocument,
+    "\n  query playerLinks($playerId: Int!) {\n    player(id: $playerId) {\n      id\n      links {\n        id\n        type\n        link\n      }\n    }\n  }\n": types.PlayerLinksDocument,
     "\n  query listTournamentsPlayedByPlayer($playerId: Int!) {\n    tournamentsPlayed(playerId: $playerId) {\n      id\n      name\n      region\n      slug\n      participantsNumber\n      prizePool\n      currency\n      startDate\n      endDate\n      set {\n        id\n        name\n      }\n      finalPosition\n    }\n  }\n": types.ListTournamentsPlayedByPlayerDocument,
     "\n  query onePlayerBySlug($slug: String!) {\n    playerBySlug(slug: $slug) {\n      id\n      name\n      region\n      country\n      alias\n    }\n  }\n": types.OnePlayerBySlugDocument,
     "\n  query onePlayerWithStats($id: Int!, $setId: Int) {\n    player(id: $id) {\n      id\n      playerStats(setId: $setId) {\n        averagePosition\n        totalGames\n        topFourCount\n        topOneCount\n      }\n    }\n  }\n": types.OnePlayerWithStatsDocument,
@@ -103,6 +108,22 @@ export function graphql(source: "\n  query sets {\n    sets {\n      id\n      n
  * The graphql function is used to parse GraphQL queries into a document that can be used by GraphQL clients.
  */
 export function graphql(source: "\n  query listPointSchemas {\n    pointSchemas {\n      id\n      name\n    }\n  }\n"): (typeof documents)["\n  query listPointSchemas {\n    pointSchemas {\n      id\n      name\n    }\n  }\n"];
+/**
+ * The graphql function is used to parse GraphQL queries into a document that can be used by GraphQL clients.
+ */
+export function graphql(source: "\n  query adminPlayerLinks($playerId: Int!) {\n    player(id: $playerId) {\n      id\n      links {\n        id\n        type\n        link\n      }\n    }\n  }\n"): (typeof documents)["\n  query adminPlayerLinks($playerId: Int!) {\n    player(id: $playerId) {\n      id\n      links {\n        id\n        type\n        link\n      }\n    }\n  }\n"];
+/**
+ * The graphql function is used to parse GraphQL queries into a document that can be used by GraphQL clients.
+ */
+export function graphql(source: "\n  mutation createPlayerLink($playerId: Int!, $link: String!, $type: String!) {\n    createPlayerLink(playerId: $playerId, link: $link, type: $type) {\n      id\n    }\n  }\n"): (typeof documents)["\n  mutation createPlayerLink($playerId: Int!, $link: String!, $type: String!) {\n    createPlayerLink(playerId: $playerId, link: $link, type: $type) {\n      id\n    }\n  }\n"];
+/**
+ * The graphql function is used to parse GraphQL queries into a document that can be used by GraphQL clients.
+ */
+export function graphql(source: "\n  mutation deletePlayerLink($id: Int!) {\n    deletePlayerLink(id: $id) {\n      id\n    }\n  }\n"): (typeof documents)["\n  mutation deletePlayerLink($id: Int!) {\n    deletePlayerLink(id: $id) {\n      id\n    }\n  }\n"];
+/**
+ * The graphql function is used to parse GraphQL queries into a document that can be used by GraphQL clients.
+ */
+export function graphql(source: "\n  query adminPlayer($id: Int!) {\n    player(id: $id) {\n      id\n      name\n      country\n      region\n      slug\n      alias\n    }\n  }\n"): (typeof documents)["\n  query adminPlayer($id: Int!) {\n    player(id: $id) {\n      id\n      name\n      country\n      region\n      slug\n      alias\n    }\n  }\n"];
 /**
  * The graphql function is used to parse GraphQL queries into a document that can be used by GraphQL clients.
  */
@@ -303,6 +324,10 @@ export function graphql(source: "\n  mutation createPlayerSlugs {\n    createPla
  * The graphql function is used to parse GraphQL queries into a document that can be used by GraphQL clients.
  */
 export function graphql(source: "\n  mutation createTournamentSlugs {\n    createTournamentSlugs {\n      id\n      name\n      slug\n    }\n  }\n"): (typeof documents)["\n  mutation createTournamentSlugs {\n    createTournamentSlugs {\n      id\n      name\n      slug\n    }\n  }\n"];
+/**
+ * The graphql function is used to parse GraphQL queries into a document that can be used by GraphQL clients.
+ */
+export function graphql(source: "\n  query playerLinks($playerId: Int!) {\n    player(id: $playerId) {\n      id\n      links {\n        id\n        type\n        link\n      }\n    }\n  }\n"): (typeof documents)["\n  query playerLinks($playerId: Int!) {\n    player(id: $playerId) {\n      id\n      links {\n        id\n        type\n        link\n      }\n    }\n  }\n"];
 /**
  * The graphql function is used to parse GraphQL queries into a document that can be used by GraphQL clients.
  */

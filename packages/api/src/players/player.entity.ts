@@ -1,5 +1,6 @@
 import { Field, Float, Int, ObjectType } from "@nestjs/graphql";
 import { Column, Entity, Index, PrimaryGeneratedColumn } from "typeorm";
+import { PlayerLink } from "../player-links/player-link.entity";
 
 @ObjectType()
 export class PlayerCalculatedStats {
@@ -34,6 +35,9 @@ export class Player {
 
   @Field({ nullable: true })
   playerStats?: PlayerCalculatedStats;
+
+  @Field(() => [PlayerLink])
+  links: PlayerLink[];
 
   @Field({ nullable: true })
   @Column({ nullable: true })

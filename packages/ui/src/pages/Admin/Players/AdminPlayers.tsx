@@ -20,6 +20,8 @@ import {
   MERGE_PLAYER_MUTATION,
 } from "./queries";
 
+export const ADMIN_PLAYERS_PATH = "/admin/players";
+
 export const AdminPlayers = () => {
   const [searchQuery, setSearchQuery] = useState("");
   const { show } = useToast();

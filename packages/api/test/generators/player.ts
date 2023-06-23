@@ -9,6 +9,7 @@ export function player({
   country,
   alias,
   slug,
+  links,
 }: PlayerGeneratorParams): Player {
   const randomId = Math.random() * 999;
   return {
@@ -19,5 +20,6 @@ export function player({
     playerStats: null,
     alias: alias || [],
     slug: slug || "",
+    links: links || [],
   };
 }
