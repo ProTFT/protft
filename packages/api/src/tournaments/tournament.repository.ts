@@ -1,6 +1,6 @@
 import { FindCondition, In, Raw, Repository } from "typeorm";
 import { EntityFieldsNames } from "typeorm/common/EntityFieldsNames";
-import { includes } from "../lib/DBRawFilter";
+import { afterDay, beforeOrDay, includes } from "../lib/DBRawFilter";
 import { PaginationArgs } from "../lib/dto/pagination.args";
 import { getSearchQueryFilter } from "../lib/SearchQuery";
 import { BaseGetTournamentArgs } from "./dto/get-tournaments.args";
@@ -35,6 +35,12 @@ export class TournamentRepository {
       region: Raw(includes(filters.region)),
     };
     const setFilter = filters.setId && { setId: In(filters.setId) };
+    const startDateFilter = filters.startDate && {
+      startDate: Raw(afterDay(filters.startDate)),
+    };
+    const endDateFilter = filters.endDate && {
+      endDate: Raw(beforeOrDay(filters.endDate)),
+    };
     return this.repository.find({
       where: {
         ...searchQueryFilter,
@@ -42,6 +48,8 @@ export class TournamentRepository {
         ...regionFilter,
         ...setFilter,
         ...condition,
+        ...startDateFilter,
+        ...endDateFilter,
       },
       take,
       skip,

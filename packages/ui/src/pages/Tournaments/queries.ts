@@ -74,6 +74,14 @@ export interface PastTournamentsQueryResult {
   pastTournaments: Tournament[];
 }
 
+export interface PastTournamentsVariables {
+  searchQuery?: string;
+  setId?: number[];
+  region?: string[];
+  take?: number;
+  skip?: number;
+}
+
 export const PAST_TOURNAMENTS_QUERY = graphql(`
   query listPastTournaments(
     $searchQuery: String

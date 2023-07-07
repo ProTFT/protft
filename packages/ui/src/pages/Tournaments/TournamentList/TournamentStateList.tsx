@@ -1,4 +1,6 @@
-import { useEffect, useRef } from "react";
+import FullCalendar from "@fullcalendar/react";
+import dayGridPlugin from "@fullcalendar/daygrid";
+import { useEffect, useMemo, useRef } from "react";
 import { useQuery } from "urql";
 import { colors } from "../../../design/colors";
 import { useObserver } from "../../../hooks/useObserver";
@@ -14,6 +16,8 @@ import {
 } from "../queries";
 import { TournamentFilters } from "../TournamentsContext";
 import { TournamentBaseList } from "./TournamentBaseList";
+import { EventInput, EventSourceInput } from "@fullcalendar/core";
+import { CalendarWrapper } from "../../../components/Calendar/Calendar";
 
 interface StateListProps {
   searchQuery: string;
@@ -92,11 +96,31 @@ export const PastTournamentList = ({
     },
   });
 
+  const events = useMemo<EventSourceInput | undefined>(() => {
+    return data?.pastTournaments.map<EventInput>((tournament) => ({
+      id: String(tournament.id),
+      start: tournament.startDate,
+      end: tournament.endDate,
+      title: tournament.name,
+      allDay: false,
+      display: "block",
+    }));
+  }, [data?.pastTournaments]);
+  console.log(events);
+
   const bottomRef = useRef<HTMLDivElement>(null);
 
   useObserver(bottomRef, onLoadMore);
 
   return (
-    <TournamentBaseList ref={bottomRef} tournaments={data?.pastTournaments} />
+    <CalendarWrapper>
+      <FullCalendar
+        plugins={[dayGridPlugin]}
+        initialView="dayGridMonth"
+        defaultAllDay={false}
+        events={events}
+      />
+      <TournamentBaseList ref={bottomRef} tournaments={data?.pastTournaments} />
+    </CalendarWrapper>
   );
 };

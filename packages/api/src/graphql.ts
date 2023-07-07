@@ -254,13 +254,14 @@ export interface Circuit {
 export interface IQuery {
     sets(): Set[] | Promise<Set[]>;
     set(id: number): Nullable<Set> | Promise<Nullable<Set>>;
-    tournaments(region?: Nullable<string[]>, setId?: Nullable<number[]>, searchQuery?: Nullable<string>, take?: Nullable<number>, skip?: Nullable<number>): Tournament[] | Promise<Tournament[]>;
-    adminTournaments(region?: Nullable<string[]>, setId?: Nullable<number[]>, searchQuery?: Nullable<string>, take?: Nullable<number>, skip?: Nullable<number>): Tournament[] | Promise<Tournament[]>;
+    tournaments(region?: Nullable<string[]>, setId?: Nullable<number[]>, searchQuery?: Nullable<string>, startDate?: Nullable<string>, endDate?: Nullable<string>, take?: Nullable<number>, skip?: Nullable<number>): Tournament[] | Promise<Tournament[]>;
+    adminTournaments(region?: Nullable<string[]>, setId?: Nullable<number[]>, searchQuery?: Nullable<string>, startDate?: Nullable<string>, endDate?: Nullable<string>, take?: Nullable<number>, skip?: Nullable<number>): Tournament[] | Promise<Tournament[]>;
     tournament(id: number): Tournament | Promise<Tournament>;
     tournamentBySlug(slug: string): Tournament | Promise<Tournament>;
     ongoingTournaments(): Tournament[] | Promise<Tournament[]>;
-    upcomingTournaments(region?: Nullable<string[]>, setId?: Nullable<number[]>, searchQuery?: Nullable<string>, take?: Nullable<number>, skip?: Nullable<number>): Tournament[] | Promise<Tournament[]>;
-    pastTournaments(region?: Nullable<string[]>, setId?: Nullable<number[]>, searchQuery?: Nullable<string>, take?: Nullable<number>, skip?: Nullable<number>): Tournament[] | Promise<Tournament[]>;
+    upcomingTournaments(region?: Nullable<string[]>, setId?: Nullable<number[]>, searchQuery?: Nullable<string>, startDate?: Nullable<string>, endDate?: Nullable<string>, take?: Nullable<number>, skip?: Nullable<number>): Tournament[] | Promise<Tournament[]>;
+    pastTournaments(region?: Nullable<string[]>, setId?: Nullable<number[]>, searchQuery?: Nullable<string>, startDate?: Nullable<string>, endDate?: Nullable<string>, take?: Nullable<number>, skip?: Nullable<number>): Tournament[] | Promise<Tournament[]>;
+    tournamentsByMonth(month: number, year: number, region?: Nullable<string[]>): Tournament[] | Promise<Tournament[]>;
     tournamentsWithStats(searchQuery?: Nullable<string>): Tournament[] | Promise<Tournament[]>;
     stages(tournamentId: number): Stage[] | Promise<Stage[]>;
     stage(id: number): Stage | Promise<Stage>;

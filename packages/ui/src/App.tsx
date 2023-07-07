@@ -23,6 +23,7 @@ import { AdminPlayers } from "./pages/Admin/Players/AdminPlayers";
 import { TournamentsProvider } from "./pages/Tournaments/TournamentsContext";
 import { PlayersProvider } from "./pages/Players/PlayersContext";
 import { AdminPlayer } from "./pages/Admin/Player/AdminPlayer";
+import { Calendar } from "./pages/Calendar/Calendar";
 
 const ProtectedRoutes = (props: any) => {
   const location = useLocation();
@@ -61,6 +62,10 @@ export const App = () => {
             element={<SuspenseElement element={<Tournament />} />}
           />
         </Route>
+        <Route
+          path="calendar"
+          element={<SuspenseElement element={<Calendar />} />}
+        />
         <Route path="players">
           <Route
             index

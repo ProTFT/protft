@@ -25,6 +25,7 @@ interface Props {
 
 enum MenuItems {
   tournament,
+  calendar,
   players,
   stats,
   about,
@@ -32,6 +33,7 @@ enum MenuItems {
 
 const selectedMenuMap: { [urlText: string]: MenuItems } = {
   tournament: MenuItems.tournament,
+  calendar: MenuItems.calendar,
   player: MenuItems.players,
   stats: MenuItems.stats,
   about: MenuItems.about,
@@ -74,6 +76,11 @@ export const DesktopNavBar = ({ selectedMenu }: Props) => {
             <Link to={"/tournaments"}>
               <NavBarButton selected={selectedMenu === MenuItems.tournament}>
                 Tourneys
+              </NavBarButton>
+            </Link>
+            <Link to={"/calendar"}>
+              <NavBarButton selected={selectedMenu === MenuItems.calendar}>
+                Calendar
               </NavBarButton>
             </Link>
             <Link to={"/players"}>

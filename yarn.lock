@@ -3063,6 +3063,35 @@ __metadata:
   languageName: node
   linkType: hard
 
+"@fullcalendar/core@npm:^6.1.8":
+  version: 6.1.8
+  resolution: "@fullcalendar/core@npm:6.1.8"
+  dependencies:
+    preact: ~10.12.1
+  checksum: 66c13078c95573c4dc1c767c2a855c8f77608d1c0cee07eac4923fa1d967a64557640079b45e3da43a68cb8942873dd06523716544f25d98efa3641c0754045f
+  languageName: node
+  linkType: hard
+
+"@fullcalendar/daygrid@npm:^6.1.8":
+  version: 6.1.8
+  resolution: "@fullcalendar/daygrid@npm:6.1.8"
+  peerDependencies:
+    "@fullcalendar/core": ~6.1.8
+  checksum: a99441c81d8b2054cb03945a2cd4907ef569c759b68238d953d86fc96f739c75305219de182a61d82c77d54893041657bb4bc3f8a5a0779e57e294a614ae9677
+  languageName: node
+  linkType: hard
+
+"@fullcalendar/react@npm:^6.1.8":
+  version: 6.1.8
+  resolution: "@fullcalendar/react@npm:6.1.8"
+  peerDependencies:
+    "@fullcalendar/core": ~6.1.8
+    react: ^16.7.0 || ^17 || ^18
+    react-dom: ^16.7.0 || ^17 || ^18
+  checksum: 8381ea73df16f84c8e69c97083aa99620daf3c7af6ccba47a0e0447ee4dd648163a9447360893e53ede65e017cf84f88f7b1a3c2cbb083cd7f9c54dfef1edf1e
+  languageName: node
+  linkType: hard
+
 "@gar/promisify@npm:^1.0.1, @gar/promisify@npm:^1.1.3":
   version: 1.1.3
   resolution: "@gar/promisify@npm:1.1.3"
@@ -20994,6 +21023,13 @@ __metadata:
   languageName: node
   linkType: hard
 
+"preact@npm:~10.12.1":
+  version: 10.12.1
+  resolution: "preact@npm:10.12.1"
+  checksum: 0de99f477563ab7f94a0f964952ad216375973c0dcd9eb49881f8eb5effc5ed6948da062548c87d5bb0d82f1a1e516b649020e760eab3a0503dfdd8e64d34a26
+  languageName: node
+  linkType: hard
+
 "prelude-ls@npm:^1.2.1":
   version: 1.2.1
   resolution: "prelude-ls@npm:1.2.1"
@@ -21309,6 +21345,9 @@ __metadata:
   version: 0.0.0-use.local
   resolution: "protft_ui@workspace:packages/ui"
   dependencies:
+    "@fullcalendar/core": ^6.1.8
+    "@fullcalendar/daygrid": ^6.1.8
+    "@fullcalendar/react": ^6.1.8
     "@graphql-codegen/cli": ^4.0.1
     "@graphql-codegen/client-preset": ^4.0.0
     "@graphql-typed-document-node/core": ^3.2.0

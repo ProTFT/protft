@@ -7,6 +7,8 @@ import { SegmentedButton } from "../../components/SegmentedButton/SegmentedButto
 import React from "react";
 import { useTournamentsContext } from "./TournamentsContext";
 import { Helmet } from "react-helmet";
+import FullCalendar from "@fullcalendar/react";
+import dayGridPlugin from "@fullcalendar/daygrid";
 
 const OngoingTournamentList = React.lazy(() =>
   import("./TournamentList/TournamentStateList").then((m) => ({

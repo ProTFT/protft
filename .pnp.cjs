@@ -6410,6 +6410,68 @@ function $$SETUP_STATE(hydrateRuntimeState, basePath) {
           "linkType": "HARD"\
         }]\
       ]],\
+      ["@fullcalendar/core", [\
+        ["npm:6.1.8", {\
+          "packageLocation": "./.yarn/cache/@fullcalendar-core-npm-6.1.8-da04efa804-66c13078c9.zip/node_modules/@fullcalendar/core/",\
+          "packageDependencies": [\
+            ["@fullcalendar/core", "npm:6.1.8"],\
+            ["preact", "npm:10.12.1"]\
+          ],\
+          "linkType": "HARD"\
+        }]\
+      ]],\
+      ["@fullcalendar/daygrid", [\
+        ["npm:6.1.8", {\
+          "packageLocation": "./.yarn/cache/@fullcalendar-daygrid-npm-6.1.8-3f45184389-a99441c81d.zip/node_modules/@fullcalendar/daygrid/",\
+          "packageDependencies": [\
+            ["@fullcalendar/daygrid", "npm:6.1.8"]\
+          ],\
+          "linkType": "SOFT"\
+        }],\
+        ["virtual:258f67bfb17ac70f76e552bac762bf306bdba6124c2f4eb9750027eafe0ae10f09ef2722b1c3b436c5e4260ebaad0c93cc4998d2525f2ce7b6d70ee4be5420b2#npm:6.1.8", {\
+          "packageLocation": "./.yarn/__virtual__/@fullcalendar-daygrid-virtual-be0e563205/0/cache/@fullcalendar-daygrid-npm-6.1.8-3f45184389-a99441c81d.zip/node_modules/@fullcalendar/daygrid/",\
+          "packageDependencies": [\
+            ["@fullcalendar/daygrid", "virtual:258f67bfb17ac70f76e552bac762bf306bdba6124c2f4eb9750027eafe0ae10f09ef2722b1c3b436c5e4260ebaad0c93cc4998d2525f2ce7b6d70ee4be5420b2#npm:6.1.8"],\
+            ["@fullcalendar/core", "npm:6.1.8"],\
+            ["@types/fullcalendar__core", null]\
+          ],\
+          "packagePeers": [\
+            "@fullcalendar/core",\
+            "@types/fullcalendar__core"\
+          ],\
+          "linkType": "HARD"\
+        }]\
+      ]],\
+      ["@fullcalendar/react", [\
+        ["npm:6.1.8", {\
+          "packageLocation": "./.yarn/cache/@fullcalendar-react-npm-6.1.8-a7984cb318-8381ea73df.zip/node_modules/@fullcalendar/react/",\
+          "packageDependencies": [\
+            ["@fullcalendar/react", "npm:6.1.8"]\
+          ],\
+          "linkType": "SOFT"\
+        }],\
+        ["virtual:258f67bfb17ac70f76e552bac762bf306bdba6124c2f4eb9750027eafe0ae10f09ef2722b1c3b436c5e4260ebaad0c93cc4998d2525f2ce7b6d70ee4be5420b2#npm:6.1.8", {\
+          "packageLocation": "./.yarn/__virtual__/@fullcalendar-react-virtual-0303e0cd19/0/cache/@fullcalendar-react-npm-6.1.8-a7984cb318-8381ea73df.zip/node_modules/@fullcalendar/react/",\
+          "packageDependencies": [\
+            ["@fullcalendar/react", "virtual:258f67bfb17ac70f76e552bac762bf306bdba6124c2f4eb9750027eafe0ae10f09ef2722b1c3b436c5e4260ebaad0c93cc4998d2525f2ce7b6d70ee4be5420b2#npm:6.1.8"],\
+            ["@fullcalendar/core", "npm:6.1.8"],\
+            ["@types/fullcalendar__core", null],\
+            ["@types/react", "npm:18.0.10"],\
+            ["@types/react-dom", "npm:18.0.5"],\
+            ["react", "npm:18.1.0"],\
+            ["react-dom", "virtual:258f67bfb17ac70f76e552bac762bf306bdba6124c2f4eb9750027eafe0ae10f09ef2722b1c3b436c5e4260ebaad0c93cc4998d2525f2ce7b6d70ee4be5420b2#npm:18.1.0"]\
+          ],\
+          "packagePeers": [\
+            "@fullcalendar/core",\
+            "@types/fullcalendar__core",\
+            "@types/react-dom",\
+            "@types/react",\
+            "react-dom",\
+            "react"\
+          ],\
+          "linkType": "HARD"\
+        }]\
+      ]],\
       ["@gar/promisify", [\
         ["npm:1.1.3", {\
           "packageLocation": "./.yarn/cache/@gar-promisify-npm-1.1.3-ac1a325862-4059f790e2.zip/node_modules/@gar/promisify/",\
@@ -29774,6 +29836,15 @@ function $$SETUP_STATE(hydrateRuntimeState, basePath) {
           "linkType": "HARD"\
         }]\
       ]],\
+      ["preact", [\
+        ["npm:10.12.1", {\
+          "packageLocation": "./.yarn/cache/preact-npm-10.12.1-fdb903e9a5-0de99f4775.zip/node_modules/preact/",\
+          "packageDependencies": [\
+            ["preact", "npm:10.12.1"]\
+          ],\
+          "linkType": "HARD"\
+        }]\
+      ]],\
       ["prelude-ls", [\
         ["npm:1.1.2", {\
           "packageLocation": "./.yarn/cache/prelude-ls-npm-1.1.2-a0daac0886-c4867c8748.zip/node_modules/prelude-ls/",\
@@ -30139,6 +30210,9 @@ function $$SETUP_STATE(hydrateRuntimeState, basePath) {
           "packageLocation": "./packages/ui/",\
           "packageDependencies": [\
             ["protft_ui", "workspace:packages/ui"],\
+            ["@fullcalendar/core", "npm:6.1.8"],\
+            ["@fullcalendar/daygrid", "virtual:258f67bfb17ac70f76e552bac762bf306bdba6124c2f4eb9750027eafe0ae10f09ef2722b1c3b436c5e4260ebaad0c93cc4998d2525f2ce7b6d70ee4be5420b2#npm:6.1.8"],\
+            ["@fullcalendar/react", "virtual:258f67bfb17ac70f76e552bac762bf306bdba6124c2f4eb9750027eafe0ae10f09ef2722b1c3b436c5e4260ebaad0c93cc4998d2525f2ce7b6d70ee4be5420b2#npm:6.1.8"],\
             ["@graphql-codegen/cli", "virtual:258f67bfb17ac70f76e552bac762bf306bdba6124c2f4eb9750027eafe0ae10f09ef2722b1c3b436c5e4260ebaad0c93cc4998d2525f2ce7b6d70ee4be5420b2#npm:4.0.1"],\
             ["@graphql-codegen/client-preset", "virtual:258f67bfb17ac70f76e552bac762bf306bdba6124c2f4eb9750027eafe0ae10f09ef2722b1c3b436c5e4260ebaad0c93cc4998d2525f2ce7b6d70ee4be5420b2#npm:4.0.0"],\
             ["@graphql-typed-document-node/core", "virtual:258f67bfb17ac70f76e552bac762bf306bdba6124c2f4eb9750027eafe0ae10f09ef2722b1c3b436c5e4260ebaad0c93cc4998d2525f2ce7b6d70ee4be5420b2#npm:3.2.0"],\

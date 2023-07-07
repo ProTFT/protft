@@ -26,6 +26,7 @@ import { BaseResolver } from "../lib/BaseResolver";
 import { GetTournamentWithStatsArgs } from "./dto/get-tournaments-with-stats.args";
 import { TournamentsReadService } from "./services/tournaments-read.service";
 import { TournamentsFieldsService } from "./services/tournaments-fields.service";
+import { GetTournamentsByMonthArgs } from "./dto/get-tournaments-by-month.args";
 
 @Resolver(() => Tournament)
 export class TournamentsResolver extends BaseResolver {
@@ -41,9 +42,24 @@ export class TournamentsResolver extends BaseResolver {
 
   @Query(() => [Tournament])
   async tournaments(
-    @Args() { region, setId, take, skip, searchQuery }: GetTournamentsArgs,
+    @Args()
+    {
+      region,
+      setId,
+      take,
+      skip,
+      searchQuery,
+      startDate,
+      endDate,
+    }: GetTournamentsArgs,
   ) {
-    const filters = this.cleanGraphQLFilters({ region, setId, searchQuery });
+    const filters = this.cleanGraphQLFilters({
+      region,
+      setId,
+      searchQuery,
+      startDate,
+      endDate,
+    });
     return this.tournamentsReadService.findAll({ ...filters }, { take, skip });
   }
 
@@ -92,6 +108,16 @@ export class TournamentsResolver extends BaseResolver {
   ) {
     const filters = this.cleanGraphQLFilters({ region, setId, searchQuery });
     return this.tournamentsReadService.findPast({ ...filters }, { take, skip });
+  }
+
+  @Query(() => [Tournament])
+  async tournamentsByMonth(
+    @Args() { region, month, year }: GetTournamentsByMonthArgs,
+  ) {
+    const filters = this.cleanGraphQLFilters({ region });
+    return this.tournamentsReadService.findByMonth(month, year, {
+      ...filters,
+    });
   }
 
   @Query(() => [Tournament])

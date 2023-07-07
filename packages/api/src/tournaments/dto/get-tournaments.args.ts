@@ -11,6 +11,12 @@ export class BaseGetTournamentArgs {
 
   @Field({ name: "searchQuery", nullable: true })
   searchQuery?: string;
+
+  @Field({ name: "startDate", nullable: true })
+  startDate?: string;
+
+  @Field({ name: "endDate", nullable: true })
+  endDate?: string;
 }
 
 @ArgsType()
