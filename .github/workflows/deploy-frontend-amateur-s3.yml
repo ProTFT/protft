@@ -1,4 +1,4 @@
-name: deploy-frontend-s3
+name: deploy-frontend-s3-amateur
 
 on:
   workflow_dispatch:
