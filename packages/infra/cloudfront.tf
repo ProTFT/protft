@@ -214,7 +214,7 @@ resource "aws_cloudfront_distribution" "www_amateur_distribution" {
   is_ipv6_enabled     = true
   default_root_object = "index.html"
 
-  aliases = ["${var.amateur_subdomain}.${var.domain_name}","${var.amateur_subdomain}.${var.domain_name}"]
+  aliases = ["${var.amateur_subdomain}.${var.domain_name}","www.${var.amateur_subdomain}.${var.domain_name}"]
 
   custom_error_response {
     error_caching_min_ttl = 0

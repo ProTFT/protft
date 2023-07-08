@@ -50,6 +50,18 @@ resource "aws_route53_record" "amateur-ptft" {
   }
 }
 
+resource "aws_route53_record" "www-amateur-ptft" {
+  zone_id = aws_route53_zone.main.zone_id
+  name    = "www.${var.amateur_subdomain}.${var.domain_name}"
+  type    = "A"
+
+  alias {
+    name                   = aws_cloudfront_distribution.www_amateur_distribution.domain_name
+    zone_id                = aws_cloudfront_distribution.www_amateur_distribution.hosted_zone_id
+    evaluate_target_health = false
+  }
+}
+
 resource "aws_route53_record" "example" {
   for_each = {
     for dvo in aws_acm_certificate.ssl_certificate.domain_validation_options : dvo.domain_name => {
