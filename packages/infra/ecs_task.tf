@@ -16,7 +16,8 @@ resource "aws_ecs_task_definition" "ptft_ecs_task" {
       { name = "DATABASE_URL", value = var.db_url },
       { name = "SIGNIN_KEY", value = var.signin_key },
       { name = "JWT_SECRET", value = var.jwt_secret },
-      { name = "COOKIE_SECRET", value = var.cookie_secret }
+      { name = "COOKIE_SECRET", value = var.cookie_secret },
+      { name = "API_KEY", value = var.api_key }
     ]
     portMappings = [{
       protocol      = "tcp"

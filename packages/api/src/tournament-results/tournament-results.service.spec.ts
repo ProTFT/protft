@@ -1,7 +1,7 @@
 import { Repository } from "typeorm";
 import { RoundResultsService } from "../round-results/round-results.service";
-import { StageType } from "../stages/stage.entity";
 import { StagesService } from "../stages/stages.service";
+import { StageType } from "../stages/types/StageType";
 import { TournamentResult } from "./tournament-result.entity";
 import { TournamentResultsService } from "./tournament-results.service";
 

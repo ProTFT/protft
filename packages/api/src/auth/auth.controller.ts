@@ -9,6 +9,7 @@ import {
   UseGuards,
 } from "@nestjs/common";
 import { ConfigService } from "@nestjs/config";
+import { ApiExcludeController } from "@nestjs/swagger";
 import {
   Response as ExpressResponse,
   Request as ExpressRequest,
@@ -19,6 +20,7 @@ import { JwtAuthGuard } from "./jwt-auth.guard";
 import { LocalAuthGuard } from "./local-auth.guard";
 
 @Controller("auth")
+@ApiExcludeController()
 export class AuthController {
   constructor(
     private authService: AuthService,

@@ -6,6 +6,8 @@ describe("Cors config", () => {
     expect(getOrigin(Environments.Production)).toStrictEqual([
       "https://www.protft.com",
       "https://protft.com",
+      "https://roadto.protft.com",
+      "https://www.roadto.protft.com",
     ]);
   });
 

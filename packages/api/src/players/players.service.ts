@@ -113,11 +113,9 @@ export class PlayersService {
       region,
       alias,
     });
-    await this.playerRepository.update(
-      { id: savedPlayer.id },
-      { slug: this.createSlug(savedPlayer) },
-    );
-    return savedPlayer;
+    const slug = this.createSlug(savedPlayer);
+    await this.playerRepository.update({ id: savedPlayer.id }, { slug });
+    return { ...savedPlayer, slug };
   }
 
   public async createBulk(fileString: string, dryRun = true): Promise<any> {

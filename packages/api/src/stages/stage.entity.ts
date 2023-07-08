@@ -14,11 +14,7 @@ import { PointSchema } from "../points/point.entity";
 import { Tournament } from "../tournaments/tournament.entity";
 import { StagePlayerInfo } from "../stage-player-infos/stage-player-info.entity";
 import { LobbyGroup } from "../lobbies/lobby-group.entity";
-
-export enum StageType {
-  RANKING = "Ranking",
-  GROUP_BASED = "Group Based",
-}
+import { StageType } from "./types/StageType";
 
 registerEnumType(StageType, { name: "StageType" });
 

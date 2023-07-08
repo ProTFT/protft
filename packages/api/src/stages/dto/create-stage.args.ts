@@ -1,5 +1,5 @@
 import { ArgsType, Field, Int } from "@nestjs/graphql";
-import { StageType } from "../stage.entity";
+import { StageType } from "../types/StageType";
 
 @ArgsType()
 export class CreateStageArgs {
@@ -15,17 +15,17 @@ export class CreateStageArgs {
   @Field(() => Int, { name: "sequence" })
   sequence: number;
 
-  @Field(() => Int, { name: "qualifiedCount" })
-  qualifiedCount: number;
-
   @Field(() => StageType, { name: "stageType" })
   stageType: StageType;
 
   @Field(() => Int, { name: "roundCount" })
   roundCount: number;
 
+  @Field(() => Int, { name: "qualifiedCount", nullable: true, defaultValue: 0 })
+  qualifiedCount?: number;
+
   @Field(() => [Int], { name: "tiebreakers", nullable: true })
-  tiebreakers: number[];
+  tiebreakers?: number[];
 
   @Field({ name: "description", nullable: true })
   description?: string;

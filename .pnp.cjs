@@ -7615,6 +7615,25 @@ function $$SETUP_STATE(hydrateRuntimeState, basePath) {
           "linkType": "HARD"\
         }]\
       ]],\
+      ["@hapi/hoek", [\
+        ["npm:9.3.0", {\
+          "packageLocation": "./.yarn/cache/@hapi-hoek-npm-9.3.0-447eb8d274-4771c7a776.zip/node_modules/@hapi/hoek/",\
+          "packageDependencies": [\
+            ["@hapi/hoek", "npm:9.3.0"]\
+          ],\
+          "linkType": "HARD"\
+        }]\
+      ]],\
+      ["@hapi/topo", [\
+        ["npm:5.1.0", {\
+          "packageLocation": "./.yarn/cache/@hapi-topo-npm-5.1.0-5e0b776809-604dfd5dde.zip/node_modules/@hapi/topo/",\
+          "packageDependencies": [\
+            ["@hapi/topo", "npm:5.1.0"],\
+            ["@hapi/hoek", "npm:9.3.0"]\
+          ],\
+          "linkType": "HARD"\
+        }]\
+      ]],\
       ["@humanwhocodes/config-array", [\
         ["npm:0.9.5", {\
           "packageLocation": "./.yarn/cache/@humanwhocodes-config-array-npm-0.9.5-030a025eae-8ba6281bc0.zip/node_modules/@humanwhocodes/config-array/",\
@@ -8696,6 +8715,38 @@ function $$SETUP_STATE(hydrateRuntimeState, basePath) {
           ],\
           "linkType": "SOFT"\
         }],\
+        ["npm:2.0.2", {\
+          "packageLocation": "./.yarn/cache/@nestjs-mapped-types-npm-2.0.2-3b001953e2-1fb0dca383.zip/node_modules/@nestjs/mapped-types/",\
+          "packageDependencies": [\
+            ["@nestjs/mapped-types", "npm:2.0.2"]\
+          ],\
+          "linkType": "SOFT"\
+        }],\
+        ["virtual:181e73ba47d58558adf5a81bdc42344bc8806513327a2c962d397b15e4beb03f6bf06839bf844f5c872bb95b2113d3c36fa16caa768680189e87cb4c4ab265d5#npm:2.0.2", {\
+          "packageLocation": "./.yarn/__virtual__/@nestjs-mapped-types-virtual-f93d025a07/0/cache/@nestjs-mapped-types-npm-2.0.2-3b001953e2-1fb0dca383.zip/node_modules/@nestjs/mapped-types/",\
+          "packageDependencies": [\
+            ["@nestjs/mapped-types", "virtual:181e73ba47d58558adf5a81bdc42344bc8806513327a2c962d397b15e4beb03f6bf06839bf844f5c872bb95b2113d3c36fa16caa768680189e87cb4c4ab265d5#npm:2.0.2"],\
+            ["@nestjs/common", "virtual:bac4008d35a304375ff1ab4baeb61323523d963ad78fe9677e36b15d15f89064a355ca0cb83f2c600ae38e797c7f86a24ea965c3931d6b33889f658aa9914d2c#patch:@nestjs/common@npm%3A8.4.6#../../.yarn/patches/@nestjs-common-npm-8.4.6-ceb145a01e.patch::version=8.4.6&hash=3f40ac&locator=protft_api%40workspace%3Apackages%2Fapi"],\
+            ["@types/class-transformer", null],\
+            ["@types/class-validator", null],\
+            ["@types/nestjs__common", null],\
+            ["@types/reflect-metadata", null],\
+            ["class-transformer", null],\
+            ["class-validator", null],\
+            ["reflect-metadata", "npm:0.1.13"]\
+          ],\
+          "packagePeers": [\
+            "@nestjs/common",\
+            "@types/class-transformer",\
+            "@types/class-validator",\
+            "@types/nestjs__common",\
+            "@types/reflect-metadata",\
+            "class-transformer",\
+            "class-validator",\
+            "reflect-metadata"\
+          ],\
+          "linkType": "HARD"\
+        }],\
         ["virtual:825544611fb61fb4e7a89903fa9eca260f8fd288bb575bb6bf57ef11d966a432fd1631656f246dd9b542e71f0c3d1ab60fba811f218c54301f31b012e63c1ccd#npm:1.2.2", {\
           "packageLocation": "./.yarn/__virtual__/@nestjs-mapped-types-virtual-c17a1e3da2/0/cache/@nestjs-mapped-types-npm-1.2.2-879ac81dac-85f295a147.zip/node_modules/@nestjs/mapped-types/",\
           "packageDependencies": [\
@@ -8820,6 +8871,53 @@ function $$SETUP_STATE(hydrateRuntimeState, basePath) {
           "packagePeers": [\
             "@types/typescript",\
             "typescript"\
+          ],\
+          "linkType": "HARD"\
+        }]\
+      ]],\
+      ["@nestjs/swagger", [\
+        ["npm:7.1.1", {\
+          "packageLocation": "./.yarn/cache/@nestjs-swagger-npm-7.1.1-c9f6e9a3b0-bf82acaf85.zip/node_modules/@nestjs/swagger/",\
+          "packageDependencies": [\
+            ["@nestjs/swagger", "npm:7.1.1"]\
+          ],\
+          "linkType": "SOFT"\
+        }],\
+        ["virtual:bac4008d35a304375ff1ab4baeb61323523d963ad78fe9677e36b15d15f89064a355ca0cb83f2c600ae38e797c7f86a24ea965c3931d6b33889f658aa9914d2c#npm:7.1.1", {\
+          "packageLocation": "./.yarn/__virtual__/@nestjs-swagger-virtual-181e73ba47/0/cache/@nestjs-swagger-npm-7.1.1-c9f6e9a3b0-bf82acaf85.zip/node_modules/@nestjs/swagger/",\
+          "packageDependencies": [\
+            ["@nestjs/swagger", "virtual:bac4008d35a304375ff1ab4baeb61323523d963ad78fe9677e36b15d15f89064a355ca0cb83f2c600ae38e797c7f86a24ea965c3931d6b33889f658aa9914d2c#npm:7.1.1"],\
+            ["@fastify/static", null],\
+            ["@nestjs/common", "virtual:bac4008d35a304375ff1ab4baeb61323523d963ad78fe9677e36b15d15f89064a355ca0cb83f2c600ae38e797c7f86a24ea965c3931d6b33889f658aa9914d2c#patch:@nestjs/common@npm%3A8.4.6#../../.yarn/patches/@nestjs-common-npm-8.4.6-ceb145a01e.patch::version=8.4.6&hash=3f40ac&locator=protft_api%40workspace%3Apackages%2Fapi"],\
+            ["@nestjs/core", "virtual:bac4008d35a304375ff1ab4baeb61323523d963ad78fe9677e36b15d15f89064a355ca0cb83f2c600ae38e797c7f86a24ea965c3931d6b33889f658aa9914d2c#npm:8.4.6"],\
+            ["@nestjs/mapped-types", "virtual:181e73ba47d58558adf5a81bdc42344bc8806513327a2c962d397b15e4beb03f6bf06839bf844f5c872bb95b2113d3c36fa16caa768680189e87cb4c4ab265d5#npm:2.0.2"],\
+            ["@types/class-transformer", null],\
+            ["@types/class-validator", null],\
+            ["@types/fastify__static", null],\
+            ["@types/nestjs__common", null],\
+            ["@types/nestjs__core", null],\
+            ["@types/reflect-metadata", null],\
+            ["class-transformer", null],\
+            ["class-validator", null],\
+            ["js-yaml", "npm:4.1.0"],\
+            ["lodash", "npm:4.17.21"],\
+            ["path-to-regexp", "npm:3.2.0"],\
+            ["reflect-metadata", "npm:0.1.13"],\
+            ["swagger-ui-dist", "npm:5.1.0"]\
+          ],\
+          "packagePeers": [\
+            "@fastify/static",\
+            "@nestjs/common",\
+            "@nestjs/core",\
+            "@types/class-transformer",\
+            "@types/class-validator",\
+            "@types/fastify__static",\
+            "@types/nestjs__common",\
+            "@types/nestjs__core",\
+            "@types/reflect-metadata",\
+            "class-transformer",\
+            "class-validator",\
+            "reflect-metadata"\
           ],\
           "linkType": "HARD"\
         }]\
@@ -9423,6 +9521,34 @@ function $$SETUP_STATE(hydrateRuntimeState, basePath) {
           "packageLocation": "./.yarn/cache/@rushstack-eslint-patch-npm-1.1.3-78a3592ebb-53752d1e34.zip/node_modules/@rushstack/eslint-patch/",\
           "packageDependencies": [\
             ["@rushstack/eslint-patch", "npm:1.1.3"]\
+          ],\
+          "linkType": "HARD"\
+        }]\
+      ]],\
+      ["@sideway/address", [\
+        ["npm:4.1.4", {\
+          "packageLocation": "./.yarn/cache/@sideway-address-npm-4.1.4-32f94bc9f5-b9fca2a93a.zip/node_modules/@sideway/address/",\
+          "packageDependencies": [\
+            ["@sideway/address", "npm:4.1.4"],\
+            ["@hapi/hoek", "npm:9.3.0"]\
+          ],\
+          "linkType": "HARD"\
+        }]\
+      ]],\
+      ["@sideway/formula", [\
+        ["npm:3.0.1", {\
+          "packageLocation": "./.yarn/cache/@sideway-formula-npm-3.0.1-ee371b2ddf-e4beeebc9d.zip/node_modules/@sideway/formula/",\
+          "packageDependencies": [\
+            ["@sideway/formula", "npm:3.0.1"]\
+          ],\
+          "linkType": "HARD"\
+        }]\
+      ]],\
+      ["@sideway/pinpoint", [\
+        ["npm:2.0.0", {\
+          "packageLocation": "./.yarn/cache/@sideway-pinpoint-npm-2.0.0-66d94e687e-0f4491e589.zip/node_modules/@sideway/pinpoint/",\
+          "packageDependencies": [\
+            ["@sideway/pinpoint", "npm:2.0.0"]\
           ],\
           "linkType": "HARD"\
         }]\
@@ -24846,6 +24972,20 @@ function $$SETUP_STATE(hydrateRuntimeState, basePath) {
           "linkType": "HARD"\
         }]\
       ]],\
+      ["joi", [\
+        ["npm:17.9.2", {\
+          "packageLocation": "./.yarn/cache/joi-npm-17.9.2-51354605e1-8c37098492.zip/node_modules/joi/",\
+          "packageDependencies": [\
+            ["joi", "npm:17.9.2"],\
+            ["@hapi/hoek", "npm:9.3.0"],\
+            ["@hapi/topo", "npm:5.1.0"],\
+            ["@sideway/address", "npm:4.1.4"],\
+            ["@sideway/formula", "npm:3.0.1"],\
+            ["@sideway/pinpoint", "npm:2.0.0"]\
+          ],\
+          "linkType": "HARD"\
+        }]\
+      ]],\
       ["jose", [\
         ["npm:4.14.4", {\
           "packageLocation": "./.yarn/cache/jose-npm-4.14.4-8255fd76fa-2d820a91a8.zip/node_modules/jose/",\
@@ -30085,6 +30225,7 @@ function $$SETUP_STATE(hydrateRuntimeState, basePath) {
             ["@nestjs/passport", "virtual:bac4008d35a304375ff1ab4baeb61323523d963ad78fe9677e36b15d15f89064a355ca0cb83f2c600ae38e797c7f86a24ea965c3931d6b33889f658aa9914d2c#npm:9.0.0"],\
             ["@nestjs/platform-express", "virtual:bac4008d35a304375ff1ab4baeb61323523d963ad78fe9677e36b15d15f89064a355ca0cb83f2c600ae38e797c7f86a24ea965c3931d6b33889f658aa9914d2c#npm:8.4.6"],\
             ["@nestjs/schematics", "virtual:bac4008d35a304375ff1ab4baeb61323523d963ad78fe9677e36b15d15f89064a355ca0cb83f2c600ae38e797c7f86a24ea965c3931d6b33889f658aa9914d2c#npm:8.0.11"],\
+            ["@nestjs/swagger", "virtual:bac4008d35a304375ff1ab4baeb61323523d963ad78fe9677e36b15d15f89064a355ca0cb83f2c600ae38e797c7f86a24ea965c3931d6b33889f658aa9914d2c#npm:7.1.1"],\
             ["@nestjs/testing", "virtual:bac4008d35a304375ff1ab4baeb61323523d963ad78fe9677e36b15d15f89064a355ca0cb83f2c600ae38e797c7f86a24ea965c3931d6b33889f658aa9914d2c#npm:8.4.6"],\
             ["@nestjs/typeorm", "virtual:bac4008d35a304375ff1ab4baeb61323523d963ad78fe9677e36b15d15f89064a355ca0cb83f2c600ae38e797c7f86a24ea965c3931d6b33889f658aa9914d2c#npm:8.1.2"],\
             ["@types/bcrypt", "npm:5.0.0"],\
@@ -30109,6 +30250,7 @@ function $$SETUP_STATE(hydrateRuntimeState, basePath) {
             ["eslint-plugin-prettier", "virtual:bac4008d35a304375ff1ab4baeb61323523d963ad78fe9677e36b15d15f89064a355ca0cb83f2c600ae38e797c7f86a24ea965c3931d6b33889f658aa9914d2c#npm:4.0.0"],\
             ["graphql", "npm:16.5.0"],\
             ["jest", "virtual:bac4008d35a304375ff1ab4baeb61323523d963ad78fe9677e36b15d15f89064a355ca0cb83f2c600ae38e797c7f86a24ea965c3931d6b33889f658aa9914d2c#npm:28.0.3"],\
+            ["joi", "npm:17.9.2"],\
             ["lodash.chunk", "npm:4.2.0"],\
             ["luxon", "npm:3.3.0"],\
             ["passport", "npm:0.6.0"],\
@@ -33618,6 +33760,15 @@ function $$SETUP_STATE(hydrateRuntimeState, basePath) {
             ["csso", "npm:4.2.0"],\
             ["picocolors", "npm:1.0.0"],\
             ["stable", "npm:0.1.8"]\
+          ],\
+          "linkType": "HARD"\
+        }]\
+      ]],\
+      ["swagger-ui-dist", [\
+        ["npm:5.1.0", {\
+          "packageLocation": "./.yarn/cache/swagger-ui-dist-npm-5.1.0-2571f16bc3-41b91708e7.zip/node_modules/swagger-ui-dist/",\
+          "packageDependencies": [\
+            ["swagger-ui-dist", "npm:5.1.0"]\
           ],\
           "linkType": "HARD"\
         }]\

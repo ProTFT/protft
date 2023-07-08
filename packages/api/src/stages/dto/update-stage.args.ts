@@ -1,5 +1,5 @@
 import { ArgsType, Field, Int } from "@nestjs/graphql";
-import { StageType } from "../stage.entity";
+import { StageType } from "../types/StageType";
 
 @ArgsType()
 export class UpdateStageArgs {

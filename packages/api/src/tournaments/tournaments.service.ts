@@ -1,4 +1,8 @@
-import { Injectable, NotFoundException } from "@nestjs/common";
+import {
+  BadRequestException,
+  Injectable,
+  NotFoundException,
+} from "@nestjs/common";
 import { In, Repository } from "typeorm";
 import { DeleteResponse } from "../lib/dto/delete-return";
 import { Player } from "../players/player.entity";
@@ -13,6 +17,9 @@ import { Tournament } from "./tournament.entity";
 import slugify from "slugify";
 import { parseMultilinePlayerNamesFromAll } from "../lib/MultilineInput";
 import { InjectRepository } from "@nestjs/typeorm";
+import { StagesService } from "../stages/stages.service";
+import { CreateTournamentStageBodySchemaDto } from "./schema/create-stage.schema";
+import { Stage } from "../stages/stage.entity";
 
 @Injectable()
 export class TournamentsService {
@@ -20,6 +27,7 @@ export class TournamentsService {
     @InjectRepository(Tournament)
     private tournamentRepository: Repository<Tournament>,
     private setsService: SetsService,
+    private stagesService: StagesService,
   ) {}
 
   async createOne(payload: CreateTournamentArgs): Promise<Tournament> {
@@ -29,6 +37,20 @@ export class TournamentsService {
       visibility: false,
     };
     return this.tournamentRepository.save(payloadWithSlug);
+  }
+
+  async createStage(
+    tournamentId: number,
+    payload: CreateTournamentStageBodySchemaDto,
+  ): Promise<Stage> {
+    const tournament = await this.tournamentRepository.findOne(tournamentId);
+    if (!tournament) {
+      throw new BadRequestException("Tournament does not exist");
+    }
+    return this.stagesService.createOne({
+      tournamentId,
+      ...payload,
+    });
   }
 
   async updateOne({ id, ...rest }: UpdateTournamentArgs): Promise<Tournament> {

@@ -8,6 +8,7 @@ import { PlayersResolver } from "../src/players/players.resolver";
 import { RoundResultsService } from "../src/round-results/round-results.service";
 import { PlayersService } from "../src/players/players.service";
 import { PlayersController } from "../src/players/players.controller";
+import { ApiKeyGuard } from "../src/auth/apikey.guard";
 
 const graphql = "/graphql";
 
@@ -88,6 +89,8 @@ describe("Player (e2e)", () => {
       .overrideGuard(GqlJwtAuthGuard)
       .useValue({})
       .overrideGuard(JwtAuthGuard)
+      .useValue({})
+      .overrideGuard(ApiKeyGuard)
       .useValue({})
       .compile();
 

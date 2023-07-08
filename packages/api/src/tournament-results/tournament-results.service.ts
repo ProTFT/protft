@@ -4,8 +4,8 @@ import { Repository, UpdateResult } from "typeorm";
 import { DeleteResponse } from "../lib/dto/delete-return";
 import { getOrdinal } from "../lib/Number";
 import { RoundResultsService } from "../round-results/round-results.service";
-import { StageType } from "../stages/stage.entity";
 import { PLAYERS_IN_TFT_LOBBY, StagesService } from "../stages/stages.service";
+import { StageType } from "../stages/types/StageType";
 import { TournamentResult } from "./tournament-result.entity";
 
 @Injectable()

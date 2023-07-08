@@ -2,6 +2,7 @@ import { NotFoundException } from "@nestjs/common";
 import { Repository } from "typeorm";
 import { DeleteResponse } from "../lib/dto/delete-return";
 import { SetsService } from "../sets/sets.service";
+import { StagesService } from "../stages/stages.service";
 import { CreateTournamentArgs } from "./dto/create-tournament.args";
 import { UpdateTournamentArgs } from "./dto/update-tournament.args";
 import { Tournament } from "./tournament.entity";
@@ -11,6 +12,7 @@ describe("TournamentsService", () => {
   let service: TournamentsService;
   let tournamentRepository: Repository<Tournament>;
   let setsService: SetsService;
+  let stagesService: StagesService;
   const mockTournamentId = 1;
 
   beforeEach(() => {
@@ -42,7 +44,12 @@ describe("TournamentsService", () => {
     setsService = {
       findOne: jest.fn().mockResolvedValue({ id: 1, name: "setName" }),
     } as unknown as SetsService;
-    service = new TournamentsService(tournamentRepository, setsService);
+    stagesService = {} as unknown as StagesService;
+    service = new TournamentsService(
+      tournamentRepository,
+      setsService,
+      stagesService,
+    );
   });
 
   afterEach(() => {

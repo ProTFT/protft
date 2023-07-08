@@ -1,4 +1,5 @@
-import { Stage, StageType } from "../../src/stages/stage.entity";
+import { Stage } from "../../src/stages/stage.entity";
+import { StageType } from "../../src/stages/types/StageType";
 import { tournament as genTournament } from "./tournament";
 
 export function stage({
