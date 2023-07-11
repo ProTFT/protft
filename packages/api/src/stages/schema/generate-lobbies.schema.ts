@@ -17,6 +17,6 @@ export const GenerateLobbiesSchema = buildValidator({
     stageId: Joi.number().required(),
   }),
   body: Joi.object({
-    roundsUntilReseed: Joi.number().required,
+    roundsUntilReseed: Joi.number().required(),
   }),
 });

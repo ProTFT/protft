@@ -11,26 +11,26 @@ import {
 import { GqlJwtAuthGuard } from "../auth/jwt-auth.guard";
 import { SetsService } from "../sets/sets.service";
 import { StagesService } from "../stages/stages.service";
-import { CreateTournamentArgs } from "./dto/create-tournament.args";
-import { Tournament } from "./tournament.entity";
-import { TournamentsService } from "./tournaments.service";
+import { Tournament } from "./entities/tournament.entity";
+import { TournamentsWriteService } from "./services/tournaments-write.service";
 import { DeleteResponse } from "../lib/dto/delete-return";
-import { UpdateTournamentArgs } from "./dto/update-tournament.args";
 import {
   CreateTournamentPlayerArgs,
   CreateTournamentPlayerByNameArgs,
-} from "./dto/create-tournament-player.args";
+} from "./gql/create-tournament-player.args";
 import { Player } from "../players/player.entity";
-import { GetTournamentsArgs } from "./dto/get-tournaments.args";
 import { BaseResolver } from "../lib/BaseResolver";
-import { GetTournamentWithStatsArgs } from "./dto/get-tournaments-with-stats.args";
 import { TournamentsReadService } from "./services/tournaments-read.service";
 import { TournamentsFieldsService } from "./services/tournaments-fields.service";
+import { CreateTournamentArgs } from "./gql/create-tournament.args";
+import { GetTournamentWithStatsArgs } from "./gql/get-tournaments-with-stats.args";
+import { GetTournamentsArgs } from "./gql/get-tournaments.args";
+import { UpdateTournamentArgs } from "./gql/update-tournament.args";
 
 @Resolver(() => Tournament)
 export class TournamentsResolver extends BaseResolver {
   constructor(
-    private tournamentsService: TournamentsService,
+    private tournamentsService: TournamentsWriteService,
     private setService: SetsService,
     private stagesService: StagesService,
     private tournamentsReadService: TournamentsReadService,

@@ -25,6 +25,8 @@ import { TournamentResultsModule } from "./tournament-results/tournament-results
 import { TournamentStreamsModule } from "./tournament-streams/tournament-streams.module";
 import { PlayerLinksModule } from "./player-links/player-links.module";
 import { CircuitsModule } from "./circuits/circuits.module";
+import { PlayerAccountsModule } from "./player-accounts/player-accounts.module";
+import { ServersModule } from "./servers/servers.module";
 
 @Module({
   imports: [
@@ -84,6 +86,8 @@ import { CircuitsModule } from "./circuits/circuits.module";
     TournamentStreamsModule,
     PlayerLinksModule,
     CircuitsModule,
+    PlayerAccountsModule,
+    ServersModule,
   ],
   controllers: [AppController],
   providers: [AppService],

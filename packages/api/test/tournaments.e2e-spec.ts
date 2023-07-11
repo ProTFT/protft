@@ -2,7 +2,6 @@ import { Test, TestingModule } from "@nestjs/testing";
 import { HttpStatus, INestApplication } from "@nestjs/common";
 import request from "supertest";
 import { TournamentsResolver } from "../src/tournaments/tournaments.resolver";
-import { TournamentsService } from "../src/tournaments/tournaments.service";
 import { SetsService } from "../src/sets/sets.service";
 import { StagesService } from "../src/stages/stages.service";
 import { GraphQLModule } from "@nestjs/graphql";
@@ -10,7 +9,13 @@ import { ApolloDriver, ApolloDriverConfig } from "@nestjs/apollo";
 import { GqlJwtAuthGuard } from "../src/auth/jwt-auth.guard";
 import { TournamentsReadService } from "../src/tournaments/services/tournaments-read.service";
 import { TournamentsFieldsService } from "../src/tournaments/services/tournaments-fields.service";
+import { TournamentsWriteService } from "../src/tournaments/services/tournaments-write.service";
+import { TournamentsExternalController } from "../src/tournaments/tournaments-external.controller";
+import { ApiKeyGuard } from "../src/auth/apikey.guard";
+import { TournamentsExternalService } from "../src/tournaments/services/tournaments-external.service";
+import { StageType } from "../src/stages/types/StageType";
 
+const restUrl = "/tournaments";
 const graphql = "/graphql";
 
 const mockTournaments = [
@@ -48,7 +53,7 @@ const mockTournamentWithResolvedFields = {
 
 const mockStartTime = 5;
 
-const fakeTournamentService = {
+const fakeTournamentWriteService = {
   createOne: jest.fn().mockResolvedValue(mockTournaments[0]),
   updateOne: jest.fn().mockResolvedValue(mockTournaments[0]),
   deleteOne: jest.fn().mockResolvedValue(mockTournaments[0]),
@@ -57,6 +62,11 @@ const fakeTournamentService = {
     .fn()
     .mockResolvedValue(mockTournaments[0]),
   createMissingSlugs: jest.fn().mockResolvedValue(mockTournaments),
+  createStage: jest.fn(),
+} as unknown as TournamentsWriteService;
+
+const fakeTournamentExternalService = {
+  createOne: jest.fn().mockResolvedValue(mockTournaments[0]),
 };
 
 const fakeTournamentsReadService = {
@@ -97,21 +107,27 @@ describe("Tournament (e2e)", () => {
         TournamentsReadService,
         TournamentsFieldsService,
         SetsService,
-        TournamentsService,
+        TournamentsWriteService,
         StagesService,
+        TournamentsExternalService,
       ],
+      controllers: [TournamentsExternalController],
     })
       .overrideProvider(SetsService)
       .useValue(fakeSetsService)
-      .overrideProvider(TournamentsService)
-      .useValue(fakeTournamentService)
+      .overrideProvider(TournamentsWriteService)
+      .useValue(fakeTournamentWriteService)
       .overrideProvider(TournamentsReadService)
       .useValue(fakeTournamentsReadService)
+      .overrideProvider(TournamentsExternalService)
+      .useValue(fakeTournamentExternalService)
       .overrideProvider(TournamentsFieldsService)
       .useValue(fakeTournamentsFieldsService)
       .overrideProvider(StagesService)
       .useValue(fakeStagesService)
       .overrideGuard(GqlJwtAuthGuard)
+      .useValue({})
+      .overrideGuard(ApiKeyGuard)
       .useValue({})
       .compile();
 
@@ -119,427 +135,467 @@ describe("Tournament (e2e)", () => {
     await app.init();
   });
 
-  describe("tournaments", () => {
-    it("should get data from service", async () => {
-      const response = await request(app.getHttpServer())
-        .post(graphql)
-        .send({
-          query: `
-          query {
-            tournaments {
-              id
-              name
-            }
-          }`,
-        })
-        .expect(HttpStatus.OK);
-
-      expect(response.body).toStrictEqual({
-        data: { tournaments: mockTournaments },
-      });
-    });
-
-    it("should get nextStartTime resolved", async () => {
-      const response = await request(app.getHttpServer())
-        .post(graphql)
-        .send({
-          query: `
-          query {
-            tournaments {
-              id
-              name
-              nextStartTime
-            }
-          }`,
-        });
-
-      const tournamentsWithStartTime = mockTournaments.map((tournament) => ({
-        ...tournament,
-        nextStartTime: mockStartTime,
-      }));
-
-      expect(response.status).toBe(HttpStatus.OK);
-      expect(response.body).toStrictEqual({
-        data: {
-          tournaments: tournamentsWithStartTime,
-        },
-      });
-    });
-
-    it("should apply filters and pagination", async () => {
-      const response = await request(app.getHttpServer())
-        .post(graphql)
-        .send({
-          query: `
-          query {
-            tournaments(searchQuery: "Test", region: ["WO", "NA"], setId: [1, 2], take: 20, skip: 20) {
-              id
-              name
-            }
-          }`,
-        });
-
-      expect(fakeTournamentsReadService.findAll).toHaveBeenCalledWith(
-        { searchQuery: "Test", region: ["WO", "NA"], setId: [1, 2] },
-        { take: 20, skip: 20 },
-      );
-      expect(response.body).toStrictEqual({
-        data: { tournaments: mockTournaments },
-      });
-    });
-  });
-
-  describe("adminTournaments", () => {
-    it("should get data from service", async () => {
-      const response = await request(app.getHttpServer())
-        .post(graphql)
-        .send({
-          query: `
-          query {
-            adminTournaments {
-              id
-              name
-            }
-          }`,
-        })
-        .expect(HttpStatus.OK);
-
-      expect(response.body).toStrictEqual({
-        data: { adminTournaments: mockTournaments },
-      });
-    });
-  });
-
-  describe("tournament", () => {
-    it("should get data from service", async () => {
-      const response = await request(app.getHttpServer())
-        .post(graphql)
-        .send({
-          query: `
-          query {
-            tournament(id: 1) {
-              id
-              name
-            }
-          }`,
-        })
-        .expect(HttpStatus.OK);
-
-      expect(response.body).toStrictEqual({
-        data: { tournament: mockTournaments[0] },
-      });
-    });
-
-    it("should get relations", async () => {
-      const response = await request(app.getHttpServer())
-        .post(graphql)
-        .send({
-          query: `
-          query {
-            tournament(id: 1) {
-              id
-              name
-              set {
+  describe("GQL", () => {
+    describe("tournaments", () => {
+      it("should get data from service", async () => {
+        const response = await request(app.getHttpServer())
+          .post(graphql)
+          .send({
+            query: `
+            query {
+              tournaments {
                 id
                 name
               }
-              stages {
+            }`,
+          })
+          .expect(HttpStatus.OK);
+
+        expect(response.body).toStrictEqual({
+          data: { tournaments: mockTournaments },
+        });
+      });
+
+      it("should get nextStartTime resolved", async () => {
+        const response = await request(app.getHttpServer())
+          .post(graphql)
+          .send({
+            query: `
+            query {
+              tournaments {
+                id
+                name
+                nextStartTime
+              }
+            }`,
+          });
+
+        const tournamentsWithStartTime = mockTournaments.map((tournament) => ({
+          ...tournament,
+          nextStartTime: mockStartTime,
+        }));
+
+        expect(response.status).toBe(HttpStatus.OK);
+        expect(response.body).toStrictEqual({
+          data: {
+            tournaments: tournamentsWithStartTime,
+          },
+        });
+      });
+
+      it("should apply filters and pagination", async () => {
+        const response = await request(app.getHttpServer())
+          .post(graphql)
+          .send({
+            query: `
+            query {
+              tournaments(searchQuery: "Test", region: ["WO", "NA"], setId: [1, 2], take: 20, skip: 20) {
                 id
                 name
               }
-              players {
+            }`,
+          });
+
+        expect(fakeTournamentsReadService.findAll).toHaveBeenCalledWith(
+          { searchQuery: "Test", region: ["WO", "NA"], setId: [1, 2] },
+          { take: 20, skip: 20 },
+        );
+        expect(response.body).toStrictEqual({
+          data: { tournaments: mockTournaments },
+        });
+      });
+    });
+
+    describe("adminTournaments", () => {
+      it("should get data from service", async () => {
+        const response = await request(app.getHttpServer())
+          .post(graphql)
+          .send({
+            query: `
+            query {
+              adminTournaments {
                 id
                 name
               }
-            }
-          }`,
-        })
-        .expect(HttpStatus.OK);
+            }`,
+          })
+          .expect(HttpStatus.OK);
 
-      expect(response.body).toStrictEqual({
-        data: { tournament: mockTournamentWithResolvedFields },
-      });
-    });
-  });
-
-  describe("tournamentBySlug", () => {
-    it("should get data from service", async () => {
-      const response = await request(app.getHttpServer())
-        .post(graphql)
-        .send({
-          query: `
-          query {
-            tournamentBySlug(slug: "Slug") {
-              id
-              name
-            }
-          }`,
-        })
-        .expect(HttpStatus.OK);
-
-      expect(response.body).toStrictEqual({
-        data: { tournamentBySlug: mockTournaments[0] },
-      });
-    });
-  });
-
-  describe("tournamentsWithStats", () => {
-    it("should get data from service", async () => {
-      const response = await request(app.getHttpServer())
-        .post(graphql)
-        .send({
-          query: `
-          query {
-            tournamentsWithStats {
-              id
-              name
-            }
-          }`,
-        })
-        .expect(HttpStatus.OK);
-
-      expect(response.body).toStrictEqual({
-        data: { tournamentsWithStats: mockTournaments },
-      });
-    });
-  });
-
-  describe("ongoingTournaments", () => {
-    it("should get data from service", async () => {
-      const response = await request(app.getHttpServer())
-        .post(graphql)
-        .send({
-          query: `
-          query {
-            ongoingTournaments {
-              id
-              name
-            }
-          }`,
-        })
-        .expect(HttpStatus.OK);
-
-      expect(response.body).toStrictEqual({
-        data: { ongoingTournaments: mockTournaments },
-      });
-    });
-  });
-
-  describe("upcomingTournaments", () => {
-    it("should get data from service", async () => {
-      const response = await request(app.getHttpServer())
-        .post(graphql)
-        .send({
-          query: `
-          query {
-            upcomingTournaments {
-              id
-              name
-            }
-          }`,
-        })
-        .expect(HttpStatus.OK);
-
-      expect(response.body).toStrictEqual({
-        data: { upcomingTournaments: mockTournaments },
-      });
-    });
-
-    it("should apply filters and pagination", async () => {
-      const response = await request(app.getHttpServer())
-        .post(graphql)
-        .send({
-          query: `
-          query {
-            upcomingTournaments(searchQuery: "Test", region: ["WO", "NA"], setId: [1, 2], take: 20, skip: 20) {
-              id
-              name
-            }
-          }`,
+        expect(response.body).toStrictEqual({
+          data: { adminTournaments: mockTournaments },
         });
-
-      expect(fakeTournamentsReadService.findUpcoming).toHaveBeenCalledWith(
-        { searchQuery: "Test", region: ["WO", "NA"], setId: [1, 2] },
-        { take: 20, skip: 20 },
-      );
-      expect(response.body).toStrictEqual({
-        data: { upcomingTournaments: mockTournaments },
-      });
-    });
-  });
-
-  describe("pastTournaments", () => {
-    it("should get data from service", async () => {
-      const response = await request(app.getHttpServer())
-        .post(graphql)
-        .send({
-          query: `
-          query {
-            pastTournaments {
-              id
-              name
-            }
-          }`,
-        })
-        .expect(HttpStatus.OK);
-
-      expect(response.body).toStrictEqual({
-        data: { pastTournaments: mockTournaments },
       });
     });
 
-    it("should apply filters and pagination", async () => {
-      const response = await request(app.getHttpServer())
-        .post(graphql)
-        .send({
-          query: `
-          query {
-            pastTournaments(searchQuery: "Test", region: ["WO", "NA"], setId: [1, 2], take: 20, skip: 20) {
-              id
-              name
-            }
-          }`,
+    describe("tournament", () => {
+      it("should get data from service", async () => {
+        const response = await request(app.getHttpServer())
+          .post(graphql)
+          .send({
+            query: `
+            query {
+              tournament(id: 1) {
+                id
+                name
+              }
+            }`,
+          })
+          .expect(HttpStatus.OK);
+
+        expect(response.body).toStrictEqual({
+          data: { tournament: mockTournaments[0] },
         });
+      });
 
-      expect(fakeTournamentsReadService.findPast).toHaveBeenCalledWith(
-        { searchQuery: "Test", region: ["WO", "NA"], setId: [1, 2] },
-        { take: 20, skip: 20 },
-      );
-      expect(response.body).toStrictEqual({
-        data: { pastTournaments: mockTournaments },
+      it("should get relations", async () => {
+        const response = await request(app.getHttpServer())
+          .post(graphql)
+          .send({
+            query: `
+            query {
+              tournament(id: 1) {
+                id
+                name
+                set {
+                  id
+                  name
+                }
+                stages {
+                  id
+                  name
+                }
+                players {
+                  id
+                  name
+                }
+              }
+            }`,
+          })
+          .expect(HttpStatus.OK);
+
+        expect(response.body).toStrictEqual({
+          data: { tournament: mockTournamentWithResolvedFields },
+        });
+      });
+    });
+
+    describe("tournamentBySlug", () => {
+      it("should get data from service", async () => {
+        const response = await request(app.getHttpServer())
+          .post(graphql)
+          .send({
+            query: `
+            query {
+              tournamentBySlug(slug: "Slug") {
+                id
+                name
+              }
+            }`,
+          })
+          .expect(HttpStatus.OK);
+
+        expect(response.body).toStrictEqual({
+          data: { tournamentBySlug: mockTournaments[0] },
+        });
+      });
+    });
+
+    describe("tournamentsWithStats", () => {
+      it("should get data from service", async () => {
+        const response = await request(app.getHttpServer())
+          .post(graphql)
+          .send({
+            query: `
+            query {
+              tournamentsWithStats {
+                id
+                name
+              }
+            }`,
+          })
+          .expect(HttpStatus.OK);
+
+        expect(response.body).toStrictEqual({
+          data: { tournamentsWithStats: mockTournaments },
+        });
+      });
+    });
+
+    describe("ongoingTournaments", () => {
+      it("should get data from service", async () => {
+        const response = await request(app.getHttpServer())
+          .post(graphql)
+          .send({
+            query: `
+            query {
+              ongoingTournaments {
+                id
+                name
+              }
+            }`,
+          })
+          .expect(HttpStatus.OK);
+
+        expect(response.body).toStrictEqual({
+          data: { ongoingTournaments: mockTournaments },
+        });
+      });
+    });
+
+    describe("upcomingTournaments", () => {
+      it("should get data from service", async () => {
+        const response = await request(app.getHttpServer())
+          .post(graphql)
+          .send({
+            query: `
+            query {
+              upcomingTournaments {
+                id
+                name
+              }
+            }`,
+          })
+          .expect(HttpStatus.OK);
+
+        expect(response.body).toStrictEqual({
+          data: { upcomingTournaments: mockTournaments },
+        });
+      });
+
+      it("should apply filters and pagination", async () => {
+        const response = await request(app.getHttpServer())
+          .post(graphql)
+          .send({
+            query: `
+            query {
+              upcomingTournaments(searchQuery: "Test", region: ["WO", "NA"], setId: [1, 2], take: 20, skip: 20) {
+                id
+                name
+              }
+            }`,
+          });
+
+        expect(fakeTournamentsReadService.findUpcoming).toHaveBeenCalledWith(
+          { searchQuery: "Test", region: ["WO", "NA"], setId: [1, 2] },
+          { take: 20, skip: 20 },
+        );
+        expect(response.body).toStrictEqual({
+          data: { upcomingTournaments: mockTournaments },
+        });
+      });
+    });
+
+    describe("pastTournaments", () => {
+      it("should get data from service", async () => {
+        const response = await request(app.getHttpServer())
+          .post(graphql)
+          .send({
+            query: `
+            query {
+              pastTournaments {
+                id
+                name
+              }
+            }`,
+          })
+          .expect(HttpStatus.OK);
+
+        expect(response.body).toStrictEqual({
+          data: { pastTournaments: mockTournaments },
+        });
+      });
+
+      it("should apply filters and pagination", async () => {
+        const response = await request(app.getHttpServer())
+          .post(graphql)
+          .send({
+            query: `
+            query {
+              pastTournaments(searchQuery: "Test", region: ["WO", "NA"], setId: [1, 2], take: 20, skip: 20) {
+                id
+                name
+              }
+            }`,
+          });
+
+        expect(fakeTournamentsReadService.findPast).toHaveBeenCalledWith(
+          { searchQuery: "Test", region: ["WO", "NA"], setId: [1, 2] },
+          { take: 20, skip: 20 },
+        );
+        expect(response.body).toStrictEqual({
+          data: { pastTournaments: mockTournaments },
+        });
+      });
+    });
+
+    describe("createTournament", () => {
+      it("should call tournament creation", async () => {
+        const response = await request(app.getHttpServer())
+          .post(graphql)
+          .send({
+            query: `
+            mutation {
+              createTournament(name: "name", setId: 1, region: ["NA"]) {
+                id
+                name
+              }
+            }`,
+          });
+
+        expect(fakeTournamentWriteService.createOne).toHaveBeenCalled();
+        expect(response.body).toStrictEqual({
+          data: { createTournament: mockTournaments[0] },
+        });
+      });
+    });
+
+    describe("updateTournament", () => {
+      it("should call tournament update", async () => {
+        const response = await request(app.getHttpServer())
+          .post(graphql)
+          .send({
+            query: `
+            mutation {
+              updateTournament(id: 1, name: "name") {
+                id
+                name
+              }
+            }`,
+          })
+          .expect(HttpStatus.OK);
+
+        expect(fakeTournamentWriteService.updateOne).toHaveBeenCalled();
+        expect(response.body).toStrictEqual({
+          data: { updateTournament: mockTournaments[0] },
+        });
+      });
+    });
+
+    describe("deleteTournament", () => {
+      it("should call tournament delete", async () => {
+        const response = await request(app.getHttpServer())
+          .post(graphql)
+          .send({
+            query: `
+            mutation {
+              deleteTournament(id: 1) {
+                id
+              }
+            }`,
+          })
+          .expect(HttpStatus.OK);
+
+        expect(fakeTournamentWriteService.deleteOne).toHaveBeenCalled();
+        expect(response.body).toStrictEqual({
+          data: { deleteTournament: { id: mockTournaments[0].id } },
+        });
+      });
+    });
+
+    describe("createTournamentPlayers", () => {
+      it("should call tournament player creation", async () => {
+        const response = await request(app.getHttpServer())
+          .post(graphql)
+          .send({
+            query: `
+            mutation {
+              createTournamentPlayers(tournamentId: 1, playerIds: [1, 2, 3]) {
+                id
+                name
+              }
+            }`,
+          })
+          .expect(HttpStatus.OK);
+
+        expect(
+          fakeTournamentWriteService.createTournamentPlayers,
+        ).toHaveBeenCalled();
+        expect(response.body).toStrictEqual({
+          data: { createTournamentPlayers: mockTournaments[0] },
+        });
+      });
+    });
+
+    describe("createTournamentPlayersByName", () => {
+      it("should call tournament player creation by name", async () => {
+        const response = await request(app.getHttpServer())
+          .post(graphql)
+          .send({
+            query: `
+            mutation {
+              createTournamentPlayersByName(tournamentId: 1, playerNames: "LucasTestPedro") {
+                id
+                name
+              }
+            }`,
+          })
+          .expect(HttpStatus.OK);
+
+        expect(
+          fakeTournamentWriteService.createTournamentPlayersByName,
+        ).toHaveBeenCalled();
+        expect(response.body).toStrictEqual({
+          data: { createTournamentPlayersByName: mockTournaments[0] },
+        });
+      });
+    });
+
+    describe("createTournamentSlugs", () => {
+      it("should call slug creation", async () => {
+        const response = await request(app.getHttpServer())
+          .post(graphql)
+          .send({
+            query: `
+            mutation {
+              createTournamentSlugs {
+                id
+                name
+              }
+            }`,
+          })
+          .expect(HttpStatus.OK);
+
+        expect(
+          fakeTournamentWriteService.createMissingSlugs,
+        ).toHaveBeenCalled();
+        expect(response.body).toStrictEqual({
+          data: { createTournamentSlugs: mockTournaments },
+        });
       });
     });
   });
 
-  describe("createTournament", () => {
-    it("should call tournament creation", async () => {
-      const response = await request(app.getHttpServer())
-        .post(graphql)
-        .send({
-          query: `
-          mutation {
-            createTournament(name: "name", setId: 1) {
-              id
-              name
-            }
-          }`,
-        })
-        .expect(HttpStatus.OK);
+  describe("External Controller", () => {
+    describe("create one", () => {
+      it("should call service with minimum fields", async () => {
+        const response = await request(app.getHttpServer())
+          .post(restUrl)
+          .send({
+            name: "Name",
+            setId: 1,
+            description: "Alala",
+            region: ["BR"],
+          });
 
-      expect(fakeTournamentService.createOne).toHaveBeenCalled();
-      expect(response.body).toStrictEqual({
-        data: { createTournament: mockTournaments[0] },
+        expect(fakeTournamentWriteService.createOne).toHaveBeenCalled();
+        expect(response.statusCode).toBe(201);
       });
     });
-  });
 
-  describe("updateTournament", () => {
-    it("should call tournament update", async () => {
-      const response = await request(app.getHttpServer())
-        .post(graphql)
-        .send({
-          query: `
-          mutation {
-            updateTournament(id: 1, name: "name") {
-              id
-              name
-            }
-          }`,
-        })
-        .expect(HttpStatus.OK);
+    describe("create stage", () => {
+      it("should call service with minimum fields", async () => {
+        const response = await request(app.getHttpServer())
+          .post(`${restUrl}/1/stages`)
+          .send({
+            pointSchemaId: 1,
+            name: "Name",
+            sequence: 1,
+            stageType: StageType.RANKING,
+            roundCount: 6,
+          });
 
-      expect(fakeTournamentService.updateOne).toHaveBeenCalled();
-      expect(response.body).toStrictEqual({
-        data: { updateTournament: mockTournaments[0] },
-      });
-    });
-  });
-
-  describe("deleteTournament", () => {
-    it("should call tournament delete", async () => {
-      const response = await request(app.getHttpServer())
-        .post(graphql)
-        .send({
-          query: `
-          mutation {
-            deleteTournament(id: 1) {
-              id
-            }
-          }`,
-        })
-        .expect(HttpStatus.OK);
-
-      expect(fakeTournamentService.deleteOne).toHaveBeenCalled();
-      expect(response.body).toStrictEqual({
-        data: { deleteTournament: { id: mockTournaments[0].id } },
-      });
-    });
-  });
-
-  describe("createTournamentPlayers", () => {
-    it("should call tournament player creation", async () => {
-      const response = await request(app.getHttpServer())
-        .post(graphql)
-        .send({
-          query: `
-          mutation {
-            createTournamentPlayers(tournamentId: 1, playerIds: [1, 2, 3]) {
-              id
-              name
-            }
-          }`,
-        })
-        .expect(HttpStatus.OK);
-
-      expect(fakeTournamentService.createTournamentPlayers).toHaveBeenCalled();
-      expect(response.body).toStrictEqual({
-        data: { createTournamentPlayers: mockTournaments[0] },
-      });
-    });
-  });
-
-  describe("createTournamentPlayersByName", () => {
-    it("should call tournament player creation by name", async () => {
-      const response = await request(app.getHttpServer())
-        .post(graphql)
-        .send({
-          query: `
-          mutation {
-            createTournamentPlayersByName(tournamentId: 1, playerNames: "LucasTestPedro") {
-              id
-              name
-            }
-          }`,
-        })
-        .expect(HttpStatus.OK);
-
-      expect(
-        fakeTournamentService.createTournamentPlayersByName,
-      ).toHaveBeenCalled();
-      expect(response.body).toStrictEqual({
-        data: { createTournamentPlayersByName: mockTournaments[0] },
-      });
-    });
-  });
-
-  describe("createTournamentSlugs", () => {
-    it("should call slug creation", async () => {
-      const response = await request(app.getHttpServer())
-        .post(graphql)
-        .send({
-          query: `
-          mutation {
-            createTournamentSlugs {
-              id
-              name
-            }
-          }`,
-        })
-        .expect(HttpStatus.OK);
-
-      expect(fakeTournamentService.createMissingSlugs).toHaveBeenCalled();
-      expect(response.body).toStrictEqual({
-        data: { createTournamentSlugs: mockTournaments },
+        expect(fakeTournamentWriteService.createStage).toHaveBeenCalled();
+        expect(response.statusCode).toBe(201);
       });
     });
   });

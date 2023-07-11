@@ -1,7 +1,7 @@
 import { Injectable } from "@nestjs/common";
 import { DateTime } from "luxon";
 import { StagesService } from "../../stages/stages.service";
-import { Tournament } from "../tournament.entity";
+import { Tournament } from "../entities/tournament.entity";
 
 @Injectable()
 export class TournamentsFieldsService {

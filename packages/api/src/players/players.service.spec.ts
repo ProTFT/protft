@@ -6,7 +6,7 @@ import { PlayerLinksService } from "../player-links/player-links.service";
 import { RoundResultsService } from "../round-results/round-results.service";
 import { StagePlayerInfosService } from "../stage-player-infos/stage-player-infos.service";
 import { TournamentResultsService } from "../tournament-results/tournament-results.service";
-import { TournamentsService } from "../tournaments/tournaments.service";
+import { TournamentsWriteService } from "../tournaments/services/tournaments-write.service";
 import { Player } from "./player.entity";
 import { PlayersService } from "./players.service";
 
@@ -52,7 +52,7 @@ describe("PlayersService", () => {
   } as unknown as TournamentResultsService;
   const tournamentsService = {
     updatePlayer: jest.fn(),
-  } as unknown as TournamentsService;
+  } as unknown as TournamentsWriteService;
   const lobbyPlayerInfosService = {
     updatePlayer: jest.fn(),
   } as unknown as LobbyPlayerInfosService;

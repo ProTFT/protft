@@ -8,8 +8,8 @@ export class CreateTournamentArgs {
   @Field(() => Int, { name: "setId" })
   setId: number;
 
-  @Field(() => [String], { name: "region", nullable: true })
-  region?: string[];
+  @Field(() => [String], { name: "region" })
+  region: string[];
 
   @Field({ name: "host", nullable: true })
   host?: string;

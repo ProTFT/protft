@@ -1,37 +1,33 @@
-import { Tournament } from "../../src/tournaments/tournament.entity";
+import { Tournament } from "../../src/tournaments/entities/tournament.entity";
 import { set as genSet } from "./set";
 
 type TournamentGeneratorParams = Partial<Tournament>;
 
-export function tournament({
-  id,
-  name,
-  region,
-  host,
-  participantsNumber,
-  prizePool,
-  startDate,
-  endDate,
-  setId,
-  set,
-  stages,
-  slug,
-  visibility,
-}: TournamentGeneratorParams): Tournament {
+export function tournament(
+  tournamentParams?: TournamentGeneratorParams,
+): Tournament {
   const randomId = Math.random() * 999;
   return {
-    id: id || randomId,
-    name: name || "",
-    region: region || [],
-    host: host || "",
-    participantsNumber: participantsNumber || randomId,
-    prizePool: prizePool || randomId,
-    startDate: startDate || new Date(),
-    endDate: endDate || new Date(),
-    setId: setId || randomId,
-    set: set || genSet({}),
-    stages: stages || [],
-    slug: slug || "",
-    visibility: visibility || false,
+    id: randomId,
+    name: "",
+    region: [],
+    host: "",
+    participantsNumber: randomId,
+    prizePool: randomId,
+    startDate: new Date(),
+    endDate: new Date(),
+    setId: randomId,
+    set: genSet({}),
+    stages: [],
+    slug: "",
+    visibility: false,
+    currency: "",
+    description: "",
+    image: "",
+    isAmateur: false,
+    metadata: null,
+    nextStartTime: 123,
+    players: [],
+    ...tournamentParams,
   };
 }

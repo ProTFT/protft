@@ -1,6 +1,5 @@
 import { Injectable } from "@nestjs/common";
 import { Raw, Repository } from "typeorm";
-import { Tournament } from "../tournament.entity";
 import {
   afterOrToday,
   afterToday,
@@ -8,12 +7,13 @@ import {
   beforeToday,
 } from "../../lib/DBRawFilter";
 import { PaginationArgs } from "../../lib/dto/pagination.args";
+import { TournamentRepository } from "../tournament.repository";
+import { InjectRepository } from "@nestjs/typeorm";
 import {
   BaseGetTournamentArgs,
   GetTournamentsArgs,
-} from "../dto/get-tournaments.args";
-import { TournamentRepository } from "../tournament.repository";
-import { InjectRepository } from "@nestjs/typeorm";
+} from "../gql/get-tournaments.args";
+import { Tournament } from "../entities/tournament.entity";
 
 @Injectable()
 export class TournamentsReadService {

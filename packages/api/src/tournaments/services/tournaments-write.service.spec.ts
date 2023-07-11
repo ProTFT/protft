@@ -1,15 +1,17 @@
-import { NotFoundException } from "@nestjs/common";
+import { BadRequestException, NotFoundException } from "@nestjs/common";
 import { Repository } from "typeorm";
-import { DeleteResponse } from "../lib/dto/delete-return";
-import { SetsService } from "../sets/sets.service";
-import { StagesService } from "../stages/stages.service";
-import { CreateTournamentArgs } from "./dto/create-tournament.args";
-import { UpdateTournamentArgs } from "./dto/update-tournament.args";
-import { Tournament } from "./tournament.entity";
-import { TournamentsService } from "./tournaments.service";
+import { DeleteResponse } from "../../lib/dto/delete-return";
+import { SetsService } from "../../sets/sets.service";
+import { StagesService } from "../../stages/stages.service";
+import { StageType } from "../../stages/types/StageType";
+import { Tournament } from "../entities/tournament.entity";
+import { CreateTournamentArgs } from "../gql/create-tournament.args";
+import { UpdateTournamentArgs } from "../gql/update-tournament.args";
+import { CreateTournamentStageBodySchemaDto } from "../schema/create-stage.schema";
+import { TournamentsWriteService } from "./tournaments-write.service";
 
-describe("TournamentsService", () => {
-  let service: TournamentsService;
+describe("TournamentsWriteService", () => {
+  let service: TournamentsWriteService;
   let tournamentRepository: Repository<Tournament>;
   let setsService: SetsService;
   let stagesService: StagesService;
@@ -44,8 +46,10 @@ describe("TournamentsService", () => {
     setsService = {
       findOne: jest.fn().mockResolvedValue({ id: 1, name: "setName" }),
     } as unknown as SetsService;
-    stagesService = {} as unknown as StagesService;
-    service = new TournamentsService(
+    stagesService = {
+      createOne: jest.fn(),
+    } as unknown as StagesService;
+    service = new TournamentsWriteService(
       tournamentRepository,
       setsService,
       stagesService,
@@ -73,6 +77,39 @@ describe("TournamentsService", () => {
         ...defaultCreationParameters,
         ...payload,
         slug: "setname-regionname-tournamentname",
+      });
+    });
+  });
+
+  describe("createStage", () => {
+    const tournamentId = 1;
+    const payload = {
+      name: "name",
+      pointSchemaId: 1,
+      roundCount: 1,
+      sequence: 1,
+      stageType: StageType.RANKING,
+      tiebreakers: [1, 2, 3],
+      description: "descr",
+      qualifiedCount: 23,
+    } as CreateTournamentStageBodySchemaDto;
+
+    it("if tournament does not exist, should throw", async () => {
+      tournamentRepository.findOne = jest.fn().mockResolvedValueOnce(undefined);
+
+      expect(
+        async () => await service.createStage(tournamentId, payload),
+      ).rejects.toThrowError(BadRequestException);
+    });
+
+    it("should save and return", async () => {
+      tournamentRepository.findOne = jest.fn().mockResolvedValueOnce({});
+
+      await service.createStage(tournamentId, payload);
+
+      expect(stagesService.createOne).toHaveBeenCalledWith({
+        tournamentId,
+        ...payload,
       });
     });
   });

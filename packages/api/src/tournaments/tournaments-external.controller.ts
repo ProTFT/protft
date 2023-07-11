@@ -5,12 +5,10 @@ import {
   Post,
   UseGuards,
   UseInterceptors,
-  UsePipes,
 } from "@nestjs/common";
 import { ApiSecurity } from "@nestjs/swagger";
 import { ApiKeyGuard } from "../auth/apikey.guard";
 import { ValidationInterceptor } from "../lib/joi/validation.interceptor";
-import { JoiValidationPipe } from "../lib/pipe/JoiPipe";
 import {
   CreateTournamentStageSchema,
   CreateTournamentStageBodySchemaDto,
@@ -20,17 +18,21 @@ import {
   CreateTournamentSchema,
   CreateTournamentSchemaDto,
 } from "./schema/create-tournament.schema";
-import { TournamentsService } from "./tournaments.service";
+import { TournamentsExternalService } from "./services/tournaments-external.service";
+import { TournamentsWriteService } from "./services/tournaments-write.service";
 
 @Controller("tournaments")
-export class TournamentsController {
-  constructor(private tournamentsService: TournamentsService) {}
+export class TournamentsExternalController {
+  constructor(
+    private tournamentsWriteService: TournamentsWriteService,
+    private tournamentsExternalService: TournamentsExternalService,
+  ) {}
 
   @Post()
   @UseGuards(ApiKeyGuard)
-  @UsePipes(new JoiValidationPipe(CreateTournamentSchema))
+  @UseInterceptors(new ValidationInterceptor(CreateTournamentSchema))
   createOne(@Body() body: CreateTournamentSchemaDto) {
-    return this.tournamentsService.createOne(body);
+    return this.tournamentsExternalService.createOne(body);
   }
 
   @Post("/:tournamentId/stages")
@@ -41,6 +43,6 @@ export class TournamentsController {
     @Param() params: CreateTournamentStageParamsSchemaDto,
     @Body() body: CreateTournamentStageBodySchemaDto,
   ) {
-    return this.tournamentsService.createStage(params.tournamentId, body);
+    return this.tournamentsWriteService.createStage(params.tournamentId, body);
   }
 }

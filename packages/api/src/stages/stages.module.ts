@@ -5,7 +5,7 @@ import { PointsModule } from "../points/points.module";
 import { RoundsModule } from "../rounds/rounds.module";
 import { StagePlayerInfosModule } from "../stage-player-infos/stage-player-infos.module";
 import { Stage } from "./stage.entity";
-import { StagesController } from "./stages.controller";
+import { StagesExternalController } from "./stages-external.controller";
 import { StagesResolver } from "./stages.resolver";
 import { StagesService } from "./stages.service";
 
@@ -18,7 +18,7 @@ import { StagesService } from "./stages.service";
     StagePlayerInfosModule,
   ],
   providers: [StagesService, StagesResolver],
-  controllers: [StagesController],
+  controllers: [StagesExternalController],
   exports: [StagesService],
 })
 export class StagesModule {}

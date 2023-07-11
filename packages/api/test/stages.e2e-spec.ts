@@ -11,7 +11,10 @@ import { RoundsService } from "../src/rounds/rounds.service";
 import { PointSchemasService } from "../src/points/points.service";
 import { StagePlayerInfosService } from "../src/stage-player-infos/stage-player-infos.service";
 import { mockStagePlayers } from "./data/bulk-result-creation";
+import { StagesExternalController } from "../src/stages/stages-external.controller";
+import { ApiKeyGuard } from "../src/auth/apikey.guard";
 
+const restUrl = "/stages";
 const graphql = "/graphql";
 
 const mockStages = [
@@ -92,7 +95,7 @@ const mockTiebreakers = [{ id: 1, description: "lala" }];
 
 const fakeStagesService = {
   findAllByTournament: jest.fn().mockResolvedValue(mockStages),
-  findOne: jest.fn().mockResolvedValue(mockStages[0]),
+  findOne: jest.fn().mockResolvedValue(mockStageWithResolvedFields),
   findPreviousStage: jest.fn().mockResolvedValue(mockStages[1]),
   findTiebreakers: jest.fn().mockResolvedValue(mockTiebreakers),
   createOne: jest.fn().mockResolvedValue(mockStages[0]),
@@ -143,6 +146,7 @@ describe("Stages (e2e)", () => {
         PointSchemasService,
         StagePlayerInfosService,
       ],
+      controllers: [StagesExternalController],
     })
       .overrideProvider(StagesService)
       .useValue(fakeStagesService)
@@ -156,347 +160,372 @@ describe("Stages (e2e)", () => {
       .useValue(fakeStagePlayerInfosService)
       .overrideGuard(GqlJwtAuthGuard)
       .useValue({})
+      .overrideGuard(ApiKeyGuard)
+      .useValue({})
       .compile();
 
     app = moduleFixture.createNestApplication();
     await app.init();
   });
 
-  describe("stages", () => {
-    it("should get data from service", async () => {
-      const response = await request(app.getHttpServer())
-        .post(graphql)
-        .send({
-          query: `
-          query {
-            stages(tournamentId: 1) {
-              id
-              name
-            }
-          }`,
-        })
-        .expect(HttpStatus.OK);
+  afterEach(jest.clearAllMocks);
 
-      expect(response.body).toStrictEqual({
-        data: { stages: mockStages },
-      });
-    });
-  });
+  describe("GQL", () => {
+    describe("stages", () => {
+      it("should get data from service", async () => {
+        const response = await request(app.getHttpServer())
+          .post(graphql)
+          .send({
+            query: `
+            query {
+              stages(tournamentId: 1) {
+                id
+                name
+              }
+            }`,
+          })
+          .expect(HttpStatus.OK);
 
-  describe("stage", () => {
-    it("should get data from service", async () => {
-      const response = await request(app.getHttpServer())
-        .post(graphql)
-        .send({
-          query: `
-          query {
-            stage(id: 1) {
-              id
-              name
-            }
-          }`,
-        })
-        .expect(HttpStatus.OK);
-
-      expect(response.body).toStrictEqual({
-        data: { stage: mockStages[0] },
+        expect(response.body).toStrictEqual({
+          data: { stages: mockStages },
+        });
       });
     });
 
-    it("should resolve all fields", async () => {
-      const response = await request(app.getHttpServer())
-        .post(graphql)
-        .send({
-          query: `
-          query {
-            stage(id: 1) {
-              id
-              name
-              lobbies {
+    describe("stage", () => {
+      it("should get data from service", async () => {
+        const response = await request(app.getHttpServer())
+          .post(graphql)
+          .send({
+            query: `
+            query {
+              stage(id: 1) {
                 id
+                name
               }
-              lobbyGroups {
+            }`,
+          })
+          .expect(HttpStatus.OK);
+
+        expect(response.body).toStrictEqual({
+          data: { stage: mockStages[0] },
+        });
+      });
+
+      it("should resolve all fields", async () => {
+        const response = await request(app.getHttpServer())
+          .post(graphql)
+          .send({
+            query: `
+            query {
+              stage(id: 1) {
                 id
+                name
+                lobbies {
+                  id
+                }
+                lobbyGroups {
+                  id
+                }
+                rounds {
+                  id
+                }
+                roundCount
+                pointSchema {
+                  id
+                }
+                players {
+                  stageId
+                  playerId
+                  extraPoints
+                  tiebreakerRanking
+                }
               }
-              rounds {
-                id
-              }
-              roundCount
-              pointSchema {
-                id
-              }
-              players {
+            }`,
+          })
+          .expect(HttpStatus.OK);
+
+        expect(response.body).toStrictEqual({
+          data: { stage: mockStageWithResolvedFields },
+        });
+      });
+    });
+
+    describe("playerFromPreviousStage", () => {
+      it("should get data from service", async () => {
+        const response = await request(app.getHttpServer())
+          .post(graphql)
+          .send({
+            query: `
+            query {
+              playersFromPreviousStage(id: 1) {
                 stageId
                 playerId
                 extraPoints
                 tiebreakerRanking
               }
-            }
-          }`,
-        })
-        .expect(HttpStatus.OK);
+            }`,
+          })
+          .expect(HttpStatus.OK);
 
-      expect(response.body).toStrictEqual({
-        data: { stage: mockStageWithResolvedFields },
+        expect(response.body).toStrictEqual({
+          data: { playersFromPreviousStage: mockStagePlayerInfos },
+        });
       });
     });
-  });
 
-  describe("playerFromPreviousStage", () => {
-    it("should get data from service", async () => {
-      const response = await request(app.getHttpServer())
-        .post(graphql)
-        .send({
-          query: `
-          query {
-            playersFromPreviousStage(id: 1) {
-              stageId
-              playerId
-              extraPoints
-              tiebreakerRanking
-            }
-          }`,
-        })
-        .expect(HttpStatus.OK);
+    describe("tiebreakers", () => {
+      it("should get data from service", async () => {
+        const response = await request(app.getHttpServer())
+          .post(graphql)
+          .send({
+            query: `
+            query {
+              tiebreakers {
+                id
+                description
+              }
+            }`,
+          })
+          .expect(HttpStatus.OK);
 
-      expect(response.body).toStrictEqual({
-        data: { playersFromPreviousStage: mockStagePlayerInfos },
+        expect(response.body).toStrictEqual({
+          data: { tiebreakers: mockTiebreakers },
+        });
       });
     });
-  });
 
-  describe("tiebreakers", () => {
-    it("should get data from service", async () => {
-      const response = await request(app.getHttpServer())
-        .post(graphql)
-        .send({
-          query: `
-          query {
-            tiebreakers {
-              id
-              description
-            }
-          }`,
-        })
-        .expect(HttpStatus.OK);
-
-      expect(response.body).toStrictEqual({
-        data: { tiebreakers: mockTiebreakers },
-      });
-    });
-  });
-
-  describe("createStage", () => {
-    it("should create new stage", async () => {
-      const response = await request(app.getHttpServer())
-        .post(graphql)
-        .send({
-          query: `
-          mutation {
-            createStage(
-              tournamentId: 1,
-              pointSchemaId: 2,
-              name: "name",
-              sequence: 1,
-              roundCount: 1,
-              tiebreakers: [1, 2, 3],
-              description: "desc",
-              qualifiedCount: 4,
-              stageType: RANKING,
-            ) {
-              id
-              name
-            }
-          }`,
-        })
-        .expect(HttpStatus.OK);
-
-      expect(response.body).toStrictEqual({
-        data: { createStage: mockStages[0] },
-      });
-    });
-  });
-
-  describe("updateStage", () => {
-    it("should update", async () => {
-      const response = await request(app.getHttpServer())
-        .post(graphql)
-        .send({
-          query: `
-          mutation {
-            updateStage(
-              id: 1,
-              tournamentId: 1,
-              pointSchemaId: 2,
-              name: "name",
-              sequence: 1,
-              roundCount: 1,
-              tiebreakers: [1, 2, 3],
-              description: "desc",
-              qualifiedCount: 4,
-              stageType: RANKING,
-            ) {
-              id
-              name
-            }
-          }`,
-        })
-        .expect(HttpStatus.OK);
-
-      expect(response.body).toStrictEqual({
-        data: { updateStage: mockStages[0] },
-      });
-    });
-  });
-
-  describe("updateTiebreakers", () => {
-    it("should update", async () => {
-      const response = await request(app.getHttpServer())
-        .post(graphql)
-        .send({
-          query: `
-          mutation {
-            updateTiebreakers(id: 1, tiebreakers: [1, 2, 3]) {
-              id
-              name
-            }
-          }`,
-        })
-        .expect(HttpStatus.OK);
-
-      expect(response.body).toStrictEqual({
-        data: { updateTiebreakers: mockStages[0] },
-      });
-    });
-  });
-
-  describe("deleteStage", () => {
-    it("should delete", async () => {
-      const response = await request(app.getHttpServer())
-        .post(graphql)
-        .send({
-          query: `
-          mutation {
-            deleteStage(id: 1) {
-              id
-            }
-          }`,
-        })
-        .expect(HttpStatus.OK);
-
-      expect(response.body).toStrictEqual({
-        data: { deleteStage: { id: 1 } },
-      });
-    });
-  });
-
-  describe("createStagePlayers", () => {
-    it("should create", async () => {
-      const response = await request(app.getHttpServer())
-        .post(graphql)
-        .send({
-          query: `
-          mutation {
-            createStagePlayers(stageId: 1, playerIds: [1, 2, 3]) {
-              id
-              name
-            }
-          }`,
-        })
-        .expect(HttpStatus.OK);
-
-      expect(response.body).toStrictEqual({
-        data: { createStagePlayers: mockStages[0] },
-      });
-    });
-  });
-
-  describe("createStagePlayersByName", () => {
-    it("should create", async () => {
-      const response = await request(app.getHttpServer())
-        .post(graphql)
-        .send({
-          query: `
-          mutation {
-            createStagePlayersByName(stageId: 1, playerNames: "LucasPedro") {
-              id
-              name
-            }
-          }`,
-        })
-        .expect(HttpStatus.OK);
-
-      expect(response.body).toStrictEqual({
-        data: { createStagePlayersByName: mockStages[0] },
-      });
-    });
-  });
-
-  describe("generateLobbies", () => {
-    it("should generate", async () => {
-      const response = await request(app.getHttpServer())
-        .post(graphql)
-        .send({
-          query: `
-          mutation {
-            generateLobbies(stageId: 1, roundsPerLobbyGroup: 2) {
-              createdLobbyGroups
-              createdLobbies
-            }
-          }`,
-        })
-        .expect(HttpStatus.OK);
-
-      expect(response.body).toStrictEqual({
-        data: { generateLobbies: mockGeneratedLobbies },
-      });
-    });
-  });
-
-  describe("stagePlayer", () => {
-    it("should get", async () => {
-      const response = await request(app.getHttpServer())
-        .post(graphql)
-        .send({
-          query: `
-          query {
-            stagePlayer(stageId: 1, playerId: 1) {
-              player {
+    describe("createStage", () => {
+      it("should create new stage", async () => {
+        const response = await request(app.getHttpServer())
+          .post(graphql)
+          .send({
+            query: `
+            mutation {
+              createStage(
+                tournamentId: 1,
+                pointSchemaId: 2,
+                name: "name",
+                sequence: 1,
+                roundCount: 1,
+                tiebreakers: [1, 2, 3],
+                description: "desc",
+                qualifiedCount: 4,
+                stageType: RANKING,
+              ) {
                 id
                 name
-                alias
               }
-            }
-          }`,
-        })
-        .expect(HttpStatus.OK);
+            }`,
+          })
+          .expect(HttpStatus.OK);
 
-      expect(response.body).toStrictEqual({
-        data: { stagePlayer: mockStagePlayers[0] },
+        expect(response.body).toStrictEqual({
+          data: { createStage: mockStages[0] },
+        });
+      });
+    });
+
+    describe("updateStage", () => {
+      it("should update", async () => {
+        const response = await request(app.getHttpServer())
+          .post(graphql)
+          .send({
+            query: `
+            mutation {
+              updateStage(
+                id: 1,
+                tournamentId: 1,
+                pointSchemaId: 2,
+                name: "name",
+                sequence: 1,
+                roundCount: 1,
+                tiebreakers: [1, 2, 3],
+                description: "desc",
+                qualifiedCount: 4,
+                stageType: RANKING,
+              ) {
+                id
+                name
+              }
+            }`,
+          })
+          .expect(HttpStatus.OK);
+
+        expect(response.body).toStrictEqual({
+          data: { updateStage: mockStages[0] },
+        });
+      });
+    });
+
+    describe("updateTiebreakers", () => {
+      it("should update", async () => {
+        const response = await request(app.getHttpServer())
+          .post(graphql)
+          .send({
+            query: `
+            mutation {
+              updateTiebreakers(id: 1, tiebreakers: [1, 2, 3]) {
+                id
+                name
+              }
+            }`,
+          })
+          .expect(HttpStatus.OK);
+
+        expect(response.body).toStrictEqual({
+          data: { updateTiebreakers: mockStages[0] },
+        });
+      });
+    });
+
+    describe("deleteStage", () => {
+      it("should delete", async () => {
+        const response = await request(app.getHttpServer())
+          .post(graphql)
+          .send({
+            query: `
+            mutation {
+              deleteStage(id: 1) {
+                id
+              }
+            }`,
+          })
+          .expect(HttpStatus.OK);
+
+        expect(response.body).toStrictEqual({
+          data: { deleteStage: { id: 1 } },
+        });
+      });
+    });
+
+    describe("createStagePlayers", () => {
+      it("should create", async () => {
+        const response = await request(app.getHttpServer())
+          .post(graphql)
+          .send({
+            query: `
+            mutation {
+              createStagePlayers(stageId: 1, playerIds: [1, 2, 3]) {
+                id
+                name
+              }
+            }`,
+          })
+          .expect(HttpStatus.OK);
+
+        expect(response.body).toStrictEqual({
+          data: { createStagePlayers: mockStages[0] },
+        });
+      });
+    });
+
+    describe("createStagePlayersByName", () => {
+      it("should create", async () => {
+        const response = await request(app.getHttpServer())
+          .post(graphql)
+          .send({
+            query: `
+            mutation {
+              createStagePlayersByName(stageId: 1, playerNames: "LucasPedro") {
+                id
+                name
+              }
+            }`,
+          })
+          .expect(HttpStatus.OK);
+
+        expect(response.body).toStrictEqual({
+          data: { createStagePlayersByName: mockStages[0] },
+        });
+      });
+    });
+
+    describe("generateLobbies", () => {
+      it("should generate", async () => {
+        const response = await request(app.getHttpServer())
+          .post(graphql)
+          .send({
+            query: `
+            mutation {
+              generateLobbies(stageId: 1, roundsPerLobbyGroup: 2) {
+                createdLobbyGroups
+                createdLobbies
+              }
+            }`,
+          })
+          .expect(HttpStatus.OK);
+
+        expect(response.body).toStrictEqual({
+          data: { generateLobbies: mockGeneratedLobbies },
+        });
+      });
+    });
+
+    describe("stagePlayer", () => {
+      it("should get", async () => {
+        const response = await request(app.getHttpServer())
+          .post(graphql)
+          .send({
+            query: `
+            query {
+              stagePlayer(stageId: 1, playerId: 1) {
+                player {
+                  id
+                  name
+                  alias
+                }
+              }
+            }`,
+          })
+          .expect(HttpStatus.OK);
+
+        expect(response.body).toStrictEqual({
+          data: { stagePlayer: mockStagePlayers[0] },
+        });
+      });
+    });
+
+    describe("updateStagePlayer", () => {
+      it("should update", async () => {
+        const response = await request(app.getHttpServer())
+          .post(graphql)
+          .send({
+            query: `
+            mutation {
+              updateStagePlayer(stageId: 1, playerId: 1, extraPoints: 10) {
+                player {
+                  id
+                  name
+                  alias
+                }
+              }
+            }`,
+          })
+          .expect(HttpStatus.OK);
+
+        expect(response.body).toStrictEqual({
+          data: { updateStagePlayer: mockStagePlayers[0] },
+        });
       });
     });
   });
 
-  describe("updateStagePlayer", () => {
-    it("should update", async () => {
-      const response = await request(app.getHttpServer())
-        .post(graphql)
-        .send({
-          query: `
-          mutation {
-            updateStagePlayer(stageId: 1, playerId: 1, extraPoints: 10) {
-              player {
-                id
-                name
-                alias
-              }
-            }
-          }`,
-        })
-        .expect(HttpStatus.OK);
+  describe("External Endpoints", () => {
+    describe("generateLobbies", () => {
+      it("should call service to generate", async () => {
+        const stageId = 123;
+        const roundsUntilReseed = 2;
+        const response = await request(app.getHttpServer())
+          .post(`${restUrl}/${stageId}/generateLobbies`)
+          .send({ roundsUntilReseed });
 
-      expect(response.body).toStrictEqual({
-        data: { updateStagePlayer: mockStagePlayers[0] },
+        expect(fakeStagesService.generateLobbies).toHaveBeenCalledWith(
+          stageId,
+          roundsUntilReseed,
+          mockStagePlayerInfos.length,
+        );
+        expect(response.statusCode).toBe(201);
       });
     });
   });

@@ -1,6 +1,6 @@
 import { Field, Int, ObjectType } from "@nestjs/graphql";
 import { Column, Entity, ManyToOne, PrimaryColumn } from "typeorm";
-import { Tournament } from "../tournaments/tournament.entity";
+import { Tournament } from "../tournaments/entities/tournament.entity";
 
 @Entity()
 @ObjectType()

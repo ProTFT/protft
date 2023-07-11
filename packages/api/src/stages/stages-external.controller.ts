@@ -17,7 +17,7 @@ import {
 import { StagesService } from "./stages.service";
 
 @Controller("stages")
-export class StagesController {
+export class StagesExternalController {
   constructor(private stagesService: StagesService) {}
 
   @Post("/:stageId/generateLobbies")

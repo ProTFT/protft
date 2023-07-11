@@ -1,5 +1,5 @@
 import { Repository } from "typeorm";
-import { Tournament } from "./tournament.entity";
+import { Tournament } from "./entities/tournament.entity";
 import {
   TournamentRepository,
   TOURNAMENT_INITIAL_PAGE,

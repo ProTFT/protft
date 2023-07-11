@@ -288,7 +288,7 @@ export interface IQuery {
 }
 
 export interface IMutation {
-    createTournament(name: string, setId: number, region?: Nullable<string[]>, host?: Nullable<string>, participantsNumber?: Nullable<number>, prizePool?: Nullable<number>, currency?: Nullable<string>, startDate?: Nullable<DateTime>, endDate?: Nullable<DateTime>): Tournament | Promise<Tournament>;
+    createTournament(name: string, setId: number, region: string[], host?: Nullable<string>, participantsNumber?: Nullable<number>, prizePool?: Nullable<number>, currency?: Nullable<string>, startDate?: Nullable<DateTime>, endDate?: Nullable<DateTime>): Tournament | Promise<Tournament>;
     updateTournament(id: number, name?: Nullable<string>, setId?: Nullable<number>, region?: Nullable<string[]>, host?: Nullable<string>, participantsNumber?: Nullable<number>, prizePool?: Nullable<number>, currency?: Nullable<string>, startDate?: Nullable<DateTime>, endDate?: Nullable<DateTime>, visibility?: Nullable<boolean>): Tournament | Promise<Tournament>;
     deleteTournament(id: number): DeleteResponse | Promise<DeleteResponse>;
     createTournamentPlayers(tournamentId: number, playerIds: number[]): Tournament | Promise<Tournament>;

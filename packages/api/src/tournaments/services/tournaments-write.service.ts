@@ -3,26 +3,27 @@ import {
   Injectable,
   NotFoundException,
 } from "@nestjs/common";
+import { InjectRepository } from "@nestjs/typeorm";
 import { In, Repository } from "typeorm";
-import { DeleteResponse } from "../lib/dto/delete-return";
-import { Player } from "../players/player.entity";
-import { SetsService } from "../sets/sets.service";
+import { DeleteResponse } from "../../lib/dto/delete-return";
+import { parseMultilinePlayerNamesFromAll } from "../../lib/MultilineInput";
+import { Player } from "../../players/player.entity";
+import { SetsService } from "../../sets/sets.service";
+import { Stage } from "../../stages/stage.entity";
+import { StagesService } from "../../stages/stages.service";
+import { CreateTournamentDto } from "../dto/create-tournament.dto";
+import { Tournament } from "../entities/tournament.entity";
 import {
   CreateTournamentPlayerArgs,
   CreateTournamentPlayerByNameArgs,
-} from "./dto/create-tournament-player.args";
-import { CreateTournamentArgs } from "./dto/create-tournament.args";
-import { UpdateTournamentArgs } from "./dto/update-tournament.args";
-import { Tournament } from "./tournament.entity";
-import slugify from "slugify";
-import { parseMultilinePlayerNamesFromAll } from "../lib/MultilineInput";
-import { InjectRepository } from "@nestjs/typeorm";
-import { StagesService } from "../stages/stages.service";
-import { CreateTournamentStageBodySchemaDto } from "./schema/create-stage.schema";
-import { Stage } from "../stages/stage.entity";
+} from "../gql/create-tournament-player.args";
+import { CreateTournamentArgs } from "../gql/create-tournament.args";
+import { UpdateTournamentArgs } from "../gql/update-tournament.args";
+import { CreateTournamentStageBodySchemaDto } from "../schema/create-stage.schema";
+import { createSlug } from "../tournament.logic";
 
 @Injectable()
-export class TournamentsService {
+export class TournamentsWriteService {
   constructor(
     @InjectRepository(Tournament)
     private tournamentRepository: Repository<Tournament>,
@@ -31,9 +32,9 @@ export class TournamentsService {
   ) {}
 
   async createOne(payload: CreateTournamentArgs): Promise<Tournament> {
-    const payloadWithSlug: Partial<Tournament> = {
+    const payloadWithSlug: CreateTournamentDto = {
       ...payload,
-      slug: await this.createSlug(payload),
+      slug: await createSlug(payload, this.setsService),
       visibility: false,
     };
     return this.tournamentRepository.save(payloadWithSlug);
@@ -103,7 +104,7 @@ export class TournamentsService {
       this.tournamentRepository.update(
         { id: tournament.id },
         {
-          slug: await this.createSlug(tournament),
+          slug: await createSlug(tournament, this.setsService),
         },
       ),
     );
@@ -147,20 +148,5 @@ export class TournamentsService {
         return this.tournamentRepository.save(updatedTournament);
       }),
     );
-  }
-
-  private async createSlug(
-    tournament: Pick<Tournament, "name" | "setId" | "region"> &
-      Partial<Pick<Tournament, "set">>,
-  ): Promise<string> {
-    let setName = tournament.set?.name;
-    if (!setName) {
-      const { name } = await this.setsService.findOne(tournament.setId);
-      setName = name;
-    }
-    return slugify(`${setName}-${tournament.region}-${tournament.name}`, {
-      lower: true,
-      strict: true,
-    });
   }
 }

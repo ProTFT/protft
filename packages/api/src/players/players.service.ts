@@ -5,7 +5,7 @@ import {
 } from "@nestjs/common";
 import { InjectRepository } from "@nestjs/typeorm";
 import slugify from "slugify";
-import { Brackets, ILike, Raw, Repository } from "typeorm";
+import { Brackets, Raw, Repository } from "typeorm";
 import { EntityFieldsNames } from "typeorm/common/EntityFieldsNames";
 import { likeNameOrAlias } from "../lib/DBCompositeFilters";
 import { isEqualName } from "../lib/DBRawFilter";
@@ -19,7 +19,7 @@ import { PlayerStatsRaw } from "../round-results/dto/get-player-stats.raw";
 import { RoundResultsService } from "../round-results/round-results.service";
 import { StagePlayerInfosService } from "../stage-player-infos/stage-player-infos.service";
 import { TournamentResultsService } from "../tournament-results/tournament-results.service";
-import { TournamentsService } from "../tournaments/tournaments.service";
+import { TournamentsWriteService } from "../tournaments/services/tournaments-write.service";
 import { CreatePlayerArgs } from "./dto/create-player.args";
 import { BaseGetPlayerArgs } from "./dto/get-players.args";
 import { TournamentsPlayed } from "./dto/get-tournaments-played.out";
@@ -42,7 +42,7 @@ export class PlayersService {
     private playerRepository: Repository<Player>,
     private roundResultsService: RoundResultsService,
     private tournamentResultsService: TournamentResultsService,
-    private tournamentsService: TournamentsService,
+    private tournamentsService: TournamentsWriteService,
     private lobbyPlayerInfosService: LobbyPlayerInfosService,
     private stagePlayersInfosService: StagePlayerInfosService,
     private playerLinksService: PlayerLinksService,

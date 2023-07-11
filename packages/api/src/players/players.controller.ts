@@ -8,11 +8,9 @@ import {
   UseInterceptors,
 } from "@nestjs/common";
 import { FileInterceptor } from "@nestjs/platform-express";
-import { ApiExcludeEndpoint, ApiSecurity } from "@nestjs/swagger";
-import { ApiKeyGuard } from "../auth/apikey.guard";
+import { ApiExcludeEndpoint } from "@nestjs/swagger";
 import { JwtAuthGuard } from "../auth/jwt-auth.guard";
 import { PlayersService } from "./players.service";
-import { CreatePlayerBodySchemaDto } from "./schema/create-player.schema";
 
 @Controller("players")
 export class PlayersController {
@@ -32,12 +30,5 @@ export class PlayersController {
     const isRealRun = body.dryRun === "false";
     const fileString = file.buffer.toString("utf-8");
     return this.playersService.createBulk(fileString, !isRealRun);
-  }
-
-  @Post()
-  @UseGuards(ApiKeyGuard)
-  @ApiSecurity("x-api-key")
-  createOne(@Body() body: CreatePlayerBodySchemaDto) {
-    return this.playersService.createOne(body);
   }
 }

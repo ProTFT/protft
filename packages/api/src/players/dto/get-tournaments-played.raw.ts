@@ -1,4 +1,4 @@
-import { Tournament } from "../../tournaments/tournament.entity";
+import { Tournament } from "../../tournaments/entities/tournament.entity";
 
 export interface TournamentsPlayedRaw extends Tournament {
   setId: number;

@@ -1,7 +1,7 @@
 import { ApiProperty, ApiPropertyOptional } from "@nestjs/swagger";
 import Joi from "joi";
 import { buildValidator } from "../../lib/joi/validation.interceptor";
-import { RegionCode } from "../../tournaments/schema/region.types";
+import { RegionCode } from "../../tournaments/types/region.types";
 
 export class CreatePlayerBodySchemaDto {
   @ApiProperty({ example: "KC Double61" })

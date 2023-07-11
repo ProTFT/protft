@@ -3,8 +3,8 @@ import { EntityFieldsNames } from "typeorm/common/EntityFieldsNames";
 import { includes } from "../lib/DBRawFilter";
 import { PaginationArgs } from "../lib/dto/pagination.args";
 import { getSearchQueryFilter } from "../lib/SearchQuery";
-import { BaseGetTournamentArgs } from "./dto/get-tournaments.args";
-import { Tournament } from "./tournament.entity";
+import { Tournament } from "./entities/tournament.entity";
+import { BaseGetTournamentArgs } from "./gql/get-tournaments.args";
 
 interface FindParameters {
   onlyVisible?: boolean;
