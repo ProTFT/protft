@@ -32,7 +32,7 @@ const PLAYER_DIALOG_FIELDS: FormFieldProps[] = [
 ];
 
 export interface Props extends BaseDialogProps<Player> {
-  player?: Player;
+  player?: Omit<Player, "links">;
 }
 
 export const usePlayerDialog = ({ player, onSubmit, onSuccess }: Props) =>

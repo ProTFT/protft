@@ -16,7 +16,7 @@ import {
 } from "./PlayerCard.styled";
 
 interface Props {
-  player: Player;
+  player: Omit<Player, "links">;
 }
 
 export const PlayerCard = ({
