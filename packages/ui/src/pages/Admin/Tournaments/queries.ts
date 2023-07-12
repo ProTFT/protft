@@ -48,7 +48,7 @@ export type CreateTournamentVariables = Pick<
 export const CREATE_TOURNAMENT_QUERY = graphql(`
   mutation createTournament(
     $name: String!
-    $region: [String]
+    $region: [String!]!
     $host: String
     $participantsNumber: Int
     $prizePool: Float

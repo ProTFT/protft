@@ -2,11 +2,11 @@ name: deploy-frontend-s3-amateur
 
 on:
   workflow_dispatch:
-  push:
-    branches:
-      - main
-    paths:
-      - packages/ui/**
+  # push:
+  #   branches:
+  #     - main
+  #   paths:
+  #     - packages/ui/**
 
 jobs:
   run:

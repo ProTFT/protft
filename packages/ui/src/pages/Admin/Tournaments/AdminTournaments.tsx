@@ -2,7 +2,6 @@ import { useCallback, useRef, useState } from "react";
 import { Link } from "react-router-dom";
 import { useMutation, useQuery } from "urql";
 import { ProTFTButton } from "../../../components/Button/Button";
-import { Tournament } from "../../../graphql/schema";
 import { TournamentListItem } from "../../Tournaments/TournamentListItem/TournamentListItem";
 import { StyledAdminBar } from "../Components/AdminBar/AdminBar.styled";
 import { useToast } from "../Components/Toast/Toast";
@@ -12,8 +11,6 @@ import {
   StyledTournamentList,
 } from "./AdminTournaments.styled";
 import {
-  CreateTournamentResult,
-  CreateTournamentVariables,
   CREATE_PLAYER_SLUGS_MUTATION,
   CREATE_TOURNAMENT_QUERY,
   TournamentsQueryResult,
@@ -22,6 +19,7 @@ import {
 import { useObserver } from "../../../hooks/useObserver";
 import { usePagination } from "../../../hooks/usePagination";
 import { SearchField } from "../../../components/SearchFilterBar/SearchField";
+import { CreateTournamentMutationVariables } from "../../../gql/graphql";
 
 export const ADMIN_TOURNAMENTS_PATH = "/admin/tournaments";
 
@@ -39,15 +37,12 @@ export const AdminTournaments = () => {
     variables: { searchQuery, ...paginationArgs },
   });
 
-  const [, createTournament] = useMutation<
-    CreateTournamentResult,
-    CreateTournamentVariables
-  >(CREATE_TOURNAMENT_QUERY);
+  const [, createTournament] = useMutation(CREATE_TOURNAMENT_QUERY);
 
   const [, createPlayerSlugs] = useMutation(CREATE_PLAYER_SLUGS_MUTATION);
 
   const onSubmit = useCallback(
-    (tournament: Omit<Tournament, "id" | "set">) =>
+    (tournament: CreateTournamentMutationVariables) =>
       createTournament({
         ...tournament,
       }),
