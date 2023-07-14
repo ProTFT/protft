@@ -15,7 +15,7 @@ export class TournamentsFieldsService {
     });
 
     if (currentDate > tournamentEndDate) {
-      return 0;
+      return null;
     }
 
     const stages = await this.stagesService.findAllByTournament(id, ["rounds"]);
@@ -31,7 +31,7 @@ export class TournamentsFieldsService {
     });
 
     if (!nextStage) {
-      return 0;
+      return null;
     }
 
     const nextStageDateTime = DateTime.fromISO(nextStage.startDateTime);

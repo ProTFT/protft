@@ -7,7 +7,7 @@ import {
 } from "./TournamentContent.styled";
 
 interface Props {
-  nextStartTime: number;
+  nextStartTime?: number | null;
 }
 
 const formatRemainingTime = (duration: number) => {
@@ -19,6 +19,8 @@ const formatRemainingTime = (duration: number) => {
 
   return stringHours + ":" + stringMinutes;
 };
+
+const ONE_DAY_IN_MS = 86400000;
 
 export const OngoingTournamentTimeIndicator = ({ nextStartTime }: Props) => {
   const [remainingTime, setRemainingTime] = useState<number>(
@@ -34,6 +36,14 @@ export const OngoingTournamentTimeIndicator = ({ nextStartTime }: Props) => {
       clearInterval(timer);
     };
   }, []);
+
+  if (
+    nextStartTime === null ||
+    nextStartTime === undefined ||
+    nextStartTime >= ONE_DAY_IN_MS
+  ) {
+    return null;
+  }
 
   if (nextStartTime <= 0 || (nextStartTime && !remainingTime)) {
     return <LiveIndicator />;

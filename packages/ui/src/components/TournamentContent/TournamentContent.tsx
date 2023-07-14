@@ -69,7 +69,7 @@ export const TournamentContent = ({
           <StyledTournamentTitle>{name}</StyledTournamentTitle>
         </StyledTitleContainer>
         {isOngoing && (
-          <OngoingTournamentTimeIndicator nextStartTime={nextStartTime || 0} />
+          <OngoingTournamentTimeIndicator nextStartTime={nextStartTime} />
         )}
         {/* {nextStartTime && nextStartTime} */}
         {finalPosition && <PlayerPositionLabel position={finalPosition} />}

@@ -23,7 +23,7 @@ describe("TournamentsFieldsService", () => {
     const minutesToMs = (minutes: number) => minutes * 60 * 1000;
     const mockTournament = tournament({ endDate: new Date(2023, 5, 2, 13) });
 
-    it("if tournament is in the past, should return 0", async () => {
+    it("if tournament is in the past, should return null", async () => {
       const dateIn2022 = new Date(2022, 1, 1);
       const dateIn2023 = new Date(2023, 5, 31);
       const tournamentIn2022 = tournament({ endDate: dateIn2022 });
@@ -31,7 +31,7 @@ describe("TournamentsFieldsService", () => {
 
       const response = await service.findNextStageStartTime(tournamentIn2022);
 
-      expect(response).toBe(0);
+      expect(response).toBe(null);
     });
 
     it("if we are 23 hours away from the stage start, should return 23 hours in ms", async () => {
@@ -91,7 +91,7 @@ describe("TournamentsFieldsService", () => {
 
       const response = await service.findNextStageStartTime(mockTournament);
 
-      expect(response).toBe(0);
+      expect(response).toBe(null);
     });
 
     it("if we are 1h30 past the stage start, it has one round, and has next stage should return the next stage countdown", async () => {
