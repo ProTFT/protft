@@ -1,4 +1,4 @@
-import { useEffect, useRef } from "react";
+import { useEffect, useMemo, useRef } from "react";
 import { useQuery } from "urql";
 import { colors } from "../../../design/colors";
 import { useObserver } from "../../../hooks/useObserver";
@@ -26,6 +26,16 @@ export const OngoingTournamentList = () => {
   const [{ data }, refetch] = useQuery<OngoingTournamentsQueryResult>({
     query: ONGOING_TOURNAMENTS_QUERY,
   });
+  const orderedOngoing = useMemo(() => {
+    const [nullStartTime, withStartTime] = [
+      data?.ongoingTournaments.filter((t) => t.nextStartTime === null) ?? [],
+      data?.ongoingTournaments.filter((t) => t.nextStartTime !== null) ?? [],
+    ];
+    return [
+      ...[...withStartTime].sort((a, b) => a.nextStartTime! - b.nextStartTime!),
+      ...nullStartTime,
+    ];
+  }, [data?.ongoingTournaments]);
   const isFocused = usePageVisibility();
 
   useEffect(() => {
@@ -34,13 +44,13 @@ export const OngoingTournamentList = () => {
     }
   }, [isFocused, refetch]);
 
-  if (!data?.ongoingTournaments.length) {
+  if (!orderedOngoing) {
     return null;
   }
 
   return (
     <TournamentBaseList
-      tournaments={data?.ongoingTournaments}
+      tournaments={orderedOngoing}
       color={colors.darkPurple}
       isOngoing
     />
