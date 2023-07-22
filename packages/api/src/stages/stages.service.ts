@@ -8,6 +8,7 @@ import { LobbiesService } from "../lobbies/lobbies.service";
 import { createLobbyName } from "../lobbies/lobby.logic";
 import { RoundsService } from "../rounds/rounds.service";
 import { StagePlayerInfo } from "../stage-player-infos/stage-player-info.entity";
+import { ApplyTiebreakersArgs } from "./dto/apply-tiebreakers.args";
 import { CreateLobbiesResponse } from "./dto/create-lobbies.result";
 import {
   CreateStagePlayerArgs,
@@ -160,6 +161,16 @@ export class StagesService {
     );
 
     return this.createStagePlayers({ stageId, playerIds });
+  }
+
+  async applyTiebreakersToAll({ stageId }: ApplyTiebreakersArgs) {
+    const { tournamentId, tiebreakers } = await this.findOne(stageId);
+    const allStages = await this.findAllByTournament(tournamentId);
+    const updatedStages = allStages.map((stage) => ({
+      ...stage,
+      tiebreakers,
+    }));
+    return this.stageRepository.save(updatedStages);
   }
 
   private async createRounds(stageId: number, roundCount: number) {

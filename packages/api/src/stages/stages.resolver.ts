@@ -15,6 +15,7 @@ import { PointSchemasService } from "../points/points.service";
 import { RoundsService } from "../rounds/rounds.service";
 import { StagePlayerInfo } from "../stage-player-infos/stage-player-info.entity";
 import { StagePlayerInfosService } from "../stage-player-infos/stage-player-infos.service";
+import { ApplyTiebreakersArgs } from "./dto/apply-tiebreakers.args";
 import { CreateLobbiesResponse } from "./dto/create-lobbies.result";
 import {
   CreateStagePlayerArgs,
@@ -166,5 +167,11 @@ export class StagesResolver {
   @Mutation(() => StagePlayerInfo)
   async updateStagePlayer(@Args() args: UpdateStagePlayerArgs) {
     return this.stagePlayerInfosService.updateOne(args);
+  }
+
+  @UseGuards(GqlJwtAuthGuard)
+  @Mutation(() => [Stage])
+  async applyTiebreakersToAllStages(@Args() args: ApplyTiebreakersArgs) {
+    return this.stagesService.applyTiebreakersToAll(args);
   }
 }

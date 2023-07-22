@@ -47,6 +47,7 @@ const documents = {
     "\n  query oneStageTiebreakers($id: Int!) {\n    stage(id: $id) {\n      id\n      tiebreakers\n    }\n  }\n": types.OneStageTiebreakersDocument,
     "\n  mutation updateTiebreakers($id: Int!, $tiebreakers: [Int!]!) {\n    updateTiebreakers(id: $id, tiebreakers: $tiebreakers) {\n      id\n    }\n  }\n": types.UpdateTiebreakersDocument,
     "\n  mutation carryOverPointsFromLastStage($stageId: Int!) {\n    carryOverPointsFromLastStage(stageId: $stageId) {\n      success\n    }\n  }\n": types.CarryOverPointsFromLastStageDocument,
+    "\n  mutation applyTiebreakersToAllStages($stageId: Int!) {\n    applyTiebreakersToAllStages(stageId: $stageId) {\n      id\n    }\n  }\n": types.ApplyTiebreakersToAllStagesDocument,
     "\n  query oneStage($id: Int!) {\n    stage(id: $id) {\n      id\n      name\n      description\n      sequence\n      pointSchemaId\n      roundCount\n      qualifiedCount\n      stageType\n      startDateTime\n    }\n  }\n": types.OneStageDocument,
     "\n  query oneTournamentWithSet($id: Int!) {\n    tournament(id: $id) {\n      id\n      name\n      set {\n        id\n        name\n      }\n    }\n  }\n": types.OneTournamentWithSetDocument,
     "\n  query playersPaginated(\n    $region: String\n    $country: String\n    $searchQuery: String\n  ) {\n    players(\n      region: $region\n      country: $country\n      searchQuery: $searchQuery\n      take: 10\n      skip: 0\n    ) {\n      id\n      name\n      country\n      region\n    }\n  }\n": types.PlayersPaginatedDocument,
@@ -236,6 +237,10 @@ export function graphql(source: "\n  mutation updateTiebreakers($id: Int!, $tieb
  * The graphql function is used to parse GraphQL queries into a document that can be used by GraphQL clients.
  */
 export function graphql(source: "\n  mutation carryOverPointsFromLastStage($stageId: Int!) {\n    carryOverPointsFromLastStage(stageId: $stageId) {\n      success\n    }\n  }\n"): (typeof documents)["\n  mutation carryOverPointsFromLastStage($stageId: Int!) {\n    carryOverPointsFromLastStage(stageId: $stageId) {\n      success\n    }\n  }\n"];
+/**
+ * The graphql function is used to parse GraphQL queries into a document that can be used by GraphQL clients.
+ */
+export function graphql(source: "\n  mutation applyTiebreakersToAllStages($stageId: Int!) {\n    applyTiebreakersToAllStages(stageId: $stageId) {\n      id\n    }\n  }\n"): (typeof documents)["\n  mutation applyTiebreakersToAllStages($stageId: Int!) {\n    applyTiebreakersToAllStages(stageId: $stageId) {\n      id\n    }\n  }\n"];
 /**
  * The graphql function is used to parse GraphQL queries into a document that can be used by GraphQL clients.
  */

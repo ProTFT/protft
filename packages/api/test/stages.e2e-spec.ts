@@ -105,6 +105,7 @@ const fakeStagesService = {
   generateLobbies: jest.fn().mockResolvedValue(mockGeneratedLobbies),
   createStagePlayers: jest.fn().mockResolvedValue(mockStages[0]),
   createStagePlayerByName: jest.fn().mockResolvedValue(mockStages[0]),
+  applyTiebreakersToAll: jest.fn().mockResolvedValue(mockStages),
 };
 
 const fakeLobbiesService = {
@@ -507,6 +508,26 @@ describe("Stages (e2e)", () => {
         expect(response.body).toStrictEqual({
           data: { updateStagePlayer: mockStagePlayers[0] },
         });
+      });
+    });
+  });
+
+  describe("applyTiebreakersToAll", () => {
+    it("should call service", async () => {
+      const response = await request(app.getHttpServer())
+        .post(graphql)
+        .send({
+          query: `
+          mutation {
+            applyTiebreakersToAllStages(stageId: 1) {
+              id
+              name
+            }
+          }`,
+        });
+
+      expect(response.body).toStrictEqual({
+        data: { applyTiebreakersToAllStages: mockStages },
       });
     });
   });

@@ -357,4 +357,30 @@ describe("Stages service", () => {
       expect(response).toStrictEqual(getAll());
     });
   });
+
+  describe("applyTiebreakersToAll", () => {
+    it("should save all related stages", async () => {
+      const mockOtherStageId = 345;
+      const mockAnotherStageId = 678;
+      const tiebreakers = [1, 2, 3];
+
+      stageRepository.findOne = jest.fn().mockResolvedValue({
+        tournamentId: mockTournamentId,
+        tiebreakers,
+      });
+      stageRepository.find = jest
+        .fn()
+        .mockResolvedValue([
+          { id: mockStageId },
+          { id: mockOtherStageId },
+          { id: mockAnotherStageId },
+        ]);
+      await service.applyTiebreakersToAll({ stageId: mockStageId });
+      expect(stageRepository.save).toHaveBeenCalledWith([
+        { id: mockStageId, tiebreakers },
+        { id: mockOtherStageId, tiebreakers },
+        { id: mockAnotherStageId, tiebreakers },
+      ]);
+    });
+  });
 });

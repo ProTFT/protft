@@ -302,6 +302,7 @@ export interface IMutation {
     generateLobbies(stageId: number, roundsPerLobbyGroup: number): CreateLobbiesResponse | Promise<CreateLobbiesResponse>;
     createStagePlayersByName(stageId: number, playerNames: string): Stage | Promise<Stage>;
     updateStagePlayer(stageId: number, playerId: number, extraPoints?: Nullable<number>, tiebreakerRanking?: Nullable<number>): StagePlayerInfo | Promise<StagePlayerInfo>;
+    applyTiebreakersToAllStages(stageId: number): Stage[] | Promise<Stage[]>;
     createLobby(stageId: number, sequence: number, lobbyGroupId: number, name?: Nullable<string>): Lobby | Promise<Lobby>;
     createNLobby(stageId: number, lobbyGroupId: number, quantity: number): Lobby[] | Promise<Lobby[]>;
     updateLobby(id: number, stageId: number, sequence: number, lobbyGroupId: number, name?: Nullable<string>): Lobby | Promise<Lobby>;
