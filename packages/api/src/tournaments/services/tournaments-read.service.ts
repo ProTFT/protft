@@ -14,6 +14,7 @@ import {
   GetTournamentsArgs,
 } from "../gql/get-tournaments.args";
 import { Tournament } from "../entities/tournament.entity";
+import { GetTournamentWithStatsArgs } from "../gql/get-tournaments-with-stats.args";
 
 @Injectable()
 export class TournamentsReadService {
@@ -48,10 +49,13 @@ export class TournamentsReadService {
     return this.tournamentRepository.findOne({ slug });
   }
 
-  async findWithStats(searchQuery?: string): Promise<Tournament[]> {
+  async findWithStats({
+    searchQuery,
+    setIds,
+  }: GetTournamentWithStatsArgs): Promise<Tournament[]> {
     const [past, current] = await Promise.all([
-      this.findPast({ searchQuery }),
-      this.findOngoing(searchQuery),
+      this.findPast({ searchQuery, setId: setIds }),
+      this.findOngoing({ searchQuery, setIds }),
     ]);
     return [...current, ...past];
   }
@@ -70,9 +74,12 @@ export class TournamentsReadService {
     );
   }
 
-  findOngoing(searchQuery?: string): Promise<Tournament[]> {
+  findOngoing({
+    searchQuery,
+    setIds,
+  }: GetTournamentWithStatsArgs): Promise<Tournament[]> {
     return this.customRepository.findWithPagination(
-      { searchQuery },
+      { searchQuery, setId: setIds },
       { skip: 0, take: 100 },
       {
         condition: {

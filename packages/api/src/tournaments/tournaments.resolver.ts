@@ -72,7 +72,7 @@ export class TournamentsResolver extends BaseResolver {
 
   @Query(() => [Tournament])
   async ongoingTournaments() {
-    return this.tournamentsReadService.findOngoing();
+    return this.tournamentsReadService.findOngoing({});
   }
 
   @Query(() => [Tournament])
@@ -95,10 +95,8 @@ export class TournamentsResolver extends BaseResolver {
   }
 
   @Query(() => [Tournament])
-  async tournamentsWithStats(
-    @Args() { searchQuery }: GetTournamentWithStatsArgs,
-  ) {
-    return this.tournamentsReadService.findWithStats(searchQuery);
+  async tournamentsWithStats(@Args() args: GetTournamentWithStatsArgs) {
+    return this.tournamentsReadService.findWithStats(args);
   }
 
   @ResolveField()

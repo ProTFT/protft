@@ -34,8 +34,8 @@ export interface PlayersStatsQueryResult {
 }
 
 export interface PlayerStatsQueryVariables {
-  setId?: number;
-  region?: string;
+  setIds?: number[];
+  regions?: string[];
   take?: number;
   skip?: number;
   tournamentIds?: number[];
@@ -46,8 +46,8 @@ export interface PlayerStatsQueryVariables {
 
 export const PLAYER_STATS_QUERY = graphql(`
   query stats(
-    $setId: Int
-    $region: String
+    $setIds: [Int!]
+    $regions: [String!]
     $take: Int
     $skip: Int
     $tournamentIds: [Int!]
@@ -56,8 +56,8 @@ export const PLAYER_STATS_QUERY = graphql(`
     $minimumGames: Int
   ) {
     playerStats(
-      setId: $setId
-      region: $region
+      setIds: $setIds
+      regions: $regions
       take: $take
       skip: $skip
       tournamentIds: $tournamentIds

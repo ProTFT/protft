@@ -2,8 +2,8 @@ import { RegionCode, regionCodeToName } from "../../../formatter/Region";
 import { DataSelect } from "../DataSelect/DataSelect";
 
 interface Props {
-  value: string;
-  onValueChange: (newValue: string | undefined) => void;
+  value: string[];
+  onValueChange: (newValue: string[] | undefined) => void;
 }
 
 type SelectRegion = { id: string; label: string };
@@ -17,14 +17,15 @@ export const RegionSelect = ({ value, onValueChange }: Props) => {
   const fetching = false;
 
   return (
-    <DataSelect<string, SelectRegion>
+    <DataSelect<string[], SelectRegion>
       data={data.regions}
       valueKey="id"
       labelKey="label"
       value={value}
       onValueChange={onValueChange}
       isLoading={fetching}
-      placeholder="NA, EMEA, China"
+      placeholder="Select"
+      isMulti
     />
   );
 };

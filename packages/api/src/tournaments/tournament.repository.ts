@@ -34,7 +34,7 @@ export class TournamentRepository {
     const regionFilter = filters.region && {
       region: Raw(includes(filters.region)),
     };
-    const setFilter = filters.setId && { setId: In(filters.setId) };
+    const setFilter = filters.setId.length && { setId: In(filters.setId) };
     return this.repository.find({
       where: {
         ...searchQueryFilter,

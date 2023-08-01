@@ -1,4 +1,4 @@
-import { Suspense, useCallback, useState } from "react";
+import { Suspense, useCallback, useMemo, useState } from "react";
 import { Helmet } from "react-helmet";
 import { colors } from "../../design/colors";
 import { ArrowRightSimpleIcon } from "../../design/icons/ArrowRightSimple";
@@ -30,8 +30,8 @@ const defaultSorting: { [key in SortColumn]: boolean } = {
 };
 
 const defaultFilter: { [key in Filters]: any } = {
-  [Filters.REGION]: "",
-  [Filters.SET]: 0,
+  [Filters.REGION]: [],
+  [Filters.SET]: [],
   [Filters.TOURNAMENTS]: [],
   [Filters.MINIMUM_GAMES]: 1,
 };
@@ -44,7 +44,7 @@ export const Stats = () => {
   const [regionFilter, setRegionFilter] = useState(
     defaultFilter[Filters.REGION]
   );
-  const [setFilter, setSetFilter] = useState<number>(
+  const [setFilter, setSetFilter] = useState<number[]>(
     defaultFilter[Filters.SET]
   );
   const [tournamentFilter, setTournamentFilter] = useState<number[]>(
@@ -89,6 +89,11 @@ export const Stats = () => {
     setPage((curr) => curr + 1);
   }, []);
 
+  const isSetSelectDisabled = useMemo(
+    () => Boolean(!setFilter.length && tournamentFilter.length),
+    [setFilter.length, tournamentFilter.length]
+  );
+
   const { paginationArgs } = usePagination(page, ITEMS_PER_PAGE);
 
   return (
@@ -98,30 +103,34 @@ export const Stats = () => {
       </Helmet>
       <StyledStatsFilters>
         <StyledFilterContainer>
-          <StyledFilterLabel>Tournaments</StyledFilterLabel>
-          <TournamentSelect
-            value={tournamentFilter}
-            onValueChange={onValueChange<number[]>(
-              setTournamentFilter,
-              defaultFilter[Filters.TOURNAMENTS]
-            )}
-          />
-        </StyledFilterContainer>
-        <StyledFilterContainer>
           <StyledFilterLabel>Set</StyledFilterLabel>
           <SetSelect
             value={setFilter}
-            onValueChange={onValueChange<number>(
+            onValueChange={onValueChange<number[]>(
               setSetFilter,
               defaultFilter[Filters.SET]
             )}
+            isDisabled={isSetSelectDisabled}
           />
         </StyledFilterContainer>
         <StyledFilterContainer>
-          <StyledFilterLabel>Region</StyledFilterLabel>
+          <StyledFilterLabel>Tournaments</StyledFilterLabel>
+          <Suspense>
+            <TournamentSelect
+              value={tournamentFilter}
+              onValueChange={onValueChange<number[]>(
+                setTournamentFilter,
+                defaultFilter[Filters.TOURNAMENTS]
+              )}
+              setIds={setFilter}
+            />
+          </Suspense>
+        </StyledFilterContainer>
+        <StyledFilterContainer>
+          <StyledFilterLabel>Player region</StyledFilterLabel>
           <RegionSelect
             value={regionFilter}
-            onValueChange={onValueChange<string>(
+            onValueChange={onValueChange<string[]>(
               setRegionFilter,
               defaultFilter[Filters.REGION]
             )}
@@ -145,7 +154,9 @@ export const Stats = () => {
         <StyledPlayerTable>
           <StyledPlayerTableHeader>
             <StyledPlayerTableHeaderRow>
-              <StyledPlayerTableHeaderData>Player</StyledPlayerTableHeaderData>
+              <StyledPlayerTableHeaderData alignment={"left"}>
+                Player
+              </StyledPlayerTableHeaderData>
               <StyledPlayerTableHeaderData
                 onClick={changeSorting(SortColumn.AVERAGE_POSITION)}
               >

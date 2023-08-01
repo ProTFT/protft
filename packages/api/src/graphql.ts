@@ -261,7 +261,7 @@ export interface IQuery {
     ongoingTournaments(): Tournament[] | Promise<Tournament[]>;
     upcomingTournaments(region?: Nullable<string[]>, setId?: Nullable<number[]>, searchQuery?: Nullable<string>, take?: Nullable<number>, skip?: Nullable<number>): Tournament[] | Promise<Tournament[]>;
     pastTournaments(region?: Nullable<string[]>, setId?: Nullable<number[]>, searchQuery?: Nullable<string>, take?: Nullable<number>, skip?: Nullable<number>): Tournament[] | Promise<Tournament[]>;
-    tournamentsWithStats(searchQuery?: Nullable<string>): Tournament[] | Promise<Tournament[]>;
+    tournamentsWithStats(searchQuery?: Nullable<string>, setIds?: Nullable<number[]>): Tournament[] | Promise<Tournament[]>;
     stages(tournamentId: number): Stage[] | Promise<Stage[]>;
     stage(id: number): Stage | Promise<Stage>;
     playersFromPreviousStage(id: number): StagePlayerInfo[] | Promise<StagePlayerInfo[]>;
@@ -279,7 +279,7 @@ export interface IQuery {
     resultsByStage(stageId: number): PlayerResults[] | Promise<PlayerResults[]>;
     lobbyResultsByStage(stageId: number): LobbyGroupWithLobbies[] | Promise<LobbyGroupWithLobbies[]>;
     resultsByLobbyGroup(lobbyGroupId: number): PlayerResults[] | Promise<PlayerResults[]>;
-    playerStats(setId?: Nullable<number>, tournamentIds?: Nullable<number[]>, region?: Nullable<string>, sort?: Nullable<SortOption>, searchQuery?: Nullable<string>, take?: Nullable<number>, skip?: Nullable<number>, minimumGames?: Nullable<number>): PlayerWithStats[] | Promise<PlayerWithStats[]>;
+    playerStats(setIds?: Nullable<number[]>, tournamentIds?: Nullable<number[]>, regions?: Nullable<string[]>, sort?: Nullable<SortOption>, searchQuery?: Nullable<string>, take?: Nullable<number>, skip?: Nullable<number>, minimumGames?: Nullable<number>): PlayerWithStats[] | Promise<PlayerWithStats[]>;
     resultsOfTournament(tournamentId: number): TournamentResult[] | Promise<TournamentResult[]>;
     playerLink(id: number): PlayerLink | Promise<PlayerLink>;
     streamsOfTournament(tournamentId: number): TournamentStream[] | Promise<TournamentStream[]>;

@@ -343,10 +343,10 @@ export class RoundResultsService {
   }
 
   private findStats({
-    setId,
+    setIds,
     skip,
     take = 10,
-    region,
+    regions,
     tournamentIds,
     sort,
     minimumGames = 0,
@@ -383,15 +383,17 @@ export class RoundResultsService {
               .innerJoin("tournament", "t", "t.id = s.tournamentId")
               .groupBy("player.id");
 
-            if (region) {
-              query = query.andWhere("player.region = :region", { region });
+            if (regions?.length) {
+              query = query.andWhere("player.region IN (:...regions)", {
+                regions,
+              });
             }
 
-            if (setId) {
-              query = query.andWhere("t.setId = :setId", { setId });
+            if (setIds?.length) {
+              query = query.andWhere("t.setId IN (:...setIds)", { setIds });
             }
 
-            if (tournamentIds && tournamentIds.length) {
+            if (tournamentIds?.length) {
               query = query.andWhere("t.id IN (:...tournamentIds)", {
                 tournamentIds,
               });

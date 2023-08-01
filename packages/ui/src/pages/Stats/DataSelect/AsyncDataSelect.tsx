@@ -85,6 +85,7 @@ export const AsyncDataSelect = <
       defaultOptions={options}
       cacheOptions={true}
       isSearchable={true}
+      closeMenuOnSelect={false}
     />
   );
 };
