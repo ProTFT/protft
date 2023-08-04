@@ -3,6 +3,7 @@ import { Helmet } from "react-helmet";
 import { useParams } from "react-router-dom";
 import { useQuery } from "urql";
 import { TournamentContent } from "../../components/TournamentContent/TournamentContent";
+import { formatDateFromDB } from "../../formatter/Date";
 import { Stage } from "../../graphql/schema";
 import { useIsMobile } from "../../hooks/useIsMobile";
 import { useTracking } from "../../hooks/useTracking";
@@ -43,7 +44,9 @@ export const Tournament = () => {
       startDate,
       endDate,
     } = data?.tournamentBySlug ?? {};
-    return `${name} is a competitive Teamfight Tactics (TFT) tournament in the ${region} region. From ${startDate} to ${endDate}, ${participantsNumber} players will face off to win a prize of ${prizePool} ${currency}.`;
+    const formattedStartDate = formatDateFromDB(startDate);
+    const formattedEndDate = formatDateFromDB(endDate);
+    return `${name} is a competitive Teamfight Tactics (TFT) tournament in the ${region} region. From ${formattedStartDate} to ${formattedEndDate}, ${participantsNumber} players will face off to win a prize of ${prizePool} ${currency}.`;
   }, [data?.tournamentBySlug]);
 
   const [open, setOpen] = useState(false);
