@@ -80,7 +80,7 @@ export const Tournament = () => {
     <>
       <Helmet>
         <title>{data?.tournamentBySlug.name}</title>
-        <meta name="description">{description}</meta>
+        <meta name="description" content={description} />
         <script type="application/ld+json">
           {getEventMetadata({
             name: data!.tournamentBySlug.name,

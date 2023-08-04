@@ -37,7 +37,7 @@ export const Player = () => {
     <StyledPageContainer>
       <Helmet>
         <title>{data?.playerBySlug.name || "Loading"}</title>
-        <meta name="description">{description}</meta>
+        <meta name="description" content={description} />
       </Helmet>
       <Header player={data?.playerBySlug} />
       <Suspense fallback={<StatsSkeleton />}>

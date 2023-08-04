@@ -100,6 +100,11 @@ export const Stats = () => {
     <StyledContainer>
       <Helmet>
         <title>Stats</title>
+        <meta
+          name="description"
+          content="Check out competitive stats for professional tournaments of Teamfight
+          Tactics (TFT)"
+        />
       </Helmet>
       <StyledStatsFilters>
         <StyledFilterContainer>
