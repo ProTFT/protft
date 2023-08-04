@@ -34,8 +34,16 @@ export const Tournament = () => {
   });
 
   const description = useMemo(() => {
-    const tournament = data?.tournamentBySlug;
-    return `${tournament?.name} is a competitive Teamfight Tactics (TFT) tournament in the ${tournament?.region} region. ${tournament?.participantsNumber} players will face off to win a prize of ${tournament?.prizePool} ${tournament?.currency}.`;
+    const {
+      name,
+      region,
+      participantsNumber,
+      prizePool,
+      currency,
+      startDate,
+      endDate,
+    } = data?.tournamentBySlug ?? {};
+    return `${name} is a competitive Teamfight Tactics (TFT) tournament in the ${region} region. From ${startDate} to ${endDate}, ${participantsNumber} players will face off to win a prize of ${prizePool} ${currency}.`;
   }, [data?.tournamentBySlug]);
 
   const [open, setOpen] = useState(false);
@@ -72,6 +80,7 @@ export const Tournament = () => {
     <>
       <Helmet>
         <title>{data?.tournamentBySlug.name}</title>
+        <meta name="description">{description}</meta>
         <script type="application/ld+json">
           {getEventMetadata({
             name: data!.tournamentBySlug.name,
