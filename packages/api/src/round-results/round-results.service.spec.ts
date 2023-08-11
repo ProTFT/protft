@@ -433,8 +433,8 @@ describe("RoundResults service", () => {
 
     it("if filters are passed, should apply", async () => {
       const filterPayload = {
-        region: "region",
-        setId: 1,
+        regions: ["region"],
+        setIds: [1],
         tournamentIds: [1, 2, 3],
       };
       await service.playerStats(filterPayload);

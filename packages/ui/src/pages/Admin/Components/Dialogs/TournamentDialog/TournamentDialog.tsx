@@ -40,6 +40,10 @@ const SET_OPTIONS = [
     value: "9",
     name: "9 - Runeterra Reforged",
   },
+  {
+    value: "10",
+    name: "10 - ?",
+  },
 ];
 
 const TOURNAMENT_FORM_FIELDS: FormFieldProps[] = [

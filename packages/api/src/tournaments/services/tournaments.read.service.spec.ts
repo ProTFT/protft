@@ -104,7 +104,7 @@ describe("TournamentsReadService", () => {
         },
       ];
       findWithPaginationSpy.mockResolvedValue(tournaments);
-      const response = await service.findWithStats();
+      const response = await service.findWithStats({});
 
       expect(findWithPaginationSpy).toHaveBeenCalledTimes(2);
       expect(response).toStrictEqual([...tournaments, ...tournaments]);
@@ -125,7 +125,7 @@ describe("TournamentsReadService", () => {
         },
       ];
       findWithPaginationSpy.mockResolvedValue(tournaments);
-      const response = await service.findWithStats(searchQuery);
+      const response = await service.findWithStats({ searchQuery });
 
       expect(findWithPaginationSpy).toHaveBeenCalledTimes(2);
       expect(findWithPaginationSpy).toHaveBeenNthCalledWith(
@@ -147,7 +147,7 @@ describe("TournamentsReadService", () => {
   describe("findOngoing", () => {
     it("should call repository", async () => {
       const searchQuery = "test";
-      await service.findOngoing(searchQuery);
+      await service.findOngoing({ searchQuery });
 
       expect(findWithPaginationSpy).toHaveBeenCalledWith(
         expect.objectContaining({ searchQuery }),
