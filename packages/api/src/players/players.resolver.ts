@@ -13,12 +13,15 @@ import { PlayerFilterMeta } from "./dto/get-player-filter-meta.out";
 import { GetPlayerArgs } from "./dto/get-players.args";
 import { Player, PlayerCalculatedStats } from "./player.entity";
 import { PlayersService } from "./players.service";
-import { UseGuards } from "@nestjs/common";
+import { UseGuards, UseInterceptors } from "@nestjs/common";
 import { GqlJwtAuthGuard } from "../auth/jwt-auth.guard";
 import { GetPlayerStatsArgs } from "./dto/get-player-stats.args";
 import { TournamentsPlayed } from "./dto/get-tournaments-played.out";
 import { UpdatePlayerArgs } from "./dto/update-player.args";
 import { PlayerLink } from "../player-links/player-link.entity";
+import { CacheInterceptor } from "../cache/cache.interceptor";
+import { CacheKey } from "../cache/cache-key.decorator";
+import { ExtractPlayerCacheKeyFromRequest } from "./players.cache";
 
 @Resolver(() => Player)
 export class PlayersResolver extends BaseResolver {
@@ -43,6 +46,8 @@ export class PlayersResolver extends BaseResolver {
     return this.playersService.findAll(filters, { take, skip }, { id: "DESC" });
   }
 
+  @CacheKey(ExtractPlayerCacheKeyFromRequest)
+  @UseInterceptors(CacheInterceptor)
   @Query(() => Player)
   async player(@Args("id", { type: () => Int }) id: number) {
     return this.playersService.findOne(id);
@@ -110,7 +115,7 @@ export class PlayersResolver extends BaseResolver {
     return this.playersService.deleteOne(id);
   }
 
-  // @UseGuards(GqlJwtAuthGuard)
+  @UseGuards(GqlJwtAuthGuard)
   @Mutation(() => Player)
   async mergePlayer(
     @Args("playerIdToMaintain", { type: () => Int }) playerIdToMaintain: number,

@@ -36,7 +36,7 @@ export const PlayerLinks = () => {
     AdminPlayerLinksQueryVariables
   >({
     query: PLAYER_LINKS_QUERY,
-    variables: { playerId: Number(playerId) },
+    variables: { id: Number(playerId) },
   });
 
   const [, createPlayerLink] = useMutation(CREATE_PLAYER_LINK_MUTATION);

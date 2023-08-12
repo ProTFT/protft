@@ -15,7 +15,7 @@ import { TypedDocumentNode as DocumentNode } from '@graphql-typed-document-node/
 const documents = {
     "\n  query sets {\n    sets {\n      id\n      name\n    }\n  }\n": types.SetsDocument,
     "\n  query listPointSchemas {\n    pointSchemas {\n      id\n      name\n    }\n  }\n": types.ListPointSchemasDocument,
-    "\n  query adminPlayerLinks($playerId: Int!) {\n    player(id: $playerId) {\n      id\n      links {\n        id\n        type\n        link\n      }\n    }\n  }\n": types.AdminPlayerLinksDocument,
+    "\n  query adminPlayerLinks($id: Int!) {\n    player(id: $id) {\n      id\n      links {\n        id\n        type\n        link\n      }\n    }\n  }\n": types.AdminPlayerLinksDocument,
     "\n  mutation createPlayerLink($playerId: Int!, $link: String!, $type: String!) {\n    createPlayerLink(playerId: $playerId, link: $link, type: $type) {\n      id\n    }\n  }\n": types.CreatePlayerLinkDocument,
     "\n  mutation deletePlayerLink($id: Int!) {\n    deletePlayerLink(id: $id) {\n      id\n    }\n  }\n": types.DeletePlayerLinkDocument,
     "\n  query adminPlayer($id: Int!) {\n    player(id: $id) {\n      id\n      name\n      country\n      region\n      slug\n      alias\n    }\n  }\n": types.AdminPlayerDocument,
@@ -112,7 +112,7 @@ export function graphql(source: "\n  query listPointSchemas {\n    pointSchemas 
 /**
  * The graphql function is used to parse GraphQL queries into a document that can be used by GraphQL clients.
  */
-export function graphql(source: "\n  query adminPlayerLinks($playerId: Int!) {\n    player(id: $playerId) {\n      id\n      links {\n        id\n        type\n        link\n      }\n    }\n  }\n"): (typeof documents)["\n  query adminPlayerLinks($playerId: Int!) {\n    player(id: $playerId) {\n      id\n      links {\n        id\n        type\n        link\n      }\n    }\n  }\n"];
+export function graphql(source: "\n  query adminPlayerLinks($id: Int!) {\n    player(id: $id) {\n      id\n      links {\n        id\n        type\n        link\n      }\n    }\n  }\n"): (typeof documents)["\n  query adminPlayerLinks($id: Int!) {\n    player(id: $id) {\n      id\n      links {\n        id\n        type\n        link\n      }\n    }\n  }\n"];
 /**
  * The graphql function is used to parse GraphQL queries into a document that can be used by GraphQL clients.
  */

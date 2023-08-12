@@ -7,6 +7,8 @@ import { InjectRepository } from "@nestjs/typeorm";
 import slugify from "slugify";
 import { Brackets, Raw, Repository } from "typeorm";
 import { EntityFieldsNames } from "typeorm/common/EntityFieldsNames";
+import { CacheService } from "../cache/cache.service";
+import { CacheCollections, CacheKeys } from "../cache/cache.types";
 import { likeNameOrAlias } from "../lib/DBCompositeFilters";
 import { isEqualName } from "../lib/DBRawFilter";
 import { PaginationArgs } from "../lib/dto/pagination.args";
@@ -46,6 +48,7 @@ export class PlayersService {
     private lobbyPlayerInfosService: LobbyPlayerInfosService,
     private stagePlayersInfosService: StagePlayerInfosService,
     private playerLinksService: PlayerLinksService,
+    private cacheService: CacheService,
   ) {}
 
   async findAll(
@@ -92,6 +95,9 @@ export class PlayersService {
       throw new NotFoundException("Player not found");
     }
     await this.playerRepository.update({ id }, payload);
+    await this.cacheService.delete(
+      `${CacheKeys[CacheCollections.PLAYERS]}/${id}`,
+    );
     return {
       ...player,
       ...payload,

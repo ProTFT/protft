@@ -1,8 +1,9 @@
 import { gql } from "urql";
+import { graphql } from "../../../../../gql";
 
-export const PLAYER_LINKS_QUERY = gql`
-  query adminPlayerLinks($playerId: Int!) {
-    player(id: $playerId) {
+export const PLAYER_LINKS_QUERY = graphql(`
+  query adminPlayerLinks($id: Int!) {
+    player(id: $id) {
       id
       links {
         id
@@ -11,7 +12,7 @@ export const PLAYER_LINKS_QUERY = gql`
       }
     }
   }
-`;
+`);
 
 export const CREATE_PLAYER_LINK_MUTATION = gql`
   mutation createPlayerLink($playerId: Int!, $link: String!, $type: String!) {

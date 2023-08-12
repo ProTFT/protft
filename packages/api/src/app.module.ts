@@ -27,6 +27,7 @@ import { PlayerLinksModule } from "./player-links/player-links.module";
 import { CircuitsModule } from "./circuits/circuits.module";
 import { PlayerAccountsModule } from "./player-accounts/player-accounts.module";
 import { ServersModule } from "./servers/servers.module";
+import { CacheModule } from "./cache/cache.module";
 
 @Module({
   imports: [
@@ -88,6 +89,7 @@ import { ServersModule } from "./servers/servers.module";
     CircuitsModule,
     PlayerAccountsModule,
     ServersModule,
+    CacheModule,
   ],
   controllers: [AppController],
   providers: [AppService],
