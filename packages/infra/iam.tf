@@ -18,6 +18,7 @@ resource "aws_iam_role" "ecs_task_role" {
 EOF
 
 inline_policy {
+  name = "ptft-ecs-task-access-dynamodb"
   policy = <<EOF
 {
   "Version": "2012-10-17",
@@ -25,14 +26,10 @@ inline_policy {
     {
       "Effect": "Allow",
       "Action": [
-        "dynamodb:UpdateTimeToLive",
-        "dynamodb:PutItem",
-        "dynamodb:ListTables",
-        "dynamodb:DeleteItem",
         "dynamodb:GetItem",
+        "dynamodb:PutItem",
         "dynamodb:Scan",
-        "dynamodb:Query",
-        "dynamodb:UpdateItem"
+        "dynamodb:BatchWriteItem"
       ],
       "Resource": "*"
     }

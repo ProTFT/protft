@@ -27,7 +27,7 @@ export const Header = ({ player }: Props) => {
       <StyledPlayerImage />
       <StyledPlayerInfo>
         <StyledPlayerName>{player?.name}</StyledPlayerName>
-        {player?.alias.length && (
+        {Boolean(player?.alias.length) && (
           <PlayerAlias>AKA: {formattedAlias}</PlayerAlias>
         )}
         <RegionsIndicator regionCodes={[player?.region || ""]} />
