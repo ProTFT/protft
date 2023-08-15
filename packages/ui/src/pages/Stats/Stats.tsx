@@ -3,6 +3,8 @@ import { Helmet } from "react-helmet";
 import { colors } from "../../design/colors";
 import { ArrowRightSimpleIcon } from "../../design/icons/ArrowRightSimple";
 import { usePagination } from "../../hooks/usePagination";
+import { useTracking } from "../../hooks/useTracking";
+import { TrackingEvents } from "../../tracking/Events";
 import { Filters, SortColumn, SortDirection, SortOption } from "./queries";
 import { RegionSelect } from "./RegionSelect/RegionSelect";
 import { SetSelect } from "./SetSelect/SetSelect";
@@ -40,8 +42,9 @@ const ITEMS_PER_PAGE = 20;
 
 export const Stats = () => {
   const [page, setPage] = useState(0);
+  const { trackEvent } = useTracking();
 
-  const [regionFilter, setRegionFilter] = useState(
+  const [regionFilter, setRegionFilter] = useState<string[]>(
     defaultFilter[Filters.REGION]
   );
   const [setFilter, setSetFilter] = useState<number[]>(
@@ -65,9 +68,23 @@ export const Stats = () => {
       ) =>
       (newValue?: T) => {
         changeFunction(newValue || defaultValue);
+        trackEvent(TrackingEvents.APPLY_FILTER, {
+          filters: [
+            "R",
+            ...regionFilter,
+            "S",
+            ...setFilter,
+            "T",
+            ...tournamentFilter,
+            "M",
+            minimumGamesFilter,
+            "N",
+            ...(Array.isArray(newValue) ? newValue : [newValue]),
+          ].join(","),
+        });
         setPage(0);
       },
-    []
+    [minimumGamesFilter, regionFilter, setFilter, tournamentFilter, trackEvent]
   );
 
   const changeSorting = useCallback(
