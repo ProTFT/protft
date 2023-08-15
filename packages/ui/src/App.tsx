@@ -23,6 +23,8 @@ import { AdminPlayers } from "./pages/Admin/Players/AdminPlayers";
 import { TournamentsProvider } from "./pages/Tournaments/TournamentsContext";
 import { PlayersProvider } from "./pages/Players/PlayersContext";
 import { AdminPlayer } from "./pages/Admin/Player/AdminPlayer";
+import { FloatingButton } from "./components/FloatingButton/FloatingButton";
+import { AboutIcon } from "./design/icons/About";
 
 const ProtectedRoutes = (props: any) => {
   const location = useLocation();
@@ -108,6 +110,15 @@ export const App = () => {
           />
         </Route>
       </Routes>
+      <a
+        href="https://forms.gle/Zfqnt2MTQCtpmivZ8"
+        target="_blank"
+        rel="noreferrer"
+      >
+        <FloatingButton>
+          <AboutIcon color="black" /> FEEDBACK
+        </FloatingButton>
+      </a>
       <Footer />
     </div>
   );
