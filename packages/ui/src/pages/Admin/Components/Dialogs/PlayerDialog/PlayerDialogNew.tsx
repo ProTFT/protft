@@ -24,13 +24,15 @@ const PLAYER_DIALOG_FIELDS: FormFieldProps[] = [
     name: "country",
     type: "select",
     options: [
+      { name: "No Country EMEA", value: "!RL", key: "!RL" },
+      { name: "No Country SEA", value: "!EA", key: "!EA" },
+      { name: "No Country OCE", value: "!OC", key: "!OC" },
+      { name: "No Country LATAM", value: "!LA", key: "!LA" },
       ...lookup.countries.map((country) => ({
         name: `${country.iso3} - ${country.country}`,
         value: country.iso3,
         key: country.iso2,
       })),
-      { name: "No Country EMEA", value: "!RL", key: "!RL" },
-      { name: "No Country SEA", value: "!EA", key: "!EA" },
     ],
   },
 ];
