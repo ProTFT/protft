@@ -3,6 +3,7 @@ import { RegionCode, regionCodeToName } from "../../formatter/Region";
 import { TextIconHorizontalContainer } from "../Layout/HorizontalContainer/TextIconHorizontalContainer.styled";
 import { StyledRegionText } from "./RegionIndicator.styled";
 import { byIso } from "country-code-lookup";
+import { S3_FOLDER_PATH } from "../../aws/Constants";
 
 interface Props {
   regionCodes?: string[];
@@ -23,7 +24,7 @@ const SingleRegionIndicator = ({ regionCode, showName }: SingleProps) => {
   return (
     <TextIconHorizontalContainer key={regionCode}>
       <img
-        src={`/regions/${regionCode}.webp`}
+        src={`${S3_FOLDER_PATH}/regions/${regionCode}.webp`}
         alt={regionName}
         style={{ width: "16px" }}
       />
@@ -66,7 +67,7 @@ export const CountryIndicator = ({
   return (
     <TextIconHorizontalContainer>
       <img
-        src={`https://protft-images.s3.us-east-1.amazonaws.com/countries/${countryCode}.webp`}
+        src={`${S3_FOLDER_PATH}/countries/${countryCode}.webp`}
         alt={countryCode}
         style={{ width: "16px" }}
       />

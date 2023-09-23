@@ -1,3 +1,4 @@
+import { S3_FOLDER_PATH } from "../../../../aws/Constants";
 import {
   StyledTournamentImage,
   StyledTournamentInfoContainer,
@@ -19,7 +20,7 @@ export const AdminStageHeader = ({ stage, tournament }: Props) => {
   return (
     <StyledHeaderContainer>
       <StyledTournamentImage
-        src={`/sets/${tournament?.set.id}.webp`}
+        src={`${S3_FOLDER_PATH}/sets/${tournament?.set.id}.webp`}
         alt={tournament?.set.name}
       />
       <StyledTournamentInfoContainer>

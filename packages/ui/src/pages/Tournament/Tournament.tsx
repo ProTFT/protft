@@ -2,6 +2,7 @@ import React, { useCallback, Suspense, useState, useMemo } from "react";
 import { Helmet } from "react-helmet";
 import { useParams } from "react-router-dom";
 import { useQuery } from "urql";
+import { S3_FOLDER_PATH } from "../../aws/Constants";
 import { TournamentContent } from "../../components/TournamentContent/TournamentContent";
 import { formatDateFromDB } from "../../formatter/Date";
 import { Stage } from "../../graphql/schema";
@@ -90,7 +91,7 @@ export const Tournament = () => {
             description,
             startDateTime: data!.tournamentBySlug.startDate,
             endDateTime: data!.tournamentBySlug.endDate,
-            image: `https://www.protft.com/sets/${
+            image: `${S3_FOLDER_PATH}/sets/${
               data!.tournamentBySlug.setId
             }.webp`,
             host: data!.tournamentBySlug.host || "",

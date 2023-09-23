@@ -1,4 +1,5 @@
 import React, { useMemo } from "react";
+import { S3_FOLDER_PATH } from "../../aws/Constants";
 import { colors } from "../../design/colors";
 import { PlayersIcon } from "../../design/icons/Players";
 import { TourneysIcon } from "../../design/icons/Tourneys";
@@ -62,7 +63,10 @@ export const TournamentContent = ({
 
   return (
     <>
-      <StyledTournamentImage src={`/sets/${set.id}.webp`} alt={set.name} />
+      <StyledTournamentImage
+        src={`${S3_FOLDER_PATH}/sets/${set.id}.webp`}
+        alt={set.name}
+      />
       <StyledTournamentInfoContainer>
         <StyledTitleContainer>
           <StyledTournamentSet>{set.name}</StyledTournamentSet>
