@@ -14,6 +14,7 @@ const trackingContext = createContext<TrackingContext>({} as TrackingContext);
 export function ProvideTracking({ children }: React.PropsWithChildren<{}>) {
   const { trackEvent: trackPlausible } = Plausible({
     domain: "protft.com",
+    apiHost: "//protft.com",
   });
   const trackEvent = <T extends keyof TrackingEventTypeMap>(
     type: T,

@@ -38,6 +38,13 @@ const defaultFilter: { [key in Filters]: any } = {
   [Filters.MINIMUM_GAMES]: 1,
 };
 
+export enum InputNames {
+  Set = "Set",
+  Tournaments = "Tournaments",
+  PlayerRegion = "PlayerRegion",
+  MinimumGames = "MinimumGames",
+}
+
 const ITEMS_PER_PAGE = 20;
 
 export const Stats = () => {
@@ -64,23 +71,22 @@ export const Stats = () => {
   const onValueChange = useCallback(
     <T extends unknown>(
         changeFunction: React.Dispatch<React.SetStateAction<T>>,
-        defaultValue: T
+        defaultValue: T,
+        field: string
       ) =>
       (newValue?: T) => {
-        changeFunction(newValue || defaultValue);
+        const actualValue = newValue || defaultValue;
+        changeFunction(actualValue);
         trackEvent(TrackingEvents.APPLY_FILTER, {
-          filters: [
-            "R",
-            ...regionFilter,
-            "S",
-            ...setFilter,
-            "T",
-            ...tournamentFilter,
-            "M",
-            minimumGamesFilter,
-            "N",
-            ...(Array.isArray(newValue) ? newValue : [newValue]),
-          ].join(","),
+          [InputNames.Set]: setFilter.join(","),
+          [InputNames.Tournaments]: tournamentFilter.join(","),
+          [InputNames.PlayerRegion]: regionFilter.join(","),
+          [InputNames.MinimumGames]: String(minimumGamesFilter),
+          ...{
+            [field]: Array.isArray(actualValue)
+              ? actualValue.join(",")
+              : actualValue,
+          },
         });
         setPage(0);
       },
@@ -130,7 +136,8 @@ export const Stats = () => {
             value={setFilter}
             onValueChange={onValueChange<number[]>(
               setSetFilter,
-              defaultFilter[Filters.SET]
+              defaultFilter[Filters.SET],
+              InputNames.Set
             )}
             isDisabled={isSetSelectDisabled}
           />
@@ -142,7 +149,8 @@ export const Stats = () => {
               value={tournamentFilter}
               onValueChange={onValueChange<number[]>(
                 setTournamentFilter,
-                defaultFilter[Filters.TOURNAMENTS]
+                defaultFilter[Filters.TOURNAMENTS],
+                InputNames.Tournaments
               )}
               setIds={setFilter}
             />
@@ -154,7 +162,8 @@ export const Stats = () => {
             value={regionFilter}
             onValueChange={onValueChange<string[]>(
               setRegionFilter,
-              defaultFilter[Filters.REGION]
+              defaultFilter[Filters.REGION],
+              InputNames.PlayerRegion
             )}
           />
         </StyledFilterContainer>
@@ -166,7 +175,8 @@ export const Stats = () => {
             onChange={(event) =>
               onValueChange<number>(
                 setMinimumGamesFilter,
-                defaultFilter[Filters.MINIMUM_GAMES]
+                defaultFilter[Filters.MINIMUM_GAMES],
+                InputNames.MinimumGames
               )(Number(event.target.value))
             }
           />
