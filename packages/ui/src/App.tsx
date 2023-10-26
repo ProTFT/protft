@@ -1,6 +1,7 @@
 import "./App.css";
 import "typeface-roboto";
 import "./design/fonts/VTFRedzone/stylesheet.css";
+import "./design/fonts/DMSans/stylesheet.css";
 import { Navigate, Outlet, Route, Routes, useLocation } from "react-router-dom";
 import { Home } from "./pages/Home/Home";
 import { Tournaments } from "./pages/Tournaments/Tournaments";
@@ -25,6 +26,7 @@ import { PlayersProvider } from "./pages/Players/PlayersContext";
 import { AdminPlayer } from "./pages/Admin/Player/AdminPlayer";
 import { FloatingButton } from "./components/FloatingButton/FloatingButton";
 import { AboutIcon } from "./design/icons/About";
+import { TournamentNew } from "./pages/TournamentNew/Tournament";
 
 const ProtectedRoutes = (props: any) => {
   const location = useLocation();
@@ -60,7 +62,17 @@ export const App = () => {
           />
           <Route
             path=":tournamentSlug"
-            element={<SuspenseElement element={<Tournament />} />}
+            element={
+              <SuspenseElement
+                element={
+                  process.env.REACT_APP_NEW_UI === "true" ? (
+                    <TournamentNew />
+                  ) : (
+                    <Tournament />
+                  )
+                }
+              />
+            }
           />
         </Route>
         <Route path="players">

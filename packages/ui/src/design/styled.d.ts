@@ -26,6 +26,26 @@ declare module "styled-components" {
       white: string;
 
       text: string;
+
+      newDesign: {
+        primary: string;
+        secondary: string;
+        darkPurple: string;
+        grayScale: {
+          "5": string;
+          "10": string;
+          "20": string;
+          "30": string;
+          "40": string;
+          "50": string;
+          "60": string;
+          "70": string;
+          "80": string;
+          "90": string;
+          "95": string;
+        };
+      };
     };
+    spacing: (rems: number) => string;
   }
 }

@@ -2,7 +2,11 @@
 
 * {
   box-sizing: border-box;
-  font-family: Roboto;
+  font-family: DM Sans;
+}
+
+html {
+  font-size: 10px;
 }
 
 body {

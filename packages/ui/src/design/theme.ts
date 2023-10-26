@@ -8,4 +8,5 @@ export const theme = {
   colors: {
     ...colors,
   },
+  spacing: (rems: number) => `${rems * 0.2}rem`,
 };

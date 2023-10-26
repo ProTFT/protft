@@ -4,7 +4,7 @@
   "private": true,
   "dependencies": {
     "@graphql-typed-document-node/core": "^3.2.0",
-    "@testing-library/jest-dom": "^5.16.4",
+    "@testing-library/jest-dom": "^6.0.0",
     "@testing-library/react": "^13.2.0",
     "@testing-library/user-event": "^14.2.0",
     "@types/jest": "^25.2.3",
@@ -45,6 +45,7 @@
     "start": "react-scripts start",
     "build": "react-scripts build",
     "test": "react-scripts test",
+    "test:watch": "react-scripts test --w",
     "eject": "react-scripts eject",
     "storybook": "start-storybook -p 6006 -s public",
     "build-storybook": "build-storybook -s public"
@@ -87,6 +88,7 @@
     "@storybook/preset-create-react-app": "^4.1.1",
     "@storybook/react": "^6.5.5",
     "@storybook/testing-library": "^0.0.11",
+    "@testing-library/dom": "^9.3.3",
     "@types/debounce-promise": "^3.1.6",
     "@types/react-outside-click-handler": "^1.3.1",
     "eslint-config-react-app": "^7.0.1",

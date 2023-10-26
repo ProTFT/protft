@@ -18,4 +18,23 @@ export const colors = {
   white: "#FFFFFF",
 
   text: "#F5F5F5",
+
+  newDesign: {
+    primary: "#FAAC01",
+    secondary: "#5544D1",
+    darkPurple: "#211E3A",
+    grayScale: {
+      "5": "#FCFCFC",
+      "10": "#EFEFEF",
+      "20": "#D6D6D6",
+      "30": "#C3C3C3",
+      "40": "#A4A4A4",
+      "50": "#858585",
+      "60": "#636363",
+      "70": "#434343",
+      "80": "#252525",
+      "90": "#141414",
+      "95": "#090909",
+    },
+  },
 };
