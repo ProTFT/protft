@@ -1,5 +1,17 @@
-import { AltText400 } from "../../design/fonts/NewFonts";
-import { PointContainer, TableStyled } from "./Table.styled";
+import { CountryIndicator } from "../../components/RegionIndicator/RegionIndicator";
+import { Button } from "../Button/Button";
+import { ButtonVariants, ColorSchemes } from "../Button/Button.styled";
+import {
+  ColumnHeader,
+  TableValueContainer,
+  TableDataForPoints,
+  ColumnHeaderForPoints,
+  TableStyled,
+  TableWrapper,
+  PointsContainer,
+  PositionContainer,
+  HighlightedPositionContainer,
+} from "./Table.styled";
 
 const mockData = {
   rank: 1,
@@ -20,58 +32,59 @@ const example = [
   mockData,
 ];
 
+const rounds = [1, 2, 3, 4, 5, 6];
+
 export const Table = () => {
   return (
-    <TableStyled>
-      <thead>
-        <tr>
-          <th align="left" style={{ width: "5%" }}>
-            Rank
-          </th>
-          <th align="left" style={{ width: "15%" }}>
-            Name
-          </th>
-          <th align="left" style={{ width: "10%" }}>
-            P
-          </th>
-          <th align="left" style={{ width: "10%" }}>
-            R1
-          </th>
-          <th align="left" style={{ width: "10%" }}>
-            R2
-          </th>
-          <th align="left" style={{ width: "10%" }}>
-            R3
-          </th>
-          <th align="left" style={{ width: "10%" }}>
-            R4
-          </th>
-          <th align="left" style={{ width: "10%" }}>
-            R5
-          </th>
-          <th align="left" style={{ width: "10%" }}>
-            R6
-          </th>
-          <th align="left" style={{ width: "5%" }} />
-        </tr>
-      </thead>
-      <tbody>
-        {example.map((data) => (
+    <TableWrapper>
+      <TableStyled>
+        <thead>
           <tr>
-            <td style={{ width: "5%" }}>{data.rank}</td>
-            <td style={{ width: "15%" }}>{data.name}</td>
-            <td style={{ width: "10%" }}>
-              <PointContainer>{data.points}</PointContainer>
-            </td>
-            {data.positions.map((position) => (
-              <td style={{ width: "10%" }}>
-                <PointContainer>{position}</PointContainer>
-              </td>
+            <ColumnHeader size={25}>#</ColumnHeader>
+            <ColumnHeader size={100}>Name</ColumnHeader>
+            <ColumnHeader size={40}>P</ColumnHeader>
+            {rounds.map((round) => (
+              <ColumnHeaderForPoints>{`R${round}`}</ColumnHeaderForPoints>
             ))}
-            {data.qualified && <td style={{ width: "5%" }}>Qualified</td>}
+            <th align="left" />
           </tr>
-        ))}
-      </tbody>
-    </TableStyled>
+        </thead>
+        <tbody>
+          {example.map((data) => (
+            <tr>
+              <td>{data.rank}</td>
+              <td>
+                {/* <CountryIndicator countryCode={"BRA"} showName={false} /> */}
+                {data.name}
+              </td>
+              <td>
+                <PointsContainer>{data.points}</PointsContainer>
+              </td>
+              {data.positions.map((position) => (
+                <TableDataForPoints>
+                  {position > 4 ? (
+                    <PositionContainer>{position}</PositionContainer>
+                  ) : (
+                    <HighlightedPositionContainer>
+                      {position}
+                    </HighlightedPositionContainer>
+                  )}
+                </TableDataForPoints>
+              ))}
+              {data.qualified && (
+                <td align="right">
+                  <Button
+                    colorScheme={ColorSchemes.SECONDARY}
+                    variant={ButtonVariants.OUTLINED}
+                  >
+                    FILTRAR
+                  </Button>
+                </td>
+              )}
+            </tr>
+          ))}
+        </tbody>
+      </TableStyled>
+    </TableWrapper>
   );
 };

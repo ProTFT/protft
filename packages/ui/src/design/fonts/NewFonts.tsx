@@ -53,3 +53,14 @@ export const AltText400Props = (theme: DefaultTheme) => ({
 });
 
 export const AltText400 = styled.p(({ theme }) => AltText400Props(theme));
+
+export const Paragraph500Props = (theme: DefaultTheme) => ({
+  fontFamily: "DMSans",
+  fontSize: theme.spacing(8),
+  fontStyle: "normal",
+  fontWeight: 500,
+  lineHeight: theme.spacing(9),
+  letterSpacing: theme.spacing(0.64),
+});
+
+export const Paragraph500 = styled.p(({ theme }) => AltText400Props(theme));
