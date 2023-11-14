@@ -7,6 +7,7 @@ import {
   ManyToOne,
   PrimaryColumn,
 } from "typeorm";
+import { BaseEntity } from "../lib/BaseEntity";
 import { Lobby } from "../lobbies/lobby.entity";
 import { Player } from "../players/player.entity";
 
@@ -17,7 +18,7 @@ const LOBBY_PLAYER_UNIQUE_CONSTRAINT = "lobbyPlayer";
 @Index(LOBBY_PLAYER_UNIQUE_CONSTRAINT, ["lobbyId", "playerId"], {
   unique: true,
 })
-export class LobbyPlayerInfo {
+export class LobbyPlayerInfo extends BaseEntity {
   @Generated()
   @PrimaryColumn()
   @Field(() => Int)

@@ -87,7 +87,7 @@ export class TournamentResultsService {
   }
 
   async deleteResults(tournamentId: number): Promise<DeleteResponse> {
-    await this.tournamentResultRepository.delete({ tournamentId });
+    await this.tournamentResultRepository.softDelete({ tournamentId });
     return { id: tournamentId };
   }
 

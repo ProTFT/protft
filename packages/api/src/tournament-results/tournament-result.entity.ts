@@ -2,10 +2,11 @@ import { Column, Entity, ManyToOne, PrimaryColumn } from "typeorm";
 import { Field, Float, Int, ObjectType } from "@nestjs/graphql";
 import { Tournament } from "../tournaments/entities/tournament.entity";
 import { Player } from "../players/player.entity";
+import { BaseEntity } from "../lib/BaseEntity";
 
 @Entity()
 @ObjectType()
-export class TournamentResult {
+export class TournamentResult extends BaseEntity {
   @Field(() => Int)
   @PrimaryColumn()
   tournamentId: number;

@@ -1,5 +1,6 @@
 import { Field, Float, Int, ObjectType } from "@nestjs/graphql";
 import { Column, Entity, Index, PrimaryGeneratedColumn } from "typeorm";
+import { BaseEntity } from "../lib/BaseEntity";
 import { PlayerLink } from "../player-links/player-link.entity";
 
 @ObjectType()
@@ -24,7 +25,7 @@ export class PlayerCalculatedStats {
 @Entity()
 @Index(["slug"], { unique: true })
 @Index(["name"], { unique: false })
-export class Player {
+export class Player extends BaseEntity {
   @Field(() => Int)
   @PrimaryGeneratedColumn()
   id: number;

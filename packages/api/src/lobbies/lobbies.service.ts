@@ -87,12 +87,12 @@ export class LobbiesService {
   }
 
   async deleteOne(id: number): Promise<DeleteResponse> {
-    await this.lobbiesRepository.delete({ id });
+    await this.lobbiesRepository.softDelete({ id });
     return new DeleteResponse(id);
   }
 
   async deleteManyLobbyGroups(stageId: number): Promise<DeleteResponse> {
-    await this.lobbyGroupsRepository.delete({ stageId });
+    await this.lobbyGroupsRepository.softDelete({ stageId });
     return new DeleteResponse(stageId);
   }
 

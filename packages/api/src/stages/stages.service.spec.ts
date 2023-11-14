@@ -30,7 +30,7 @@ describe("Stages service", () => {
       find: jest.fn(),
       save: jest.fn(),
       update: jest.fn(),
-      delete: jest.fn(),
+      softDelete: jest.fn(),
       manager: {
         createQueryBuilder: jest.fn().mockReturnThis(),
         select: jest.fn().mockReturnThis(),
@@ -210,7 +210,9 @@ describe("Stages service", () => {
     it("should delete", async () => {
       const response = await service.deleteOne(mockStageId);
 
-      expect(stageRepository.delete).toHaveBeenCalledWith({ id: mockStageId });
+      expect(stageRepository.softDelete).toHaveBeenCalledWith({
+        id: mockStageId,
+      });
       expect(response).toStrictEqual(new DeleteResponse(mockStageId));
     });
   });

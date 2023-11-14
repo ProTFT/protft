@@ -19784,6 +19784,18 @@ __metadata:
   languageName: node
   linkType: hard
 
+"nestjs-cls@npm:^3.6.0":
+  version: 3.6.0
+  resolution: "nestjs-cls@npm:3.6.0"
+  peerDependencies:
+    "@nestjs/common": "> 7.0.0 < 11"
+    "@nestjs/core": "> 7.0.0 < 11"
+    reflect-metadata: "*"
+    rxjs: ">= 7"
+  checksum: 31ef22ec4215da93c3f0f6579bebc7999bff9f36680fec34bbf11ebdde2f595c423fc202fd37a270efcf2b101a4ce4a72388b77e2ddf82ce3bc23af30c74c33d
+  languageName: node
+  linkType: hard
+
 "nice-try@npm:^1.0.4":
   version: 1.0.5
   resolution: "nice-try@npm:1.0.5"
@@ -22362,6 +22374,7 @@ __metadata:
     joi: ^17.9.2
     lodash.chunk: ^4.2.0
     luxon: ^3.3.0
+    nestjs-cls: ^3.6.0
     passport: ^0.6.0
     passport-jwt: ^4.0.1
     passport-local: ^1.0.0

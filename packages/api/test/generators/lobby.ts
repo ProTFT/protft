@@ -1,6 +1,7 @@
 import { Lobby } from "../../src/lobbies/lobby.entity";
 import { stage as genStage } from "./stage";
 import { lobbyGroup as genLobbyGroup } from "./lobby-group";
+import { BaseProps } from "./base-props";
 
 export function lobby({
   id,
@@ -22,5 +23,6 @@ export function lobby({
     players: players || [],
     lobbyGroupId: lobbyGroupId || randomId,
     lobbyGroup: lobbyGroup || genLobbyGroup({}),
+    ...BaseProps(),
   };
 }

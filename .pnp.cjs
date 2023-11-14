@@ -27695,6 +27695,40 @@ function $$SETUP_STATE(hydrateRuntimeState, basePath) {
           "linkType": "HARD"\
         }]\
       ]],\
+      ["nestjs-cls", [\
+        ["npm:3.6.0", {\
+          "packageLocation": "./.yarn/cache/nestjs-cls-npm-3.6.0-ad09569c97-31ef22ec42.zip/node_modules/nestjs-cls/",\
+          "packageDependencies": [\
+            ["nestjs-cls", "npm:3.6.0"]\
+          ],\
+          "linkType": "SOFT"\
+        }],\
+        ["virtual:bac4008d35a304375ff1ab4baeb61323523d963ad78fe9677e36b15d15f89064a355ca0cb83f2c600ae38e797c7f86a24ea965c3931d6b33889f658aa9914d2c#npm:3.6.0", {\
+          "packageLocation": "./.yarn/__virtual__/nestjs-cls-virtual-d85ca21b65/0/cache/nestjs-cls-npm-3.6.0-ad09569c97-31ef22ec42.zip/node_modules/nestjs-cls/",\
+          "packageDependencies": [\
+            ["nestjs-cls", "virtual:bac4008d35a304375ff1ab4baeb61323523d963ad78fe9677e36b15d15f89064a355ca0cb83f2c600ae38e797c7f86a24ea965c3931d6b33889f658aa9914d2c#npm:3.6.0"],\
+            ["@nestjs/common", "virtual:bac4008d35a304375ff1ab4baeb61323523d963ad78fe9677e36b15d15f89064a355ca0cb83f2c600ae38e797c7f86a24ea965c3931d6b33889f658aa9914d2c#patch:@nestjs/common@npm%3A8.4.6#../../.yarn/patches/@nestjs-common-npm-8.4.6-ceb145a01e.patch::version=8.4.6&hash=3f40ac&locator=protft_api%40workspace%3Apackages%2Fapi"],\
+            ["@nestjs/core", "virtual:bac4008d35a304375ff1ab4baeb61323523d963ad78fe9677e36b15d15f89064a355ca0cb83f2c600ae38e797c7f86a24ea965c3931d6b33889f658aa9914d2c#npm:8.4.6"],\
+            ["@types/nestjs__common", null],\
+            ["@types/nestjs__core", null],\
+            ["@types/reflect-metadata", null],\
+            ["@types/rxjs", null],\
+            ["reflect-metadata", "npm:0.1.13"],\
+            ["rxjs", "npm:7.5.5"]\
+          ],\
+          "packagePeers": [\
+            "@nestjs/common",\
+            "@nestjs/core",\
+            "@types/nestjs__common",\
+            "@types/nestjs__core",\
+            "@types/reflect-metadata",\
+            "@types/rxjs",\
+            "reflect-metadata",\
+            "rxjs"\
+          ],\
+          "linkType": "HARD"\
+        }]\
+      ]],\
       ["nice-try", [\
         ["npm:1.0.5", {\
           "packageLocation": "./.yarn/cache/nice-try-npm-1.0.5-963856b16f-0b4af3b5bb.zip/node_modules/nice-try/",\
@@ -31330,6 +31364,7 @@ function $$SETUP_STATE(hydrateRuntimeState, basePath) {
             ["joi", "npm:17.9.2"],\
             ["lodash.chunk", "npm:4.2.0"],\
             ["luxon", "npm:3.3.0"],\
+            ["nestjs-cls", "virtual:bac4008d35a304375ff1ab4baeb61323523d963ad78fe9677e36b15d15f89064a355ca0cb83f2c600ae38e797c7f86a24ea965c3931d6b33889f658aa9914d2c#npm:3.6.0"],\
             ["passport", "npm:0.6.0"],\
             ["passport-jwt", "npm:4.0.1"],\
             ["passport-local", "npm:1.0.0"],\

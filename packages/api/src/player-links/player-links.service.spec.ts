@@ -14,7 +14,7 @@ describe("Player Links Service", () => {
       id: SAVED_PLAYER_LINK_ID,
     })),
     update: jest.fn(),
-    delete: jest.fn(),
+    softDelete: jest.fn(),
   } as unknown as Repository<PlayerLink>;
 
   beforeEach(() => {
@@ -63,7 +63,7 @@ describe("Player Links Service", () => {
         id,
       });
 
-      expect(playerLinksRepository.delete).toHaveBeenCalledWith({ id });
+      expect(playerLinksRepository.softDelete).toHaveBeenCalledWith({ id });
     });
   });
 });

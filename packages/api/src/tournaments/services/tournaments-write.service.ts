@@ -64,7 +64,7 @@ export class TournamentsWriteService {
   }
 
   async deleteOne(id: number): Promise<DeleteResponse> {
-    await this.tournamentRepository.delete({ id });
+    await this.tournamentRepository.softDelete({ id });
     return new DeleteResponse(id);
   }
 

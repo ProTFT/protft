@@ -9,11 +9,12 @@ import {
 import { RoundResult } from "../round-results/round-result.entity";
 import { Field, Int, ObjectType } from "@nestjs/graphql";
 import { Stage } from "../stages/stage.entity";
+import { BaseEntity } from "../lib/BaseEntity";
 
 @Entity()
 @ObjectType()
 @Index(["stageId", "sequence"], { unique: true })
-export class Round {
+export class Round extends BaseEntity {
   @Field(() => Int)
   @PrimaryGeneratedColumn()
   id: number;

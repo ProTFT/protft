@@ -7,11 +7,12 @@ import {
   ManyToOne,
   PrimaryGeneratedColumn,
 } from "typeorm";
+import { BaseEntity } from "../lib/BaseEntity";
 
 @ObjectType()
 @Entity()
 @Index(["stageId", "sequence"], { unique: true })
-export class LobbyGroup {
+export class LobbyGroup extends BaseEntity {
   @Field(() => Int)
   @PrimaryGeneratedColumn()
   id: number;

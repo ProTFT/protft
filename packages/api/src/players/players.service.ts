@@ -176,7 +176,7 @@ export class PlayersService {
     if (!player) {
       throw new NotFoundException("Player does not exist");
     }
-    await this.playerRepository.delete({ id });
+    await this.playerRepository.softDelete({ id });
     return player;
   }
 
@@ -228,7 +228,7 @@ export class PlayersService {
         id: raw.setId,
         name: raw.setName,
       },
-    }));
+    })) as unknown as TournamentsPlayed[];
   }
 
   async findLinks(playerId: number): Promise<PlayerLink[]> {

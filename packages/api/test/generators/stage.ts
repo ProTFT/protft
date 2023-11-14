@@ -1,5 +1,6 @@
 import { Stage } from "../../src/stages/stage.entity";
 import { StageType } from "../../src/stages/types/StageType";
+import { BaseProps } from "./base-props";
 import { tournament as genTournament } from "./tournament";
 
 export function stage({
@@ -39,5 +40,6 @@ export function stage({
     stageType: stageType || StageType.RANKING,
     qualifiedCount: qualifiedCount || 0,
     startDateTime: startDateTime || "",
+    ...BaseProps(),
   };
 }

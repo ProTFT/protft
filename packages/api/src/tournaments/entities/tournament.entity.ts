@@ -22,11 +22,12 @@ import { Player } from "../../players/player.entity";
 import { Stage } from "../../stages/stage.entity";
 import { TournamentMetadata } from "./tournament-metadata.entity";
 import { Set } from "../../sets/set.entity";
+import { BaseEntity } from "../../lib/BaseEntity";
 
 @ObjectType()
 @Entity()
 @Index(["slug"], { unique: true })
-export class Tournament {
+export class Tournament extends BaseEntity {
   @Field(() => Int)
   @PrimaryGeneratedColumn()
   id: number;

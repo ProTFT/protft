@@ -1,5 +1,6 @@
 import { BadRequestException, NotFoundException } from "@nestjs/common";
 import { Repository } from "typeorm";
+import { JwtUser } from "../../auth/jwt.strategy";
 import { DeleteResponse } from "../../lib/dto/delete-return";
 import { SetsService } from "../../sets/sets.service";
 import { StagesService } from "../../stages/stages.service";
@@ -22,7 +23,7 @@ describe("TournamentsWriteService", () => {
       find: jest.fn(),
       findOne: jest.fn(),
       update: jest.fn(),
-      delete: jest.fn(),
+      softDelete: jest.fn(),
       save: jest.fn(),
       createQueryBuilder: jest.fn().mockReturnThis(),
       select: jest.fn().mockReturnThis(),

@@ -1,6 +1,7 @@
 import { BadRequestException } from "@nestjs/common";
 import { ILike, Repository } from "typeorm";
 import { formatString } from "../../test/helpers/File";
+import { CacheService } from "../cache/cache.service";
 import { LobbyPlayerInfosService } from "../lobby-player-infos/lobby-player-infos.service";
 import { PlayerLinksService } from "../player-links/player-links.service";
 import { RoundResultsService } from "../round-results/round-results.service";
@@ -18,7 +19,7 @@ describe("PlayersService", () => {
     findOne: jest.fn(),
     save: jest.fn(),
     update: jest.fn(),
-    delete: jest.fn(),
+    softDelete: jest.fn(),
     manager: {
       createQueryBuilder: () => ({
         select: jest.fn().mockReturnThis(),
@@ -62,6 +63,11 @@ describe("PlayersService", () => {
   const playerLinksService = {
     getByPlayerId: jest.fn(),
   } as unknown as PlayerLinksService;
+  const cacheService = {
+    get: jest.fn(),
+    set: jest.fn(),
+    delete: jest.fn(),
+  } as unknown as CacheService;
 
   beforeEach(async () => {
     service = new PlayersService(
@@ -72,6 +78,7 @@ describe("PlayersService", () => {
       lobbyPlayerInfosService,
       stagePlayersInfosService,
       playerLinksService,
+      cacheService,
     );
   });
 
@@ -342,7 +349,7 @@ describe("PlayersService", () => {
 
       const response = await service.deleteOne(1);
 
-      expect(playerRepository.delete).toHaveBeenCalled();
+      expect(playerRepository.softDelete).toHaveBeenCalled();
       expect(response).toStrictEqual(player);
     });
   });
@@ -422,7 +429,7 @@ describe("PlayersService", () => {
       expect(tournamentsService.updatePlayer).toHaveBeenCalled();
       expect(stagePlayersInfosService.updatePlayer).toHaveBeenCalled();
       expect(lobbyPlayerInfosService.updatePlayer).toHaveBeenCalled();
-      expect(playerRepository.delete).toHaveBeenCalled();
+      expect(playerRepository.softDelete).toHaveBeenCalled();
     });
   });
 });

@@ -27,7 +27,7 @@ describe("TournamentResultsService", () => {
   const tournamentResultRepository = {
     save: jest.fn(),
     find: jest.fn(),
-    delete: jest.fn(),
+    softDelete: jest.fn(),
     update: jest.fn(),
   } as unknown as Repository<TournamentResult>;
 
@@ -69,7 +69,7 @@ describe("TournamentResultsService", () => {
     it("should call delete on repo with parameters", async () => {
       const tournamentId = 1;
       await service.deleteResults(tournamentId);
-      expect(tournamentResultRepository.delete).toHaveBeenCalledWith({
+      expect(tournamentResultRepository.softDelete).toHaveBeenCalledWith({
         tournamentId,
       });
     });

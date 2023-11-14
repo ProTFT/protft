@@ -1,4 +1,5 @@
 import { LobbyGroup } from "../../src/lobbies/lobby-group.entity";
+import { BaseProps } from "./base-props";
 import { stage as genStage } from "./stage";
 
 export function lobbyGroup({
@@ -15,5 +16,6 @@ export function lobbyGroup({
     stage: stage || genStage({}),
     stageId: stageId || randomId,
     roundsPlayed: roundsPlayed || randomId,
+    ...BaseProps(),
   };
 }

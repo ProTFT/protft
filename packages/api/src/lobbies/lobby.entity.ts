@@ -11,11 +11,12 @@ import {
 } from "typeorm";
 import { LobbyPlayerInfo } from "../lobby-player-infos/lobby-player-info.entity";
 import { LobbyGroup } from "./lobby-group.entity";
+import { BaseEntity } from "../lib/BaseEntity";
 
 @ObjectType()
 @Entity()
 @Index(["lobbyGroupId", "sequence"], { unique: true })
-export class Lobby {
+export class Lobby extends BaseEntity {
   @Field(() => Int)
   @PrimaryGeneratedColumn()
   id: number;

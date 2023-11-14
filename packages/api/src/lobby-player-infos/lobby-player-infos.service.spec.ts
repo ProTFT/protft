@@ -29,7 +29,7 @@ describe("LobbyPlayerInfos Service", () => {
     lobbyPlayerInfoRepository = {
       save: jest.fn(),
       find: jest.fn().mockResolvedValue(existingPlayers),
-      delete: jest.fn(),
+      softDelete: jest.fn(),
       update: jest.fn(),
     } as unknown as Repository<LobbyPlayerInfo>;
     service = new LobbyPlayerInfosService(lobbyPlayerInfoRepository);
@@ -67,7 +67,7 @@ describe("LobbyPlayerInfos Service", () => {
         lobbyId: mockId,
         playerIds: [10, 13],
       } as CreateManyLobbyPlayerInfoArgs);
-      expect(lobbyPlayerInfoRepository.delete).toHaveBeenCalledWith(
+      expect(lobbyPlayerInfoRepository.softDelete).toHaveBeenCalledWith(
         expect.objectContaining({
           lobbyId: mockId,
           playerId: In([11, 12]),

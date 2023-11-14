@@ -94,7 +94,7 @@ export class StagesService {
   }
 
   async deleteOne(id: number): Promise<DeleteResponse> {
-    await this.stageRepository.delete({ id });
+    await this.stageRepository.softDelete({ id });
     return new DeleteResponse(id);
   }
 
