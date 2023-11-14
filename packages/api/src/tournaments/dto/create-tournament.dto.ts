@@ -37,4 +37,5 @@ export interface CreateTournamentDto {
   description?: string;
   image?: string;
   metadata?: CreateTournamentMetadataDto;
+  editPermission?: number[];
 }

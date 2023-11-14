@@ -26,6 +26,8 @@ import { CreateTournamentArgs } from "./gql/create-tournament.args";
 import { GetTournamentWithStatsArgs } from "./gql/get-tournaments-with-stats.args";
 import { GetTournamentsArgs } from "./gql/get-tournaments.args";
 import { UpdateTournamentArgs } from "./gql/update-tournament.args";
+import { CurrentUser } from "../auth/decorator/current-user";
+import { JwtUser } from "../auth/jwt.strategy";
 
 @Resolver(() => Tournament)
 export class TournamentsResolver extends BaseResolver {
@@ -51,10 +53,11 @@ export class TournamentsResolver extends BaseResolver {
   @Query(() => [Tournament])
   async adminTournaments(
     @Args() { region, setId, take, skip, searchQuery }: GetTournamentsArgs,
+    @CurrentUser() user: JwtUser,
   ) {
     const filters = this.cleanGraphQLFilters({ region, setId, searchQuery });
     return this.tournamentsReadService.findAll(
-      { ...filters },
+      { ...filters, user },
       { take, skip },
       false,
     );
@@ -127,8 +130,11 @@ export class TournamentsResolver extends BaseResolver {
 
   @UseGuards(GqlJwtAuthGuard)
   @Mutation(() => Tournament)
-  async createTournament(@Args() payload: CreateTournamentArgs) {
-    return this.tournamentsService.createOne(payload);
+  async createTournament(
+    @Args() payload: CreateTournamentArgs,
+    @CurrentUser() user: JwtUser,
+  ) {
+    return this.tournamentsService.createOne(payload, user);
   }
 
   @UseGuards(GqlJwtAuthGuard)

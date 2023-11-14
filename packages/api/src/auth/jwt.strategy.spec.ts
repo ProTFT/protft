@@ -1,5 +1,6 @@
 import { ConfigService } from "@nestjs/config";
 import { TEST_JWT } from "../../test/stubs/Config/FakeConfigService";
+import { Roles } from "../users/user.entity";
 import { JwtStrategy } from "./jwt.strategy";
 
 describe("JWT Strategy", () => {
@@ -13,12 +14,14 @@ describe("JWT Strategy", () => {
   });
 
   it("should return info from payload", async () => {
-    const sub = "sub";
+    const sub = 1;
     const username = "username";
-    const response = await strategy.validate({ sub, username });
+    const roles = [Roles.WEBMASTER];
+    const response = await strategy.validate({ sub, username, roles });
     expect(response).toStrictEqual({
       userId: sub,
       username,
+      roles: [Roles.WEBMASTER],
     });
   });
 });

@@ -29,6 +29,7 @@ export function tournament(
     metadata: null,
     nextStartTime: 123,
     players: [],
+    editPermission: [],
     ...BaseProps(),
     ...tournamentParams,
   };

@@ -69,10 +69,11 @@ describe("TournamentsWriteService", () => {
 
     const defaultCreationParameters = {
       visibility: false,
+      editPermission: [],
     };
 
     it("should save and return", async () => {
-      await service.createOne(payload);
+      await service.createOne(payload, {} as JwtUser);
 
       expect(tournamentRepository.save).toHaveBeenCalledWith({
         ...defaultCreationParameters,

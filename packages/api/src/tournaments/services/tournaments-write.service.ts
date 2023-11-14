@@ -5,6 +5,7 @@ import {
 } from "@nestjs/common";
 import { InjectRepository } from "@nestjs/typeorm";
 import { In, Repository } from "typeorm";
+import { JwtUser } from "../../auth/jwt.strategy";
 import { DeleteResponse } from "../../lib/dto/delete-return";
 import { parseMultilinePlayerNamesFromAll } from "../../lib/MultilineInput";
 import { Player } from "../../players/player.entity";
@@ -31,11 +32,15 @@ export class TournamentsWriteService {
     private stagesService: StagesService,
   ) {}
 
-  async createOne(payload: CreateTournamentArgs): Promise<Tournament> {
+  async createOne(
+    payload: CreateTournamentArgs,
+    user: JwtUser,
+  ): Promise<Tournament> {
     const payloadWithSlug: CreateTournamentDto = {
       ...payload,
       slug: await createSlug(payload, this.setsService),
       visibility: false,
+      editPermission: [user.userId],
     };
     return this.tournamentRepository.save(payloadWithSlug);
   }

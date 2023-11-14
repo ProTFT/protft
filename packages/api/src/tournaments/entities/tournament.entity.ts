@@ -85,6 +85,9 @@ export class Tournament extends BaseEntity {
   @Column("varchar", { nullable: true })
   image: Nullable<string>;
 
+  @Column("integer", { array: true, default: [] })
+  editPermission: number[];
+
   @Field(() => Int, { nullable: true })
   nextStartTime: Nullable<number>;
 
