@@ -3,16 +3,6 @@ import { StyledHorizontalContainer } from "../../../../../components/Layout/Hori
 import { StyledVerticalContainer } from "../../../../../components/Layout/VerticalContainer/VerticalContainer.styled";
 import { colors } from "../../../../../design/colors";
 
-export const StyledContainer = styled(StyledHorizontalContainer)`
-  padding: 6rem 2rem 2rem 2rem;
-  gap: 5rem;
-  align-items: flex-start;
-`;
-
-export const StyledBar = styled(StyledHorizontalContainer)`
-  justify-content: start;
-`;
-
 export const StyledTournamentPlayersSection = styled(StyledVerticalContainer)``;
 
 export const StyledTournamentPlayerList = styled(StyledVerticalContainer)`

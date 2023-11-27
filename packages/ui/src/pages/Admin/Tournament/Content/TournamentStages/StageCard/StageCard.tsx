@@ -1,4 +1,5 @@
 import { Stage } from "../../../../../../graphql/schema";
+import { toLocaleDateTimeString } from "../../../../Stage/Content/AdminStageHeader";
 import {
   StyledInfo,
   StyledInfoContainer,
@@ -19,6 +20,11 @@ export const StageCard = ({ stage }: Props) => {
         <StyledInfo>Description: {stage.description}</StyledInfo>
         <StyledInfo>Rounds: {stage.roundCount}</StyledInfo>
         <StyledInfo>Point Schema: {stage.pointSchema.name}</StyledInfo>
+        {stage.startDateTime && (
+          <StyledInfo>
+            Time: {toLocaleDateTimeString(new Date(stage.startDateTime))}
+          </StyledInfo>
+        )}
       </StyledInfoContainer>
     </StyledStageCard>
   );

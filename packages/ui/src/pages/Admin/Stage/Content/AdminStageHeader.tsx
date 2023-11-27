@@ -12,7 +12,7 @@ interface Props {
   stage?: Stage;
 }
 
-const toLocaleDateTimeString = (date: Date): string => {
+export const toLocaleDateTimeString = (date: Date): string => {
   return `${date.toLocaleDateString()} - ${date.toLocaleTimeString()}`;
 };
 

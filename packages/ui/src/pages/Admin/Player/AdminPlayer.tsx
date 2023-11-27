@@ -16,13 +16,13 @@ import {
 } from "../../../gql/graphql";
 import { PLAYER_QUERY } from "./queries";
 import { ADMIN_PLAYERS_PATH } from "../Players/AdminPlayers";
-import { usePlayerDialog } from "../Components/Dialogs/PlayerDialog/PlayerDialogNew";
+import { usePlayerDialog } from "../Components/Dialogs/PlayerDialog/PlayerDialog";
 import {
   DELETE_PLAYER_MUTATION,
   UPDATE_PLAYER_MUTATION,
 } from "../Players/queries";
 import { Header } from "../Components/Header/Header";
-import { StyledTitle } from "../../../design/fonts/Fonts";
+import { StyledBody, StyledTitle } from "../../../design/fonts/Fonts";
 import {
   CountryIndicator,
   RegionsIndicator,
@@ -105,6 +105,7 @@ export const AdminPlayer = () => {
       <Header src="/no_pic.webp" alt={data?.player.name || ""}>
         <div>
           <StyledTitle>{data?.player.name}</StyledTitle>
+          <StyledBody>AKA: {data?.player.alias}</StyledBody>
         </div>
         <div>
           <CountryIndicator countryCode={data?.player.country} showName />

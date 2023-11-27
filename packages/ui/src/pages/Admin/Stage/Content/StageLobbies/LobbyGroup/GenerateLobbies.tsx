@@ -55,7 +55,7 @@ export const GenerateLobbies = ({
         }
       />
       <ProTFTButton onClick={onGenerateLobbies}>Generate Lobbies</ProTFTButton>
-      <ProTFTButton onClick={onSetManual}>Don't</ProTFTButton>
+      <ProTFTButton onClick={onSetManual}>Create manually</ProTFTButton>
     </StyledContainer>
   );
 };

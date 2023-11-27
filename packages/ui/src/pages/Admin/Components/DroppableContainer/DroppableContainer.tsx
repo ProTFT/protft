@@ -5,10 +5,7 @@ import { Player } from "../../../../graphql/schema";
 import { DeleteButton } from "../DeleteButton/DeleteButton";
 import { EditButton } from "../EditButton/EditButton";
 import { PlayerContent } from "../PlayerItem/PlayerItem";
-import {
-  StyledTournamentPlayerList,
-  StyledTournamentPlayerListColumn,
-} from "./DroppableContainer.styled";
+import { PlayerBoard } from "./DroppableContainer.styled";
 
 interface DroppableContainerProps {
   content: Player[];
@@ -44,16 +41,14 @@ export const DroppableContainer = ({
   );
 
   return (
-    <StyledTournamentPlayerList ref={drop}>
-      <StyledTournamentPlayerListColumn>
-        {content.map((player) => (
-          <TextIconHorizontalContainer key={player.id}>
-            <PlayerContent key={player.id} player={player} />
-            {editable && <EditButton onClick={() => onEditClick(player)} />}
-            <DeleteButton onClick={removePlayer(player.id)} />
-          </TextIconHorizontalContainer>
-        ))}
-      </StyledTournamentPlayerListColumn>
-    </StyledTournamentPlayerList>
+    <PlayerBoard ref={drop}>
+      {content.map((player) => (
+        <TextIconHorizontalContainer key={player.id}>
+          <PlayerContent key={player.id} player={player} />
+          {editable && <EditButton onClick={() => onEditClick(player)} />}
+          <DeleteButton onClick={removePlayer(player.id)} />
+        </TextIconHorizontalContainer>
+      ))}
+    </PlayerBoard>
   );
 };

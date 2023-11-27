@@ -26,7 +26,19 @@ export const TournamentStreamDialog = ({
     >
       <FormField label="Name" name="name" />
       <FormField label="Link" name="link" />
-      <FormField label="Platform" name="platform" />
+      <FormField label="Platform" name="platform" type={"select"}>
+        {[
+          <option key={"twitch"} value={"twitch"}>
+            Twitch
+          </option>,
+          <option key={"youtube"} value={"youtube"}>
+            Youtube
+          </option>,
+          <option key={"afreeca"} value={"afreeca"}>
+            Afreeca
+          </option>,
+        ]}
+      </FormField>
       <FormField label="Language" name="language" type="select">
         {[
           <option key={"WO"} value="WO">
@@ -39,7 +51,7 @@ export const TournamentStreamDialog = ({
           )),
         ]}
       </FormField>
-      <FormField label="LIVE" name="isLive" type="checkbox" />
+      {/* <FormField label="LIVE" name="isLive" type="checkbox" /> */}
       <FormField label="VOD" name="isVOD" type="checkbox" />
     </DialogForm>
   );

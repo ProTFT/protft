@@ -17,6 +17,7 @@ const LOBBY_PLAYER_UNIQUE_CONSTRAINT = "lobbyPlayer";
 @Entity()
 @Index(LOBBY_PLAYER_UNIQUE_CONSTRAINT, ["lobbyId", "playerId"], {
   unique: true,
+  where: '"deletedAt" is null',
 })
 export class LobbyPlayerInfo extends BaseEntity {
   @Generated()

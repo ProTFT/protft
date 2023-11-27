@@ -81,8 +81,8 @@ export const AdminStage = () => {
       return alert(deleteResult.error);
     }
     show();
-    navigate("..");
-  }, [deleteStage, stageId, show, navigate]);
+    navigate(`/admin/tournaments/${id}/stages`);
+  }, [deleteStage, stageId, show, navigate, id]);
 
   const handleBackToTournament = useCallback(() => {
     navigate(`/admin/tournaments/${id}/players`);

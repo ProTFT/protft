@@ -16,6 +16,7 @@ export const TOURNAMENT_STAGES_QUERY = graphql(`
         sequence
         roundCount
         pointSchemaId
+        startDateTime
         pointSchema {
           id
           name

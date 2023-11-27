@@ -21,7 +21,13 @@ import {
   TournamentStreamQueryResponse,
   TOURNAMENT_STREAM_QUERY,
 } from "./queries";
-import { StreamList, StreamListItem } from "./TournamentStreams.styled";
+import {
+  StreamCardBody,
+  StreamCardDeleteButton,
+  StreamList,
+  StreamListContainer,
+  StreamListItem,
+} from "./TournamentStreams.styled";
 import { StyledBody } from "../../../../../design/fonts/Fonts";
 
 export const TournamentStreams = () => {
@@ -47,9 +53,10 @@ export const TournamentStreams = () => {
   >(DELETE_STREAM_MUTATION);
 
   const onSubmit = useCallback(
-    async (stream: Omit<TournamentStream, "tournamentId">) => {
+    async (stream: Omit<TournamentStream, "tournamentId" | "isLive">) => {
       const result = await createStream({
         tournamentId: Number(tournamentId),
+        isLive: false,
         ...stream,
       });
       if (result.error) {
@@ -96,31 +103,25 @@ export const TournamentStreams = () => {
           Add stream
         </ProTFTButton>
       </StyledButtonBar>
-      <StyledStagesContainer>
+      <StreamListContainer>
         <StreamList>
           {data?.streamsOfTournament.map(
-            ({
-              name,
-              tournamentId,
-              link,
-              platform,
-              isLive,
-              language,
-              isVOD,
-            }) => (
+            ({ name, tournamentId, link, language, isVOD }) => (
               <StreamListItem>
-                <StyledBody>{name}</StyledBody>
-                <StyledBody>{link}</StyledBody>
-                <StyledBody>{platform}</StyledBody>
-                <StyledBody>{language}</StyledBody>
-                <StyledBody>{isLive ? "LIVE" : "OFF"}</StyledBody>
-                <StyledBody>{isVOD ? "VOD" : "Stream"}</StyledBody>
-                <DeleteButton onClick={onDeleteStream(tournamentId, name)} />
+                <StreamCardBody>
+                  <StyledBody>{name}</StyledBody>
+                  <StyledBody>{link}</StyledBody>
+                  <StyledBody>Language: {language}</StyledBody>
+                  <StyledBody>Type: {isVOD ? "VOD" : "Stream"}</StyledBody>
+                </StreamCardBody>
+                <StreamCardDeleteButton>
+                  <DeleteButton onClick={onDeleteStream(tournamentId, name)} />
+                </StreamCardDeleteButton>
               </StreamListItem>
             )
           )}
         </StreamList>
-      </StyledStagesContainer>
+      </StreamListContainer>
     </StyledVerticalContainer>
   );
 };
