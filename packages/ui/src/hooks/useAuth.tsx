@@ -1,8 +1,15 @@
 import React, { useState, useContext, createContext } from "react";
 import axios from "axios";
 
+enum Roles {
+  WEBMASTER = "WM",
+  TOURNAMENT_ORGANIZER = "TO",
+  PLAYER = "PL",
+}
+
 interface AuthContext {
   user: boolean;
+  isWebmaster: boolean;
   signin: (email: string, password: string) => Promise<void>;
   signout: () => void;
 }
@@ -26,6 +33,7 @@ function useProvideAuth(): AuthContext {
   const [user, setUser] = useState<boolean>(() =>
     Boolean(window.localStorage.getItem("l"))
   );
+  const [roles, setRoles] = useState<Roles[]>([]);
 
   const signin = async (email: string, password: string) => {
     try {
@@ -39,6 +47,7 @@ function useProvideAuth(): AuthContext {
       );
       if (response.status === 202) {
         setUser(true);
+        setRoles(response.data.roles || []);
         window.localStorage.setItem("l", String(true));
       } else {
         setUser(false);
@@ -66,6 +75,7 @@ function useProvideAuth(): AuthContext {
 
   return {
     user,
+    isWebmaster: roles.includes(Roles.WEBMASTER),
     signin,
     signout,
   };

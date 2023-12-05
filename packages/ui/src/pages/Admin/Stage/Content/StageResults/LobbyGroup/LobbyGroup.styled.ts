@@ -15,11 +15,12 @@ export const StyledButtonContainer = styled(StyledHorizontalContainer)`
   gap: 1rem;
 `;
 
-export const StyledLobbyContainer = styled(StyledHorizontalContainer)`
-  flex-wrap: wrap;
-  gap: 2rem;
-  justify-content: center;
-`;
+export const StyledLobbyContainer = styled.div(({ theme }) => ({
+  display: "grid",
+  gridTemplateColumns: "1fr 1fr",
+  columnGap: "1rem",
+  rowGap: "1rem",
+}));
 
 export const StyledTitleContainer = styled(StyledHorizontalContainer)`
   align-items: center;

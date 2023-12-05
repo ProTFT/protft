@@ -42,7 +42,7 @@ const SET_OPTIONS = [
   },
   {
     value: "10",
-    name: "10 - ?",
+    name: "10 - Remix Rumble",
   },
 ];
 

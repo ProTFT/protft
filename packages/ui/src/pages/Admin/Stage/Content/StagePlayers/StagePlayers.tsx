@@ -6,10 +6,6 @@ import { ProTFTButton } from "../../../../../components/Button/Button";
 import { SearchInput } from "../../../../../components/SearchInput/SearchInput";
 import { useBulkPlayerListDialog } from "../../../Components/Dialogs/BulkPlayerListDialog/BulkPlayerListDialog";
 import { DroppableContainer } from "../../../Components/DroppableContainer/DroppableContainer";
-import {
-  StyledLeftSide,
-  StyledRightSide,
-} from "../../../Components/Layout/TwoSided.styled";
 import { DraggablePlayer } from "../../../Components/PlayerItem/PlayerItem";
 import { StyledTitle } from "../../../Components/Title/Title.styled";
 import { useToast } from "../../../Components/Toast/Toast";
@@ -30,13 +26,16 @@ import {
   UpdateStagePlayerVariables,
   UPDATE_STAGE_PLAYER_MUTATION,
 } from "./queries";
-import {
-  StyledBar,
-  StyledButtonContainer,
-  StyledContainer,
-} from "./StagePlayers.styled";
+import { StyledBar, StyledButtonContainer } from "./StagePlayers.styled";
 import { useStagePlayerInfoDialog } from "../../../Components/Dialogs/StagePlayerInfoDialog/StagePlayerInfoDialog";
 import { useSyncedState } from "../../../../../hooks/useSyncedState";
+import {
+  GridContainer,
+  GridLeftSide,
+  GridRightSide,
+} from "../../../Components/PlayerSelectionGrid/PlayerSelectionGrid.styled";
+import { PlayerSearchList } from "../../../Components/PlayerSearchList/PlayerSearchList";
+import { BoardPlayerList } from "../../../Components/BoardPlayerList/BoardPlayerList";
 
 export const StagePlayers = () => {
   const { id: tournamentId, stageId } = useParams();
@@ -122,8 +121,9 @@ export const StagePlayers = () => {
     if (result.error) {
       return alert(result.error);
     }
+    refetchStagePlayers();
     show();
-  }, [createStagePlayers, stageId, stagePlayers, show]);
+  }, [createStagePlayers, stageId, stagePlayers, refetchStagePlayers, show]);
 
   const onAddAll = useCallback(async () => {
     setStagePlayers((players) => {
@@ -187,44 +187,33 @@ export const StagePlayers = () => {
   );
 
   return (
-    <StyledContainer>
+    <GridContainer>
       {bulkPlayerDialog}
       {stagePlayerInfoDialog}
-      <StyledLeftSide>
-        <StyledBar>
-          <SearchInput
-            placeholder="Search Players"
-            onChange={onChangeSearchInput}
-          />
-        </StyledBar>
-        {data?.tournament?.players
-          ?.filter((player) => player?.name.toLowerCase().includes(searchQuery))
-          .map((player) => (
-            <DraggablePlayer
-              key={player.id}
-              player={player}
-              onClick={() => onAdd(player)}
-            />
-          ))}
-      </StyledLeftSide>
-      <StyledRightSide>
-        <StyledBar>
-          <StyledTitle>{`Stage Players (${playersCount})`}</StyledTitle>
-          <StyledButtonContainer>
-            {/* <ProTFTButton onClick={onCopyLast}>Copy last stage</ProTFTButton> */}
-            <ProTFTButton onClick={onAddAll}>Add all</ProTFTButton>
-            <ProTFTButton onClick={openBulkPlayerDialog}>Add bulk</ProTFTButton>
-            <ProTFTButton onClick={onSaveStagePlayers}>Save</ProTFTButton>
-          </StyledButtonContainer>
-        </StyledBar>
-        <DroppableContainer
-          content={stagePlayers}
-          setContent={setStagePlayers}
-          onAdd={onAdd}
+      <GridLeftSide>
+        <PlayerSearchList
+          showButton={false}
+          onChangeSearch={onChangeSearchInput}
+          players={data?.tournament?.players?.filter((player) =>
+            player?.name.toLowerCase().includes(searchQuery)
+          )}
+          onClickPlayer={onAdd}
+        />
+      </GridLeftSide>
+      <GridRightSide>
+        <BoardPlayerList
+          title={`Stage Players (${playersCount})`}
+          players={stagePlayers}
+          onAddPlayer={onAdd}
+          setPlayers={setStagePlayers}
           editable
           onEditClick={onEditClick}
-        />
-      </StyledRightSide>
-    </StyledContainer>
+        >
+          <ProTFTButton onClick={onAddAll}>Add all</ProTFTButton>
+          <ProTFTButton onClick={openBulkPlayerDialog}>Add bulk</ProTFTButton>
+          <ProTFTButton onClick={onSaveStagePlayers}>Save</ProTFTButton>
+        </BoardPlayerList>
+      </GridRightSide>
+    </GridContainer>
   );
 };

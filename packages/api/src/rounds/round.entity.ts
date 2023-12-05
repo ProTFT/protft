@@ -13,7 +13,7 @@ import { BaseEntity } from "../lib/BaseEntity";
 
 @Entity()
 @ObjectType()
-@Index(["stageId", "sequence"], { unique: true })
+@Index(["stageId", "sequence"], { unique: true, where: '"deletedAt" is null' })
 export class Round extends BaseEntity {
   @Field(() => Int)
   @PrimaryGeneratedColumn()

@@ -150,7 +150,6 @@ describe("Player (e2e)", () => {
         expect(fakePlayersService.findAll).toHaveBeenCalledWith(
           { region: "EMEA" },
           {},
-          { id: "DESC" },
         );
         expect(response.body).toStrictEqual({
           data: { adminPlayers: mockPlayers },

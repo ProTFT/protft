@@ -43,7 +43,7 @@ export class PlayersResolver extends BaseResolver {
     @Args() { region, country, take, skip, searchQuery }: GetPlayerArgs,
   ) {
     const filters = this.cleanGraphQLFilters({ region, country, searchQuery });
-    return this.playersService.findAll(filters, { take, skip }, { id: "DESC" });
+    return this.playersService.findAll(filters, { take, skip });
   }
 
   @CacheKey(ExtractPlayerCacheKeyFromRequest)

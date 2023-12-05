@@ -40,8 +40,10 @@ export class AuthController {
     @Request() req: ExpressRequest & { user: StrippedUser },
     @Response() res: ExpressResponse,
   ) {
-    const response = await this.authService.login(req.user, res);
-    return response.status(202).send();
+    const [response, user] = await this.authService.login(req.user, res);
+    return response.status(202).send({
+      roles: user.roles,
+    });
   }
 
   @Post("signin")

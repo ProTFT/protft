@@ -1,5 +1,10 @@
 import { useMemo } from "react";
-import { StyledField, StyledInput, StyledSelect } from "./FormField.styled";
+import {
+  FieldLabel,
+  StyledField,
+  StyledInput,
+  StyledSelect,
+} from "./FormField.styled";
 
 export interface FormFieldProps {
   label: string;
@@ -78,7 +83,7 @@ export const FormField = (props: React.PropsWithChildren<FormFieldProps>) => {
 
   return (
     <StyledField>
-      <label htmlFor={props.name}>{props.label}</label>
+      <FieldLabel htmlFor={props.name}>{props.label}</FieldLabel>
       {contentElement}
     </StyledField>
   );

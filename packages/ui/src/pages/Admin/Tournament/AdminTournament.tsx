@@ -25,6 +25,7 @@ import {
   TOURNAMENT_QUERY,
   UPDATE_TOURNAMENT_MUTATION,
 } from "./queries";
+import { OnlyWebmaster } from "../../../components/AuthContainer/AuthContainer";
 
 export const AdminTournament = () => {
   const { id: tournamentId } = useParams();
@@ -136,8 +137,12 @@ export const AdminTournament = () => {
           <ProTFTButton onClick={onBackToList}>Back to list</ProTFTButton>
         </StyledActionsContainer>
         <StyledActionsContainer>
-          <ProTFTButton onClick={onLockResults}>Lock results</ProTFTButton>
-          <ProTFTButton onClick={onDeleteResults}>Delete results</ProTFTButton>
+          <OnlyWebmaster>
+            <ProTFTButton onClick={onLockResults}>Lock results</ProTFTButton>
+            <ProTFTButton onClick={onDeleteResults}>
+              Delete results
+            </ProTFTButton>
+          </OnlyWebmaster>
           <ProTFTButton onClick={onToggleVisibility}>
             Make {data?.tournament.visibility ? "invisible" : "visible"}
           </ProTFTButton>

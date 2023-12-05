@@ -33,7 +33,10 @@ export class AuthService {
     return null;
   }
 
-  public async login({ user, id }: StrippedUser, res: Response) {
+  public async login(
+    { user, id }: StrippedUser,
+    res: Response,
+  ): Promise<[Response, User]> {
     const dbUser = await this.usersService.findOne(user);
     const payload = { username: user, sub: id, roles: dbUser.roles };
     const token = this.jwtService.sign(payload);
@@ -43,7 +46,7 @@ export class AuthService {
       signed: true,
       secure: true,
     });
-    return res;
+    return [res, dbUser];
   }
 
   public async logout(res: Response) {

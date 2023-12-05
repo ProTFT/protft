@@ -155,6 +155,7 @@ export interface CreateLobbiesResponse {
 export interface Tiebreaker {
     id: number;
     description: string;
+    order: number;
 }
 
 export interface SuccessResponse {

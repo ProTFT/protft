@@ -11,7 +11,7 @@ import { Player } from "../players/player.entity";
 
 @Entity()
 @ObjectType()
-@Index(["playerId", "type"], { unique: true })
+@Index(["playerId", "type"], { unique: true, where: '"deletedAt" is null' })
 export class PlayerLink extends BaseEntity {
   @PrimaryGeneratedColumn()
   @Field(() => Int)

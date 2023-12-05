@@ -15,7 +15,10 @@ import { BaseEntity } from "../lib/BaseEntity";
 
 @ObjectType()
 @Entity()
-@Index(["lobbyGroupId", "sequence"], { unique: true })
+@Index(["lobbyGroupId", "sequence"], {
+  unique: true,
+  where: '"deletedAt" is null',
+})
 export class Lobby extends BaseEntity {
   @Field(() => Int)
   @PrimaryGeneratedColumn()

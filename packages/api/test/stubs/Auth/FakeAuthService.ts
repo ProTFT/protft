@@ -2,7 +2,7 @@ import { Response } from "express";
 
 export class FakeAuthService {
   public login(_: any, res: Response) {
-    return res;
+    return [res, { roles: [] }];
   }
 
   public validateUser() {

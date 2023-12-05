@@ -23,8 +23,8 @@ export class PlayerCalculatedStats {
 
 @ObjectType()
 @Entity()
-@Index(["slug"], { unique: true })
-@Index(["name"], { unique: false })
+@Index(["slug"], { unique: true, where: '"deletedAt" is null' })
+@Index(["name"], { unique: false, where: '"deletedAt" is null' })
 export class Player extends BaseEntity {
   @Field(() => Int)
   @PrimaryGeneratedColumn()

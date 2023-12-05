@@ -14,7 +14,7 @@ export const PlayerContent = ({
 }) => {
   return (
     <StyledPlayerContentContainer>
-      <RegionsIndicator regionCodes={[region!]} showName={false} />
+      {/* <RegionsIndicator regionCodes={[region!]} showName={false} /> */}
       <StyledPlayerName>{name}</StyledPlayerName>
     </StyledPlayerContentContainer>
   );

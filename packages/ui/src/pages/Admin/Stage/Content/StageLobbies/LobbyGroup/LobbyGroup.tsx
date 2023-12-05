@@ -54,6 +54,7 @@ import {
   NLobbyDialogFields,
   useNLobbyDialog,
 } from "../../../../Components/Dialogs/NLobbyDialog/NLobbyDialog";
+import { colors } from "../../../../../../design/colors";
 
 interface Props {
   hasLobbieGroups: boolean;
@@ -259,6 +260,7 @@ export const LobbyGroup = ({
     }
     show();
     refetchLobbyGroups();
+    setIsManual(false);
   }, [deleteLobbyGroups, refetchLobbyGroups, show, stageId]);
 
   const onAdd = useCallback(
@@ -350,19 +352,29 @@ export const LobbyGroup = ({
           <BigArrowRight onClick={goToNextLobbyGroup} />
         </StyledTitleContainer>
         <StyledButtonContainer>
-          <ProTFTButton onClick={onSave}>Save</ProTFTButton>
           <ProTFTButton onClick={onCreateLobbyGroup}>
-            Create Lobby Group
+            Create 1 Lobby Group
           </ProTFTButton>
-          {selectedLobbyGroup && (
-            <ProTFTButton onClick={onCreateLobby}>Create Lobby</ProTFTButton>
+          {selectedLobbyGroup ? (
+            <ProTFTButton onClick={onCreateLobby}>Create 1 Lobby</ProTFTButton>
+          ) : (
+            <div />
           )}
+          <ProTFTButton onClick={onSave}>Save</ProTFTButton>
           <ProTFTButton onClick={onCreateNLobbyGroup}>
             Create N Lobby Group
           </ProTFTButton>
-          <ProTFTButton onClick={onCreateNLobby}>Create N Lobby</ProTFTButton>
-          <ProTFTButton onClick={onDeleteLobbyGroups}>
-            Delete Lobby Groups
+          {selectedLobbyGroup ? (
+            <ProTFTButton onClick={onCreateNLobby}>Create N Lobby</ProTFTButton>
+          ) : (
+            <div />
+          )}
+          <ProTFTButton
+            buttonColor={colors.purple}
+            textColor={colors.white}
+            onClick={onDeleteLobbyGroups}
+          >
+            Delete all
           </ProTFTButton>
         </StyledButtonContainer>
       </StyledBar>

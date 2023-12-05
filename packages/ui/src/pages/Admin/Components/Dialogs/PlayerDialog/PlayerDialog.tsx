@@ -1,39 +1,62 @@
-import React from "react";
 import { Player } from "../../../../../graphql/schema";
-import { DialogForm } from "../../DialogForm/DialogForm";
-import { FormField } from "../../DialogForm/FormField";
+import { FormFieldProps } from "../../DialogForm/FormField";
 import * as lookup from "country-code-lookup";
+import { BaseDialogProps } from "../Dialogs.types";
+import { useEntityDialog } from "../useEntityDialog";
 
-export interface Props {
-  dialogRef: React.RefObject<HTMLDialogElement>;
-  formRef: React.RefObject<HTMLFormElement>;
-  onSubmit: (player: Omit<Player, "id" | "playerStats">) => void;
-  player?: Player;
+const PLAYER_DIALOG_FIELDS: FormFieldProps[] = [
+  {
+    label: "Name",
+    name: "name",
+  },
+  {
+    label: "Alias",
+    name: "alias",
+    type: "text",
+    specialType: "array",
+  },
+  {
+    label: "Region",
+    name: "region",
+    type: "select",
+    options: [
+      { name: "Brazil", value: "BR", key: "BR" },
+      { name: "China", value: "CN", key: "CN" },
+      { name: "EMEA", value: "EMEA", key: "EMEA" },
+      { name: "Japan", value: "JP", key: "JP" },
+      { name: "Korea", value: "KR", key: "KR" },
+      { name: "LATAM", value: "LA", key: "LA" },
+      { name: "North America", value: "NA", key: "NA" },
+      { name: "Oceania", value: "OCE", key: "OCE" },
+      { name: "SEA", value: "SEA", key: "SEA" },
+    ],
+  },
+  {
+    label: "Country",
+    name: "country",
+    type: "select",
+    options: [
+      ...lookup.countries.map((country) => ({
+        name: `${country.iso3} - ${country.country}`,
+        value: country.iso3,
+        key: country.iso2,
+      })),
+      { name: "No Country EMEA", value: "!RL", key: "!RL" },
+      { name: "No Country SEA", value: "!EA", key: "!EA" },
+      { name: "No Country OCE", value: "!OC", key: "!OC" },
+      { name: "No Country LATAM", value: "!LA", key: "!LA" },
+    ],
+  },
+];
+
+export interface Props extends BaseDialogProps<Player> {
+  player?: Omit<Player, "links">;
 }
 
-export const PlayerDialog = ({
-  dialogRef,
-  formRef,
-  onSubmit,
-  player,
-}: Props) => {
-  return (
-    <DialogForm
-      dialogRef={dialogRef}
-      formRef={formRef}
-      entity={player}
-      onSubmit={onSubmit}
-    >
-      <FormField label="Name" name="name" />
-      <FormField label="Alias" name="alias" type="text" specialType="array" />
-      <FormField label="Region" name="region" />
-      <FormField label="Country" type="select" name="country">
-        {lookup.countries.map((country) => (
-          <option key={country.iso2} value={country.iso3}>
-            {`${country.iso3} - ${country.country}`}
-          </option>
-        ))}
-      </FormField>
-    </DialogForm>
-  );
-};
+export const usePlayerDialog = ({ player, onSubmit, onSuccess }: Props) =>
+  useEntityDialog({
+    entity: player,
+    formFields: PLAYER_DIALOG_FIELDS,
+    onSubmit,
+    onSuccess,
+  });

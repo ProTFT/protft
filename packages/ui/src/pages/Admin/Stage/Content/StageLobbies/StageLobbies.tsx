@@ -1,13 +1,20 @@
-import { ChangeEvent, Suspense, useCallback, useMemo, useState } from "react";
+import {
+  ChangeEvent,
+  Suspense,
+  useCallback,
+  useEffect,
+  useMemo,
+  useState,
+} from "react";
 import { useParams } from "react-router-dom";
 import { useQuery } from "urql";
-import { SearchInput } from "../../../../../components/SearchInput/SearchInput";
 import { Player } from "../../../../../graphql/schema";
+import { PlayerSearchList } from "../../../Components/PlayerSearchList/PlayerSearchList";
 import {
-  StyledLeftSide,
-  StyledRightSide,
-} from "../../../Components/Layout/TwoSided.styled";
-import { DraggablePlayer } from "../../../Components/PlayerItem/PlayerItem";
+  GridContainer,
+  GridLeftSide,
+  GridRightSide,
+} from "../../../Components/PlayerSelectionGrid/PlayerSelectionGrid.styled";
 import { LobbyGroup } from "./LobbyGroup/LobbyGroup";
 import {
   LobbyGroupsQueryResult,
@@ -16,7 +23,6 @@ import {
   StagePlayersResponse,
   STAGE_PLAYERS_QUERY,
 } from "./queries";
-import { StyledBar, StyledContainer } from "./StageLobbies.styled";
 
 export const StageLobbies = () => {
   const { stageId } = useParams();
@@ -43,6 +49,11 @@ export const StageLobbies = () => {
   const [selectedLobbyGroupName, setSelectedLobbyGroupName] = useState(
     () => lobbyGroupsData?.stage.lobbyGroups[0]?.sequence
   );
+
+  useEffect(() => {
+    setSelectedLobbyGroup(lobbyGroupsData?.stage.lobbyGroups[0]?.id);
+    setSelectedLobbyGroupName(lobbyGroupsData?.stage.lobbyGroups[0]?.sequence);
+  }, [lobbyGroupsData?.stage.lobbyGroups]);
 
   const onChangeLobbyGroup = useCallback(
     (direction: number) => {
@@ -98,28 +109,21 @@ export const StageLobbies = () => {
   );
 
   const refetchLobbyGroups = useCallback(() => {
-    refetch();
+    refetch({});
   }, [refetch]);
 
   return (
-    <StyledContainer>
-      <StyledLeftSide>
-        <StyledBar>
-          <SearchInput
-            placeholder="Search Players"
-            value={searchQuery}
-            onChange={onChangeSearchInput}
-          />
-        </StyledBar>
-        {remainingPlayers
-          .filter((p) =>
+    <GridContainer>
+      <GridLeftSide>
+        <PlayerSearchList
+          showButton={false}
+          onChangeSearch={onChangeSearchInput}
+          players={remainingPlayers.filter((p) =>
             p.name.toLowerCase().includes(searchQuery.toLowerCase())
-          )
-          .map((player) => (
-            <DraggablePlayer key={player.id} player={player} />
-          ))}
-      </StyledLeftSide>
-      <StyledRightSide>
+          )}
+        />
+      </GridLeftSide>
+      <GridRightSide>
         <Suspense fallback={null}>
           <LobbyGroup
             hasLobbieGroups={hasLobbieGroups}
@@ -131,7 +135,7 @@ export const StageLobbies = () => {
             refetchLobbyGroups={refetchLobbyGroups}
           />
         </Suspense>
-      </StyledRightSide>
-    </StyledContainer>
+      </GridRightSide>
+    </GridContainer>
   );
 };

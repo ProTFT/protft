@@ -26,7 +26,7 @@ import { BaseEntity } from "../../lib/BaseEntity";
 
 @ObjectType()
 @Entity()
-@Index(["slug"], { unique: true })
+@Index(["slug"], { unique: true, where: `\"deletedAt\" is null` })
 export class Tournament extends BaseEntity {
   @Field(() => Int)
   @PrimaryGeneratedColumn()

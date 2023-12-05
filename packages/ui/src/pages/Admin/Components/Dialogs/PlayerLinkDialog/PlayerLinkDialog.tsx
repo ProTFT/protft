@@ -11,6 +11,13 @@ const PLAYER_LINK_FORM_FIELDS: FormFieldProps[] = [
   {
     label: "Type",
     name: "type",
+    type: "select",
+    options: [
+      { name: "Twitter", value: "twitter", key: "twitter" },
+      { name: "LolChess", value: "lolchess", key: "lolchess" },
+      { name: "Twitch", value: "twitch", key: "twitch" },
+      { name: "Youtube", value: "youtube", key: "youtube" },
+    ],
   },
 ];
 

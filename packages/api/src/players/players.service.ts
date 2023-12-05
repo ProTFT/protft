@@ -5,15 +5,12 @@ import {
 } from "@nestjs/common";
 import { InjectRepository } from "@nestjs/typeorm";
 import slugify from "slugify";
-import { Brackets, Raw, Repository } from "typeorm";
-import { EntityFieldsNames } from "typeorm/common/EntityFieldsNames";
+import { Raw, Repository } from "typeorm";
 import { CacheService } from "../cache/cache.service";
 import { CacheCollections, CacheKeys } from "../cache/cache.types";
-import { likeNameOrAlias } from "../lib/DBCompositeFilters";
 import { isEqualName } from "../lib/DBRawFilter";
 import { PaginationArgs } from "../lib/dto/pagination.args";
 import { parseFileString } from "../lib/FileParser";
-import { getSearchQueryFilter } from "../lib/SearchQuery";
 import { LobbyPlayerInfosService } from "../lobby-player-infos/lobby-player-infos.service";
 import { PlayerLink } from "../player-links/player-link.entity";
 import { PlayerLinksService } from "../player-links/player-links.service";
@@ -27,6 +24,7 @@ import { BaseGetPlayerArgs } from "./dto/get-players.args";
 import { TournamentsPlayed } from "./dto/get-tournaments-played.out";
 import { TournamentsPlayedRaw } from "./dto/get-tournaments-played.raw";
 import { Player } from "./player.entity";
+import { PlayerRepository } from "./player.repository";
 import { formatStats } from "./players.adapter";
 
 interface PlayerCountry {
@@ -39,6 +37,8 @@ interface PlayerRegion {
 
 @Injectable()
 export class PlayersService {
+  private customRepository: PlayerRepository;
+
   constructor(
     @InjectRepository(Player)
     private playerRepository: Repository<Player>,
@@ -49,23 +49,15 @@ export class PlayersService {
     private stagePlayersInfosService: StagePlayerInfosService,
     private playerLinksService: PlayerLinksService,
     private cacheService: CacheService,
-  ) {}
+  ) {
+    this.customRepository = new PlayerRepository(playerRepository);
+  }
 
   async findAll(
-    { searchQuery, ...filters }: BaseGetPlayerArgs,
-    { take = 10, skip = 0 }: PaginationArgs,
-    order?: { [P in EntityFieldsNames<Player>]?: "ASC" | "DESC" | 1 | -1 },
+    filters: BaseGetPlayerArgs,
+    pagination: PaginationArgs,
   ): Promise<Player[]> {
-    const searchQueryFilter = getSearchQueryFilter(searchQuery);
-    return this.playerRepository.find({
-      where: {
-        ...searchQueryFilter,
-        ...filters,
-      },
-      take,
-      skip,
-      order: order ?? {},
-    });
+    return this.customRepository.findWithPagination(filters, pagination);
   }
 
   async findOne(id: number) {
@@ -80,13 +72,7 @@ export class PlayersService {
     name: string,
     region: string,
   ): Promise<Player | undefined> {
-    const result = (await this.playerRepository
-      .createQueryBuilder()
-      .where({ region })
-      .andWhere(new Brackets(likeNameOrAlias(name)))
-      .execute()) as Player[];
-
-    return result[0];
+    return this.customRepository.findOneByNameOrAlias(name, region);
   }
 
   async updateOne(id: number, payload: Partial<Omit<Player, "id">>) {
@@ -128,7 +114,10 @@ export class PlayersService {
     const { titles, lines } = parseFileString(fileString);
     const [name, country, region] = titles;
     if (name !== "Name" || country !== "Country" || region !== "Region") {
-      throw new BadRequestException(`${name} - ${country} - ${region}`);
+      throw new BadRequestException(`
+        Wrong file structure. 
+        The column headers should be: "Name - Country - Region"
+        Found: "${name} - ${country} - ${region}"`);
     }
     const players = lines.map((line) => {
       const [name, country, region] = line.split(",");

@@ -21,7 +21,10 @@ registerEnumType(StageType, { name: "StageType" });
 
 @ObjectType()
 @Entity()
-@Index(["tournamentId", "sequence"], { unique: true })
+@Index(["tournamentId", "sequence"], {
+  unique: true,
+  where: '"deletedAt" is null',
+})
 export class Stage extends BaseEntity {
   @Field(() => Int)
   @PrimaryGeneratedColumn()
