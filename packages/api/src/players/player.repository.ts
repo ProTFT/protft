@@ -1,5 +1,4 @@
 import { QueryBuilder, Repository } from "typeorm";
-import { EntityFieldsNames } from "typeorm/common/EntityFieldsNames";
 import { PaginationArgs } from "../lib/dto/pagination.args";
 import { BaseGetPlayerArgs } from "./dto/get-players.args";
 import { Player } from "./player.entity";
@@ -13,7 +12,6 @@ export class PlayerRepository {
   public findWithPagination(
     { searchQuery, ...filters }: BaseGetPlayerArgs = {},
     { take = PLAYERS_PAGE_SIZE, skip = PLAYERS_INITIAL_PAGE }: PaginationArgs,
-    order?: { [P in EntityFieldsNames<Player>]?: "ASC" | "DESC" },
   ) {
     let query = this.repository
       .createQueryBuilder()
@@ -42,12 +40,6 @@ export class PlayerRepository {
     if (filters.region) {
       query = query.andWhere({ region: filters.region });
     }
-
-    // if (order) {
-    //   Object.entries(order).forEach(([field, orientation]) => {
-    //     query = query.orderBy(field, orientation);
-    //   });
-    // }
 
     return query.getMany();
   }

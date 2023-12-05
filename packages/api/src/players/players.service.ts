@@ -6,7 +6,6 @@ import {
 import { InjectRepository } from "@nestjs/typeorm";
 import slugify from "slugify";
 import { Raw, Repository } from "typeorm";
-import { EntityFieldsNames } from "typeorm/common/EntityFieldsNames";
 import { CacheService } from "../cache/cache.service";
 import { CacheCollections, CacheKeys } from "../cache/cache.types";
 import { isEqualName } from "../lib/DBRawFilter";
@@ -57,9 +56,8 @@ export class PlayersService {
   async findAll(
     filters: BaseGetPlayerArgs,
     pagination: PaginationArgs,
-    order?: { [P in EntityFieldsNames<Player>]?: "ASC" | "DESC" },
   ): Promise<Player[]> {
-    return this.customRepository.findWithPagination(filters, pagination, order);
+    return this.customRepository.findWithPagination(filters, pagination);
   }
 
   async findOne(id: number) {

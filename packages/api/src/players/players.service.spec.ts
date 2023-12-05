@@ -1,5 +1,5 @@
 import { BadRequestException } from "@nestjs/common";
-import { ILike, Repository } from "typeorm";
+import { Repository } from "typeorm";
 import { formatString } from "../../test/helpers/File";
 import { CacheService } from "../cache/cache.service";
 import { LobbyPlayerInfosService } from "../lobby-player-infos/lobby-player-infos.service";
@@ -10,10 +10,14 @@ import { TournamentResultsService } from "../tournament-results/tournament-resul
 import { TournamentsWriteService } from "../tournaments/services/tournaments-write.service";
 import { Player } from "./player.entity";
 import { PlayersService } from "./players.service";
+import { FakeQueryBuilder } from "../../test/stubs/fakeQueryBuilder";
 
 describe("PlayersService", () => {
   let service: PlayersService;
-  let mockQueryBuilderValue = null;
+  let mockQueryBuilderValue = [];
+  let fakeQueryBuilder = new FakeQueryBuilder<typeof mockQueryBuilderValue>(
+    mockQueryBuilderValue,
+  );
   const playerRepository = {
     find: jest.fn(),
     findOne: jest.fn(),
@@ -21,27 +25,9 @@ describe("PlayersService", () => {
     update: jest.fn(),
     softDelete: jest.fn(),
     manager: {
-      createQueryBuilder: () => ({
-        select: jest.fn().mockReturnThis(),
-        distinct: jest.fn().mockReturnThis(),
-        orderBy: jest.fn().mockReturnThis(),
-        from: jest.fn().mockReturnThis(),
-        innerJoin: jest.fn().mockReturnThis(),
-        leftJoin: jest.fn().mockReturnThis(),
-        where: jest.fn().mockReturnThis(),
-        execute: jest.fn().mockResolvedValue(mockQueryBuilderValue),
-      }),
+      createQueryBuilder: () => fakeQueryBuilder,
     },
-    createQueryBuilder: () => ({
-      select: jest.fn().mockReturnThis(),
-      distinct: jest.fn().mockReturnThis(),
-      orderBy: jest.fn().mockReturnThis(),
-      from: jest.fn().mockReturnThis(),
-      innerJoin: jest.fn().mockReturnThis(),
-      where: jest.fn().mockReturnThis(),
-      execute: jest.fn().mockResolvedValue(mockQueryBuilderValue),
-      andWhere: jest.fn().mockReturnThis(),
-    }),
+    createQueryBuilder: () => fakeQueryBuilder,
   } as unknown as Repository<Player>;
 
   const roundResultsService = {
@@ -84,6 +70,7 @@ describe("PlayersService", () => {
 
   afterEach(() => {
     jest.resetAllMocks();
+    fakeQueryBuilder.resetAllMocks();
   });
 
   it("should be defined", () => {
@@ -93,7 +80,7 @@ describe("PlayersService", () => {
   describe("find all", () => {
     it("should call repository", async () => {
       await service.findAll({}, {});
-      expect(playerRepository.find).toHaveBeenCalled();
+      expect(fakeQueryBuilder.wasCalled).toBeTruthy();
     });
 
     it("should pass all parameters", async () => {
@@ -112,30 +99,16 @@ describe("PlayersService", () => {
           take,
           skip,
         },
-        {
-          id: "ASC",
-        },
       );
-      expect(playerRepository.find).toHaveBeenCalledWith({
-        where: {
-          name: ILike(`%${searchQuery}%`),
-          country,
-          region,
-        },
-        take,
-        skip,
-        order: { id: "ASC" },
-      });
+      expect(fakeQueryBuilder.andWhereCount).toBe(3);
     });
 
     it("if no parameters, should pass default values", async () => {
       await service.findAll({}, {});
-      expect(playerRepository.find).toHaveBeenCalledWith({
-        where: {},
-        take: 10,
-        skip: 0,
-        order: {},
-      });
+      expect(fakeQueryBuilder.takeSpy).toBe(10);
+      expect(fakeQueryBuilder.skipSpy).toBe(0);
+      expect(fakeQueryBuilder.andWhereCount).toBe(0);
+      expect(fakeQueryBuilder.orderByClause).toBe(null);
     });
   });
 
@@ -230,7 +203,10 @@ describe("PlayersService", () => {
     });
 
     it("when dry run, should return results but not save", async () => {
-      mockQueryBuilderValue = [];
+      mockQueryBuilderValue = null;
+      fakeQueryBuilder = new FakeQueryBuilder<typeof mockQueryBuilderValue>(
+        mockQueryBuilderValue,
+      );
       const response = await service.createBulk(fileString);
       expect(response).toStrictEqual({
         newPlayers: [brazilianPlayer, englishPlayer],
@@ -244,6 +220,9 @@ describe("PlayersService", () => {
     it("when one player already exists, should not create it", async () => {
       const dryRun = true;
       mockQueryBuilderValue = [{}];
+      fakeQueryBuilder = new FakeQueryBuilder<typeof mockQueryBuilderValue>(
+        mockQueryBuilderValue,
+      );
       const response = await service.createBulk(fileString, dryRun);
       expect(response).toStrictEqual({
         newPlayers: [],
@@ -259,7 +238,10 @@ describe("PlayersService", () => {
       playerRepository.find = jest
         .fn()
         .mockResolvedValueOnce([brazilianPlayer, englishPlayer]);
-      mockQueryBuilderValue = [];
+      mockQueryBuilderValue = null;
+      fakeQueryBuilder = new FakeQueryBuilder<typeof mockQueryBuilderValue>(
+        mockQueryBuilderValue,
+      );
 
       const dryRun = false;
       const response = await service.createBulk(fileString, dryRun);
@@ -289,6 +271,10 @@ describe("PlayersService", () => {
           country: "USA",
         },
       ];
+      fakeQueryBuilder = new FakeQueryBuilder<typeof mockQueryBuilderValue>(
+        mockQueryBuilderValue,
+      );
+
       const response = await service.findUniqueCountries();
       expect(response).toStrictEqual(["BRA", "GBR", "USA"]);
     });
@@ -307,6 +293,10 @@ describe("PlayersService", () => {
           region: "SEA",
         },
       ];
+      fakeQueryBuilder = new FakeQueryBuilder<typeof mockQueryBuilderValue>(
+        mockQueryBuilderValue,
+      );
+
       const response = await service.findUniqueRegions();
       expect(response).toStrictEqual(["EMEA", "NA", "SEA"]);
     });
@@ -321,6 +311,10 @@ describe("PlayersService", () => {
         setName: "Beta",
       };
       mockQueryBuilderValue = [tournamentData];
+
+      fakeQueryBuilder = new FakeQueryBuilder<typeof mockQueryBuilderValue>(
+        mockQueryBuilderValue,
+      );
 
       const response = await service.findTournamentsPlayed(1);
 
