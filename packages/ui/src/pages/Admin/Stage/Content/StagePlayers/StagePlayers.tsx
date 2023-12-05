@@ -3,11 +3,7 @@ import { useParams } from "react-router-dom";
 import { useMutation, useQuery } from "urql";
 import { Player, StagePlayerInfo } from "../../../../../graphql/schema";
 import { ProTFTButton } from "../../../../../components/Button/Button";
-import { SearchInput } from "../../../../../components/SearchInput/SearchInput";
 import { useBulkPlayerListDialog } from "../../../Components/Dialogs/BulkPlayerListDialog/BulkPlayerListDialog";
-import { DroppableContainer } from "../../../Components/DroppableContainer/DroppableContainer";
-import { DraggablePlayer } from "../../../Components/PlayerItem/PlayerItem";
-import { StyledTitle } from "../../../Components/Title/Title.styled";
 import { useToast } from "../../../Components/Toast/Toast";
 import {
   CreateStagePlayerByNameVariables,
@@ -26,7 +22,6 @@ import {
   UpdateStagePlayerVariables,
   UPDATE_STAGE_PLAYER_MUTATION,
 } from "./queries";
-import { StyledBar, StyledButtonContainer } from "./StagePlayers.styled";
 import { useStagePlayerInfoDialog } from "../../../Components/Dialogs/StagePlayerInfoDialog/StagePlayerInfoDialog";
 import { useSyncedState } from "../../../../../hooks/useSyncedState";
 import {

@@ -1,15 +1,4 @@
 import styled from "styled-components";
-import { StyledHorizontalContainer } from "../../../../../../components/Layout/HorizontalContainer/HorizontalContainer.styled";
-import { StyledVerticalContainer } from "../../../../../../components/Layout/VerticalContainer/VerticalContainer.styled";
-
-// export const StyledTournamentPlayerListSmaller = styled(
-//   StyledVerticalContainer
-// )`
-//   border: 0.2rem solid ${colors.yellow};
-//   border-radius: 0.2rem;
-//   padding: 1.5rem;
-//   gap: 1rem;
-// `;
 
 export const StyledTournamentPlayerListSmaller = styled.div(({ theme }) => ({
   border: `0.2rem solid ${theme.colors.yellow}`,

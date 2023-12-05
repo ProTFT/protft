@@ -1,5 +1,4 @@
 import React from "react";
-import { StyledBody } from "../../../../../design/fonts/Fonts";
 import { Player } from "../../../../../graphql/schema";
 import { DialogForm } from "../../DialogForm/DialogForm";
 import { FormField } from "../../DialogForm/FormField";

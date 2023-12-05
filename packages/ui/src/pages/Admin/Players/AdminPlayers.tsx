@@ -5,7 +5,6 @@ import { OnlyWebmaster } from "../../../components/AuthContainer/AuthContainer";
 import { ProTFTButton } from "../../../components/Button/Button";
 import { TextIconHorizontalContainer } from "../../../components/Layout/HorizontalContainer/TextIconHorizontalContainer.styled";
 import { SearchField } from "../../../components/SearchFilterBar/SearchField";
-import { Player } from "../../../gql/graphql";
 import { client } from "../../../hooks/useAuth";
 import { PlayersListSkeleton } from "../../Players/PlayersList/PlayersList.skeleton";
 import { StyledAdminBar } from "../Components/AdminBar/AdminBar.styled";

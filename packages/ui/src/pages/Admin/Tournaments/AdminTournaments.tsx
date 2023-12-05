@@ -20,7 +20,6 @@ import { useObserver } from "../../../hooks/useObserver";
 import { usePagination } from "../../../hooks/usePagination";
 import { SearchField } from "../../../components/SearchFilterBar/SearchField";
 import { CreateTournamentMutationVariables } from "../../../gql/graphql";
-import { useAuth } from "../../../hooks/useAuth";
 import { OnlyWebmaster } from "../../../components/AuthContainer/AuthContainer";
 
 export const ADMIN_TOURNAMENTS_PATH = "/admin/tournaments";

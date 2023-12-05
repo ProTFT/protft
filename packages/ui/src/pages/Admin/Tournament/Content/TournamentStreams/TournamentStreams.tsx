@@ -7,10 +7,7 @@ import { useToast } from "../../../Components/Toast/Toast";
 import { StyledVerticalContainer } from "../../../../../components/Layout/VerticalContainer/VerticalContainer.styled";
 import { TournamentStreamDialog } from "../../../Components/Dialogs/StreamDialog/StreamDialog";
 import { DeleteButton } from "../../../Components/DeleteButton/DeleteButton";
-import {
-  StyledButtonBar,
-  StyledStagesContainer,
-} from "../TournamentStages/TournamentStages.styled";
+import { StyledButtonBar } from "../TournamentStages/TournamentStages.styled";
 import {
   ADD_STREAM_MUTATION,
   CreateStreamResult,
