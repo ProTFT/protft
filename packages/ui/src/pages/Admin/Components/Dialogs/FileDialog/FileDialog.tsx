@@ -1,4 +1,5 @@
 import React from "react";
+import { StyledBody } from "../../../../../design/fonts/Fonts";
 import { Player } from "../../../../../graphql/schema";
 import { DialogForm } from "../../DialogForm/DialogForm";
 import { FormField } from "../../DialogForm/FormField";
@@ -12,9 +13,17 @@ export interface Props {
     ignorePlayerNumber: boolean;
   }) => void;
   player?: Player;
+  showDryRun?: boolean;
+  showIgnoreValidation?: boolean;
 }
 
-export const BulkPlayerDialog = ({ dialogRef, formRef, onSubmit }: Props) => {
+export const FileDialog = ({
+  dialogRef,
+  formRef,
+  onSubmit,
+  showDryRun = false,
+  showIgnoreValidation = false,
+}: Props) => {
   return (
     <DialogForm
       dialogRef={dialogRef}
@@ -23,12 +32,16 @@ export const BulkPlayerDialog = ({ dialogRef, formRef, onSubmit }: Props) => {
       onSubmit={onSubmit}
     >
       <FormField label="File" name="file" type="file" />
-      <FormField label="Dry-run" name="dryRun" type="checkbox" />
-      <FormField
-        label="Ignore validation"
-        name="ignorePlayerNumber"
-        type="checkbox"
-      />
+      {showDryRun && (
+        <FormField label="Dry-run" name="dryRun" type="checkbox" />
+      )}
+      {showIgnoreValidation && (
+        <FormField
+          label="Ignore validation"
+          name="ignorePlayerNumber"
+          type="checkbox"
+        />
+      )}
     </DialogForm>
   );
 };

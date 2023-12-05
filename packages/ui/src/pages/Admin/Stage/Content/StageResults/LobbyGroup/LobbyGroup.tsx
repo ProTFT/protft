@@ -9,7 +9,7 @@ import {
   RoundResult,
 } from "../../../../../../graphql/schema";
 import { client } from "../../../../../../hooks/useAuth";
-import { BulkPlayerDialog } from "../../../../Components/Dialogs/BulkPlayerDialog/BulkPlayerDialog";
+import { FileDialog } from "../../../../Components/Dialogs/FileDialog/FileDialog";
 import { StyledTitle } from "../../../../Components/Title/Title.styled";
 import { useToast } from "../../../../Components/Toast/Toast";
 import { LobbyContainer } from "../LobbyContainer/LobbyContainer";
@@ -219,10 +219,11 @@ export const LobbyGroup = ({
 
   return (
     <StyledLobbyGroupContainer>
-      <BulkPlayerDialog
+      <FileDialog
         dialogRef={dialogRef}
         formRef={formRef}
         onSubmit={onSubmit}
+        showIgnoreValidation
       />
       <StyledBar>
         <StyledTitleContainer>

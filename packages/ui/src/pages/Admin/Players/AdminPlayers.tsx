@@ -9,7 +9,7 @@ import { Player } from "../../../gql/graphql";
 import { client } from "../../../hooks/useAuth";
 import { PlayersListSkeleton } from "../../Players/PlayersList/PlayersList.skeleton";
 import { StyledAdminBar } from "../Components/AdminBar/AdminBar.styled";
-import { BulkPlayerDialog } from "../Components/Dialogs/BulkPlayerDialog/BulkPlayerDialog";
+import { FileDialog } from "../Components/Dialogs/FileDialog/FileDialog";
 import {
   MergePlayerDialog,
   MergePlayerParameters,
@@ -120,10 +120,11 @@ export const AdminPlayers = () => {
             <ProTFTButton onClick={onClickMergePlayer}>Merge</ProTFTButton>
           </OnlyWebmaster>
         </TextIconHorizontalContainer>
-        <BulkPlayerDialog
+        <FileDialog
           dialogRef={playerDialogRef}
           formRef={playerFormRef}
           onSubmit={onSubmitBulkAddPlayer}
+          showDryRun
         />
         <MergePlayerDialog
           dialogRef={mergeDialogRef}

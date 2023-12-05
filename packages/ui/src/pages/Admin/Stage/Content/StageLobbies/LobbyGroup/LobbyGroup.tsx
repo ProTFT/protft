@@ -54,6 +54,7 @@ import {
   NLobbyDialogFields,
   useNLobbyDialog,
 } from "../../../../Components/Dialogs/NLobbyDialog/NLobbyDialog";
+import { colors } from "../../../../../../design/colors";
 
 interface Props {
   hasLobbieGroups: boolean;
@@ -368,7 +369,13 @@ export const LobbyGroup = ({
           ) : (
             <div />
           )}
-          <ProTFTButton onClick={onDeleteLobbyGroups}>Delete all</ProTFTButton>
+          <ProTFTButton
+            buttonColor={colors.purple}
+            textColor={colors.white}
+            onClick={onDeleteLobbyGroups}
+          >
+            Delete all
+          </ProTFTButton>
         </StyledButtonContainer>
       </StyledBar>
       <StyledLobbyContainer>

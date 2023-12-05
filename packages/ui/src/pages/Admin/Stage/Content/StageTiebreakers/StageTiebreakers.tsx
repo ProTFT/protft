@@ -4,7 +4,7 @@ import { useQuery, useMutation } from "urql";
 import { ProTFTButton } from "../../../../../components/Button/Button";
 import { Tiebreaker } from "../../../../../graphql/schema";
 import { client } from "../../../../../hooks/useAuth";
-import { BulkPlayerDialog } from "../../../Components/Dialogs/BulkPlayerDialog/BulkPlayerDialog";
+import { FileDialog } from "../../../Components/Dialogs/FileDialog/FileDialog";
 import { DeleteButton } from "../../../Components/DeleteButton/DeleteButton";
 import { useToast } from "../../../Components/Toast/Toast";
 import {
@@ -194,7 +194,7 @@ export const StageTiebreakers = () => {
 
   return (
     <GridContainer>
-      <BulkPlayerDialog
+      <FileDialog
         dialogRef={bulkTiebreakerDialogRef}
         formRef={bulkTiebreakerFormRef}
         onSubmit={onSubmitBulkTiebreaker}
@@ -220,12 +220,12 @@ export const StageTiebreakers = () => {
           <BoardListHeader>
             <StyledTitle>Stage Tiebreakers</StyledTitle>
             <BoardListButtons>
-              <ProTFTButton onClick={onUploadBulk}>Upload Bulk</ProTFTButton>
+              <ProTFTButton onClick={onUploadBulk}>Add seeding</ProTFTButton>
               <ProTFTButton onClick={onCarryOver}>
                 Carry over points
               </ProTFTButton>
               <ProTFTButton onClick={onApplyTiebreakerToAll}>
-                Apply TB to all
+                Copy to all stages
               </ProTFTButton>
               <ProTFTButton onClick={onSave}>Save</ProTFTButton>
             </BoardListButtons>
