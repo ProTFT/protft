@@ -13,6 +13,12 @@ export enum StageType {
     GROUP_BASED = "GROUP_BASED"
 }
 
+export enum SnakeSeedType {
+    SEEDING = "SEEDING",
+    CURRENT_STAGE = "CURRENT_STAGE",
+    LAST_STAGE = "LAST_STAGE"
+}
+
 export interface SortOption {
     column: string;
     asc: boolean;
@@ -330,6 +336,7 @@ export interface IMutation {
     createCircuit(name: string, setId: number, region: string[]): Circuit | Promise<Circuit>;
     updateCircuit(id: number, name?: Nullable<string>, setId?: Nullable<number>, region?: Nullable<string[]>): Circuit | Promise<Circuit>;
     deleteCircuit(id: number): DeleteResponse | Promise<DeleteResponse>;
+    snakeSeed(stageId: number, lobbyGroupId: number, type: SnakeSeedType): LobbyPlayerInfo[] | Promise<LobbyPlayerInfo[]>;
 }
 
 export type DateTime = any;

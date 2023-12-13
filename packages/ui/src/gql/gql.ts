@@ -29,6 +29,7 @@ const documents = {
     "\n  mutation createNLobby($stageId: Int!, $quantity: Int!, $lobbyGroupId: Int!) {\n    createNLobby(\n      stageId: $stageId\n      quantity: $quantity\n      lobbyGroupId: $lobbyGroupId\n    ) {\n      id\n    }\n  }\n": types.CreateNLobbyDocument,
     "\n  mutation createLobby(\n    $stageId: Int!\n    $sequence: Int!\n    $lobbyGroupId: Int!\n    $name: String\n  ) {\n    createLobby(\n      stageId: $stageId\n      sequence: $sequence\n      lobbyGroupId: $lobbyGroupId\n      name: $name\n    ) {\n      id\n    }\n  }\n": types.CreateLobbyDocument,
     "\n  mutation deleteLobbyGroups($stageId: Int!) {\n    deleteLobbyGroups(stageId: $stageId) {\n      id\n    }\n  }\n": types.DeleteLobbyGroupsDocument,
+    "\n  mutation snakeSeed(\n    $stageId: Int!\n    $lobbyGroupId: Int!\n    $type: SnakeSeedType!\n  ) {\n    snakeSeed(stageId: $stageId, lobbyGroupId: $lobbyGroupId, type: $type) {\n      id\n    }\n  }\n": types.SnakeSeedDocument,
     "\n  query oneTournamentWithPlayers($id: Int!) {\n    tournament(id: $id) {\n      id\n      players {\n        id\n        name\n        region\n      }\n    }\n  }\n": types.OneTournamentWithPlayersDocument,
     "\n  query oneStageWithPlayers($id: Int!) {\n    stage(id: $id) {\n      id\n      players {\n        player {\n          id\n          name\n          region\n        }\n      }\n    }\n  }\n": types.OneStageWithPlayersDocument,
     "\n  query oneStageWithLobbyGroups($id: Int!) {\n    stage(id: $id) {\n      id\n      lobbyGroups {\n        id\n        sequence\n      }\n    }\n  }\n": types.OneStageWithLobbyGroupsDocument,
@@ -165,6 +166,10 @@ export function graphql(source: "\n  mutation createLobby(\n    $stageId: Int!\n
  * The graphql function is used to parse GraphQL queries into a document that can be used by GraphQL clients.
  */
 export function graphql(source: "\n  mutation deleteLobbyGroups($stageId: Int!) {\n    deleteLobbyGroups(stageId: $stageId) {\n      id\n    }\n  }\n"): (typeof documents)["\n  mutation deleteLobbyGroups($stageId: Int!) {\n    deleteLobbyGroups(stageId: $stageId) {\n      id\n    }\n  }\n"];
+/**
+ * The graphql function is used to parse GraphQL queries into a document that can be used by GraphQL clients.
+ */
+export function graphql(source: "\n  mutation snakeSeed(\n    $stageId: Int!\n    $lobbyGroupId: Int!\n    $type: SnakeSeedType!\n  ) {\n    snakeSeed(stageId: $stageId, lobbyGroupId: $lobbyGroupId, type: $type) {\n      id\n    }\n  }\n"): (typeof documents)["\n  mutation snakeSeed(\n    $stageId: Int!\n    $lobbyGroupId: Int!\n    $type: SnakeSeedType!\n  ) {\n    snakeSeed(stageId: $stageId, lobbyGroupId: $lobbyGroupId, type: $type) {\n      id\n    }\n  }\n"];
 /**
  * The graphql function is used to parse GraphQL queries into a document that can be used by GraphQL clients.
  */

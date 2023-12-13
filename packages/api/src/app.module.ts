@@ -32,6 +32,7 @@ import { ClsModule } from "nestjs-cls";
 import { APP_INTERCEPTOR } from "@nestjs/core";
 import { UserStoreInterceptor } from "./auth/interceptor/user-store.interceptor";
 import { BaseEntitySubscriber } from "./lib/BaseEntity.subscriber";
+import { SeedingModule } from "./seeding/seeding.module";
 
 @Module({
   imports: [
@@ -98,6 +99,7 @@ import { BaseEntitySubscriber } from "./lib/BaseEntity.subscriber";
     PlayerAccountsModule,
     ServersModule,
     CacheModule,
+    SeedingModule,
   ],
   controllers: [AppController],
   providers: [

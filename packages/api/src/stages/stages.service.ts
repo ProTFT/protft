@@ -54,7 +54,7 @@ export class StagesService {
     );
     const stageIndex = allTournamentStages.findIndex((s) => s.id === stage.id);
     if (stageIndex <= 0) {
-      throw new NotFoundException();
+      throw new NotFoundException("There is no previous stage");
     }
     return allTournamentStages[stageIndex - 1];
   }

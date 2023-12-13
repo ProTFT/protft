@@ -146,3 +146,15 @@ export const DELETE_LOBBY_GROUPS = graphql(`
     }
   }
 `);
+
+export const SNAKE_SEED_MUTATION = graphql(`
+  mutation snakeSeed(
+    $stageId: Int!
+    $lobbyGroupId: Int!
+    $type: SnakeSeedType!
+  ) {
+    snakeSeed(stageId: $stageId, lobbyGroupId: $lobbyGroupId, type: $type) {
+      id
+    }
+  }
+`);

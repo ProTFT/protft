@@ -41,6 +41,7 @@ import {
   CreateNLobbyResult,
   CreateNLobbyVariables,
   DELETE_LOBBY_GROUPS,
+  SNAKE_SEED_MUTATION,
 } from "./queries";
 import { useToast } from "../../../../Components/Toast/Toast";
 import { StyledTitle } from "../../../../Components/Title/Title.styled";
@@ -55,6 +56,12 @@ import {
   useNLobbyDialog,
 } from "../../../../Components/Dialogs/NLobbyDialog/NLobbyDialog";
 import { colors } from "../../../../../../design/colors";
+import {
+  SnakeSeedMutation,
+  SnakeSeedMutationVariables,
+  SnakeSeedType,
+} from "../../../../../../gql/graphql";
+import { useSnakeSeedDialog } from "../../../../Components/Dialogs/SnakeSeedDialog/SnakeSeedDialog";
 
 interface Props {
   hasLobbieGroups: boolean;
@@ -121,6 +128,11 @@ export const LobbyGroup = ({
     DeleteLobbyGroupsResult,
     DeleteLobbyGroupsVariables
   >(DELETE_LOBBY_GROUPS);
+
+  const [, snakeSeed] = useMutation<
+    SnakeSeedMutation,
+    SnakeSeedMutationVariables
+  >(SNAKE_SEED_MUTATION);
 
   const [, createLobby] = useMutation<CreateLobbyResult, CreateLobbyVariables>(
     CREATE_LOBBY_MUTATION
@@ -263,6 +275,27 @@ export const LobbyGroup = ({
     setIsManual(false);
   }, [deleteLobbyGroups, refetchLobbyGroups, show, stageId]);
 
+  const onSnakeSeed = useCallback(
+    async ({ type }: { type: SnakeSeedType }) => {
+      return snakeSeed({
+        stageId: Number(stageId),
+        lobbyGroupId: Number(selectedLobbyGroup!),
+        type,
+      });
+    },
+    [selectedLobbyGroup, snakeSeed, stageId]
+  );
+
+  const { dialog: snakeSeedDialog, openDialog: openSnakeSeedDialog } =
+    useSnakeSeedDialog({
+      onSubmit: onSnakeSeed,
+      onSuccess: refetchLobbies,
+    });
+
+  const onSnakeSeedOpen = useCallback(async () => {
+    openSnakeSeedDialog();
+  }, [openSnakeSeedDialog]);
+
   const onAdd = useCallback(
     ({ lobbyId, name: lobbyName }: AllLobbyPlayers) =>
       (newPlayer: Player) => {
@@ -345,6 +378,7 @@ export const LobbyGroup = ({
       />
       {NLobbyGroupDialog}
       {NLobbyDialog}
+      {snakeSeedDialog}
       <StyledBar>
         <StyledTitleContainer>
           <BigArrowLeft onClick={goToPreviousLobbyGroup} />
@@ -376,6 +410,7 @@ export const LobbyGroup = ({
           >
             Delete all
           </ProTFTButton>
+          <ProTFTButton onClick={onSnakeSeedOpen}>Snake Seed</ProTFTButton>
         </StyledButtonContainer>
       </StyledBar>
       <StyledLobbyContainer>
