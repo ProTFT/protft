@@ -4,8 +4,21 @@ const dateFormatOptions: Intl.DateTimeFormatOptions = {
   year: "2-digit",
 };
 
-export const formatDateFromDB = (stringDate: string) =>
-  new Date(stringDate).toLocaleDateString(undefined, dateFormatOptions);
+export const formatDateFromDB = (
+  stringDate: string,
+  convertToLocal: boolean = false
+) => {
+  if (convertToLocal) {
+    return new Date(stringDate).toLocaleDateString(
+      undefined,
+      dateFormatOptions
+    );
+  }
+  return new Date(stringDate).toLocaleDateString(undefined, {
+    ...dateFormatOptions,
+    timeZone: "UTC",
+  });
+};
 
 export const dbUTCDateTimeToHTML = (dbDateTimeString?: string): string => {
   if (!dbDateTimeString) {
