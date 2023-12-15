@@ -33,7 +33,9 @@ function useProvideAuth(): AuthContext {
   const [user, setUser] = useState<boolean>(() =>
     Boolean(window.localStorage.getItem("l"))
   );
-  const [roles, setRoles] = useState<Roles[]>([]);
+  const [roles, setRoles] = useState<Roles[]>(
+    () => JSON.parse(window.localStorage.getItem("lr") || "[]") as Roles[]
+  );
 
   const signin = async (email: string, password: string) => {
     try {
@@ -46,9 +48,11 @@ function useProvideAuth(): AuthContext {
         { withCredentials: true }
       );
       if (response.status === 202) {
+        const resolvedRoles = response.data.roles || [];
         setUser(true);
-        setRoles(response.data.roles || []);
+        setRoles(resolvedRoles);
         window.localStorage.setItem("l", String(true));
+        window.localStorage.setItem("lr", JSON.stringify(resolvedRoles));
       } else {
         setUser(false);
       }
@@ -64,6 +68,7 @@ function useProvideAuth(): AuthContext {
       if (response.status === 202) {
         setUser(false);
         window.localStorage.removeItem("l");
+        window.localStorage.removeItem("lr");
       } else {
         setUser(true);
       }

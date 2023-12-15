@@ -301,6 +301,7 @@ export interface IMutation {
     createTournamentPlayers(tournamentId: number, playerIds: number[]): Tournament | Promise<Tournament>;
     createTournamentPlayersByName(tournamentId: number, playerNames: string): Tournament | Promise<Tournament>;
     createTournamentSlugs(): Tournament[] | Promise<Tournament[]>;
+    cloneTournament(tournamentId: number, setId: number, name: string): Tournament | Promise<Tournament>;
     createStage(tournamentId: number, pointSchemaId: number, name: string, sequence: number, stageType: StageType, roundCount: number, qualifiedCount?: Nullable<number>, tiebreakers?: Nullable<number[]>, description?: Nullable<string>, startDateTime?: Nullable<string>): Stage | Promise<Stage>;
     updateStage(id: number, tournamentId: number, pointSchemaId: number, name: string, sequence: number, qualifiedCount: number, stageType: StageType, roundCount: number, tiebreakers?: Nullable<number[]>, description?: Nullable<string>, startDateTime?: Nullable<string>): Stage | Promise<Stage>;
     updateTiebreakers(id: number, tiebreakers: number[]): Stage | Promise<Stage>;

@@ -6,10 +6,12 @@ import {
 import { InjectRepository } from "@nestjs/typeorm";
 import { In, Repository } from "typeorm";
 import { JwtUser } from "../../auth/jwt.strategy";
+import { BaseEntity } from "../../lib/BaseEntity";
 import { DeleteResponse } from "../../lib/dto/delete-return";
 import { parseMultilinePlayerNamesFromAll } from "../../lib/MultilineInput";
 import { Player } from "../../players/player.entity";
 import { SetsService } from "../../sets/sets.service";
+import { CreateStageArgs } from "../../stages/dto/create-stage.args";
 import { Stage } from "../../stages/stage.entity";
 import { StagesService } from "../../stages/stages.service";
 import { CreateTournamentDto } from "../dto/create-tournament.dto";
@@ -153,5 +155,67 @@ export class TournamentsWriteService {
         return this.tournamentRepository.save(updatedTournament);
       }),
     );
+  }
+
+  async cloneTournament(
+    tournamentId: number,
+    name: string,
+    setId: number,
+    user: JwtUser,
+  ): Promise<Tournament> {
+    const [tournament, stages] = await Promise.all([
+      this.tournamentRepository.findOne(tournamentId),
+      this.stagesService.findAllByTournament(tournamentId),
+    ]);
+
+    const strippedTournament = this.removeProperties(tournament, [
+      "slug",
+      "visibility",
+    ]) as CreateTournamentArgs;
+    const tournamentToCreate = {
+      ...strippedTournament,
+      name,
+      setId,
+    };
+    const createdTournament = await this.createOne(tournamentToCreate, user);
+
+    const stagesToCreate = stages.map((stage) => {
+      const strippedStage = this.removeProperties(stage, [
+        "tournamentId",
+      ]) as CreateStageArgs;
+      const stageToCreate = {
+        ...strippedStage,
+        tournamentId: createdTournament.id,
+      };
+      this.stagesService.createOne(stageToCreate);
+    });
+    await Promise.all(stagesToCreate);
+    return createdTournament;
+  }
+
+  private removeProperties<T>(
+    baseObject: T,
+    propertiesToRemove: Array<keyof T>,
+  ) {
+    const basePropertiesToRemove: Array<keyof BaseEntity> = [
+      "createdAt",
+      "createdBy",
+      "deletedAt",
+      "deletedBy",
+      "updatedAt",
+      "updatedBy",
+    ];
+    const fullPropertiesToRemove = [
+      "id",
+      ...basePropertiesToRemove,
+      ...propertiesToRemove,
+    ];
+    const objectKeys = Object.keys(baseObject) as Array<keyof T>;
+    return objectKeys.reduce((newObject, currentKey) => {
+      if (!fullPropertiesToRemove.includes(currentKey)) {
+        newObject[currentKey as string] = baseObject[currentKey];
+      }
+      return newObject;
+    }, {});
   }
 }

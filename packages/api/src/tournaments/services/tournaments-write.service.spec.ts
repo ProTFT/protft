@@ -1,5 +1,7 @@
 import { BadRequestException, NotFoundException } from "@nestjs/common";
 import { Repository } from "typeorm";
+import { stage } from "../../../test/generators/stage";
+import { tournament } from "../../../test/generators/tournament";
 import { JwtUser } from "../../auth/jwt.strategy";
 import { DeleteResponse } from "../../lib/dto/delete-return";
 import { SetsService } from "../../sets/sets.service";
@@ -339,6 +341,45 @@ describe("TournamentsWriteService", () => {
         ...tournamentData,
         players: [randomPlayer, playerToBeAdded],
       });
+    });
+  });
+
+  describe("cloneTournament", () => {
+    it("should create new tournament using the properties provided", async () => {
+      const currentTournament = tournament({ name: "old name" });
+      const newTournament = tournament();
+      tournamentRepository.findOne = jest
+        .fn()
+        .mockResolvedValue(currentTournament);
+
+      tournamentRepository.save = jest.fn().mockResolvedValue(newTournament);
+
+      stagesService.findAllByTournament = jest
+        .fn()
+        .mockResolvedValue([stage({}), stage({})]);
+
+      await service.cloneTournament(
+        currentTournament.id,
+        "new name",
+        123,
+        {} as JwtUser,
+      );
+
+      expect(tournamentRepository.save).toHaveBeenCalledWith(
+        expect.objectContaining({
+          name: "new name",
+          setId: 123,
+          visibility: false,
+          slug: "setname-new-name",
+        }),
+      );
+
+      expect(stagesService.createOne).toHaveBeenCalledTimes(2);
+
+      expect(stagesService.createOne).toHaveBeenNthCalledWith(
+        1,
+        expect.objectContaining({ tournamentId: newTournament.id }),
+      );
     });
   });
 });

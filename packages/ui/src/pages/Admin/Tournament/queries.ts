@@ -67,6 +67,14 @@ export const UPDATE_TOURNAMENT_MUTATION = graphql(`
   }
 `);
 
+export const CLONE_TOURNAMENT_MUTATION = graphql(`
+  mutation cloneTournament($tournamentId: Int!, $name: String!, $setId: Int!) {
+    cloneTournament(tournamentId: $tournamentId, name: $name, setId: $setId) {
+      id
+    }
+  }
+`);
+
 export interface LockResultsResult {
   lockTournament: {
     tournamentId: number;

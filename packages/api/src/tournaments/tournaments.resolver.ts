@@ -28,6 +28,7 @@ import { GetTournamentsArgs } from "./gql/get-tournaments.args";
 import { UpdateTournamentArgs } from "./gql/update-tournament.args";
 import { CurrentUser } from "../auth/decorator/current-user";
 import { JwtUser } from "../auth/jwt.strategy";
+import { CloneTournamentArgs } from "./gql/clone-tournament.args";
 
 @Resolver(() => Tournament)
 export class TournamentsResolver extends BaseResolver {
@@ -171,5 +172,19 @@ export class TournamentsResolver extends BaseResolver {
   @Mutation(() => [Tournament])
   async createTournamentSlugs() {
     return this.tournamentsService.createMissingSlugs();
+  }
+
+  @UseGuards(GqlJwtAuthGuard)
+  @Mutation(() => Tournament)
+  async cloneTournament(
+    @Args() { tournamentId, name, setId }: CloneTournamentArgs,
+    @CurrentUser() user: JwtUser,
+  ) {
+    return this.tournamentsService.cloneTournament(
+      tournamentId,
+      name,
+      setId,
+      user,
+    );
   }
 }
