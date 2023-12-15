@@ -30,7 +30,6 @@ import { OnlyWebmaster } from "../../../components/AuthContainer/AuthContainer";
 import {
   CloneTournamentMutation,
   CloneTournamentMutationVariables,
-  MutationCloneTournamentArgs,
 } from "../../../gql/graphql";
 import { useCloneTournamentDialog } from "../Components/Dialogs/CloneTournamentDialog/CloneTournamentDialog";
 
