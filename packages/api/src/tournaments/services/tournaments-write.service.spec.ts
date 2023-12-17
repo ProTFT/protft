@@ -4,6 +4,7 @@ import { stage } from "../../../test/generators/stage";
 import { tournament } from "../../../test/generators/tournament";
 import { JwtUser } from "../../auth/jwt.strategy";
 import { DeleteResponse } from "../../lib/dto/delete-return";
+import { Round } from "../../rounds/round.entity";
 import { SetsService } from "../../sets/sets.service";
 import { StagesService } from "../../stages/stages.service";
 import { StageType } from "../../stages/types/StageType";
@@ -354,9 +355,12 @@ describe("TournamentsWriteService", () => {
 
       tournamentRepository.save = jest.fn().mockResolvedValue(newTournament);
 
-      stagesService.findAllByTournament = jest
-        .fn()
-        .mockResolvedValue([stage({}), stage({})]);
+      stagesService.findAllByTournament = jest.fn().mockResolvedValue([
+        stage({
+          roundCount: 5,
+        }),
+        stage({ rounds: [{} as Round, {} as Round] }),
+      ]);
 
       await service.cloneTournament(
         currentTournament.id,
@@ -377,8 +381,11 @@ describe("TournamentsWriteService", () => {
       expect(stagesService.createOne).toHaveBeenCalledTimes(2);
 
       expect(stagesService.createOne).toHaveBeenNthCalledWith(
-        1,
-        expect.objectContaining({ tournamentId: newTournament.id }),
+        2,
+        expect.objectContaining({
+          tournamentId: newTournament.id,
+          roundCount: 2,
+        }),
       );
     });
   });

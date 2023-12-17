@@ -165,7 +165,7 @@ export class TournamentsWriteService {
   ): Promise<Tournament> {
     const [tournament, stages] = await Promise.all([
       this.tournamentRepository.findOne(tournamentId),
-      this.stagesService.findAllByTournament(tournamentId),
+      this.stagesService.findAllByTournament(tournamentId, ["rounds"]),
     ]);
 
     const strippedTournament = this.removeProperties(tournament, [
@@ -179,15 +179,17 @@ export class TournamentsWriteService {
     };
     const createdTournament = await this.createOne(tournamentToCreate, user);
 
-    const stagesToCreate = stages.map((stage) => {
+    const stagesToCreate = stages.map<Promise<Stage>>((stage) => {
       const strippedStage = this.removeProperties(stage, [
         "tournamentId",
+        "rounds",
       ]) as CreateStageArgs;
       const stageToCreate = {
         ...strippedStage,
+        roundCount: stage.rounds.length,
         tournamentId: createdTournament.id,
       };
-      this.stagesService.createOne(stageToCreate);
+      return this.stagesService.createOne(stageToCreate);
     });
     await Promise.all(stagesToCreate);
     return createdTournament;

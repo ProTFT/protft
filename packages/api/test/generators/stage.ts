@@ -26,7 +26,7 @@ export function stage({
     id: id || randomId,
     name: name || "",
     lobbies: lobbies || [],
-    roundCount: rounds?.length || 0,
+    roundCount: undefined,
     pointSchema: pointSchema || { id: randomId, name: "" },
     pointSchemaId: pointSchemaId || randomId,
     sequence: sequence || randomId,
