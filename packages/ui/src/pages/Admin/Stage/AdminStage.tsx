@@ -1,10 +1,4 @@
-import { Stage } from "../../../graphql/schema";
-import {
-  StageQueryResponse,
-  STAGE_QUERY,
-  TournamentQueryResponse,
-  TOURNAMENT_QUERY,
-} from "./queries";
+import { STAGE_QUERY, TOURNAMENT_QUERY } from "./queries";
 import { useMutation, useQuery } from "urql";
 import {
   Link,
@@ -24,12 +18,13 @@ import { StagePlayers } from "./Content/StagePlayers/StagePlayers";
 import { StageLobbies } from "./Content/StageLobbies/StageLobbies";
 import { StageResults } from "./Content/StageResults/StageResults";
 import { StyledActionsContainer } from "../Tournament/AdminTournament.styled";
-import { StageDialog } from "../Components/Dialogs/StageDialog/StageDialog";
+import {
+  DialogStage,
+  StageDialog,
+} from "../Components/Dialogs/StageDialog/StageDialog";
 import {
   StageDeleteResult,
   DELETE_STAGE_MUTATION,
-  UpdateStageResult,
-  UpdateStageVariables,
   UPDATE_STAGE_MUTATION,
 } from "../Tournament/Content/TournamentStages/StageCard/queries";
 import { useToast } from "../Components/Toast/Toast";
@@ -37,6 +32,12 @@ import { StageTiebreakers } from "./Content/StageTiebreakers/StageTiebreakers";
 import { SuspenseElement } from "../../../components/SuspendedPage";
 import { ProTFTButton } from "../../../components/Button/Button";
 import { AdminStageHeader } from "./Content/AdminStageHeader";
+import {
+  OneStageQuery,
+  OneTournamentWithSetQuery,
+  UpdateStageMutation,
+  UpdateStageMutationVariables,
+} from "../../../gql/graphql";
 
 export const AdminStage = () => {
   const { id, stageId } = useParams();
@@ -49,12 +50,12 @@ export const AdminStage = () => {
     (path: string) => location.pathname.includes(path),
     [location.pathname]
   );
-  const [{ data }, stagesRefetch] = useQuery<StageQueryResponse>({
+  const [{ data }, stagesRefetch] = useQuery<OneStageQuery>({
     query: STAGE_QUERY,
     variables: { id: Number(stageId) },
   });
 
-  const [{ data: tournamentData }] = useQuery<TournamentQueryResponse>({
+  const [{ data: tournamentData }] = useQuery<OneTournamentWithSetQuery>({
     query: TOURNAMENT_QUERY,
     variables: { id: Number(id) },
   });
@@ -67,9 +68,10 @@ export const AdminStage = () => {
     DELETE_STAGE_MUTATION
   );
 
-  const [, updateStage] = useMutation<UpdateStageResult, UpdateStageVariables>(
-    UPDATE_STAGE_MUTATION
-  );
+  const [, updateStage] = useMutation<
+    UpdateStageMutation,
+    UpdateStageMutationVariables
+  >(UPDATE_STAGE_MUTATION);
 
   const handleUpdateStage = useCallback(() => {
     dialogRef.current?.showModal();
@@ -88,14 +90,13 @@ export const AdminStage = () => {
     navigate(`/admin/tournaments/${id}/players`);
   }, [navigate, id]);
 
-  const onSubmit = async (
-    formStage: Omit<Stage, "id" | "rounds" | "lobbies">
-  ) => {
+  const onSubmit = async (formStage: DialogStage) => {
     const result = await updateStage({
       ...formStage,
       startDateTime: formStage.startDateTime ?? undefined,
       id: Number(stageId),
       tournamentId: Number(id),
+      sequenceForResult: formStage.sequenceForResult || formStage.sequence,
     });
     if (result.error) {
       return alert(result.error);

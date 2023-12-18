@@ -43,6 +43,10 @@ export class Stage extends BaseEntity {
   sequence: number;
 
   @Field(() => Int)
+  @Column({ default: 0 })
+  sequenceForResult: number;
+
+  @Field(() => Int)
   @Column()
   tournamentId: number;
 

@@ -57,6 +57,7 @@ export class TournamentsWriteService {
     }
     return this.stagesService.createOne({
       tournamentId,
+      sequenceForResult: payload.sequence,
       ...payload,
     });
   }

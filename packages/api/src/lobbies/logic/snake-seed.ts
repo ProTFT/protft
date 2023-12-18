@@ -6,7 +6,6 @@ export interface PlayerWithSeed {
 }
 
 export const snakeSeed = (players: PlayerWithSeed[]) => {
-  console.log(players);
   const numberOfLobbies = players.length / PLAYERS_IN_TFT_LOBBY;
   const arrayOfLobbies = new Array(numberOfLobbies).fill([]);
   const playersSorted = [...players].sort((a, b) => a.ranking - b.ranking);

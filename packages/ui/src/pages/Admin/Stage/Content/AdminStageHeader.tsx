@@ -4,12 +4,12 @@ import {
   StyledTournamentInfoContainer,
   StyledTournamentTitle,
 } from "../../../../components/TournamentContent/TournamentContent.styled";
-import { Stage, Tournament } from "../../../../graphql/schema";
+import { Stage, Tournament } from "../../../../gql/graphql";
 import { StyledHeaderContainer } from "./AdminStageHeader.styled";
 
 interface Props {
-  tournament?: Tournament;
-  stage?: Stage;
+  tournament?: Pick<Tournament, "set" | "name">;
+  stage?: Pick<Stage, "sequence" | "name" | "startDateTime">;
 }
 
 export const toLocaleDateTimeString = (date: Date): string => {

@@ -1,9 +1,4 @@
 import { graphql } from "../../../gql";
-import { Stage, Tournament } from "../../../graphql/schema";
-
-export interface StageQueryResponse {
-  stage: Stage;
-}
 
 export const STAGE_QUERY = graphql(`
   query oneStage($id: Int!) {
@@ -12,6 +7,7 @@ export const STAGE_QUERY = graphql(`
       name
       description
       sequence
+      sequenceForResult
       pointSchemaId
       roundCount
       qualifiedCount
@@ -20,10 +16,6 @@ export const STAGE_QUERY = graphql(`
     }
   }
 `);
-
-export interface TournamentQueryResponse {
-  tournament: Tournament;
-}
 
 export const TOURNAMENT_QUERY = graphql(`
   query oneTournamentWithSet($id: Int!) {

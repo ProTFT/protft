@@ -93,6 +93,7 @@ describe("TournamentsWriteService", () => {
       pointSchemaId: 1,
       roundCount: 1,
       sequence: 1,
+      sequenceForResult: 1,
       stageType: StageType.RANKING,
       tiebreakers: [1, 2, 3],
       description: "descr",

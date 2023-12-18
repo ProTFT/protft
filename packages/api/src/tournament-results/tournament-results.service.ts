@@ -3,9 +3,13 @@ import { InjectRepository } from "@nestjs/typeorm";
 import { Repository, UpdateResult } from "typeorm";
 import { DeleteResponse } from "../lib/dto/delete-return";
 import { getOrdinal } from "../lib/Number";
+import { LobbyGroupWithLobbies } from "../round-results/dto/get-lobby-results.out";
+import { PlayerResultsWithPast } from "../round-results/round-result.logic";
 import { RoundResultsService } from "../round-results/round-results.service";
+import { Stage } from "../stages/stage.entity";
 import { PLAYERS_IN_TFT_LOBBY, StagesService } from "../stages/stages.service";
 import { StageType } from "../stages/types/StageType";
+import { arrayToCardinals } from "./logic/arrayToCardinals";
 import { TournamentResult } from "./tournament-result.entity";
 
 @Injectable()
@@ -32,33 +36,65 @@ export class TournamentResultsService {
     >[] = [];
 
     const arrayOfLobbyPlayers = new Array(PLAYERS_IN_TFT_LOBBY).fill(0);
+    const processedStages = [];
 
-    for (const stage of tournamentStages.reverse()) {
-      if (stage.stageType === StageType.RANKING) {
-        const results = await this.roundResultsService.overviewResultsByStage(
-          stage.id,
+    for (const currentStage of tournamentStages.reverse()) {
+      if (processedStages.includes(currentStage.id)) {
+        continue;
+      }
+      if (currentStage.stageType === StageType.RANKING) {
+        const results = await this.fetchResultsForStageRankingPlusParallelOnes(
+          currentStage,
+          tournamentStages,
+          processedStages,
         );
 
-        results
-          .filter(
+        const resultsForRemainingPlayers = results.map((stageResult) =>
+          stageResult.filter(
             (result) =>
               !finalResults.find((fr) => fr.playerId === result.player.id),
-          )
-          .forEach((playersInStage) => {
-            finalResults.push({
-              tournamentId,
-              finalPosition: getOrdinal(finalResults.length + 1),
-              playerId: playersInStage.player.id,
-            });
-          });
-      }
-
-      if (stage.stageType === StageType.GROUP_BASED) {
-        const results = await this.roundResultsService.lobbyResultsByStage(
-          stage.id,
+          ),
         );
 
-        for (const lobbyGroup of results) {
+        let consolidatedResults = [];
+
+        if (resultsForRemainingPlayers.length > 1) {
+          resultsForRemainingPlayers.forEach((stageResult) => {
+            stageResult.forEach((_, index) => {
+              consolidatedResults[index] = [
+                ...(consolidatedResults[index] || []),
+                stageResult[index].player.id,
+              ];
+            });
+          });
+        } else {
+          consolidatedResults = resultsForRemainingPlayers[0].map((result) => [
+            result.player.id,
+          ]);
+        }
+
+        const result = arrayToCardinals(
+          consolidatedResults,
+          finalResults.length,
+        );
+
+        result.forEach((r) => {
+          finalResults.push({
+            tournamentId,
+            finalPosition: r.finalPosition,
+            playerId: r.id,
+          });
+        });
+      }
+
+      if (currentStage.stageType === StageType.GROUP_BASED) {
+        const results = await this.fetchResultsForStageGroupPlusParallelOnes(
+          currentStage,
+          tournamentStages,
+          processedStages,
+        );
+
+        for (const lobbyGroup of [results]) {
           const lobbies = lobbyGroup.lobbies;
           arrayOfLobbyPlayers.forEach((_, positionIndex) => {
             const offset = finalResults.length + 1;
@@ -84,6 +120,50 @@ export class TournamentResultsService {
     }
 
     return this.tournamentResultRepository.save(finalResults);
+  }
+
+  private async fetchResultsForStageRankingPlusParallelOnes(
+    stage: Stage,
+    allStages: Stage[],
+    processedStages: number[],
+  ): Promise<PlayerResultsWithPast[][]> {
+    const idsToFetch = this.getStageIdsToFetch(stage, allStages);
+    const resultsFromAllRelatedStages = await Promise.all(
+      idsToFetch.map((id) =>
+        this.roundResultsService.overviewResultsByStage(id),
+      ),
+    );
+    processedStages.push(...idsToFetch);
+    return resultsFromAllRelatedStages;
+  }
+
+  private async fetchResultsForStageGroupPlusParallelOnes(
+    stage: Stage,
+    allStages: Stage[],
+    processedStages: number[],
+  ): Promise<LobbyGroupWithLobbies> {
+    const idsToFetch = this.getStageIdsToFetch(stage, allStages);
+    const resultsFromAllRelatedStages = await Promise.all(
+      idsToFetch.map((id) => this.roundResultsService.lobbyResultsByStage(id)),
+    );
+    processedStages.push(...idsToFetch);
+    const flatResults = resultsFromAllRelatedStages.flat();
+    return flatResults.reduce<LobbyGroupWithLobbies>(
+      (prev, curr) => ({
+        ...prev,
+        lobbies: [...(prev.lobbies || []), ...curr.lobbies],
+      }),
+      {} as LobbyGroupWithLobbies,
+    );
+  }
+
+  private getStageIdsToFetch(stage: Stage, allStages: Stage[]) {
+    const { id, sequenceForResult } = stage;
+    const stagesWithSameSequence = allStages.filter(
+      (s) => s.sequenceForResult === sequenceForResult && s.id !== id,
+    );
+    const idsToFetch = [id, ...stagesWithSameSequence.map((s) => s.id)];
+    return idsToFetch;
   }
 
   async deleteResults(tournamentId: number): Promise<DeleteResponse> {

@@ -79,8 +79,18 @@ describe("TournamentResultsService", () => {
     describe("ranking-based tournament", () => {
       beforeEach(() => {
         stagesService.findAllByTournament = jest.fn().mockResolvedValue([
-          { id: 1, stageType: StageType.RANKING },
-          { id: 2, stageType: StageType.RANKING },
+          {
+            id: 1,
+            stageType: StageType.RANKING,
+            sequence: 1,
+            sequenceForResult: 1,
+          },
+          {
+            id: 2,
+            stageType: StageType.RANKING,
+            sequence: 2,
+            sequenceForResult: 2,
+          },
         ]);
 
         roundResultsService.overviewResultsByStage = jest
@@ -113,8 +123,20 @@ describe("TournamentResultsService", () => {
     describe("group-based tournament", () => {
       beforeEach(() => {
         stagesService.findAllByTournament = jest.fn().mockResolvedValue([
-          { id: 1, stageType: StageType.GROUP_BASED, qualifiedCount: 4 },
-          { id: 2, stageType: StageType.GROUP_BASED, qualifiedCount: 2 },
+          {
+            id: 1,
+            stageType: StageType.GROUP_BASED,
+            qualifiedCount: 4,
+            sequence: 1,
+            sequenceForResult: 1,
+          },
+          {
+            id: 2,
+            stageType: StageType.GROUP_BASED,
+            qualifiedCount: 2,
+            sequence: 2,
+            sequenceForResult: 2,
+          },
         ]);
       });
 
@@ -503,8 +525,18 @@ describe("TournamentResultsService", () => {
     describe("mixed tournament", () => {
       beforeEach(() => {
         stagesService.findAllByTournament = jest.fn().mockResolvedValue([
-          { id: 1, stageType: StageType.GROUP_BASED },
-          { id: 2, stageType: StageType.RANKING },
+          {
+            id: 1,
+            stageType: StageType.GROUP_BASED,
+            sequence: 1,
+            sequenceForResult: 1,
+          },
+          {
+            id: 2,
+            stageType: StageType.RANKING,
+            sequence: 2,
+            sequenceForResult: 2,
+          },
         ]);
         roundResultsService.overviewResultsByStage = jest
           .fn()
@@ -659,9 +691,24 @@ describe("TournamentResultsService", () => {
     describe("tournament with play-ins", () => {
       beforeEach(() => {
         stagesService.findAllByTournament = jest.fn().mockResolvedValue([
-          { id: 1, stageType: StageType.RANKING },
-          { id: 2, stageType: StageType.GROUP_BASED },
-          { id: 3, stageType: StageType.RANKING },
+          {
+            id: 1,
+            stageType: StageType.RANKING,
+            sequence: 1,
+            sequenceForResult: 1,
+          },
+          {
+            id: 2,
+            stageType: StageType.GROUP_BASED,
+            sequence: 2,
+            sequenceForResult: 2,
+          },
+          {
+            id: 3,
+            stageType: StageType.RANKING,
+            sequence: 3,
+            sequenceForResult: 3,
+          },
         ]);
         roundResultsService.overviewResultsByStage = jest
           .fn()
@@ -840,6 +887,251 @@ describe("TournamentResultsService", () => {
           {
             finalPosition: "20th",
             playerId: 20,
+            tournamentId: mockTournamentId,
+          },
+        ]);
+      });
+    });
+
+    describe("tournament with parallel group stages", () => {
+      beforeEach(() => {
+        stagesService.findAllByTournament = jest.fn().mockResolvedValue([
+          {
+            id: 1,
+            sequence: 1,
+            stageType: StageType.GROUP_BASED,
+            sequenceForResult: 1,
+          },
+          {
+            id: 2,
+            sequence: 2,
+            stageType: StageType.GROUP_BASED,
+            sequenceForResult: 1,
+          },
+        ]);
+        roundResultsService.lobbyResultsByStage = jest
+          .fn()
+          .mockImplementation((stageId: number) => {
+            if (stageId === 1) {
+              return [
+                {
+                  id: 1,
+                  lobbies: [
+                    {
+                      id: 1,
+                      results: [
+                        playerWithOnlyPosition(1, 1),
+                        playerWithOnlyPosition(2, 2),
+                        playerWithOnlyPosition(9, 3),
+                        playerWithOnlyPosition(10, 4),
+                      ],
+                    },
+                    {
+                      id: 2,
+                      results: [
+                        playerWithOnlyPosition(3, 5),
+                        playerWithOnlyPosition(4, 6),
+                        playerWithOnlyPosition(11, 7),
+                        playerWithOnlyPosition(12, 8),
+                      ],
+                    },
+                  ],
+                },
+              ];
+            }
+            return [
+              {
+                id: 1,
+                lobbies: [
+                  {
+                    id: 3,
+                    results: [
+                      playerWithOnlyPosition(5, 1),
+                      playerWithOnlyPosition(6, 2),
+                      playerWithOnlyPosition(13, 3),
+                      playerWithOnlyPosition(14, 4),
+                    ],
+                  },
+                  {
+                    id: 4,
+                    results: [
+                      playerWithOnlyPosition(7, 5),
+                      playerWithOnlyPosition(8, 6),
+                      playerWithOnlyPosition(15, 7),
+                      playerWithOnlyPosition(16, 8),
+                    ],
+                  },
+                ],
+              },
+            ];
+          });
+      });
+
+      it("should be able to consider stages as side-by-side", async () => {
+        await service.lockResults(mockTournamentId);
+        expect(tournamentResultRepository.save).toHaveBeenCalledWith([
+          {
+            finalPosition: "1st-4th",
+            playerId: 5,
+            tournamentId: mockTournamentId,
+          },
+          {
+            finalPosition: "1st-4th",
+            playerId: 7,
+            tournamentId: mockTournamentId,
+          },
+          {
+            finalPosition: "1st-4th",
+            playerId: 1,
+            tournamentId: mockTournamentId,
+          },
+          {
+            finalPosition: "1st-4th",
+            playerId: 3,
+            tournamentId: mockTournamentId,
+          },
+          {
+            finalPosition: "5th-8th",
+            playerId: 6,
+            tournamentId: mockTournamentId,
+          },
+          {
+            finalPosition: "5th-8th",
+            playerId: 8,
+            tournamentId: mockTournamentId,
+          },
+          {
+            finalPosition: "5th-8th",
+            playerId: 2,
+            tournamentId: mockTournamentId,
+          },
+          {
+            finalPosition: "5th-8th",
+            playerId: 4,
+            tournamentId: mockTournamentId,
+          },
+          {
+            finalPosition: "9th-12th",
+            playerId: 13,
+            tournamentId: mockTournamentId,
+          },
+          {
+            finalPosition: "9th-12th",
+            playerId: 15,
+            tournamentId: mockTournamentId,
+          },
+          {
+            finalPosition: "9th-12th",
+            playerId: 9,
+            tournamentId: mockTournamentId,
+          },
+          {
+            finalPosition: "9th-12th",
+            playerId: 11,
+            tournamentId: mockTournamentId,
+          },
+          {
+            finalPosition: "13th-16th",
+            playerId: 14,
+            tournamentId: mockTournamentId,
+          },
+          {
+            finalPosition: "13th-16th",
+            playerId: 16,
+            tournamentId: mockTournamentId,
+          },
+          {
+            finalPosition: "13th-16th",
+            playerId: 10,
+            tournamentId: mockTournamentId,
+          },
+          {
+            finalPosition: "13th-16th",
+            playerId: 12,
+            tournamentId: mockTournamentId,
+          },
+        ]);
+      });
+    });
+
+    describe("tournament with parallel ranking stages", () => {
+      beforeEach(() => {
+        stagesService.findAllByTournament = jest.fn().mockResolvedValue([
+          {
+            id: 1,
+            sequence: 1,
+            stageType: StageType.RANKING,
+            sequenceForResult: 1,
+          },
+          {
+            id: 2,
+            sequence: 2,
+            stageType: StageType.RANKING,
+            sequenceForResult: 1,
+          },
+        ]);
+        roundResultsService.overviewResultsByStage = jest
+          .fn()
+          .mockImplementation((stageId: number) => {
+            if (stageId === 1) {
+              return [
+                playerWithOnlyPosition(1, 1),
+                playerWithOnlyPosition(2, 2),
+                playerWithOnlyPosition(3, 3),
+                playerWithOnlyPosition(4, 4),
+              ];
+            }
+
+            return [
+              playerWithOnlyPosition(9, 1),
+              playerWithOnlyPosition(10, 2),
+              playerWithOnlyPosition(11, 3),
+              playerWithOnlyPosition(12, 4),
+            ];
+          });
+      });
+
+      it("should be able to consider stages as side-by-side", async () => {
+        await service.lockResults(mockTournamentId);
+        expect(tournamentResultRepository.save).toHaveBeenCalledWith([
+          {
+            finalPosition: "1st-2nd",
+            playerId: 9,
+            tournamentId: mockTournamentId,
+          },
+          {
+            finalPosition: "1st-2nd",
+            playerId: 1,
+            tournamentId: mockTournamentId,
+          },
+          {
+            finalPosition: "3rd-4th",
+            playerId: 10,
+            tournamentId: mockTournamentId,
+          },
+          {
+            finalPosition: "3rd-4th",
+            playerId: 2,
+            tournamentId: mockTournamentId,
+          },
+          {
+            finalPosition: "5th-6th",
+            playerId: 11,
+            tournamentId: mockTournamentId,
+          },
+          {
+            finalPosition: "5th-6th",
+            playerId: 3,
+            tournamentId: mockTournamentId,
+          },
+          {
+            finalPosition: "7th-8th",
+            playerId: 12,
+            tournamentId: mockTournamentId,
+          },
+          {
+            finalPosition: "7th-8th",
+            playerId: 4,
             tournamentId: mockTournamentId,
           },
         ]);

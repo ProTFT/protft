@@ -1,5 +1,4 @@
 import { graphql } from "../../../../../../gql";
-import { Stage, StageType } from "../../../../../../graphql/schema";
 
 export interface DeleteResult {
   id: number;
@@ -17,23 +16,6 @@ export const DELETE_STAGE_MUTATION = graphql(`
   }
 `);
 
-export interface UpdateStageResult {
-  updateStage: { id: Pick<Stage, "id"> };
-}
-
-export type UpdateStageVariables = {
-  id: number;
-  tournamentId: number;
-  pointSchemaId: number;
-  name: string;
-  sequence: number;
-  roundCount: number;
-  description: string;
-  qualifiedCount: number;
-  stageType: StageType;
-  startDateTime?: string;
-};
-
 export const UPDATE_STAGE_MUTATION = graphql(`
   mutation updateStage(
     $id: Int!
@@ -41,6 +23,7 @@ export const UPDATE_STAGE_MUTATION = graphql(`
     $pointSchemaId: Int!
     $name: String!
     $sequence: Int!
+    $sequenceForResult: Int!
     $roundCount: Int!
     $description: String
     $qualifiedCount: Int!
@@ -53,6 +36,7 @@ export const UPDATE_STAGE_MUTATION = graphql(`
       pointSchemaId: $pointSchemaId
       name: $name
       sequence: $sequence
+      sequenceForResult: $sequenceForResult
       description: $description
       roundCount: $roundCount
       qualifiedCount: $qualifiedCount

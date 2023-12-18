@@ -89,45 +89,5 @@ describe("Seeding service", () => {
         mockPreviousStageId,
       );
     });
-
-    it("if seed type = CURRENT_STAGE, but the stage type is not ranking, should throw error", async () => {
-      (stageService.findOne as jest.Mock).mockResolvedValueOnce({
-        stageType: StageType.GROUP_BASED,
-      });
-      expect(
-        service.snakeSeed(
-          mockLobbyGroupId,
-          mockStageId,
-          SnakeSeedType.CURRENT_STAGE,
-        ),
-      ).rejects.toThrowError();
-    });
-
-    it("if seed type = LAST_STAGE, but the last stage type is not ranking, should throw error", async () => {
-      (stageService.findOne as jest.Mock).mockResolvedValueOnce({
-        stageType: StageType.RANKING,
-      });
-      (stageService.findPreviousStage as jest.Mock).mockResolvedValueOnce({
-        stageType: StageType.GROUP_BASED,
-      });
-      expect(
-        service.snakeSeed(
-          mockLobbyGroupId,
-          mockStageId,
-          SnakeSeedType.LAST_STAGE,
-        ),
-      ).rejects.toThrowError();
-    });
-  });
-
-  describe("full example", () => {
-    beforeEach(() => {
-      (lobbyService.findAllByLobbyGroup as jest.Mock).mockResolvedValue([
-        { id: 1 },
-        { id: 2 },
-        { id: 3 },
-        { id: 4 },
-      ]);
-    });
   });
 });

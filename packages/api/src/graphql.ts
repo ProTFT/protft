@@ -121,6 +121,7 @@ export interface Stage {
     name: string;
     description: string;
     sequence: number;
+    sequenceForResult: number;
     tournamentId: number;
     pointSchemaId: number;
     tiebreakers: number[];
@@ -302,8 +303,8 @@ export interface IMutation {
     createTournamentPlayersByName(tournamentId: number, playerNames: string): Tournament | Promise<Tournament>;
     createTournamentSlugs(): Tournament[] | Promise<Tournament[]>;
     cloneTournament(tournamentId: number, setId: number, name: string): Tournament | Promise<Tournament>;
-    createStage(tournamentId: number, pointSchemaId: number, name: string, sequence: number, stageType: StageType, roundCount: number, qualifiedCount?: Nullable<number>, tiebreakers?: Nullable<number[]>, description?: Nullable<string>, startDateTime?: Nullable<string>): Stage | Promise<Stage>;
-    updateStage(id: number, tournamentId: number, pointSchemaId: number, name: string, sequence: number, qualifiedCount: number, stageType: StageType, roundCount: number, tiebreakers?: Nullable<number[]>, description?: Nullable<string>, startDateTime?: Nullable<string>): Stage | Promise<Stage>;
+    createStage(tournamentId: number, pointSchemaId: number, name: string, sequence: number, sequenceForResult: number, stageType: StageType, roundCount: number, qualifiedCount?: Nullable<number>, tiebreakers?: Nullable<number[]>, description?: Nullable<string>, startDateTime?: Nullable<string>): Stage | Promise<Stage>;
+    updateStage(id: number, tournamentId: number, pointSchemaId: number, name: string, sequence: number, sequenceForResult: number, qualifiedCount: number, stageType: StageType, roundCount: number, tiebreakers?: Nullable<number[]>, description?: Nullable<string>, startDateTime?: Nullable<string>): Stage | Promise<Stage>;
     updateTiebreakers(id: number, tiebreakers: number[]): Stage | Promise<Stage>;
     deleteStage(id: number): DeleteResponse | Promise<DeleteResponse>;
     createStagePlayers(stageId: number, playerIds: number[]): Stage | Promise<Stage>;

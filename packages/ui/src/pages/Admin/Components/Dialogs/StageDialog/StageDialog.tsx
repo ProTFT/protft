@@ -1,7 +1,7 @@
 import React, { useMemo } from "react";
 import { useQuery } from "urql";
 import { dbUTCDateTimeToHTML } from "../../../../../formatter/Date";
-import { Stage, StageType } from "../../../../../graphql/schema";
+import { Stage, StageType } from "../../../../../gql/graphql";
 import { DialogForm } from "../../DialogForm/DialogForm";
 import { FormField } from "../../DialogForm/FormField";
 import { PointSchemasResponse, POINT_SCHEMA_IDS_QUERY } from "./queries";
@@ -9,8 +9,31 @@ import { PointSchemasResponse, POINT_SCHEMA_IDS_QUERY } from "./queries";
 export interface Props {
   dialogRef: React.RefObject<HTMLDialogElement>;
   formRef: React.RefObject<HTMLFormElement>;
-  onSubmit: (stage: Omit<Stage, "id" | "lobbies" | "rounds">) => void;
-  stage?: Stage;
+  onSubmit: (stage: DialogStage) => void;
+  stage?: Pick<
+    Stage,
+    | "name"
+    | "description"
+    | "sequence"
+    | "sequenceForResult"
+    | "pointSchemaId"
+    | "roundCount"
+    | "stageType"
+    | "startDateTime"
+    | "qualifiedCount"
+  >;
+}
+
+export interface DialogStage {
+  name: string;
+  description: string;
+  sequence: number;
+  sequenceForResult: number;
+  pointSchemaId: number;
+  roundCount: number;
+  stageType: StageType;
+  startDateTime: string;
+  qualifiedCount: number;
 }
 
 const eightToOnePointSchemaId = 2;
@@ -28,6 +51,8 @@ export const StageDialog = ({ dialogRef, formRef, onSubmit, stage }: Props) => {
     [stage]
   );
 
+  console.log(formattedStageData);
+
   return (
     <DialogForm
       dialogRef={dialogRef}
@@ -39,6 +64,12 @@ export const StageDialog = ({ dialogRef, formRef, onSubmit, stage }: Props) => {
       <FormField label="Name" name="name" />
       <FormField label="Description" name="description" />
       <FormField label="Order" name="sequence" type="number" />
+
+      <FormField
+        label="Sequence (results)"
+        name="sequenceForResult"
+        type="number"
+      />
       <FormField
         label="Point Schema"
         type="select"
@@ -53,8 +84,8 @@ export const StageDialog = ({ dialogRef, formRef, onSubmit, stage }: Props) => {
       </FormField>
       <FormField label="Round Qty." name="roundCount" type="number" />
       <FormField label="Stage Type" type="select" name="stageType">
-        <option value={StageType.RANKING}>Ranking</option>
-        <option value={StageType.GROUP_BASED}>Group based</option>
+        <option value={StageType.Ranking}>Ranking</option>
+        <option value={StageType.GroupBased}>Group based</option>
       </FormField>
       <FormField
         label="Time (UTC)"

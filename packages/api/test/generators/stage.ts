@@ -20,6 +20,7 @@ export function stage({
   stageType,
   qualifiedCount,
   startDateTime,
+  sequenceForResult,
 }: Partial<Stage>): Stage {
   const randomId = Math.random() * 999;
   return {
@@ -40,6 +41,7 @@ export function stage({
     stageType: stageType || StageType.RANKING,
     qualifiedCount: qualifiedCount || 0,
     startDateTime: startDateTime || "",
+    sequenceForResult: sequenceForResult || 0,
     ...BaseProps(),
   };
 }
