@@ -36,7 +36,7 @@ export const StyledMobileMainButton = styled.div`
 export const StyledDesktopContainer = styled.div`
   background-color: ${colors.pitchBlack};
   width: 100%;
-  height: 5rem;
+  height: 8rem;
   display: flex;
   justify-content: space-between;
   align-items: center;

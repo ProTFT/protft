@@ -99,4 +99,6 @@ export class Stage {
   @Field(() => PointSchema)
   @JoinColumn({ name: "pointSchemaId" })
   pointSchema: PointSchema;
+
+  // TODO new relation to qualification rules table
 }

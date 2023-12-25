@@ -1,9 +1,8 @@
-import { CountryIndicator } from "../../components/RegionIndicator/RegionIndicator";
+import { useMemo } from "react";
 import { Button } from "../Button/Button";
 import { ButtonVariants, ColorSchemes } from "../Button/Button.styled";
 import {
   ColumnHeader,
-  TableValueContainer,
   TableDataForPoints,
   ColumnHeaderForPoints,
   TableStyled,
@@ -13,28 +12,56 @@ import {
   HighlightedPositionContainer,
 } from "./Table.styled";
 
-const mockData = {
-  rank: 1,
-  name: "setsuko",
-  points: 40,
-  positions: [1, 2, 3, 4, 5, 6],
-  qualified: true,
-};
+interface TableResult {
+  name: string;
+  country: string;
+  totalPoints: number;
+  positions: number[];
+}
 
-const example = [
-  mockData,
-  mockData,
-  mockData,
-  mockData,
-  mockData,
-  mockData,
-  mockData,
-  mockData,
-];
+type ResultWithQualification = TableResult &
+  Partial<Pick<TableQualificationRule, "relevance" | "description" | "link">>;
 
-const rounds = [1, 2, 3, 4, 5, 6];
+interface TableQualificationRule {
+  // TODO: migration to convert qualifiedCount to this format
+  initialPosition: number;
+  finalPosition: number;
+  relevance: number; // TODO this should define the color, so maybe an enum? Primary, secondary...
+  description: string;
+  link: string;
+}
 
-export const Table = () => {
+interface TableProps {
+  numberOfRounds: number;
+  results: TableResult[];
+  qualificationRules: TableQualificationRule[];
+}
+
+export const Table = ({
+  numberOfRounds,
+  qualificationRules,
+  results,
+}: TableProps) => {
+  const arrayOfRounds = new Array(numberOfRounds).fill({});
+  const resultsWithQualification = useMemo<ResultWithQualification[]>(() => {
+    return results.map((result, index) => {
+      const realPosition = index + 1;
+      const ruleThatApplies = qualificationRules.find(
+        (rule) =>
+          rule.initialPosition <= realPosition &&
+          rule.finalPosition >= realPosition
+      );
+      if (!ruleThatApplies) {
+        return result;
+      }
+      return {
+        ...result,
+        relevance: ruleThatApplies.relevance,
+        description: ruleThatApplies.description,
+        link: ruleThatApplies.link,
+      };
+    });
+  }, [qualificationRules, results]);
   return (
     <TableWrapper>
       <TableStyled>
@@ -43,22 +70,22 @@ export const Table = () => {
             <ColumnHeader size={25}>#</ColumnHeader>
             <ColumnHeader size={100}>Name</ColumnHeader>
             <ColumnHeader size={40}>P</ColumnHeader>
-            {rounds.map((round) => (
-              <ColumnHeaderForPoints>{`R${round}`}</ColumnHeaderForPoints>
+            {arrayOfRounds.map((_, index) => (
+              <ColumnHeaderForPoints>{`R${index + 1}`}</ColumnHeaderForPoints>
             ))}
             <th align="left" />
           </tr>
         </thead>
         <tbody>
-          {example.map((data) => (
+          {resultsWithQualification.map((data, index) => (
             <tr>
-              <td>{data.rank}</td>
+              <td>{index + 1}</td>
               <td>
-                {/* <CountryIndicator countryCode={"BRA"} showName={false} /> */}
+                {/* <CountryIndicator countryCode={data.country} showName={false} /> */}
                 {data.name}
               </td>
               <td>
-                <PointsContainer>{data.points}</PointsContainer>
+                <PointsContainer>{data.totalPoints}</PointsContainer>
               </td>
               {data.positions.map((position) => (
                 <TableDataForPoints>
@@ -71,7 +98,7 @@ export const Table = () => {
                   )}
                 </TableDataForPoints>
               ))}
-              {data.qualified && (
+              {false && (
                 <td align="right">
                   <Button
                     colorScheme={ColorSchemes.SECONDARY}

@@ -7,7 +7,6 @@ interface OpenAwareProps {
 export const SectionContainer = styled.section(() => ({
   display: "grid",
   gridTemplateColumns: "repeat(1, 1fr)",
-  gridTemplateRows: "1fr 4fr",
 }));
 
 export const SectionHeader = styled.header(({ theme }) => ({
@@ -48,7 +47,7 @@ export const SectionCollapseButton = styled.div<OpenAwareProps>(
 export const SectionCollapsible = styled.div<OpenAwareProps>(
   ({ theme, isOpen }) => ({
     backgroundColor: theme.colors.newDesign.grayScale[80],
-    maxHeight: isOpen ? "100vh" : 0,
+    maxHeight: isOpen ? "1000vh" : 0,
     visibility: isOpen ? "visible" : "hidden",
     transition: "max-height ease-in 300ms, visibility 100ms linear",
     overflow: "hidden",
