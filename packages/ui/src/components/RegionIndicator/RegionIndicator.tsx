@@ -79,3 +79,18 @@ export const CountryIndicator = ({
     </TextIconHorizontalContainer>
   );
 };
+
+interface RegionImageProps {
+  countryCode: string;
+  size?: number;
+}
+
+export const RegionImage = ({ countryCode, size = 2.4 }: RegionImageProps) => {
+  return (
+    <img
+      src={`${S3_FOLDER_PATH}/regions/${countryCode}.webp`}
+      alt={countryCode}
+      style={{ width: `${size}rem` }}
+    />
+  );
+};

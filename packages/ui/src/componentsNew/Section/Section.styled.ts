@@ -62,5 +62,5 @@ export const SectionCollapsible = styled.div<OpenAwareProps>(
 );
 
 export const SectionBody = styled.div(({ theme }) => ({
-  padding: `${theme.spacing(13)} ${theme.spacing(23)}`,
+  padding: `${theme.spacing(20)} ${theme.spacing(23)}`,
 }));

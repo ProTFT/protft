@@ -12,7 +12,7 @@ import {
   HighlightedPositionContainer,
 } from "./Table.styled";
 
-interface TableResult {
+export interface TableResult {
   name: string;
   country: string;
   totalPoints: number;
