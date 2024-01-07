@@ -301,8 +301,10 @@ export const sortByDirectCombat = (a: PlayerResults, b: PlayerResults) => {
 };
 
 export const sortByTopFourPlusFirsts = (a: PlayerResults, b: PlayerResults) =>
-  b.positions.filter((p) => p <= 4 || p === 1).length -
-  a.positions.filter((p) => p <= 4 || p === 1).length;
+  b.positions.filter((p) => p <= 4).length +
+  b.positions.filter((p) => p === 1).length -
+  (a.positions.filter((p) => p <= 4).length +
+    a.positions.filter((p) => p === 1).length);
 
 interface PastPoints {
   a: number;

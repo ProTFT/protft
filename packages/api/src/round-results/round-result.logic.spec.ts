@@ -796,25 +796,25 @@ describe("Sorting with tie breakers", () => {
   });
 
   describe("sort by most top fours and top 1s combined", () => {
-    const twoTopFoursAndOnes = generatePlayer([4, 1, 8]);
-    const oneTopFOurAndOnes = generatePlayer([3, 8, 8]);
+    const eightTopFoursAndOnes = generatePlayer([3, 6, 1, 4, 1, 1]);
+    const sevenTopFourAndOnes = generatePlayer([2, 1, 2, 4, 3, 4]);
     const noTopFourOrOnes = generatePlayer([8, 8, 8]);
 
     it("should be negative if a has higher placement than b", () => {
       expect(
-        sortByTopFourPlusFirsts(twoTopFoursAndOnes, noTopFourOrOnes),
+        sortByTopFourPlusFirsts(eightTopFoursAndOnes, sevenTopFourAndOnes),
       ).toBeLessThan(0);
     });
 
     it("should be positive if b has higher placement than a", () => {
       expect(
-        sortByTopFourPlusFirsts(noTopFourOrOnes, oneTopFOurAndOnes),
+        sortByTopFourPlusFirsts(noTopFourOrOnes, sevenTopFourAndOnes),
       ).toBeGreaterThan(0);
     });
 
     it("should be zero if a = b", () => {
       expect(
-        sortByTopFourPlusFirsts(twoTopFoursAndOnes, twoTopFoursAndOnes),
+        sortByTopFourPlusFirsts(eightTopFoursAndOnes, eightTopFoursAndOnes),
       ).toBe(0);
     });
   });
