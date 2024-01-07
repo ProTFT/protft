@@ -147,6 +147,11 @@ export const tiebreakerMap: { [key in SortingMethods]: Tiebreaker } = {
     description: "Direct Combat",
     order: 29,
   },
+  [SortingMethods.TOP_FOURS_PLUS_FIRST]: {
+    id: 29,
+    description: "Most top fours + first places",
+    order: 30,
+  },
 };
 
 export const getAll = () =>

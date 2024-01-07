@@ -30,6 +30,7 @@ export enum SortingMethods {
   TOTAL_EVENT_FIFTH_PLACE = 26,
   TOTAL_EVENT_SIXTH_PLACE = 27,
   TOTAL_EVENT_SEVENTH_PLACE = 28,
+  TOP_FOURS_PLUS_FIRST = 29,
 }
 
 export const SortingMethodsNeedPastResults = [
@@ -299,6 +300,10 @@ export const sortByDirectCombat = (a: PlayerResults, b: PlayerResults) => {
   }, 0);
 };
 
+export const sortByTopFourPlusFirsts = (a: PlayerResults, b: PlayerResults) =>
+  b.positions.filter((p) => p <= 4 || p === 1).length -
+  a.positions.filter((p) => p <= 4 || p === 1).length;
+
 interface PastPoints {
   a: number;
   b: number;
@@ -340,6 +345,7 @@ export const sortingMethods: {
   [SortingMethods.TOTAL_EVENT_FIFTH_PLACE]: sortByTotalEventFifthPosition,
   [SortingMethods.TOTAL_EVENT_SIXTH_PLACE]: sortByTotalEventSixthPosition,
   [SortingMethods.TOTAL_EVENT_SEVENTH_PLACE]: sortByTotalEventSeventhPosition,
+  [SortingMethods.TOP_FOURS_PLUS_FIRST]: sortByTopFourPlusFirsts,
 };
 
 export interface PlayerResultsWithPast extends PlayerResults {

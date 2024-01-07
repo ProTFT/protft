@@ -19,6 +19,7 @@ import {
   sortBySixthPlaces,
   sortByThirdPlaces,
   sortByTopFour,
+  sortByTopFourPlusFirsts,
   sortByTopThree,
   sortByTopTwo,
   sortByTotalEventAveragePosition,
@@ -791,6 +792,30 @@ describe("Sorting with tie breakers", () => {
 
     it("should be zero if a = b", () => {
       expect(sortByDirectCombat(worst, worst)).toBe(0);
+    });
+  });
+
+  describe("sort by most top fours and top 1s combined", () => {
+    const twoTopFoursAndOnes = generatePlayer([4, 1, 8]);
+    const oneTopFOurAndOnes = generatePlayer([3, 8, 8]);
+    const noTopFourOrOnes = generatePlayer([8, 8, 8]);
+
+    it("should be negative if a has higher placement than b", () => {
+      expect(
+        sortByTopFourPlusFirsts(twoTopFoursAndOnes, noTopFourOrOnes),
+      ).toBeLessThan(0);
+    });
+
+    it("should be positive if b has higher placement than a", () => {
+      expect(
+        sortByTopFourPlusFirsts(noTopFourOrOnes, oneTopFOurAndOnes),
+      ).toBeGreaterThan(0);
+    });
+
+    it("should be zero if a = b", () => {
+      expect(
+        sortByTopFourPlusFirsts(twoTopFoursAndOnes, twoTopFoursAndOnes),
+      ).toBe(0);
     });
   });
 

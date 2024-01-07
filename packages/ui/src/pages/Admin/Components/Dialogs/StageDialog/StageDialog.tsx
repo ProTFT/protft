@@ -51,8 +51,6 @@ export const StageDialog = ({ dialogRef, formRef, onSubmit, stage }: Props) => {
     [stage]
   );
 
-  console.log(formattedStageData);
-
   return (
     <DialogForm
       dialogRef={dialogRef}
