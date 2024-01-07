@@ -40,3 +40,27 @@ export const FormatCardsContent = styled.div(({ theme }) => ({
     },
   },
 }));
+
+export const FormatTiebreakersContent = styled.div(({ theme }) => ({
+  display: "flex",
+  flexDirection: "column",
+  gap: theme.spacing(5),
+}));
+
+export const StageHeader = styled.div(({ theme }) => ({
+  display: "grid",
+  gridTemplateColumns: "9fr 1fr",
+  paddingBottom: theme.spacing(20),
+}));
+
+export const StageSelectorContainer = styled.div(({ theme }) => ({
+  display: "grid",
+  maxWidth: "fit-content",
+  gridColumn: 1,
+}));
+
+export const StageExtraControlsContainer = styled.div(({ theme }) => ({
+  display: "grid",
+  gridColumn: 2,
+  justifyContent: "end",
+}));

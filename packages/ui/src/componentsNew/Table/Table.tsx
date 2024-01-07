@@ -71,14 +71,16 @@ export const Table = ({
             <ColumnHeader size={100}>Name</ColumnHeader>
             <ColumnHeader size={40}>P</ColumnHeader>
             {arrayOfRounds.map((_, index) => (
-              <ColumnHeaderForPoints>{`R${index + 1}`}</ColumnHeaderForPoints>
+              <ColumnHeaderForPoints key={index}>{`R${
+                index + 1
+              }`}</ColumnHeaderForPoints>
             ))}
             <th align="left" />
           </tr>
         </thead>
         <tbody>
           {resultsWithQualification.map((data, index) => (
-            <tr>
+            <tr key={data.name}>
               <td>{index + 1}</td>
               <td>
                 {/* <CountryIndicator countryCode={data.country} showName={false} /> */}
@@ -87,8 +89,8 @@ export const Table = ({
               <td>
                 <PointsContainer>{data.totalPoints}</PointsContainer>
               </td>
-              {data.positions.map((position) => (
-                <TableDataForPoints>
+              {data.positions.map((position, index) => (
+                <TableDataForPoints key={index}>
                   {position > 4 ? (
                     <PositionContainer>{position}</PositionContainer>
                   ) : (

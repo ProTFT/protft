@@ -81,6 +81,15 @@ export const Paragraph500Props = (theme: DefaultTheme) => ({
   letterSpacing: theme.spacing(0.64),
 });
 
+export const Paragraph700Props = (theme: DefaultTheme) => ({
+  fontFamily: "DMSans",
+  fontSize: theme.spacing(8),
+  fontStyle: "normal",
+  fontWeight: 700,
+  lineHeight: theme.spacing(13),
+  letterSpacing: theme.spacing(0.48),
+});
+
 export const Paragraph400Props = (theme: DefaultTheme) => ({
   fontFamily: "DMSans",
   fontSize: theme.spacing(8),

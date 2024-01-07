@@ -5,10 +5,20 @@ import { Card } from "../../componentsNew/Card/Card";
 import { CardBadge } from "../../componentsNew/Card/Card.styled";
 import { PageWrapper } from "../../componentsNew/PageWrapper/PageWrapper";
 import { Section } from "../../componentsNew/Section/Section";
-import { TabHeader } from "../../componentsNew/TabHeader/TabHeader";
+import { Switch } from "../../componentsNew/Switch/Switch";
+import {
+  TabHeader,
+  TabHeaderVariant,
+} from "../../componentsNew/TabHeader/TabHeader";
 import { Table, TableResult } from "../../componentsNew/Table/Table";
+import { TiebreakerRow } from "../../componentsNew/TiebreakerRow/TiebreakerRow";
 import { TournamentHeader } from "../../componentsNew/TournamentHeader/TournamentHeader";
 import { H3Med500 } from "../../design/fonts/NewFonts";
+import { InfoOutlined } from "../../design/iconsNew/InfoOutlined";
+import { StatsOutlined } from "../../design/iconsNew/StatsOutlined";
+import { StreamOutlined } from "../../design/iconsNew/StreamOutlined";
+import { SwordsOutlined } from "../../design/iconsNew/SwordsOutlined";
+import { TrophyOutlined } from "../../design/iconsNew/TrophyOutlined";
 import { QueryTournamentBySlugArgs, TournamentQuery } from "../../gql/graphql";
 import {
   ResultsByLobbyGroupQueryResponse,
@@ -19,7 +29,11 @@ import {
 import {
   FormatCardsContainer as FormatCardsLayout,
   FormatCardsContent,
+  FormatTiebreakersContent,
   InfoCardContainer,
+  StageExtraControlsContainer,
+  StageHeader,
+  StageSelectorContainer,
   TournamentContainer,
 } from "./Tournament.styled";
 
@@ -29,9 +43,12 @@ enum TAB_OPTIONS {
   Tiebreakers = 3,
 }
 
+const SECTION_ICON_SIZE = 42;
+
 export const TournamentNew = () => {
   const { tournamentSlug } = useParams();
   const [selectedOption, setSelectedOption] = useState(TAB_OPTIONS.Format);
+  const [selectedStage, setSelectedStage] = useState(1);
   const [{ data: tournamentData }] = useQuery<
     TournamentQuery,
     QueryTournamentBySlugArgs
@@ -63,6 +80,7 @@ export const TournamentNew = () => {
       <PageWrapper>
         <TournamentContainer>
           <Section
+            icon={<InfoOutlined size={SECTION_ICON_SIZE} />}
             title="Infos"
             extraControls={
               <TabHeader
@@ -71,10 +89,10 @@ export const TournamentNew = () => {
                     id: TAB_OPTIONS.Format,
                     name: "Format",
                   },
-                  {
-                    id: TAB_OPTIONS.Players,
-                    name: "Players",
-                  },
+                  // {
+                  //   id: TAB_OPTIONS.Players,
+                  //   name: "Players",
+                  // },
                   {
                     id: TAB_OPTIONS.Tiebreakers,
                     name: "Tiebreakers",
@@ -85,10 +103,9 @@ export const TournamentNew = () => {
               />
             }
           >
-            {selectedOption === TAB_OPTIONS.Format && <div>Format</div>}
-            {selectedOption === TAB_OPTIONS.Players && (
+            {selectedOption === TAB_OPTIONS.Format && (
               <InfoCardContainer>
-                <H3Med500>Players</H3Med500>
+                <H3Med500>Format</H3Med500>
                 <FormatCardsLayout>
                   <Card
                     title="Day 1"
@@ -119,23 +136,73 @@ export const TournamentNew = () => {
                       </div>
                     </FormatCardsContent>
                   </Card>
-                  {/* <Card title="Day 2" />
-                  <Card title="Day 3" />
-                  <Card title="Day 4" /> */}
+                </FormatCardsLayout>
+              </InfoCardContainer>
+            )}
+            {selectedOption === TAB_OPTIONS.Tiebreakers && (
+              <InfoCardContainer>
+                <H3Med500>Tiebreakers</H3Med500>
+                <FormatCardsLayout>
+                  <Card title="All stages">
+                    <FormatTiebreakersContent>
+                      <TiebreakerRow />
+                      <TiebreakerRow />
+                      <TiebreakerRow />
+                    </FormatTiebreakersContent>
+                  </Card>
                 </FormatCardsLayout>
               </InfoCardContainer>
             )}
           </Section>
-          <Section title="Stages">
+          <Section
+            title="Stages"
+            icon={<SwordsOutlined size={SECTION_ICON_SIZE} />}
+          >
+            <StageHeader>
+              <StageSelectorContainer>
+                <TabHeader
+                  options={[
+                    {
+                      id: 1,
+                      name: "Day 1",
+                      variant: TabHeaderVariant.MARKED,
+                    },
+                    {
+                      id: 2,
+                      name: "Day 2",
+                    },
+                    {
+                      id: 3,
+                      name: "Finals",
+                      variant: TabHeaderVariant.INACTIVE,
+                    },
+                  ]}
+                  selectedOption={selectedStage}
+                  setSelectedOption={setSelectedStage}
+                />
+              </StageSelectorContainer>
+              <StageExtraControlsContainer>
+                <Switch />
+              </StageExtraControlsContainer>
+            </StageHeader>
             <Table
               numberOfRounds={3}
               qualificationRules={[]}
               results={treatedData}
             />
           </Section>
-          <Section title="Stats"></Section>
-          <Section title="Ranking"></Section>
-          <Section title="Streams"></Section>
+          {/* <Section
+            title="Stats"
+            icon={<StatsOutlined size={SECTION_ICON_SIZE} />}
+          /> */}
+          <Section
+            title="Ranking"
+            icon={<TrophyOutlined size={SECTION_ICON_SIZE} />}
+          ></Section>
+          <Section
+            title="Streams"
+            icon={<StreamOutlined size={SECTION_ICON_SIZE} />}
+          ></Section>
         </TournamentContainer>
       </PageWrapper>
     </>
