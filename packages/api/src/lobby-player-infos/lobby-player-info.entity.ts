@@ -5,11 +5,13 @@ import {
   Generated,
   Index,
   ManyToOne,
+  OneToMany,
   PrimaryColumn,
 } from "typeorm";
 import { BaseEntity } from "../lib/BaseEntity";
 import { Lobby } from "../lobbies/lobby.entity";
 import { Player } from "../players/player.entity";
+import { RoundResult } from "../round-results/round-result.entity";
 
 const LOBBY_PLAYER_UNIQUE_CONSTRAINT = "lobbyPlayer";
 
@@ -43,4 +45,9 @@ export class LobbyPlayerInfo extends BaseEntity {
     onDelete: "CASCADE",
   })
   player: Player;
+
+  @OneToMany(() => RoundResult, (roundResult) => roundResult.lobbyPlayerInfo, {
+    onDelete: "CASCADE",
+  })
+  roundResults: RoundResult[];
 }

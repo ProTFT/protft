@@ -92,7 +92,11 @@ export class LobbiesService {
   }
 
   async deleteManyLobbyGroups(stageId: number): Promise<DeleteResponse> {
-    await this.lobbyGroupsRepository.softDelete({ stageId });
+    const lobbyGroups = await this.lobbyGroupsRepository.find({
+      where: { stageId },
+      relations: ["lobbies", "lobbies.players", "lobbies.players.roundResults"],
+    });
+    await this.lobbyGroupsRepository.softRemove(lobbyGroups);
     return new DeleteResponse(stageId);
   }
 

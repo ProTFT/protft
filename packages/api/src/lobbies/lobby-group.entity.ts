@@ -5,9 +5,11 @@ import {
   Entity,
   Index,
   ManyToOne,
+  OneToMany,
   PrimaryGeneratedColumn,
 } from "typeorm";
 import { BaseEntity } from "../lib/BaseEntity";
+import { Lobby } from "./lobby.entity";
 
 @ObjectType()
 @Entity()
@@ -28,6 +30,12 @@ export class LobbyGroup extends BaseEntity {
   @Field(() => Int)
   @Column()
   roundsPlayed: number;
+
+  @OneToMany(() => Lobby, (lobby) => lobby.lobbyGroup, {
+    cascade: true,
+    onDelete: "CASCADE",
+  })
+  lobbies: Lobby[];
 
   @ManyToOne(() => Stage, (stage) => stage.id, { onDelete: "CASCADE" })
   stage: Stage;

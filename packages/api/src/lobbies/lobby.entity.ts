@@ -42,6 +42,7 @@ export class Lobby extends BaseEntity {
   @Field(() => [Player])
   @OneToMany(() => LobbyPlayerInfo, (lobbyPlayer) => lobbyPlayer.lobby, {
     cascade: true,
+    onDelete: "CASCADE",
   })
   players: LobbyPlayerInfo[];
 
