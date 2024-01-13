@@ -95,9 +95,11 @@ export class TournamentsWriteService {
     tournamentId,
     playerNames,
   }: CreateTournamentPlayerByNameArgs): Promise<Tournament> {
+    const { region } = await this.tournamentRepository.findOne(tournamentId);
     const playerIds = await parseMultilinePlayerNamesFromAll(
       playerNames,
       this.tournamentRepository.manager,
+      region,
     );
 
     return this.createTournamentPlayers({ tournamentId, playerIds });
