@@ -17,6 +17,6 @@ export const getDatabaseInfo = (environment: string) => {
   const production = isProd(environment);
   return {
     ...(production ? prodDatabaseInfo : localDatabaseInfo),
-    logging: !production,
+    logging: true,
   };
 };

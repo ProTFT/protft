@@ -94,8 +94,14 @@ export class TournamentsResolver extends BaseResolver {
   async pastTournaments(
     @Args() { region, setId, take, skip, searchQuery }: GetTournamentsArgs,
   ) {
+    console.time("request");
     const filters = this.cleanGraphQLFilters({ region, setId, searchQuery });
-    return this.tournamentsReadService.findPast({ ...filters }, { take, skip });
+    const result = await this.tournamentsReadService.findPast(
+      { ...filters },
+      { take, skip },
+    );
+    console.timeEnd("request");
+    return result;
   }
 
   @Query(() => [Tournament])
