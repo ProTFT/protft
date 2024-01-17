@@ -16,6 +16,7 @@ export function lobbyGroup({
     stage: stage || genStage({}),
     stageId: stageId || randomId,
     roundsPlayed: roundsPlayed || randomId,
+    lobbies: [],
     ...BaseProps(),
   };
 }

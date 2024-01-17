@@ -6,9 +6,11 @@ import {
 } from "../cache/cache.types";
 
 export const ExtractPlayerCacheKeyFromRequest = (req: GraphqlQueryContext) => {
-  const { id } = req.getContext().req.body.variables as {
-    id: number;
+  const variables = req.getContext().req.body.variables as {
+    id?: number;
+    playerId?: number;
   };
+  const id = variables.id || variables.playerId;
   if (!id) {
     throw new BadRequestException("Missing variable for cache!");
   }

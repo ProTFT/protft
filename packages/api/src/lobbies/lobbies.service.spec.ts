@@ -27,7 +27,7 @@ describe("LobbiesService", () => {
       findOne: jest.fn().mockResolvedValue({ sequence: 1 }),
       find: jest.fn(),
       save: jest.fn(),
-      softDelete: jest.fn(),
+      softRemove: jest.fn(),
     } as unknown as Repository<LobbyGroup>;
     lobbyPlayerInfosService = {
       createManyLobbyPlayersFromGroupedData: jest.fn(),
@@ -146,7 +146,7 @@ describe("LobbiesService", () => {
     describe("delete many lobby groups", () => {
       it("should call repository", async () => {
         const response = await service.deleteManyLobbyGroups(mockId);
-        expect(lobbyGroupsRepository.softDelete).toHaveBeenCalled();
+        expect(lobbyGroupsRepository.softRemove).toHaveBeenCalled();
         expect(response).toBeInstanceOf(DeleteResponse);
       });
     });

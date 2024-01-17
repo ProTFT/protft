@@ -33,6 +33,8 @@ describe("TournamentsWriteService", () => {
       innerJoinAndSelect: jest.fn().mockReturnThis(),
       where: jest.fn().mockReturnThis(),
       getMany: jest.fn().mockResolvedValue([{}]),
+      distinct: jest.fn().mockReturnThis(),
+      from: jest.fn().mockReturnThis(),
       manager: {
         createQueryBuilder: jest.fn().mockReturnThis(),
         select: jest.fn().mockReturnThis(),
@@ -40,6 +42,8 @@ describe("TournamentsWriteService", () => {
         where: jest.fn().mockReturnThis(),
         andWhere: jest.fn().mockReturnThis(),
         orWhere: jest.fn().mockReturnThis(),
+        distinct: jest.fn().mockReturnThis(),
+        leftJoin: jest.fn().mockReturnThis(),
         getRawMany: jest.fn().mockResolvedValue([
           { id: 1, name: "a" },
           { id: 2, name: "b" },
@@ -195,6 +199,7 @@ describe("TournamentsWriteService", () => {
         id: mockTournamentId,
         name: "anyName",
         players: [],
+        region: ["NA"],
       };
       tournamentRepository.findOne = jest.fn().mockResolvedValue(tournament);
 
@@ -214,6 +219,13 @@ describe("TournamentsWriteService", () => {
           Boris
           Camila
           Denis`;
+      const tournament = {
+        id: mockTournamentId,
+        name: "anyName",
+        players: [],
+        region: ["NA"],
+      };
+      tournamentRepository.findOne = jest.fn().mockResolvedValue(tournament);
       expect(
         async () =>
           await service.createTournamentPlayersByName({

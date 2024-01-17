@@ -33,7 +33,8 @@ const basePlayerTableQuery = (
 ) => {
   const query = sqlManager
     .createQueryBuilder()
-    .select("*")
+    .select("p.id, p.name")
+    .distinct()
     .from("player", "p")
     .leftJoin(
       (qb: QueryBuilder<Player>) => {
@@ -57,7 +58,8 @@ const baseTournamentPlayerTableQuery = (
 ) =>
   sqlManager
     .createQueryBuilder()
-    .select("*")
+    .select("p.id, p.name")
+    .distinct()
     .from("tournament_players_player", "tpp")
     .innerJoin("player", "p", "tpp.playerId = p.id")
     .leftJoin(

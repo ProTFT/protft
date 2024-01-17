@@ -39,6 +39,8 @@ describe("Stages service", () => {
         andWhere: jest.fn().mockReturnThis(),
         orWhere: jest.fn().mockReturnThis(),
         innerJoin: jest.fn().mockReturnThis(),
+        distinct: jest.fn().mockReturnThis(),
+        leftJoin: jest.fn().mockReturnThis(),
         getRawMany: jest.fn().mockResolvedValue(databaseResult),
       },
     } as unknown as Repository<Stage>;

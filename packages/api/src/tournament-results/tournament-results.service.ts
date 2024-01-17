@@ -30,6 +30,10 @@ export class TournamentResultsService {
       tournamentId,
     );
 
+    const sortedStages = tournamentStages.sort(
+      (a, b) => a.sequenceForResult - b.sequenceForResult,
+    );
+
     const finalResults: Pick<
       TournamentResult,
       "tournamentId" | "finalPosition" | "playerId"
@@ -38,14 +42,14 @@ export class TournamentResultsService {
     const arrayOfLobbyPlayers = new Array(PLAYERS_IN_TFT_LOBBY).fill(0);
     const processedStages = [];
 
-    for (const currentStage of tournamentStages.reverse()) {
+    for (const currentStage of sortedStages.reverse()) {
       if (processedStages.includes(currentStage.id)) {
         continue;
       }
       if (currentStage.stageType === StageType.RANKING) {
         const results = await this.fetchResultsForStageRankingPlusParallelOnes(
           currentStage,
-          tournamentStages,
+          sortedStages,
           processedStages,
         );
 
@@ -90,7 +94,7 @@ export class TournamentResultsService {
       if (currentStage.stageType === StageType.GROUP_BASED) {
         const results = await this.fetchResultsForStageGroupPlusParallelOnes(
           currentStage,
-          tournamentStages,
+          sortedStages,
           processedStages,
         );
 
@@ -119,7 +123,12 @@ export class TournamentResultsService {
       }
     }
 
-    return this.tournamentResultRepository.save(finalResults);
+    const finalResultsWithoutDeletedAt = finalResults.map((result) => ({
+      ...result,
+      deletedAt: null,
+    }));
+
+    return this.tournamentResultRepository.save(finalResultsWithoutDeletedAt);
   }
 
   private async fetchResultsForStageRankingPlusParallelOnes(

@@ -96,7 +96,7 @@ export const AdminStage = () => {
       startDateTime: formStage.startDateTime ?? undefined,
       id: Number(stageId),
       tournamentId: Number(id),
-      sequenceForResult: formStage.sequenceForResult || formStage.sequence,
+      sequenceForResult: formStage.sequenceForResult ?? formStage.sequence,
     });
     if (result.error) {
       return alert(result.error);

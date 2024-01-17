@@ -78,6 +78,8 @@ export class PlayersResolver extends BaseResolver {
     return this.playersService.getPlayerStats(player, setId, tournamentId);
   }
 
+  @CacheKey(ExtractPlayerCacheKeyFromRequest)
+  @UseInterceptors(CacheInterceptor)
   @ResolveField()
   async links(@Parent() player: Player): Promise<PlayerLink[]> {
     return this.playersService.findLinks(player.id);
