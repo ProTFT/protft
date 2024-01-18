@@ -104,6 +104,7 @@ export class TournamentResultsService {
             const offset = finalResults.length + 1;
             lobbies.forEach((lobby, _, allLobbies) => {
               if (
+                lobby.results[positionIndex] &&
                 !finalResults.find(
                   (result) =>
                     result.playerId === lobby.results[positionIndex].player.id,
