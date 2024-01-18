@@ -13,16 +13,6 @@ variable "image_bucket_name" {
   description = "Name of bucket for serve images"
 }
 
-variable "amateur_bucket_name" {
-  type        = string
-  description = "Name of bucket for amateur website"
-}
-
-variable "amateur_subdomain" {
-  type        = string
-  description = "Domain for amateur platform"
-}
-
 variable "common_tags" {
   description = "Common tags you want applied to all components."
 }
