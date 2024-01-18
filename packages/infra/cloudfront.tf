@@ -142,6 +142,7 @@ resource "aws_cloudfront_distribution" "www_images_distribution" {
     origin_access_control_id = aws_cloudfront_origin_access_control.s3_oac.id
   }
 
+  aliases = ["images.${var.domain_name}"]
   enabled             = true
   is_ipv6_enabled     = true
 
