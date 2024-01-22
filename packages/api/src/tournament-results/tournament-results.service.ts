@@ -99,7 +99,7 @@ export class TournamentResultsService {
         );
 
         for (const lobbyGroup of [results]) {
-          const lobbies = lobbyGroup.lobbies;
+          const lobbies = lobbyGroup.lobbies || [];
           arrayOfLobbyPlayers.forEach((_, positionIndex) => {
             const offset = finalResults.length + 1;
             lobbies.forEach((lobby, _, allLobbies) => {
