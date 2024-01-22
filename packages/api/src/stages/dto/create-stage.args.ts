@@ -15,6 +15,9 @@ export class CreateStageArgs {
   @Field(() => Int, { name: "sequence" })
   sequence: number;
 
+  @Field(() => Int, { name: "sequenceForResult" })
+  sequenceForResult: number;
+
   @Field(() => StageType, { name: "stageType" })
   stageType: StageType;
 

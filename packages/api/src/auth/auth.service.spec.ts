@@ -1,5 +1,6 @@
 import { JwtService } from "@nestjs/jwt";
 import { Response } from "express";
+import { Roles } from "../users/user.entity";
 import { UsersService } from "../users/users.service";
 import { AuthService } from "./auth.service";
 
@@ -19,6 +20,7 @@ const mockJwtService = {
 } as unknown as JwtService;
 const mockUser = "anyUser";
 const mockPass = "anyPass";
+const mockRoles = [Roles.TOURNAMENT_ORGANIZER];
 
 describe("Auth Service", () => {
   let authService: AuthService;
@@ -113,7 +115,12 @@ describe("Auth Service", () => {
       mockUserService.findOne = jest.fn().mockReturnValue({});
 
       expect(
-        async () => await authService.signin(mockUser, mockPass),
+        async () =>
+          await authService.signin({
+            username: mockUser,
+            password: mockPass,
+            roles: mockRoles,
+          }),
       ).rejects.toThrow();
     });
 
@@ -122,9 +129,13 @@ describe("Auth Service", () => {
       mockUserService.findOne = jest.fn().mockReturnValue(undefined);
       mockUserService.createOne = createUserSpy;
 
-      await authService.signin(mockUser, mockPass);
+      await authService.signin({
+        username: mockUser,
+        password: mockPass,
+        roles: mockRoles,
+      });
 
-      expect(createUserSpy).toHaveBeenCalledWith(mockUser, mockPass);
+      expect(createUserSpy).toHaveBeenCalledWith(mockUser, mockPass, mockRoles);
     });
   });
 });

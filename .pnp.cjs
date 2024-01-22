@@ -12799,9 +12799,33 @@ function $$SETUP_STATE(hydrateRuntimeState, basePath) {
             ["type-detect", "npm:4.0.8"]\
           ],\
           "linkType": "HARD"\
+        }],\
+        ["npm:2.0.0", {\
+          "packageLocation": "./.yarn/cache/@sinonjs-commons-npm-2.0.0-3716f24f20-5023ba17ed.zip/node_modules/@sinonjs/commons/",\
+          "packageDependencies": [\
+            ["@sinonjs/commons", "npm:2.0.0"],\
+            ["type-detect", "npm:4.0.8"]\
+          ],\
+          "linkType": "HARD"\
+        }],\
+        ["npm:3.0.0", {\
+          "packageLocation": "./.yarn/cache/@sinonjs-commons-npm-3.0.0-fa72ff71a1-b4b5b73d4d.zip/node_modules/@sinonjs/commons/",\
+          "packageDependencies": [\
+            ["@sinonjs/commons", "npm:3.0.0"],\
+            ["type-detect", "npm:4.0.8"]\
+          ],\
+          "linkType": "HARD"\
         }]\
       ]],\
       ["@sinonjs/fake-timers", [\
+        ["npm:10.3.0", {\
+          "packageLocation": "./.yarn/cache/@sinonjs-fake-timers-npm-10.3.0-7417f876b4-614d30cb4d.zip/node_modules/@sinonjs/fake-timers/",\
+          "packageDependencies": [\
+            ["@sinonjs/fake-timers", "npm:10.3.0"],\
+            ["@sinonjs/commons", "npm:3.0.0"]\
+          ],\
+          "linkType": "HARD"\
+        }],\
         ["npm:8.1.0", {\
           "packageLocation": "./.yarn/cache/@sinonjs-fake-timers-npm-8.1.0-95c51c96db-09b5a158ce.zip/node_modules/@sinonjs/fake-timers/",\
           "packageDependencies": [\
@@ -12815,6 +12839,27 @@ function $$SETUP_STATE(hydrateRuntimeState, basePath) {
           "packageDependencies": [\
             ["@sinonjs/fake-timers", "npm:9.1.2"],\
             ["@sinonjs/commons", "npm:1.8.3"]\
+          ],\
+          "linkType": "HARD"\
+        }]\
+      ]],\
+      ["@sinonjs/samsam", [\
+        ["npm:7.0.1", {\
+          "packageLocation": "./.yarn/cache/@sinonjs-samsam-npm-7.0.1-d14786a4c3-291efb158d.zip/node_modules/@sinonjs/samsam/",\
+          "packageDependencies": [\
+            ["@sinonjs/samsam", "npm:7.0.1"],\
+            ["@sinonjs/commons", "npm:2.0.0"],\
+            ["lodash.get", "npm:4.4.2"],\
+            ["type-detect", "npm:4.0.8"]\
+          ],\
+          "linkType": "HARD"\
+        }]\
+      ]],\
+      ["@sinonjs/text-encoding", [\
+        ["npm:0.7.2", {\
+          "packageLocation": "./.yarn/cache/@sinonjs-text-encoding-npm-0.7.2-ab9862ba52-fe690002a3.zip/node_modules/@sinonjs/text-encoding/",\
+          "packageDependencies": [\
+            ["@sinonjs/text-encoding", "npm:0.7.2"]\
           ],\
           "linkType": "HARD"\
         }]\
@@ -16646,6 +16691,25 @@ function $$SETUP_STATE(hydrateRuntimeState, basePath) {
           "linkType": "HARD"\
         }]\
       ]],\
+      ["@types/sinon", [\
+        ["npm:10.0.20", {\
+          "packageLocation": "./.yarn/cache/@types-sinon-npm-10.0.20-44e0db6294-7322771345.zip/node_modules/@types/sinon/",\
+          "packageDependencies": [\
+            ["@types/sinon", "npm:10.0.20"],\
+            ["@types/sinonjs__fake-timers", "npm:8.1.5"]\
+          ],\
+          "linkType": "HARD"\
+        }]\
+      ]],\
+      ["@types/sinonjs__fake-timers", [\
+        ["npm:8.1.5", {\
+          "packageLocation": "./.yarn/cache/@types-sinonjs__fake-timers-npm-8.1.5-c35b400174-7e3c08f6c1.zip/node_modules/@types/sinonjs__fake-timers/",\
+          "packageDependencies": [\
+            ["@types/sinonjs__fake-timers", "npm:8.1.5"]\
+          ],\
+          "linkType": "HARD"\
+        }]\
+      ]],\
       ["@types/sockjs", [\
         ["npm:0.3.33", {\
           "packageLocation": "./.yarn/cache/@types-sockjs-npm-0.3.33-07d624a8b3-b9bbb2b5c5.zip/node_modules/@types/sockjs/",\
@@ -18858,6 +18922,18 @@ function $$SETUP_STATE(hydrateRuntimeState, basePath) {
           "packageLocation": "./.yarn/cache/available-typed-arrays-npm-1.0.5-88f321e4d3-20eb47b3ce.zip/node_modules/available-typed-arrays/",\
           "packageDependencies": [\
             ["available-typed-arrays", "npm:1.0.5"]\
+          ],\
+          "linkType": "HARD"\
+        }]\
+      ]],\
+      ["aws-sdk-client-mock", [\
+        ["npm:3.0.0", {\
+          "packageLocation": "./.yarn/cache/aws-sdk-client-mock-npm-3.0.0-a28aaf1d05-6298de9232.zip/node_modules/aws-sdk-client-mock/",\
+          "packageDependencies": [\
+            ["aws-sdk-client-mock", "npm:3.0.0"],\
+            ["@types/sinon", "npm:10.0.20"],\
+            ["sinon", "npm:14.0.2"],\
+            ["tslib", "npm:2.4.0"]\
           ],\
           "linkType": "HARD"\
         }]\
@@ -22540,6 +22616,13 @@ function $$SETUP_STATE(hydrateRuntimeState, basePath) {
           "packageLocation": "./.yarn/cache/diff-npm-4.0.2-73133c7102-f2c09b0ce4.zip/node_modules/diff/",\
           "packageDependencies": [\
             ["diff", "npm:4.0.2"]\
+          ],\
+          "linkType": "HARD"\
+        }],\
+        ["npm:5.1.0", {\
+          "packageLocation": "./.yarn/cache/diff-npm-5.1.0-d24d222280-c7bf0df7c9.zip/node_modules/diff/",\
+          "packageDependencies": [\
+            ["diff", "npm:5.1.0"]\
           ],\
           "linkType": "HARD"\
         }]\
@@ -29145,6 +29228,15 @@ function $$SETUP_STATE(hydrateRuntimeState, basePath) {
           "linkType": "HARD"\
         }]\
       ]],\
+      ["just-extend", [\
+        ["npm:4.2.1", {\
+          "packageLocation": "./.yarn/cache/just-extend-npm-4.2.1-ccc4201277-ff9fdede24.zip/node_modules/just-extend/",\
+          "packageDependencies": [\
+            ["just-extend", "npm:4.2.1"]\
+          ],\
+          "linkType": "HARD"\
+        }]\
+      ]],\
       ["jwa", [\
         ["npm:1.4.1", {\
           "packageLocation": "./.yarn/cache/jwa-npm-1.4.1-4f19d6572c-ff30ea7c2d.zip/node_modules/jwa/",\
@@ -29446,6 +29538,15 @@ function $$SETUP_STATE(hydrateRuntimeState, basePath) {
           "packageLocation": "./.yarn/cache/lodash.debounce-npm-4.0.8-f1d6e09799-a3f527d22c.zip/node_modules/lodash.debounce/",\
           "packageDependencies": [\
             ["lodash.debounce", "npm:4.0.8"]\
+          ],\
+          "linkType": "HARD"\
+        }]\
+      ]],\
+      ["lodash.get", [\
+        ["npm:4.4.2", {\
+          "packageLocation": "./.yarn/cache/lodash.get-npm-4.4.2-7bda64ed87-e403047ddb.zip/node_modules/lodash.get/",\
+          "packageDependencies": [\
+            ["lodash.get", "npm:4.4.2"]\
           ],\
           "linkType": "HARD"\
         }]\
@@ -30526,11 +30627,59 @@ function $$SETUP_STATE(hydrateRuntimeState, basePath) {
           "linkType": "HARD"\
         }]\
       ]],\
+      ["nestjs-cls", [\
+        ["npm:3.6.0", {\
+          "packageLocation": "./.yarn/cache/nestjs-cls-npm-3.6.0-ad09569c97-31ef22ec42.zip/node_modules/nestjs-cls/",\
+          "packageDependencies": [\
+            ["nestjs-cls", "npm:3.6.0"]\
+          ],\
+          "linkType": "SOFT"\
+        }],\
+        ["virtual:bac4008d35a304375ff1ab4baeb61323523d963ad78fe9677e36b15d15f89064a355ca0cb83f2c600ae38e797c7f86a24ea965c3931d6b33889f658aa9914d2c#npm:3.6.0", {\
+          "packageLocation": "./.yarn/__virtual__/nestjs-cls-virtual-d85ca21b65/0/cache/nestjs-cls-npm-3.6.0-ad09569c97-31ef22ec42.zip/node_modules/nestjs-cls/",\
+          "packageDependencies": [\
+            ["nestjs-cls", "virtual:bac4008d35a304375ff1ab4baeb61323523d963ad78fe9677e36b15d15f89064a355ca0cb83f2c600ae38e797c7f86a24ea965c3931d6b33889f658aa9914d2c#npm:3.6.0"],\
+            ["@nestjs/common", "virtual:bac4008d35a304375ff1ab4baeb61323523d963ad78fe9677e36b15d15f89064a355ca0cb83f2c600ae38e797c7f86a24ea965c3931d6b33889f658aa9914d2c#patch:@nestjs/common@npm%3A8.4.6#../../.yarn/patches/@nestjs-common-npm-8.4.6-ceb145a01e.patch::version=8.4.6&hash=3f40ac&locator=protft_api%40workspace%3Apackages%2Fapi"],\
+            ["@nestjs/core", "virtual:bac4008d35a304375ff1ab4baeb61323523d963ad78fe9677e36b15d15f89064a355ca0cb83f2c600ae38e797c7f86a24ea965c3931d6b33889f658aa9914d2c#npm:8.4.6"],\
+            ["@types/nestjs__common", null],\
+            ["@types/nestjs__core", null],\
+            ["@types/reflect-metadata", null],\
+            ["@types/rxjs", null],\
+            ["reflect-metadata", "npm:0.1.13"],\
+            ["rxjs", "npm:7.5.5"]\
+          ],\
+          "packagePeers": [\
+            "@nestjs/common",\
+            "@nestjs/core",\
+            "@types/nestjs__common",\
+            "@types/nestjs__core",\
+            "@types/reflect-metadata",\
+            "@types/rxjs",\
+            "reflect-metadata",\
+            "rxjs"\
+          ],\
+          "linkType": "HARD"\
+        }]\
+      ]],\
       ["nice-try", [\
         ["npm:1.0.5", {\
           "packageLocation": "./.yarn/cache/nice-try-npm-1.0.5-963856b16f-0b4af3b5bb.zip/node_modules/nice-try/",\
           "packageDependencies": [\
             ["nice-try", "npm:1.0.5"]\
+          ],\
+          "linkType": "HARD"\
+        }]\
+      ]],\
+      ["nise", [\
+        ["npm:5.1.5", {\
+          "packageLocation": "./.yarn/cache/nise-npm-5.1.5-847a2de198-c763dc62c5.zip/node_modules/nise/",\
+          "packageDependencies": [\
+            ["nise", "npm:5.1.5"],\
+            ["@sinonjs/commons", "npm:2.0.0"],\
+            ["@sinonjs/fake-timers", "npm:10.3.0"],\
+            ["@sinonjs/text-encoding", "npm:0.7.2"],\
+            ["just-extend", "npm:4.2.1"],\
+            ["path-to-regexp", "npm:1.8.0"]\
           ],\
           "linkType": "HARD"\
         }]\
@@ -31716,6 +31865,14 @@ function $$SETUP_STATE(hydrateRuntimeState, basePath) {
           "packageLocation": "./.yarn/cache/path-to-regexp-npm-0.1.7-2605347373-69a14ea24d.zip/node_modules/path-to-regexp/",\
           "packageDependencies": [\
             ["path-to-regexp", "npm:0.1.7"]\
+          ],\
+          "linkType": "HARD"\
+        }],\
+        ["npm:1.8.0", {\
+          "packageLocation": "./.yarn/cache/path-to-regexp-npm-1.8.0-a1904f5c44-709f6f083c.zip/node_modules/path-to-regexp/",\
+          "packageDependencies": [\
+            ["path-to-regexp", "npm:1.8.0"],\
+            ["isarray", "npm:0.0.1"]\
           ],\
           "linkType": "HARD"\
         }],\
@@ -34150,6 +34307,7 @@ function $$SETUP_STATE(hydrateRuntimeState, basePath) {
             ["@typescript-eslint/eslint-plugin", "virtual:bac4008d35a304375ff1ab4baeb61323523d963ad78fe9677e36b15d15f89064a355ca0cb83f2c600ae38e797c7f86a24ea965c3931d6b33889f658aa9914d2c#npm:5.27.0"],\
             ["@typescript-eslint/parser", "virtual:bac4008d35a304375ff1ab4baeb61323523d963ad78fe9677e36b15d15f89064a355ca0cb83f2c600ae38e797c7f86a24ea965c3931d6b33889f658aa9914d2c#npm:5.27.0"],\
             ["apollo-server-express", "virtual:bac4008d35a304375ff1ab4baeb61323523d963ad78fe9677e36b15d15f89064a355ca0cb83f2c600ae38e797c7f86a24ea965c3931d6b33889f658aa9914d2c#npm:3.8.1"],\
+            ["aws-sdk-client-mock", "npm:3.0.0"],\
             ["bcrypt", "npm:5.1.0"],\
             ["cookie-parser", "npm:1.4.6"],\
             ["country-code-lookup", "npm:0.0.22"],\
@@ -34161,6 +34319,7 @@ function $$SETUP_STATE(hydrateRuntimeState, basePath) {
             ["joi", "npm:17.9.2"],\
             ["lodash.chunk", "npm:4.2.0"],\
             ["luxon", "npm:3.3.0"],\
+            ["nestjs-cls", "virtual:bac4008d35a304375ff1ab4baeb61323523d963ad78fe9677e36b15d15f89064a355ca0cb83f2c600ae38e797c7f86a24ea965c3931d6b33889f658aa9914d2c#npm:3.6.0"],\
             ["passport", "npm:0.6.0"],\
             ["passport-jwt", "npm:4.0.1"],\
             ["passport-local", "npm:1.0.0"],\
@@ -36676,6 +36835,21 @@ function $$SETUP_STATE(hydrateRuntimeState, basePath) {
           "packageLocation": "./.yarn/cache/signedsource-npm-1.0.0-1e8a9aacd0-64b2c8d7a4.zip/node_modules/signedsource/",\
           "packageDependencies": [\
             ["signedsource", "npm:1.0.0"]\
+          ],\
+          "linkType": "HARD"\
+        }]\
+      ]],\
+      ["sinon", [\
+        ["npm:14.0.2", {\
+          "packageLocation": "./.yarn/cache/sinon-npm-14.0.2-76bb0b1579-de7730cd77.zip/node_modules/sinon/",\
+          "packageDependencies": [\
+            ["sinon", "npm:14.0.2"],\
+            ["@sinonjs/commons", "npm:2.0.0"],\
+            ["@sinonjs/fake-timers", "npm:9.1.2"],\
+            ["@sinonjs/samsam", "npm:7.0.1"],\
+            ["diff", "npm:5.1.0"],\
+            ["nise", "npm:5.1.5"],\
+            ["supports-color", "npm:7.2.0"]\
           ],\
           "linkType": "HARD"\
         }]\

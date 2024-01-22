@@ -3,7 +3,7 @@ import { FormFieldProps } from "../../DialogForm/FormField";
 import { BaseDialogProps } from "../Dialogs.types";
 import { useEntityDialog } from "../useEntityDialog";
 
-const SET_OPTIONS = [
+export const SET_OPTIONS = [
   {
     value: "1",
     name: "1 - Beta",
@@ -42,7 +42,7 @@ const SET_OPTIONS = [
   },
   {
     value: "10",
-    name: "10 - ?",
+    name: "10 - Remix Rumble",
   },
 ];
 

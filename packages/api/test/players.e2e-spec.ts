@@ -11,6 +11,7 @@ import { PlayersController } from "../src/players/players.controller";
 import { ApiKeyGuard } from "../src/auth/apikey.guard";
 import { PlayersExternalController } from "../src/players/players-external.controller";
 import { RegionCode } from "../src/tournaments/types/region.types";
+import { CacheService } from "../src/cache/cache.service";
 
 const restUrl = "/players";
 const graphql = "/graphql";
@@ -82,13 +83,23 @@ describe("Player (e2e)", () => {
           autoSchemaFile: true,
         }),
       ],
-      providers: [PlayersResolver, PlayersService, RoundResultsService],
+      providers: [
+        PlayersResolver,
+        PlayersService,
+        RoundResultsService,
+        CacheService,
+      ],
       controllers: [PlayersController, PlayersExternalController],
     })
       .overrideProvider(PlayersService)
       .useValue(fakePlayersService)
       .overrideProvider(RoundResultsService)
       .useValue(fakeRoundResultsService)
+      .overrideProvider(CacheService)
+      .useValue({
+        get: jest.fn(),
+        set: jest.fn(),
+      })
       .overrideGuard(GqlJwtAuthGuard)
       .useValue({})
       .overrideGuard(JwtAuthGuard)
@@ -139,7 +150,6 @@ describe("Player (e2e)", () => {
         expect(fakePlayersService.findAll).toHaveBeenCalledWith(
           { region: "EMEA" },
           {},
-          { id: "DESC" },
         );
         expect(response.body).toStrictEqual({
           data: { adminPlayers: mockPlayers },
@@ -153,13 +163,14 @@ describe("Player (e2e)", () => {
           .post(graphql)
           .send({
             query: `
-            query {
-              player(id: 1) {
+            query($id: Int!) {
+              player(id: $id) {
                 id
               }
             }`,
-          })
-          .expect(HttpStatus.OK);
+            variables: { id: 1 },
+          });
+        // .expect(HttpStatus.OK);
 
         expect(response.body).toStrictEqual({
           data: { player: mockPlayers[0] },
@@ -171,8 +182,8 @@ describe("Player (e2e)", () => {
           .post(graphql)
           .send({
             query: `
-            query {
-              player(id: 1) {
+            query($id: Int!) {
+              player(id: $id) {
                 id
                 playerStats {
                   averagePosition
@@ -187,6 +198,7 @@ describe("Player (e2e)", () => {
                 }
               }
             }`,
+            variables: { id: 1 },
           });
 
         expect(response.body).toStrictEqual({

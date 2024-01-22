@@ -5,16 +5,14 @@ import { useQuery } from "urql";
 import { S3_FOLDER_PATH } from "../../aws/Constants";
 import { TournamentContent } from "../../components/TournamentContent/TournamentContent";
 import { formatDateFromDB } from "../../formatter/Date";
+import { TournamentQuery, TournamentQueryVariables } from "../../gql/graphql";
 import { Stage } from "../../graphql/schema";
 import { useIsMobile } from "../../hooks/useIsMobile";
 import { useTracking } from "../../hooks/useTracking";
 import { getEventMetadata } from "../../seo/Event";
 import { TrackingEvents } from "../../tracking/Events";
 import { InfoBar } from "./InfoBar/InfoBar";
-import {
-  TournamentBySlugQueryResponse,
-  TOURNAMENT_BY_SLUG_QUERY,
-} from "./queries";
+import { TOURNAMENT_BY_SLUG_QUERY } from "./queries";
 import { SkeletonResultTable } from "./Results/ResultTable/SkeletonResultTable";
 import { Stages } from "./Stages/Stages";
 import {
@@ -30,9 +28,9 @@ const Results = React.lazy(() =>
 
 export const Tournament = () => {
   const { tournamentSlug } = useParams();
-  const [{ data }] = useQuery<TournamentBySlugQueryResponse>({
+  const [{ data }] = useQuery<TournamentQuery, TournamentQueryVariables>({
     query: TOURNAMENT_BY_SLUG_QUERY,
-    variables: { slug: tournamentSlug },
+    variables: { slug: tournamentSlug! },
   });
 
   const description = useMemo(() => {
@@ -62,22 +60,14 @@ export const Tournament = () => {
 
       if (hasClickedClosedStage) {
         trackEvent(TrackingEvents.TOURNAMENT_STAGE_OPEN, {
-          tournamentId: data?.tournamentBySlug.id || 0,
-          tournamentName: data?.tournamentBySlug.name || "",
-          stageId: selectedStage.id,
-          stageName: selectedStage.name,
+          tournamentStage: `${data?.tournamentBySlug.name} - ${selectedStage.name}`,
         });
       }
 
       setOpen(hasClickedClosedStage);
       setOpenStage(hasClickedClosedStage ? selectedStage : null);
     },
-    [
-      data?.tournamentBySlug.id,
-      data?.tournamentBySlug.name,
-      openStage?.id,
-      trackEvent,
-    ]
+    [data?.tournamentBySlug.name, openStage?.id, trackEvent]
   );
 
   return (
@@ -111,7 +101,7 @@ export const Tournament = () => {
           />
         )}
         <Stages
-          tournament={data?.tournamentBySlug}
+          tournament={data?.tournamentBySlug as any}
           onSelectStage={onSelectStage}
           openStage={openStage}
         />

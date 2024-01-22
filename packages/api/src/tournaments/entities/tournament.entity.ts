@@ -22,11 +22,12 @@ import { Player } from "../../players/player.entity";
 import { Stage } from "../../stages/stage.entity";
 import { TournamentMetadata } from "./tournament-metadata.entity";
 import { Set } from "../../sets/set.entity";
+import { BaseEntity } from "../../lib/BaseEntity";
 
 @ObjectType()
 @Entity()
-@Index(["slug"], { unique: true })
-export class Tournament {
+@Index(["slug"], { unique: true, where: `\"deletedAt\" is null` })
+export class Tournament extends BaseEntity {
   @Field(() => Int)
   @PrimaryGeneratedColumn()
   id: number;
@@ -83,6 +84,9 @@ export class Tournament {
 
   @Column("varchar", { nullable: true })
   image: Nullable<string>;
+
+  @Column("integer", { array: true, default: [] })
+  editPermission: number[];
 
   @Field(() => Int, { nullable: true })
   nextStartTime: Nullable<number>;

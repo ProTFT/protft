@@ -1,4 +1,5 @@
 import { Tournament } from "../../src/tournaments/entities/tournament.entity";
+import { BaseProps } from "./base-props";
 import { set as genSet } from "./set";
 
 type TournamentGeneratorParams = Partial<Tournament>;
@@ -28,6 +29,8 @@ export function tournament(
     metadata: null,
     nextStartTime: 123,
     players: [],
+    editPermission: [],
+    ...BaseProps(),
     ...tournamentParams,
   };
 }

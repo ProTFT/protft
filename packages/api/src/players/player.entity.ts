@@ -1,5 +1,6 @@
 import { Field, Float, Int, ObjectType } from "@nestjs/graphql";
 import { Column, Entity, Index, PrimaryGeneratedColumn } from "typeorm";
+import { BaseEntity } from "../lib/BaseEntity";
 import { PlayerLink } from "../player-links/player-link.entity";
 
 @ObjectType()
@@ -22,9 +23,9 @@ export class PlayerCalculatedStats {
 
 @ObjectType()
 @Entity()
-@Index(["slug"], { unique: true })
-@Index(["name"], { unique: false })
-export class Player {
+@Index(["slug"], { unique: true, where: '"deletedAt" is null' })
+@Index(["name"], { unique: false, where: '"deletedAt" is null' })
+export class Player extends BaseEntity {
   @Field(() => Int)
   @PrimaryGeneratedColumn()
   id: number;

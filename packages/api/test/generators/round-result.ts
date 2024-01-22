@@ -1,6 +1,7 @@
 import { RoundResult } from "../../src/round-results/round-result.entity";
 import { round as genRound } from "./round";
 import { lobbyPlayerInfo as genLobbyPlayerInfo } from "./lobby-player-info";
+import { BaseProps } from "./base-props";
 
 export function roundResult({
   lobbyPlayerId,
@@ -16,5 +17,6 @@ export function roundResult({
     position: position || randomId,
     roundId: roundId || randomId,
     round: round || genRound({}),
+    ...BaseProps(),
   };
 }

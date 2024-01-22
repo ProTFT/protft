@@ -11,3 +11,6 @@ export const includes = (values: string[]) => (alias: string) =>
   `${alias} && array[${values
     .map((r) => `'${r}'`)
     .join(",")}]::character varying []`;
+
+export const includesInt = (values: number[]) => (alias: string) =>
+  `${alias} && array[${values.map((r) => r).join(",")}]`;

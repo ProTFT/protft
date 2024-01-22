@@ -15,13 +15,17 @@ import { Tournament } from "../tournaments/entities/tournament.entity";
 import { StagePlayerInfo } from "../stage-player-infos/stage-player-info.entity";
 import { LobbyGroup } from "../lobbies/lobby-group.entity";
 import { StageType } from "./types/StageType";
+import { BaseEntity } from "../lib/BaseEntity";
 
 registerEnumType(StageType, { name: "StageType" });
 
 @ObjectType()
 @Entity()
-@Index(["tournamentId", "sequence"], { unique: true })
-export class Stage {
+@Index(["tournamentId", "sequence"], {
+  unique: true,
+  where: '"deletedAt" is null',
+})
+export class Stage extends BaseEntity {
   @Field(() => Int)
   @PrimaryGeneratedColumn()
   id: number;
@@ -37,6 +41,10 @@ export class Stage {
   @Field(() => Int)
   @Column()
   sequence: number;
+
+  @Field(() => Int)
+  @Column({ default: 0 })
+  sequenceForResult: number;
 
   @Field(() => Int)
   @Column()

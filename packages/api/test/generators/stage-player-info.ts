@@ -1,9 +1,7 @@
-import { Player } from "../../src/players/player.entity";
 import { StagePlayerInfo } from "../../src/stage-player-infos/stage-player-info.entity";
+import { BaseProps } from "./base-props";
 import { player as genPlayer } from "./player";
 import { stage as genStage } from "./stage";
-
-type PlayerGeneratorParams = Partial<Player>;
 
 export function stagePlayerInfo({
   playerId,
@@ -21,5 +19,6 @@ export function stagePlayerInfo({
     stage: stage || genStage({}),
     stageId: stageId || randomId,
     tiebreakerRanking: tiebreakerRanking || randomId,
+    ...BaseProps(),
   };
 }

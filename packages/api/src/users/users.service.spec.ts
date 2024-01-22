@@ -1,5 +1,5 @@
 import { Repository } from "typeorm";
-import { User } from "./user.entity";
+import { Roles, User } from "./user.entity";
 import { UsersService } from "./users.service";
 
 jest.mock("bcrypt", () => ({
@@ -33,7 +33,8 @@ describe("Users service", () => {
     it("should call repository", async () => {
       const username = "user";
       const password = "pass";
-      await service.createOne(username, password);
+      const roles = [Roles.TOURNAMENT_ORGANIZER];
+      await service.createOne(username, password, roles);
       expect(userRepository.save).toHaveBeenCalled();
     });
   });

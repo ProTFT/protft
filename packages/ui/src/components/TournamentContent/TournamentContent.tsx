@@ -24,7 +24,7 @@ import {
 } from "./TournamentContent.styled";
 
 interface Props {
-  tournament: TournamentWithMaybePlayerResult;
+  tournament: Omit<TournamentWithMaybePlayerResult, "slug">;
   isOngoing?: boolean;
 }
 

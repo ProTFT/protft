@@ -5,10 +5,13 @@ import {
 } from "@nestjs/common";
 import { InjectRepository } from "@nestjs/typeorm";
 import { In, Repository } from "typeorm";
+import { JwtUser } from "../../auth/jwt.strategy";
+import { BaseEntity } from "../../lib/BaseEntity";
 import { DeleteResponse } from "../../lib/dto/delete-return";
 import { parseMultilinePlayerNamesFromAll } from "../../lib/MultilineInput";
 import { Player } from "../../players/player.entity";
 import { SetsService } from "../../sets/sets.service";
+import { CreateStageArgs } from "../../stages/dto/create-stage.args";
 import { Stage } from "../../stages/stage.entity";
 import { StagesService } from "../../stages/stages.service";
 import { CreateTournamentDto } from "../dto/create-tournament.dto";
@@ -31,11 +34,15 @@ export class TournamentsWriteService {
     private stagesService: StagesService,
   ) {}
 
-  async createOne(payload: CreateTournamentArgs): Promise<Tournament> {
+  async createOne(
+    payload: CreateTournamentArgs,
+    user: JwtUser,
+  ): Promise<Tournament> {
     const payloadWithSlug: CreateTournamentDto = {
       ...payload,
       slug: await createSlug(payload, this.setsService),
       visibility: false,
+      editPermission: [user.userId],
     };
     return this.tournamentRepository.save(payloadWithSlug);
   }
@@ -50,6 +57,7 @@ export class TournamentsWriteService {
     }
     return this.stagesService.createOne({
       tournamentId,
+      sequenceForResult: payload.sequence,
       ...payload,
     });
   }
@@ -64,7 +72,7 @@ export class TournamentsWriteService {
   }
 
   async deleteOne(id: number): Promise<DeleteResponse> {
-    await this.tournamentRepository.delete({ id });
+    await this.tournamentRepository.softDelete({ id });
     return new DeleteResponse(id);
   }
 
@@ -87,9 +95,12 @@ export class TournamentsWriteService {
     tournamentId,
     playerNames,
   }: CreateTournamentPlayerByNameArgs): Promise<Tournament> {
+    const result = await this.tournamentRepository.findOne(tournamentId);
+    const { region } = result;
     const playerIds = await parseMultilinePlayerNamesFromAll(
       playerNames,
       this.tournamentRepository.manager,
+      region,
     );
 
     return this.createTournamentPlayers({ tournamentId, playerIds });
@@ -148,5 +159,69 @@ export class TournamentsWriteService {
         return this.tournamentRepository.save(updatedTournament);
       }),
     );
+  }
+
+  async cloneTournament(
+    tournamentId: number,
+    name: string,
+    setId: number,
+    user: JwtUser,
+  ): Promise<Tournament> {
+    const [tournament, stages] = await Promise.all([
+      this.tournamentRepository.findOne(tournamentId),
+      this.stagesService.findAllByTournament(tournamentId, ["rounds"]),
+    ]);
+
+    const strippedTournament = this.removeProperties(tournament, [
+      "slug",
+      "visibility",
+    ]) as CreateTournamentArgs;
+    const tournamentToCreate = {
+      ...strippedTournament,
+      name,
+      setId,
+    };
+    const createdTournament = await this.createOne(tournamentToCreate, user);
+
+    const stagesToCreate = stages.map<Promise<Stage>>((stage) => {
+      const strippedStage = this.removeProperties(stage, [
+        "tournamentId",
+        "rounds",
+      ]) as CreateStageArgs;
+      const stageToCreate = {
+        ...strippedStage,
+        roundCount: stage.rounds.length,
+        tournamentId: createdTournament.id,
+      };
+      return this.stagesService.createOne(stageToCreate);
+    });
+    await Promise.all(stagesToCreate);
+    return createdTournament;
+  }
+
+  private removeProperties<T>(
+    baseObject: T,
+    propertiesToRemove: Array<keyof T>,
+  ) {
+    const basePropertiesToRemove: Array<keyof BaseEntity> = [
+      "createdAt",
+      "createdBy",
+      "deletedAt",
+      "deletedBy",
+      "updatedAt",
+      "updatedBy",
+    ];
+    const fullPropertiesToRemove = [
+      "id",
+      ...basePropertiesToRemove,
+      ...propertiesToRemove,
+    ];
+    const objectKeys = Object.keys(baseObject) as Array<keyof T>;
+    return objectKeys.reduce((newObject, currentKey) => {
+      if (!fullPropertiesToRemove.includes(currentKey)) {
+        newObject[currentKey as string] = baseObject[currentKey];
+      }
+      return newObject;
+    }, {});
   }
 }

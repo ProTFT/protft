@@ -1,16 +1,11 @@
 import styled from "styled-components";
-import { StyledHorizontalContainer } from "../../../../../../components/Layout/HorizontalContainer/HorizontalContainer.styled";
-import { StyledVerticalContainer } from "../../../../../../components/Layout/VerticalContainer/VerticalContainer.styled";
-import { colors } from "../../../../../../design/colors";
 
-export const StyledTournamentPlayerListSmaller = styled(
-  StyledVerticalContainer
-)`
-  border: 0.2rem solid ${colors.yellow};
-  border-radius: 0.2rem;
-  padding: 1.5rem;
-  gap: 1rem;
-`;
+export const StyledTournamentPlayerListSmaller = styled.div(({ theme }) => ({
+  border: `0.2rem solid ${theme.colors.yellow}`,
+  display: "grid",
+  padding: "1.5rem",
+  borderRadius: "0.2rem",
+}));
 
 export const StyledLobbyName = styled.p`
   font-family: Roboto;
@@ -21,14 +16,17 @@ export const StyledLobbyName = styled.p`
   text-align: left;
 `;
 
-export const StyledTournamentPlayerListColumn = styled(StyledVerticalContainer)`
+export const StyledTournamentPlayerListColumn = styled.div`
   flex-wrap: wrap;
   max-height: 50rem;
   gap: 0.5rem;
 `;
 
 export const StyledResultInput = styled.input`
-  width: 1rem;
+  width: 2rem;
+  height: 2rem;
+  text-align: center;
+  font-size: 16px;
 
   ::-webkit-outer-spin-button,
   ::-webkit-inner-spin-button {
@@ -38,12 +36,13 @@ export const StyledResultInput = styled.input`
   -moz-appearance: textfield;
 `;
 
-export const StyledResultsInputContainer = styled(StyledHorizontalContainer)`
-  gap: 1rem;
-`;
+export const StyledResultsInputContainer = styled.div(() => ({
+  display: "flex",
+  gap: "0.5rem",
+  alignItems: "center",
+}));
 
-export const StyledFakeTable = styled(StyledHorizontalContainer)`
-  align-items: center;
-  gap: 1rem;
-  justify-content: space-between;
-`;
+export const StyledFakeTable = styled.div(() => ({
+  display: "grid",
+  gridTemplateColumns: "1fr 1fr",
+}));

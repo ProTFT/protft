@@ -15,7 +15,7 @@ const STAGE_PLAYER_INFO_FIELDS: FormFieldProps[] = [
     type: "number",
   },
   {
-    label: "Tiebreaker #",
+    label: "Seeding",
     name: "tiebreakerRanking",
     type: "number",
   },

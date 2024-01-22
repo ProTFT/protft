@@ -1,6 +1,10 @@
 import { BadRequestException, NotFoundException } from "@nestjs/common";
 import { Repository } from "typeorm";
+import { stage } from "../../../test/generators/stage";
+import { tournament } from "../../../test/generators/tournament";
+import { JwtUser } from "../../auth/jwt.strategy";
 import { DeleteResponse } from "../../lib/dto/delete-return";
+import { Round } from "../../rounds/round.entity";
 import { SetsService } from "../../sets/sets.service";
 import { StagesService } from "../../stages/stages.service";
 import { StageType } from "../../stages/types/StageType";
@@ -22,13 +26,15 @@ describe("TournamentsWriteService", () => {
       find: jest.fn(),
       findOne: jest.fn(),
       update: jest.fn(),
-      delete: jest.fn(),
+      softDelete: jest.fn(),
       save: jest.fn(),
       createQueryBuilder: jest.fn().mockReturnThis(),
       select: jest.fn().mockReturnThis(),
       innerJoinAndSelect: jest.fn().mockReturnThis(),
       where: jest.fn().mockReturnThis(),
       getMany: jest.fn().mockResolvedValue([{}]),
+      distinct: jest.fn().mockReturnThis(),
+      from: jest.fn().mockReturnThis(),
       manager: {
         createQueryBuilder: jest.fn().mockReturnThis(),
         select: jest.fn().mockReturnThis(),
@@ -36,6 +42,8 @@ describe("TournamentsWriteService", () => {
         where: jest.fn().mockReturnThis(),
         andWhere: jest.fn().mockReturnThis(),
         orWhere: jest.fn().mockReturnThis(),
+        distinct: jest.fn().mockReturnThis(),
+        leftJoin: jest.fn().mockReturnThis(),
         getRawMany: jest.fn().mockResolvedValue([
           { id: 1, name: "a" },
           { id: 2, name: "b" },
@@ -68,10 +76,11 @@ describe("TournamentsWriteService", () => {
 
     const defaultCreationParameters = {
       visibility: false,
+      editPermission: [],
     };
 
     it("should save and return", async () => {
-      await service.createOne(payload);
+      await service.createOne(payload, {} as JwtUser);
 
       expect(tournamentRepository.save).toHaveBeenCalledWith({
         ...defaultCreationParameters,
@@ -88,6 +97,7 @@ describe("TournamentsWriteService", () => {
       pointSchemaId: 1,
       roundCount: 1,
       sequence: 1,
+      sequenceForResult: 1,
       stageType: StageType.RANKING,
       tiebreakers: [1, 2, 3],
       description: "descr",
@@ -189,6 +199,7 @@ describe("TournamentsWriteService", () => {
         id: mockTournamentId,
         name: "anyName",
         players: [],
+        region: ["NA"],
       };
       tournamentRepository.findOne = jest.fn().mockResolvedValue(tournament);
 
@@ -208,6 +219,13 @@ describe("TournamentsWriteService", () => {
           Boris
           Camila
           Denis`;
+      const tournament = {
+        id: mockTournamentId,
+        name: "anyName",
+        players: [],
+        region: ["NA"],
+      };
+      tournamentRepository.findOne = jest.fn().mockResolvedValue(tournament);
       expect(
         async () =>
           await service.createTournamentPlayersByName({
@@ -337,6 +355,51 @@ describe("TournamentsWriteService", () => {
         ...tournamentData,
         players: [randomPlayer, playerToBeAdded],
       });
+    });
+  });
+
+  describe("cloneTournament", () => {
+    it("should create new tournament using the properties provided", async () => {
+      const currentTournament = tournament({ name: "old name" });
+      const newTournament = tournament();
+      tournamentRepository.findOne = jest
+        .fn()
+        .mockResolvedValue(currentTournament);
+
+      tournamentRepository.save = jest.fn().mockResolvedValue(newTournament);
+
+      stagesService.findAllByTournament = jest.fn().mockResolvedValue([
+        stage({
+          roundCount: 5,
+        }),
+        stage({ rounds: [{} as Round, {} as Round] }),
+      ]);
+
+      await service.cloneTournament(
+        currentTournament.id,
+        "new name",
+        123,
+        {} as JwtUser,
+      );
+
+      expect(tournamentRepository.save).toHaveBeenCalledWith(
+        expect.objectContaining({
+          name: "new name",
+          setId: 123,
+          visibility: false,
+          slug: "setname-new-name",
+        }),
+      );
+
+      expect(stagesService.createOne).toHaveBeenCalledTimes(2);
+
+      expect(stagesService.createOne).toHaveBeenNthCalledWith(
+        2,
+        expect.objectContaining({
+          tournamentId: newTournament.id,
+          roundCount: 2,
+        }),
+      );
     });
   });
 });

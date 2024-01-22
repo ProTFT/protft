@@ -21,7 +21,7 @@ export class TournamentStreamsService {
   }
 
   public async deleteStream(tournamentId: number, name: string) {
-    await this.tournamentStreamRepository.delete({
+    await this.tournamentStreamRepository.softDelete({
       tournamentId,
       name,
     });

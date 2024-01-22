@@ -41,6 +41,7 @@ import {
   CreateNLobbyResult,
   CreateNLobbyVariables,
   DELETE_LOBBY_GROUPS,
+  SNAKE_SEED_MUTATION,
 } from "./queries";
 import { useToast } from "../../../../Components/Toast/Toast";
 import { StyledTitle } from "../../../../Components/Title/Title.styled";
@@ -54,6 +55,13 @@ import {
   NLobbyDialogFields,
   useNLobbyDialog,
 } from "../../../../Components/Dialogs/NLobbyDialog/NLobbyDialog";
+import { colors } from "../../../../../../design/colors";
+import {
+  SnakeSeedMutation,
+  SnakeSeedMutationVariables,
+  SnakeSeedType,
+} from "../../../../../../gql/graphql";
+import { useSnakeSeedDialog } from "../../../../Components/Dialogs/SnakeSeedDialog/SnakeSeedDialog";
 
 interface Props {
   hasLobbieGroups: boolean;
@@ -120,6 +128,11 @@ export const LobbyGroup = ({
     DeleteLobbyGroupsResult,
     DeleteLobbyGroupsVariables
   >(DELETE_LOBBY_GROUPS);
+
+  const [, snakeSeed] = useMutation<
+    SnakeSeedMutation,
+    SnakeSeedMutationVariables
+  >(SNAKE_SEED_MUTATION);
 
   const [, createLobby] = useMutation<CreateLobbyResult, CreateLobbyVariables>(
     CREATE_LOBBY_MUTATION
@@ -259,7 +272,29 @@ export const LobbyGroup = ({
     }
     show();
     refetchLobbyGroups();
+    setIsManual(false);
   }, [deleteLobbyGroups, refetchLobbyGroups, show, stageId]);
+
+  const onSnakeSeed = useCallback(
+    async ({ type }: { type: SnakeSeedType }) => {
+      return snakeSeed({
+        stageId: Number(stageId),
+        lobbyGroupId: Number(selectedLobbyGroup!),
+        type,
+      });
+    },
+    [selectedLobbyGroup, snakeSeed, stageId]
+  );
+
+  const { dialog: snakeSeedDialog, openDialog: openSnakeSeedDialog } =
+    useSnakeSeedDialog({
+      onSubmit: onSnakeSeed,
+      onSuccess: refetchLobbies,
+    });
+
+  const onSnakeSeedOpen = useCallback(async () => {
+    openSnakeSeedDialog();
+  }, [openSnakeSeedDialog]);
 
   const onAdd = useCallback(
     ({ lobbyId, name: lobbyName }: AllLobbyPlayers) =>
@@ -343,6 +378,7 @@ export const LobbyGroup = ({
       />
       {NLobbyGroupDialog}
       {NLobbyDialog}
+      {snakeSeedDialog}
       <StyledBar>
         <StyledTitleContainer>
           <BigArrowLeft onClick={goToPreviousLobbyGroup} />
@@ -350,20 +386,31 @@ export const LobbyGroup = ({
           <BigArrowRight onClick={goToNextLobbyGroup} />
         </StyledTitleContainer>
         <StyledButtonContainer>
-          <ProTFTButton onClick={onSave}>Save</ProTFTButton>
           <ProTFTButton onClick={onCreateLobbyGroup}>
-            Create Lobby Group
+            Create 1 Lobby Group
           </ProTFTButton>
-          {selectedLobbyGroup && (
-            <ProTFTButton onClick={onCreateLobby}>Create Lobby</ProTFTButton>
+          {selectedLobbyGroup ? (
+            <ProTFTButton onClick={onCreateLobby}>Create 1 Lobby</ProTFTButton>
+          ) : (
+            <div />
           )}
+          <ProTFTButton onClick={onSave}>Save</ProTFTButton>
           <ProTFTButton onClick={onCreateNLobbyGroup}>
             Create N Lobby Group
           </ProTFTButton>
-          <ProTFTButton onClick={onCreateNLobby}>Create N Lobby</ProTFTButton>
-          <ProTFTButton onClick={onDeleteLobbyGroups}>
-            Delete Lobby Groups
+          {selectedLobbyGroup ? (
+            <ProTFTButton onClick={onCreateNLobby}>Create N Lobby</ProTFTButton>
+          ) : (
+            <div />
+          )}
+          <ProTFTButton
+            buttonColor={colors.purple}
+            textColor={colors.white}
+            onClick={onDeleteLobbyGroups}
+          >
+            Delete all
           </ProTFTButton>
+          <ProTFTButton onClick={onSnakeSeedOpen}>Snake Seed</ProTFTButton>
         </StyledButtonContainer>
       </StyledBar>
       <StyledLobbyContainer>

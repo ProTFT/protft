@@ -20,6 +20,7 @@ import { useObserver } from "../../../hooks/useObserver";
 import { usePagination } from "../../../hooks/usePagination";
 import { SearchField } from "../../../components/SearchFilterBar/SearchField";
 import { CreateTournamentMutationVariables } from "../../../gql/graphql";
+import { OnlyWebmaster } from "../../../components/AuthContainer/AuthContainer";
 
 export const ADMIN_TOURNAMENTS_PATH = "/admin/tournaments";
 
@@ -77,14 +78,16 @@ export const AdminTournaments = () => {
   return (
     <StyledContainer>
       {dialog}
-      <SearchField
-        placeholder="Search players"
-        setSearchQuery={setSearchQuery}
-      />
       <StyledAdminBar>
-        <ProTFTButton onClick={onCreatePlayerSlugs}>
-          Create Player Slugs
-        </ProTFTButton>
+        <SearchField
+          placeholder="Search tournaments"
+          setSearchQuery={setSearchQuery}
+        />
+        <OnlyWebmaster>
+          <ProTFTButton onClick={onCreatePlayerSlugs}>
+            Create Player Slugs
+          </ProTFTButton>
+        </OnlyWebmaster>
         <ProTFTButton onClick={onAddTournament}>Add Tournament</ProTFTButton>
       </StyledAdminBar>
       <StyledTournamentList>

@@ -1,5 +1,6 @@
 import { Stage } from "../../src/stages/stage.entity";
 import { StageType } from "../../src/stages/types/StageType";
+import { BaseProps } from "./base-props";
 import { tournament as genTournament } from "./tournament";
 
 export function stage({
@@ -19,13 +20,14 @@ export function stage({
   stageType,
   qualifiedCount,
   startDateTime,
+  sequenceForResult,
 }: Partial<Stage>): Stage {
   const randomId = Math.random() * 999;
   return {
     id: id || randomId,
     name: name || "",
     lobbies: lobbies || [],
-    roundCount: rounds?.length || 0,
+    roundCount: undefined,
     pointSchema: pointSchema || { id: randomId, name: "" },
     pointSchemaId: pointSchemaId || randomId,
     sequence: sequence || randomId,
@@ -39,5 +41,7 @@ export function stage({
     stageType: stageType || StageType.RANKING,
     qualifiedCount: qualifiedCount || 0,
     startDateTime: startDateTime || "",
+    sequenceForResult: sequenceForResult || 0,
+    ...BaseProps(),
   };
 }

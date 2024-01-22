@@ -1,4 +1,5 @@
 import { Player } from "../../src/players/player.entity";
+import { BaseProps } from "./base-props";
 
 type PlayerGeneratorParams = Partial<Player>;
 
@@ -21,5 +22,6 @@ export function player({
     alias: alias || [],
     slug: slug || "",
     links: links || [],
+    ...BaseProps(),
   };
 }

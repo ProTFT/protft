@@ -18,6 +18,9 @@ export class UpdateStageArgs {
   @Field(() => Int, { name: "sequence" })
   sequence: number;
 
+  @Field(() => Int, { name: "sequenceForResult" })
+  sequenceForResult: number;
+
   @Field(() => Int, { name: "qualifiedCount" })
   qualifiedCount: number;
 

@@ -29,7 +29,7 @@ const StreamDrawer = lazy(() =>
 );
 
 interface Props {
-  tournament?: Tournament;
+  tournament?: Omit<Tournament, "slug" | "visibility">;
   onSelectStage: (selectedStage: Stage) => void;
   openStage: Stage | null;
 }

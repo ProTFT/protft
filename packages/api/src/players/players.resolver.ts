@@ -43,7 +43,7 @@ export class PlayersResolver extends BaseResolver {
     @Args() { region, country, take, skip, searchQuery }: GetPlayerArgs,
   ) {
     const filters = this.cleanGraphQLFilters({ region, country, searchQuery });
-    return this.playersService.findAll(filters, { take, skip }, { id: "DESC" });
+    return this.playersService.findAll(filters, { take, skip });
   }
 
   @CacheKey(ExtractPlayerCacheKeyFromRequest)
@@ -78,6 +78,8 @@ export class PlayersResolver extends BaseResolver {
     return this.playersService.getPlayerStats(player, setId, tournamentId);
   }
 
+  @CacheKey(ExtractPlayerCacheKeyFromRequest)
+  @UseInterceptors(CacheInterceptor)
   @ResolveField()
   async links(@Parent() player: Player): Promise<PlayerLink[]> {
     return this.playersService.findLinks(player.id);

@@ -3,12 +3,7 @@ import {
   LobbyGroupWithLobbies,
   Player,
   PlayerResults,
-  Tournament,
 } from "../../graphql/schema";
-
-export interface TournamentBySlugQueryResponse {
-  tournamentBySlug: Tournament;
-}
 
 export const TOURNAMENT_BY_SLUG_QUERY = graphql(`
   query tournament($slug: String!) {

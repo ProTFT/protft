@@ -11,11 +11,15 @@ import {
 } from "typeorm";
 import { LobbyPlayerInfo } from "../lobby-player-infos/lobby-player-info.entity";
 import { LobbyGroup } from "./lobby-group.entity";
+import { BaseEntity } from "../lib/BaseEntity";
 
 @ObjectType()
 @Entity()
-@Index(["lobbyGroupId", "sequence"], { unique: true })
-export class Lobby {
+@Index(["lobbyGroupId", "sequence"], {
+  unique: true,
+  where: '"deletedAt" is null',
+})
+export class Lobby extends BaseEntity {
   @Field(() => Int)
   @PrimaryGeneratedColumn()
   id: number;
@@ -38,6 +42,7 @@ export class Lobby {
   @Field(() => [Player])
   @OneToMany(() => LobbyPlayerInfo, (lobbyPlayer) => lobbyPlayer.lobby, {
     cascade: true,
+    onDelete: "CASCADE",
   })
   players: LobbyPlayerInfo[];
 

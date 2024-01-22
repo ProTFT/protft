@@ -13,6 +13,12 @@ export enum StageType {
     GROUP_BASED = "GROUP_BASED"
 }
 
+export enum SnakeSeedType {
+    SEEDING = "SEEDING",
+    CURRENT_STAGE = "CURRENT_STAGE",
+    LAST_STAGE = "LAST_STAGE"
+}
+
 export interface SortOption {
     column: string;
     asc: boolean;
@@ -115,6 +121,7 @@ export interface Stage {
     name: string;
     description: string;
     sequence: number;
+    sequenceForResult: number;
     tournamentId: number;
     pointSchemaId: number;
     tiebreakers: number[];
@@ -155,6 +162,7 @@ export interface CreateLobbiesResponse {
 export interface Tiebreaker {
     id: number;
     description: string;
+    order: number;
 }
 
 export interface SuccessResponse {
@@ -294,8 +302,9 @@ export interface IMutation {
     createTournamentPlayers(tournamentId: number, playerIds: number[]): Tournament | Promise<Tournament>;
     createTournamentPlayersByName(tournamentId: number, playerNames: string): Tournament | Promise<Tournament>;
     createTournamentSlugs(): Tournament[] | Promise<Tournament[]>;
-    createStage(tournamentId: number, pointSchemaId: number, name: string, sequence: number, stageType: StageType, roundCount: number, qualifiedCount?: Nullable<number>, tiebreakers?: Nullable<number[]>, description?: Nullable<string>, startDateTime?: Nullable<string>): Stage | Promise<Stage>;
-    updateStage(id: number, tournamentId: number, pointSchemaId: number, name: string, sequence: number, qualifiedCount: number, stageType: StageType, roundCount: number, tiebreakers?: Nullable<number[]>, description?: Nullable<string>, startDateTime?: Nullable<string>): Stage | Promise<Stage>;
+    cloneTournament(tournamentId: number, setId: number, name: string): Tournament | Promise<Tournament>;
+    createStage(tournamentId: number, pointSchemaId: number, name: string, sequence: number, sequenceForResult: number, stageType: StageType, roundCount: number, qualifiedCount?: Nullable<number>, tiebreakers?: Nullable<number[]>, description?: Nullable<string>, startDateTime?: Nullable<string>): Stage | Promise<Stage>;
+    updateStage(id: number, tournamentId: number, pointSchemaId: number, name: string, sequence: number, sequenceForResult: number, qualifiedCount: number, stageType: StageType, roundCount: number, tiebreakers?: Nullable<number[]>, description?: Nullable<string>, startDateTime?: Nullable<string>): Stage | Promise<Stage>;
     updateTiebreakers(id: number, tiebreakers: number[]): Stage | Promise<Stage>;
     deleteStage(id: number): DeleteResponse | Promise<DeleteResponse>;
     createStagePlayers(stageId: number, playerIds: number[]): Stage | Promise<Stage>;
@@ -329,6 +338,7 @@ export interface IMutation {
     createCircuit(name: string, setId: number, region: string[]): Circuit | Promise<Circuit>;
     updateCircuit(id: number, name?: Nullable<string>, setId?: Nullable<number>, region?: Nullable<string[]>): Circuit | Promise<Circuit>;
     deleteCircuit(id: number): DeleteResponse | Promise<DeleteResponse>;
+    snakeSeed(stageId: number, lobbyGroupId: number, type: SnakeSeedType): LobbyPlayerInfo[] | Promise<LobbyPlayerInfo[]>;
 }
 
 export type DateTime = any;

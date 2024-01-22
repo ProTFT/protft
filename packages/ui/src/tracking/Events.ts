@@ -1,3 +1,5 @@
+import { InputNames } from "../pages/Stats/Stats";
+
 export enum TrackingEvents {
   TOURNAMENT_STAGE_OPEN = "tournament_stage_open",
   FEEDBACK_CLICK = "feedback_click",
@@ -5,18 +7,17 @@ export enum TrackingEvents {
 }
 
 type TournamentStageOpenProps = {
-  readonly tournamentId: number;
-  readonly tournamentName: string;
-  readonly stageId: number;
-  readonly stageName: string;
-} & { [prop: string]: string | number };
+  readonly tournamentStage: string;
+};
 
 type FeedbackClickProps = {
   readonly page: string;
 };
-
 type ApplyFilterProps = {
-  readonly filters: string;
+  readonly [InputNames.Set]: string;
+  readonly [InputNames.Tournaments]: string;
+  readonly [InputNames.PlayerRegion]: string;
+  readonly [InputNames.MinimumGames]: string;
 };
 
 export interface TrackingEventTypeMap {

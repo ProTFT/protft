@@ -1,14 +1,20 @@
 import { BadRequestException } from "@nestjs/common";
-import { Brackets, EntityManager, Raw, SelectQueryBuilder } from "typeorm";
+import {
+  Brackets,
+  EntityManager,
+  QueryBuilder,
+  SelectQueryBuilder,
+} from "typeorm";
 import { Player } from "../players/player.entity";
+import { RegionCode } from "../tournaments/types/region.types";
 import { createOrWhereConditions } from "./DBCompositeFilters";
-import { includes } from "./DBRawFilter";
 
 export const parseMultilinePlayerNamesFromAll = async (
   playerNames: string,
   sqlManager: EntityManager,
+  region: string[],
 ): Promise<number[]> => {
-  const query = basePlayerTableQuery(sqlManager);
+  const query = basePlayerTableQuery(sqlManager, region);
   return queryPlayers(playerNames, query);
 };
 
@@ -21,12 +27,30 @@ export const parseMultilinePlayerNamesFromTournament = async (
   return queryPlayers(playerNames, query);
 };
 
-const basePlayerTableQuery = (sqlManager: EntityManager) =>
-  sqlManager
+const basePlayerTableQuery = (
+  sqlManager: EntityManager,
+  [region]: string[],
+) => {
+  const query = sqlManager
     .createQueryBuilder()
-    .select("*")
+    .select("p.id, p.name")
+    .distinct()
     .from("player", "p")
-    .where("p.id > 0"); // Dummy condition to allow orWhere on common method
+    .leftJoin(
+      (qb: QueryBuilder<Player>) => {
+        qb.getQuery = () => `LATERAL unnest(p.alias)`;
+        qb.setParameters({});
+        return qb;
+      },
+      "formatted_alias",
+      "true",
+    );
+
+  if (region !== RegionCode.WO) {
+    return query.where(`p.region = '${region}'`);
+  }
+  return query.where("p.id > 0");
+};
 
 const baseTournamentPlayerTableQuery = (
   sqlManager: EntityManager,
@@ -34,9 +58,19 @@ const baseTournamentPlayerTableQuery = (
 ) =>
   sqlManager
     .createQueryBuilder()
-    .select("*")
+    .select("p.id, p.name")
+    .distinct()
     .from("tournament_players_player", "tpp")
     .innerJoin("player", "p", "tpp.playerId = p.id")
+    .leftJoin(
+      (qb: QueryBuilder<Player>) => {
+        qb.getQuery = () => `LATERAL unnest(p.alias)`;
+        qb.setParameters({});
+        return qb;
+      },
+      "formatted_alias",
+      "true",
+    )
     .where("tpp.tournamentId = :tournamentId", { tournamentId });
 
 const queryPlayers = async (
@@ -45,7 +79,7 @@ const queryPlayers = async (
 ): Promise<number[]> => {
   const namesToFind = playerNames.replace(/\r/g, "").split("\n");
   const searchConditions = namesToFind.map(
-    (name) => `p.name ILIKE '${name}' or ${includes([name])("alias")}`,
+    (name) => `p.name ILIKE '${name}' or formatted_alias ILIKE '${name}'`,
   );
 
   const queryWithAllConditions = baseQuery.andWhere(

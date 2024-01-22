@@ -7,7 +7,7 @@ describe("TournamentStreamsService", () => {
   const tournamentStreamRepository = {
     save: jest.fn(),
     find: jest.fn(),
-    delete: jest.fn(),
+    softDelete: jest.fn(),
   } as unknown as Repository<TournamentStream>;
 
   const mockTournamentId = 1;
@@ -45,7 +45,7 @@ describe("TournamentStreamsService", () => {
     it("should call repository", async () => {
       const mockName = "test";
       await service.deleteStream(mockTournamentId, mockName);
-      expect(tournamentStreamRepository.delete).toHaveBeenCalledWith({
+      expect(tournamentStreamRepository.softDelete).toHaveBeenCalledWith({
         tournamentId: mockTournamentId,
         name: mockName,
       });

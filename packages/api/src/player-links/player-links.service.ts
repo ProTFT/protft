@@ -35,7 +35,7 @@ export class PlayerLinksService {
   }
 
   public async deleteOne({ id }: DeletePlayerLinkArgs) {
-    await this.playerLinkRepository.delete({ id: id });
+    await this.playerLinkRepository.softDelete({ id: id });
     return new DeleteResponse(id);
   }
 }

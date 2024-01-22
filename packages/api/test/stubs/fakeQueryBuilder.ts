@@ -3,6 +3,7 @@ export class FakeQueryBuilder<T> {
   public orderByClause = null;
   public takeSpy = null;
   public skipSpy = null;
+  public wasCalled = false;
   private result: T;
 
   public constructor(result: T) {
@@ -14,6 +15,7 @@ export class FakeQueryBuilder<T> {
     this.orderByClause = null;
     this.takeSpy = null;
     this.skipSpy = null;
+    this.wasCalled = false;
   }
 
   public select() {
@@ -22,6 +24,25 @@ export class FakeQueryBuilder<T> {
 
   public addSelect() {
     return this;
+  }
+
+  public distinct() {
+    return this;
+  }
+
+  public getMany() {
+    this.wasCalled = true;
+    return this.result;
+  }
+
+  public getOne() {
+    this.wasCalled = true;
+    return this.result;
+  }
+
+  public execute() {
+    this.wasCalled = true;
+    return this.result;
   }
 
   public from(
@@ -74,10 +95,12 @@ export class FakeQueryBuilder<T> {
   }
 
   public getRawMany() {
+    this.wasCalled = true;
     return [this.result];
   }
 
   public getRawOne() {
+    this.wasCalled = true;
     return this.result;
   }
 }

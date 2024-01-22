@@ -9,6 +9,7 @@ export class CacheService {
   private readonly TABLE_NAME = "ptft_cache";
 
   private dynamoDbClient: DynamoDBDocument;
+
   constructor(private configService: ConfigService) {
     const environment = this.configService.get<string>("NODE_ENV");
     const params = getAwsConfig(environment);

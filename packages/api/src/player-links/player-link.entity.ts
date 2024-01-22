@@ -6,12 +6,13 @@ import {
   ManyToOne,
   PrimaryGeneratedColumn,
 } from "typeorm";
+import { BaseEntity } from "../lib/BaseEntity";
 import { Player } from "../players/player.entity";
 
 @Entity()
 @ObjectType()
-@Index(["playerId", "type"], { unique: true })
-export class PlayerLink {
+@Index(["playerId", "type"], { unique: true, where: '"deletedAt" is null' })
+export class PlayerLink extends BaseEntity {
   @PrimaryGeneratedColumn()
   @Field(() => Int)
   id: number;
