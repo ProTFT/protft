@@ -293,7 +293,8 @@ export class RoundResultsService {
             "tournament.id = stage.tournamentId",
           )
           .groupBy("player.id")
-          .where("lpi.playerId = :playerId", { playerId });
+          .where("lpi.playerId = :playerId", { playerId })
+          .andWhere("result.position NOT IN (0, 9)");
 
         if (setId) {
           query = query.andWhere("tournament.setId = :setId", { setId });
@@ -372,6 +373,7 @@ export class RoundResultsService {
             let query = baseQuery
               .addSelect("player.*")
               .from("round_result", "result")
+              .where("result.position NOT IN (0, 9)")
               .innerJoin(
                 "lobby_player_info",
                 "lpi",
