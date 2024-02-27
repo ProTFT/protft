@@ -1,64 +1,71 @@
 import styled from "styled-components";
 import { Switch } from "react-aria-components";
+import { Label500Props } from "../../design/fonts/NewFonts";
 
-export const StyledSwitch = styled(Switch)(({ theme }) => ({
-  // ".react-aria-Switch": {
+export const StyledSwitch = styled(Switch)<{
+  selectedBackgroundColor?: string;
+}>(({ theme, selectedBackgroundColor = theme.colors.newDesign.secondary }) => ({
   display: "flex",
   alignItems: "center",
+  // gap between ellipsis and text
   gap: "0.571rem",
-  fontSize: "1.143rem",
+  // fontSize: "1.143rem",
   color: "white",
   forcedColorAdjust: "none",
+  ...Label500Props(theme),
+  cursor: "pointer",
 
+  // Switch default state
   ".indicator": {
-    width: "3rem",
-    height: "4rem",
-    background: theme.colors.newDesign.secondary,
+    width: theme.spacing(25),
+    height: theme.spacing(12.5),
+    background: theme.colors.newDesign.grayScale[30],
     borderRadius: theme.spacing(8),
-    transition: "all 200ms",
+    transition: "all 180ms",
 
     "&:before": {
-      content: "'lalalTest'",
+      content: "''",
       display: "block",
-      margin: "0.143rem 0.143rem 0.143rem 0.143rem",
-      width: "0.857rem",
-      height: "0.857rem",
-      background: "white",
-      borderRadius: "16px",
-      transition: "all 200ms",
+      margin: theme.spacing(2),
+      width: theme.spacing(9),
+      height: theme.spacing(9),
+      background: theme.colors.newDesign.grayScale[5],
+      filter: "drop-shadow(0px 2px 4px rgba(0, 35, 11, 0.20))",
+      borderRadius: theme.spacing(8),
+      transition: "all 180ms",
     },
   },
 
+  // switch when pressed
   "&[data-pressed] .indicator": {
-    borderColor: "pink",
-
     "&:before": {
-      background: "purple",
+      width: theme.spacing(11.5),
     },
   },
 
+  // When selected
   "&[data-selected]": {
     ".indicator": {
       borderColor: "gray",
-      background: "brown",
+      background: selectedBackgroundColor,
 
       "&:before": {
-        background: "white",
-        transform: "translateX(100%)",
+        transform: "translateX(130%)",
       },
     },
 
     "&[data-pressed]": {
       ".indicator": {
-        borderColor: "pink",
-        background: "purple",
+        "&:before": {
+          transform: "translateX(90%)",
+        },
       },
     },
   },
 
+  // When tab selected
   "&[data-focus-visible] .indicator": {
     outline: "2px solid blue",
     outlineOffset: "2px",
   },
-  // },
 }));

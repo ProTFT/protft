@@ -93,6 +93,14 @@ export const LOCK_RESULTS_MUTATION = graphql(`
   }
 `);
 
+export const SAVE_FORMAT_MUTATION = graphql(`
+  mutation saveFormatExplainers($id: Int!) {
+    saveFormatExplainers(id: $id) {
+      id
+    }
+  }
+`);
+
 export interface DeleteResultsResult {
   deleteTournamentResults: {
     id: number;

@@ -19,6 +19,7 @@ import {
   LockResultsResult,
   LockResultsVariables,
   LOCK_RESULTS_MUTATION,
+  SAVE_FORMAT_MUTATION,
   TournamentQueryResponse,
   TournamentsDeleteResult,
   TournamentsUpdateResult,
@@ -30,6 +31,8 @@ import { OnlyWebmaster } from "../../../components/AuthContainer/AuthContainer";
 import {
   CloneTournamentMutation,
   CloneTournamentMutationVariables,
+  SaveFormatExplainersMutation,
+  SaveFormatExplainersMutationVariables,
 } from "../../../gql/graphql";
 import { useCloneTournamentDialog } from "../Components/Dialogs/CloneTournamentDialog/CloneTournamentDialog";
 
@@ -62,6 +65,11 @@ export const AdminTournament = () => {
   const [, lockResults] = useMutation<LockResultsResult, LockResultsVariables>(
     LOCK_RESULTS_MUTATION
   );
+
+  const [, saveFormat] = useMutation<
+    SaveFormatExplainersMutation,
+    SaveFormatExplainersMutationVariables
+  >(SAVE_FORMAT_MUTATION);
 
   const [, deleteResults] = useMutation<
     DeleteResultsResult,
@@ -125,6 +133,17 @@ export const AdminTournament = () => {
     show();
   }, [lockResults, tournamentId, show]);
 
+  const onSaveFormat = useCallback(async () => {
+    const result = await saveFormat({
+      id: Number(tournamentId),
+    });
+
+    if (result.error) {
+      return alert(result.error);
+    }
+    show();
+  }, [saveFormat, tournamentId, show]);
+
   const onDeleteResults = useCallback(async () => {
     const result = await deleteResults({
       id: Number(tournamentId),
@@ -183,6 +202,7 @@ export const AdminTournament = () => {
         </StyledActionsContainer>
         <StyledActionsContainer>
           <OnlyWebmaster>
+            <ProTFTButton onClick={onSaveFormat}>Save Format</ProTFTButton>
             <ProTFTButton onClick={onLockResults}>Lock results</ProTFTButton>
             <ProTFTButton onClick={onDeleteResults}>
               Delete results

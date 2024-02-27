@@ -1,11 +1,17 @@
-import { Switch as AriaSwitch } from "react-aria-components";
 import { StyledSwitch } from "./Switch.styled";
 
-export const Switch = () => {
+interface SwitchProps {
+  text: string;
+  // selected: boolean;
+  // setSelected:
+  selectedBgColor?: string;
+}
+
+export const Switch = ({ text, selectedBgColor }: SwitchProps) => {
   return (
-    <StyledSwitch>
+    <StyledSwitch selectedBackgroundColor={selectedBgColor}>
       <div className="indicator" />
-      Test
+      {text}
     </StyledSwitch>
   );
 };

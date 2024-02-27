@@ -72,6 +72,15 @@ export const AltText700Props = (theme: DefaultTheme) => ({
   letterSpacing: theme.spacing(0.14),
 });
 
+export const Label500Props = (theme: DefaultTheme) => ({
+  fontFamily: "DMSans",
+  fontSize: theme.spacing(6),
+  fontStyle: "normal",
+  fontWeight: 500,
+  lineHeight: theme.spacing(10),
+  letterSpacing: theme.spacing(0.24),
+});
+
 export const Paragraph500Props = (theme: DefaultTheme) => ({
   fontFamily: "DMSans",
   fontSize: theme.spacing(8),

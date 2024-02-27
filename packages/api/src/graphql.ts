@@ -127,7 +127,9 @@ export interface Stage {
     tiebreakers: number[];
     stageType: StageType;
     qualifiedCount: number;
+    numberOfPlayers: number;
     roundCount: number;
+    formatExplainer: string[];
     startDateTime?: Nullable<string>;
     players: StagePlayerInfo[];
     lobbies?: Nullable<Lobby[]>;
@@ -303,6 +305,7 @@ export interface IMutation {
     createTournamentPlayersByName(tournamentId: number, playerNames: string): Tournament | Promise<Tournament>;
     createTournamentSlugs(): Tournament[] | Promise<Tournament[]>;
     cloneTournament(tournamentId: number, setId: number, name: string): Tournament | Promise<Tournament>;
+    saveFormatExplainers(id: number): Stage[] | Promise<Stage[]>;
     createStage(tournamentId: number, pointSchemaId: number, name: string, sequence: number, sequenceForResult: number, stageType: StageType, roundCount: number, qualifiedCount?: Nullable<number>, tiebreakers?: Nullable<number[]>, description?: Nullable<string>, startDateTime?: Nullable<string>): Stage | Promise<Stage>;
     updateStage(id: number, tournamentId: number, pointSchemaId: number, name: string, sequence: number, sequenceForResult: number, qualifiedCount: number, stageType: StageType, roundCount: number, tiebreakers?: Nullable<number[]>, description?: Nullable<string>, startDateTime?: Nullable<string>): Stage | Promise<Stage>;
     updateTiebreakers(id: number, tiebreakers: number[]): Stage | Promise<Stage>;

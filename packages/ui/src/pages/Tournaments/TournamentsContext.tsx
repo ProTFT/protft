@@ -31,7 +31,7 @@ export const useTournamentsContext = () => {
   return useContext(tournamentsContext);
 };
 
-export const useProvideTournaments = (): TournamentsContext => {
+const useProvideTournaments = (): TournamentsContext => {
   const [page, setPage] = useState(0);
   const [filters, setFilters] = useState<TournamentFilters>({
     region: [],

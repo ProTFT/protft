@@ -33,6 +33,7 @@ import { APP_INTERCEPTOR } from "@nestjs/core";
 import { UserStoreInterceptor } from "./auth/interceptor/user-store.interceptor";
 import { BaseEntitySubscriber } from "./lib/BaseEntity.subscriber";
 import { SeedingModule } from "./seeding/seeding.module";
+import { QualificationModule } from "./qualification/qualification.module";
 
 @Module({
   imports: [
@@ -100,6 +101,7 @@ import { SeedingModule } from "./seeding/seeding.module";
     ServersModule,
     CacheModule,
     SeedingModule,
+    QualificationModule,
   ],
   controllers: [AppController],
   providers: [

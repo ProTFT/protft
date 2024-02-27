@@ -1,4 +1,9 @@
-import { Injectable, NotFoundException } from "@nestjs/common";
+import {
+  forwardRef,
+  Inject,
+  Injectable,
+  NotFoundException,
+} from "@nestjs/common";
 import { InjectRepository } from "@nestjs/typeorm";
 import { Repository } from "typeorm";
 import { DeleteResponse } from "../lib/dto/delete-return";
@@ -17,6 +22,7 @@ import {
 import { CreateStageArgs } from "./dto/create-stage.args";
 import { UpdateStageArgs } from "./dto/update-stage.args";
 import { UpdateTiebreakersArgs } from "./dto/update-tiebreakers.args";
+import { StageFormatService } from "./stage-format.service";
 import { Stage } from "./stage.entity";
 import { Tiebreaker } from "./tiebreaker.entity";
 import { getAll } from "./tiebreaker.logic";
@@ -29,6 +35,8 @@ export class StagesService {
     @InjectRepository(Stage) private stageRepository: Repository<Stage>,
     private roundService: RoundsService,
     private lobbiesService: LobbiesService,
+    @Inject(forwardRef(() => StageFormatService))
+    private stageFormatService: StageFormatService,
   ) {}
 
   findOne(id: number, relations?: string[]): Promise<Stage> {
@@ -194,6 +202,16 @@ export class StagesService {
       tiebreakers,
     }));
     return this.stageRepository.save(updatedStages);
+  }
+
+  async saveFormatExplainer(stageId: number) {
+    const formatExplainer = await this.stageFormatService.getFormatExplainer(
+      stageId,
+    );
+    return this.stageRepository.save({
+      id: stageId,
+      formatExplainer,
+    });
   }
 
   private async createRounds(stageId: number, roundCount: number) {

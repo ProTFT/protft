@@ -29,6 +29,7 @@ import { UpdateTournamentArgs } from "./gql/update-tournament.args";
 import { CurrentUser } from "../auth/decorator/current-user";
 import { JwtUser } from "../auth/jwt.strategy";
 import { CloneTournamentArgs } from "./gql/clone-tournament.args";
+import { Stage } from "../stages/stage.entity";
 
 @Resolver(() => Tournament)
 export class TournamentsResolver extends BaseResolver {
@@ -192,5 +193,13 @@ export class TournamentsResolver extends BaseResolver {
       setId,
       user,
     );
+  }
+
+  @UseGuards(GqlJwtAuthGuard)
+  @Mutation(() => [Stage])
+  async saveFormatExplainers(
+    @Args({ name: "id", type: () => Int }) id: number,
+  ) {
+    return this.tournamentsService.saveFormatExplainers(id);
   }
 }

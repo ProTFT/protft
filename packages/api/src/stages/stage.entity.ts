@@ -67,7 +67,15 @@ export class Stage extends BaseEntity {
   qualifiedCount: number;
 
   @Field(() => Int)
+  @Column({ default: 0 })
+  numberOfPlayers: number;
+
+  @Field(() => Int)
   roundCount: number;
+
+  @Field(() => [String])
+  @Column("varchar", { nullable: true, array: true })
+  formatExplainer: string[];
 
   @Field({ nullable: true })
   @Column({ nullable: true })

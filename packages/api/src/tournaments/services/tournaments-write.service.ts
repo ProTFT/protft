@@ -12,6 +12,7 @@ import { parseMultilinePlayerNamesFromAll } from "../../lib/MultilineInput";
 import { Player } from "../../players/player.entity";
 import { SetsService } from "../../sets/sets.service";
 import { CreateStageArgs } from "../../stages/dto/create-stage.args";
+import { StageFormatService } from "../../stages/stage-format.service";
 import { Stage } from "../../stages/stage.entity";
 import { StagesService } from "../../stages/stages.service";
 import { CreateTournamentDto } from "../dto/create-tournament.dto";
@@ -159,6 +160,17 @@ export class TournamentsWriteService {
         return this.tournamentRepository.save(updatedTournament);
       }),
     );
+  }
+
+  async saveFormatExplainers(tournamentId: number) {
+    const stages = await this.stagesService.findAllByTournament(tournamentId);
+    const stageIds = stages.map((stage) => stage.id);
+    const result = await Promise.all(
+      stageIds.map((stageId) =>
+        this.stagesService.saveFormatExplainer(stageId),
+      ),
+    );
+    return result;
   }
 
   async cloneTournament(

@@ -15,7 +15,6 @@ import { TiebreakerRow } from "../../componentsNew/TiebreakerRow/TiebreakerRow";
 import { TournamentHeader } from "../../componentsNew/TournamentHeader/TournamentHeader";
 import { H3Med500 } from "../../design/fonts/NewFonts";
 import { InfoOutlined } from "../../design/iconsNew/InfoOutlined";
-import { StatsOutlined } from "../../design/iconsNew/StatsOutlined";
 import { StreamOutlined } from "../../design/iconsNew/StreamOutlined";
 import { SwordsOutlined } from "../../design/iconsNew/SwordsOutlined";
 import { TrophyOutlined } from "../../design/iconsNew/TrophyOutlined";
@@ -23,9 +22,9 @@ import { QueryTournamentBySlugArgs, TournamentQuery } from "../../gql/graphql";
 import {
   ResultsByLobbyGroupQueryResponse,
   RESULTS_BY_STAGE_QUERY,
-  TournamentBySlugQueryResponse,
   TOURNAMENT_BY_SLUG_QUERY,
 } from "../Tournament/queries";
+import { Format } from "./Infos/Format/Format";
 import {
   FormatCardsContainer as FormatCardsLayout,
   FormatCardsContent,
@@ -36,6 +35,7 @@ import {
   StageSelectorContainer,
   TournamentContainer,
 } from "./Tournament.styled";
+import { TournamentProvider } from "./TournamentContext";
 
 enum TAB_OPTIONS {
   Players = 1,
@@ -75,7 +75,7 @@ export const TournamentNew = () => {
   }, [overviewData?.resultsByStage]);
 
   return (
-    <>
+    <TournamentProvider slug={tournamentSlug}>
       <TournamentHeader tournament={tournamentData?.tournamentBySlug} />
       <PageWrapper>
         <TournamentContainer>
@@ -106,37 +106,7 @@ export const TournamentNew = () => {
             {selectedOption === TAB_OPTIONS.Format && (
               <InfoCardContainer>
                 <H3Med500>Format</H3Med500>
-                <FormatCardsLayout>
-                  <Card
-                    title="Day 1"
-                    extraControl={
-                      <CardBadge tooltip={"In your time"}>
-                        Sep 25, 01:30PM
-                      </CardBadge>
-                    }
-                  >
-                    <FormatCardsContent>
-                      <div>
-                        <p>128 players will play 6 games</p>
-                      </div>
-
-                      <div>
-                        <p>Lobbies will shuffle every 2 games</p>
-                      </div>
-
-                      <div>
-                        <p>Top 64 will advance to Day 2</p>
-                      </div>
-
-                      <div>
-                        <p>
-                          Bonus points are awarded at the end of the day to
-                          begin Day 2 with:
-                        </p>
-                      </div>
-                    </FormatCardsContent>
-                  </Card>
-                </FormatCardsLayout>
+                <Format title={"Day 1"} />
               </InfoCardContainer>
             )}
             {selectedOption === TAB_OPTIONS.Tiebreakers && (
@@ -182,7 +152,7 @@ export const TournamentNew = () => {
                 />
               </StageSelectorContainer>
               <StageExtraControlsContainer>
-                <Switch />
+                <Switch text="Lobbies" />
               </StageExtraControlsContainer>
             </StageHeader>
             <Table
@@ -198,6 +168,7 @@ export const TournamentNew = () => {
           <Section
             title="Ranking"
             icon={<TrophyOutlined size={SECTION_ICON_SIZE} />}
+            disabled
           ></Section>
           <Section
             title="Streams"
@@ -205,6 +176,6 @@ export const TournamentNew = () => {
           ></Section>
         </TournamentContainer>
       </PageWrapper>
-    </>
+    </TournamentProvider>
   );
 };

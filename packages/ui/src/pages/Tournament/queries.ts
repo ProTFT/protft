@@ -30,6 +30,8 @@ export const TOURNAMENT_BY_SLUG_QUERY = graphql(`
         roundCount
         stageType
         qualifiedCount
+        startDateTime
+        formatExplainer
       }
     }
   }
