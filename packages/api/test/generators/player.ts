@@ -1,4 +1,5 @@
 import { Player } from "../../src/players/player.entity";
+import { BaseProps } from "./base-props";
 
 type PlayerGeneratorParams = Partial<Player>;
 
@@ -8,6 +9,8 @@ export function player({
   region,
   country,
   alias,
+  slug,
+  links,
 }: PlayerGeneratorParams): Player {
   const randomId = Math.random() * 999;
   return {
@@ -17,5 +20,9 @@ export function player({
     country: country || "",
     alias: alias || [],
     playerStats: null,
+    alias: alias || [],
+    slug: slug || "",
+    links: links || [],
+    ...BaseProps(),
   };
 }

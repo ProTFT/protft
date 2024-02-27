@@ -1,0 +1,29 @@
+mutation updateTournament(
+  $id: Int!
+  $name: String
+  $setId: Int
+  $region: [String!]
+  $host: String
+  $participantsNumber: Int
+  $prizePool: Float
+  $currency: String
+  $startDate: DateTime
+  $endDate: DateTime
+  $visibility: Boolean
+) {
+  updateTournament(
+    id: $id
+    name: $name
+    setId: $setId
+    region: $region
+    host: $host
+    participantsNumber: $participantsNumber
+    prizePool: $prizePool
+    currency: $currency
+    startDate: $startDate
+    endDate: $endDate
+    visibility: $visibility
+  ) {
+    id
+  }
+}

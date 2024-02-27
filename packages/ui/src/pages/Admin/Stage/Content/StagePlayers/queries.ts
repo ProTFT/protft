@@ -1,4 +1,4 @@
-import { gql } from "urql";
+import { graphql } from "../../../../../gql";
 import {
   Stage,
   StagePlayerInfo,
@@ -9,8 +9,8 @@ export interface TournamentPlayersResponse {
   tournament: Tournament;
 }
 
-export const TOURNAMENT_PLAYERS_QUERY = gql`
-  query tournament($id: Int!) {
+export const TOURNAMENT_PLAYERS_QUERY = graphql(`
+  query oneTournamentWithPlayers($id: Int!) {
     tournament(id: $id) {
       id
       players {
@@ -20,14 +20,14 @@ export const TOURNAMENT_PLAYERS_QUERY = gql`
       }
     }
   }
-`;
+`);
 
 export interface StagePlayersResponse {
   stage: Stage;
 }
 
-export const STAGE_PLAYERS_QUERY = gql`
-  query stage($id: Int!) {
+export const STAGE_PLAYERS_QUERY = graphql(`
+  query oneStageIwthPlayers($id: Int!) {
     stage(id: $id) {
       id
       players {
@@ -39,7 +39,7 @@ export const STAGE_PLAYERS_QUERY = gql`
       }
     }
   }
-`;
+`);
 
 export interface CreateStagePlayerResult {
   createStagePlayers: { id: Pick<Stage, "id"> };
@@ -50,26 +50,26 @@ export type CreateStagePlayerVariables = {
   playerIds: number[];
 };
 
-export const CREATE_STAGE_PLAYER = gql`
+export const CREATE_STAGE_PLAYER = graphql(`
   mutation createStagePlayers($stageId: Int!, $playerIds: [Int!]!) {
     createStagePlayers(stageId: $stageId, playerIds: $playerIds) {
       id
     }
   }
-`;
+`);
 
 export type CreateStagePlayerByNameVariables = {
   stageId: number;
   playerNames: string;
 };
 
-export const CREATE_STAGE_PLAYER_BY_NAME = gql`
+export const CREATE_STAGE_PLAYER_BY_NAME = graphql(`
   mutation createStagePlayersByName($stageId: Int!, $playerNames: String!) {
     createStagePlayersByName(stageId: $stageId, playerNames: $playerNames) {
       id
     }
   }
-`;
+`);
 
 export type GetStagePlayerVariables = {
   stageId: number;
@@ -80,8 +80,8 @@ export interface GetStagePlayerResult {
   stagePlayer: StagePlayerInfo;
 }
 
-export const GET_STAGE_PLAYER_QUERY = gql`
-  query stagePlayer($stageId: Int!, $playerId: Int!) {
+export const GET_STAGE_PLAYER_QUERY = graphql(`
+  query oneStagePlayer($stageId: Int!, $playerId: Int!) {
     stagePlayer(stageId: $stageId, playerId: $playerId) {
       stageId
       playerId
@@ -89,7 +89,7 @@ export const GET_STAGE_PLAYER_QUERY = gql`
       tiebreakerRanking
     }
   }
-`;
+`);
 
 export type UpdateStagePlayerVariables = {
   stageId: number;
@@ -102,7 +102,7 @@ export interface UpdateStagePlayerResult {
   updateStagePlayer: StagePlayerInfo;
 }
 
-export const UPDATE_STAGE_PLAYER_MUTATION = gql`
+export const UPDATE_STAGE_PLAYER_MUTATION = graphql(`
   mutation updateStagePlayer(
     $stageId: Int!
     $playerId: Int!
@@ -121,4 +121,4 @@ export const UPDATE_STAGE_PLAYER_MUTATION = gql`
       tiebreakerRanking
     }
   }
-`;
+`);

@@ -12,6 +12,10 @@ import {
 } from "./stubs/Config/FakeConfigService";
 import { FakeAuthService } from "./stubs/Auth/FakeAuthService";
 
+jest.mock("bcrypt", () => ({
+  compare: () => false,
+}));
+
 const fakeUsername = "anyUser";
 const fakePassword = "anyPass";
 

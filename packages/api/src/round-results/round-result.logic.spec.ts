@@ -4,6 +4,7 @@ import {
 } from "../../test/data/result-tiebreakers";
 import {
   sortByAveragePosition,
+  sortByDirectCombat,
   sortByExternalTiebreaker,
   sortByFifthPlaces,
   sortByFirstPlaces,
@@ -18,13 +19,19 @@ import {
   sortBySixthPlaces,
   sortByThirdPlaces,
   sortByTopFour,
+  sortByTopFourPlusFirsts,
   sortByTopThree,
   sortByTopTwo,
   sortByTotalEventAveragePosition,
+  sortByTotalEventFifthPosition,
   sortByTotalEventFirstPosition,
+  sortByTotalEventFourthPosition,
   sortByTotalEventLessTopEigth,
   sortByTotalEventPoints,
   sortByTotalEventSecondPosition,
+  sortByTotalEventSeventhPosition,
+  sortByTotalEventSixthPosition,
+  sortByTotalEventThirdPosition,
   sortByTotalEventTopFour,
   SortingMethods,
   sortResults,
@@ -527,6 +534,182 @@ describe("Sorting with tie breakers", () => {
     });
   });
 
+  describe("sort by total event third places", () => {
+    const bestNowWorstOverall = generatePlayerWithPastResults(
+      [3, 3, 3],
+      0,
+      [8, 8, 8, 8, 8, 8],
+    );
+    const worstNowBestOverall = generatePlayerWithPastResults(
+      [8, 8, 8],
+      0,
+      [3, 3, 3, 3, 3, 3],
+    );
+    const middle = generatePlayerWithPastResults(
+      [3, 3, 4],
+      0,
+      [3, 3, 4, 4, 4, 4],
+    );
+
+    it("should be negative if a has higher placement than b", () => {
+      expect(
+        sortByTotalEventThirdPosition(worstNowBestOverall, bestNowWorstOverall),
+      ).toBeLessThan(0);
+    });
+
+    it("should be positive if b has higher placement than a", () => {
+      expect(
+        sortByTotalEventThirdPosition(bestNowWorstOverall, middle),
+      ).toBeGreaterThan(0);
+    });
+
+    it("should be zero if both players had the same position", () => {
+      expect(sortByTotalEventThirdPosition(middle, middle)).toBe(0);
+    });
+  });
+
+  describe("sort by total event fourth places", () => {
+    const bestNowWorstOverall = generatePlayerWithPastResults(
+      [4, 4, 4],
+      0,
+      [8, 8, 8, 8, 8, 8],
+    );
+    const worstNowBestOverall = generatePlayerWithPastResults(
+      [8, 8, 8],
+      0,
+      [4, 4, 4, 4, 4, 4],
+    );
+    const middle = generatePlayerWithPastResults(
+      [4, 4, 5],
+      0,
+      [4, 4, 5, 5, 5, 5],
+    );
+
+    it("should be negative if a has higher placement than b", () => {
+      expect(
+        sortByTotalEventFourthPosition(
+          worstNowBestOverall,
+          bestNowWorstOverall,
+        ),
+      ).toBeLessThan(0);
+    });
+
+    it("should be positive if b has higher placement than a", () => {
+      expect(
+        sortByTotalEventFourthPosition(bestNowWorstOverall, middle),
+      ).toBeGreaterThan(0);
+    });
+
+    it("should be zero if both players had the same position", () => {
+      expect(sortByTotalEventFourthPosition(middle, middle)).toBe(0);
+    });
+  });
+
+  describe("sort by total event fifth places", () => {
+    const bestNowWorstOverall = generatePlayerWithPastResults(
+      [5, 5, 5],
+      0,
+      [8, 8, 8, 8, 8, 8],
+    );
+    const worstNowBestOverall = generatePlayerWithPastResults(
+      [8, 8, 8],
+      0,
+      [5, 5, 5, 5, 5, 5],
+    );
+    const middle = generatePlayerWithPastResults(
+      [5, 5, 3],
+      0,
+      [5, 5, 3, 3, 3, 3],
+    );
+
+    it("should be negative if a has higher placement than b", () => {
+      expect(
+        sortByTotalEventFifthPosition(worstNowBestOverall, bestNowWorstOverall),
+      ).toBeLessThan(0);
+    });
+
+    it("should be positive if b has higher placement than a", () => {
+      expect(
+        sortByTotalEventFifthPosition(bestNowWorstOverall, middle),
+      ).toBeGreaterThan(0);
+    });
+
+    it("should be zero if both players had the same position", () => {
+      expect(sortByTotalEventFifthPosition(middle, middle)).toBe(0);
+    });
+  });
+
+  describe("sort by total event sixth places", () => {
+    const bestNowWorstOverall = generatePlayerWithPastResults(
+      [6, 6, 6],
+      0,
+      [8, 8, 8, 8, 8, 8],
+    );
+    const worstNowBestOverall = generatePlayerWithPastResults(
+      [8, 8, 8],
+      0,
+      [6, 6, 6, 6, 6, 6],
+    );
+    const middle = generatePlayerWithPastResults(
+      [6, 6, 3],
+      0,
+      [6, 6, 3, 3, 3, 3],
+    );
+
+    it("should be negative if a has higher placement than b", () => {
+      expect(
+        sortByTotalEventSixthPosition(worstNowBestOverall, bestNowWorstOverall),
+      ).toBeLessThan(0);
+    });
+
+    it("should be positive if b has higher placement than a", () => {
+      expect(
+        sortByTotalEventSixthPosition(bestNowWorstOverall, middle),
+      ).toBeGreaterThan(0);
+    });
+
+    it("should be zero if both players had the same position", () => {
+      expect(sortByTotalEventSixthPosition(middle, middle)).toBe(0);
+    });
+  });
+
+  describe("sort by total event seventh places", () => {
+    const bestNowWorstOverall = generatePlayerWithPastResults(
+      [7, 7, 7],
+      0,
+      [8, 8, 8, 8, 8, 8],
+    );
+    const worstNowBestOverall = generatePlayerWithPastResults(
+      [8, 8, 8],
+      0,
+      [7, 7, 7, 7, 7, 7],
+    );
+    const middle = generatePlayerWithPastResults(
+      [7, 7, 3],
+      0,
+      [7, 7, 3, 3, 3, 3],
+    );
+
+    it("should be negative if a has higher placement than b", () => {
+      expect(
+        sortByTotalEventSeventhPosition(
+          worstNowBestOverall,
+          bestNowWorstOverall,
+        ),
+      ).toBeLessThan(0);
+    });
+
+    it("should be positive if b has higher placement than a", () => {
+      expect(
+        sortByTotalEventSeventhPosition(bestNowWorstOverall, middle),
+      ).toBeGreaterThan(0);
+    });
+
+    it("should be zero if both players had the same position", () => {
+      expect(sortByTotalEventSeventhPosition(middle, middle)).toBe(0);
+    });
+  });
+
   describe("sort by total event top four", () => {
     const bestNowWorstOverall = generatePlayerWithPastResults(
       [1, 2, 3],
@@ -592,6 +775,47 @@ describe("Sorting with tie breakers", () => {
 
     it("should be zero if both players had the same position", () => {
       expect(sortByTotalEventLessTopEigth(middle, middle)).toBe(0);
+    });
+  });
+
+  describe("sort by direct combat", () => {
+    const best = generatePlayer([1, 8, 1]);
+    const worst = generatePlayer([2, 3, 2]);
+
+    it("should be negative if a has higher placement than b", () => {
+      expect(sortByDirectCombat(best, worst)).toBeLessThan(0);
+    });
+
+    it("should be positive if b has higher placement than a", () => {
+      expect(sortByDirectCombat(worst, best)).toBeGreaterThan(0);
+    });
+
+    it("should be zero if a = b", () => {
+      expect(sortByDirectCombat(worst, worst)).toBe(0);
+    });
+  });
+
+  describe("sort by most top fours and top 1s combined", () => {
+    const eightTopFoursAndOnes = generatePlayer([3, 6, 1, 4, 1, 1]);
+    const sevenTopFourAndOnes = generatePlayer([2, 1, 2, 4, 3, 4]);
+    const noTopFourOrOnes = generatePlayer([8, 8, 8]);
+
+    it("should be negative if a has higher placement than b", () => {
+      expect(
+        sortByTopFourPlusFirsts(eightTopFoursAndOnes, sevenTopFourAndOnes),
+      ).toBeLessThan(0);
+    });
+
+    it("should be positive if b has higher placement than a", () => {
+      expect(
+        sortByTopFourPlusFirsts(noTopFourOrOnes, sevenTopFourAndOnes),
+      ).toBeGreaterThan(0);
+    });
+
+    it("should be zero if a = b", () => {
+      expect(
+        sortByTopFourPlusFirsts(eightTopFoursAndOnes, eightTopFoursAndOnes),
+      ).toBe(0);
     });
   });
 

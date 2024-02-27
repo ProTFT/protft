@@ -76,6 +76,14 @@ export class LobbiesResolver {
   }
 
   @UseGuards(GqlJwtAuthGuard)
+  @Mutation(() => DeleteResponse)
+  async deleteLobbyGroups(
+    @Args({ name: "stageId", type: () => Int }) stageId: number,
+  ) {
+    return this.lobbiesService.deleteManyLobbyGroups(stageId);
+  }
+
+  @UseGuards(GqlJwtAuthGuard)
   @Mutation(() => Round)
   async createRound(@Args() { sequence, stageId }: CreateRoundArgs) {
     const payload = { sequence, stageId };

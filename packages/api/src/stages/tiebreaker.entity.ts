@@ -7,4 +7,7 @@ export class Tiebreaker {
 
   @Field()
   description: string;
+
+  @Field()
+  order: number;
 }

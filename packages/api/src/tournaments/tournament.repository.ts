@@ -1,10 +1,12 @@
 import { FindCondition, In, Raw, Repository } from "typeorm";
 import { EntityFieldsNames } from "typeorm/common/EntityFieldsNames";
-import { includes } from "../lib/DBRawFilter";
+import { JwtUser } from "../auth/jwt.strategy";
+import { includes, includesInt } from "../lib/DBRawFilter";
 import { PaginationArgs } from "../lib/dto/pagination.args";
 import { getSearchQueryFilter } from "../lib/SearchQuery";
-import { BaseGetTournamentArgs } from "./dto/get-tournaments.args";
-import { Tournament } from "./tournament.entity";
+import { Roles } from "../users/user.entity";
+import { Tournament } from "./entities/tournament.entity";
+import { BaseGetTournamentArgs } from "./gql/get-tournaments.args";
 
 interface FindParameters {
   onlyVisible?: boolean;
@@ -34,7 +36,8 @@ export class TournamentRepository {
     const regionFilter = filters.region && {
       region: Raw(includes(filters.region)),
     };
-    const setFilter = filters.setId && { setId: In(filters.setId) };
+    const permissionFilter = this.getPermissionFilter(filters.user);
+    const setFilter = filters.setId?.length && { setId: In(filters.setId) };
     return this.repository.find({
       where: {
         ...searchQueryFilter,
@@ -42,10 +45,20 @@ export class TournamentRepository {
         ...regionFilter,
         ...setFilter,
         ...condition,
+        ...permissionFilter,
       },
       take,
       skip,
       order: sorting,
     });
   }
+
+  private getPermissionFilter = (user?: JwtUser) => {
+    if (!user || user.roles.includes(Roles.WEBMASTER)) {
+      return {};
+    }
+    return {
+      editPermission: Raw(includesInt([user.userId])),
+    };
+  };
 }

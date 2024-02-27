@@ -38,10 +38,13 @@ export const StyledPlayerTableHeaderRow = styled.tr`
 
 export const StyledPlayerTableHeaderData = styled.th<{
   onClick?: () => void;
+  alignment?: string;
 }>`
-  ${({ onClick }) => `
+  ${({ onClick, alignment = "center" }) => `
+    position: sticky;
+    top: 0;
     padding: 0.5rem;
-    text-align: center;
+    text-align: ${alignment};
     ${onClick && "cursor: pointer;"}
   `}
 `;
@@ -51,6 +54,7 @@ export const StyledPlayerTable = styled.table`
   border-spacing: 0rem;
   border-collapse: collapse;
   width: 100%;
+  position: relative;
 
   tr:nth-child(even):not(:first-child) {
     background-color: ${colors.dividerGray};
@@ -95,6 +99,7 @@ export const StyledFilterContainer = styled(StyledVerticalContainer)`
 
 export const StyledFilterLabel = styled(StyledBody)`
   @media ${device.tablet} {
+    font-size: 1rem;
     width: 50%;
   }
 `;

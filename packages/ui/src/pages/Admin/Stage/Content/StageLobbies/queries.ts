@@ -1,12 +1,12 @@
-import { gql } from "urql";
+import { graphql } from "../../../../../gql";
 import { Player, Stage, Tournament } from "../../../../../graphql/schema";
 
 export interface TournamentPlayersResponse {
   tournament: Tournament;
 }
 
-export const TOURNAMENT_PLAYERS_QUERY = gql`
-  query tournament($id: Int!) {
+export const TOURNAMENT_PLAYERS_QUERY = graphql(`
+  query oneTournamentWithPlayers($id: Int!) {
     tournament(id: $id) {
       id
       players {
@@ -16,14 +16,14 @@ export const TOURNAMENT_PLAYERS_QUERY = gql`
       }
     }
   }
-`;
+`);
 
 export interface StagePlayersResponse {
   stage: Stage;
 }
 
-export const STAGE_PLAYERS_QUERY = gql`
-  query stage($id: Int!) {
+export const STAGE_PLAYERS_QUERY = graphql(`
+  query oneStageWithPlayers($id: Int!) {
     stage(id: $id) {
       id
       players {
@@ -35,7 +35,7 @@ export const STAGE_PLAYERS_QUERY = gql`
       }
     }
   }
-`;
+`);
 
 export interface LobbyGroupsQueryResult {
   stage: Pick<Stage, "id" | "lobbyGroups">;
@@ -45,8 +45,8 @@ export type LobbyGroupsQueryVariables = {
   id: number;
 };
 
-export const LOBBY_GROUPS_QUERY = gql`
-  query stage($id: Int!) {
+export const LOBBY_GROUPS_QUERY = graphql(`
+  query oneStageWithLobbyGroups($id: Int!) {
     stage(id: $id) {
       id
       lobbyGroups {
@@ -55,7 +55,7 @@ export const LOBBY_GROUPS_QUERY = gql`
       }
     }
   }
-`;
+`);
 
 export interface GenerateLobbiesResult {
   createdLobbyGroups: number;
@@ -67,7 +67,7 @@ export type GenerateLobbiesVariables = {
   roundsPerLobbyGroup: number;
 };
 
-export const GENERATE_LOBBIES_MUTATION = gql`
+export const GENERATE_LOBBIES_MUTATION = graphql(`
   mutation generateLobbies($stageId: Int!, $roundsPerLobbyGroup: Int!) {
     generateLobbies(
       stageId: $stageId
@@ -77,24 +77,7 @@ export const GENERATE_LOBBIES_MUTATION = gql`
       createdLobbies
     }
   }
-`;
-
-export interface CreateLobbyGroupsResult {
-  id: number;
-}
-
-export type CreateLobbyGroupsVariables = {
-  stageId: number;
-  lobbyGroupsCount: number;
-};
-
-export const CREATE_LOBBY_GROUPS_MUTATION = gql`
-  mutation createLobbyGroups($stageId: Int!, $lobbyGroupsCount: Int!) {
-    createLobbyGroups(stageId: $stageId, lobbyGroupsCount: $lobbyGroupsCount) {
-      id
-    }
-  }
-`;
+`);
 
 export interface LobbyPlayersQueryResult {
   lobbies: {
@@ -108,8 +91,8 @@ export type LobbyPlayersQueryVariables = {
   lobbyGroupId: number;
 };
 
-export const LOBBY_PLAYERS_QUERY = gql`
-  query lobby($lobbyGroupId: Int!) {
+export const LOBBY_PLAYERS_QUERY = graphql(`
+  query listLobbiesWithPlayers($lobbyGroupId: Int!) {
     lobbies(lobbyGroupId: $lobbyGroupId) {
       id
       name
@@ -121,4 +104,4 @@ export const LOBBY_PLAYERS_QUERY = gql`
       }
     }
   }
-`;
+`);

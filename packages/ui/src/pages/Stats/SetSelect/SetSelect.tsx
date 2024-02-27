@@ -5,13 +5,18 @@ import { DataSelect } from "../DataSelect/DataSelect";
 import { SetsQueryResponse, SETS_QUERY } from "../DataSelect/queries";
 
 interface Props {
-  value: number;
-  onValueChange: (newValue: number | undefined) => void;
+  value: number[];
+  onValueChange: (newValue: number[] | undefined) => void;
+  isDisabled?: boolean;
 }
 
 type SelectSet = Pick<Set, "id" | "name">;
 
-export const SetSelect = ({ value, onValueChange }: Props) => {
+export const SetSelect = ({
+  value,
+  onValueChange,
+  isDisabled = false,
+}: Props) => {
   const [{ data, fetching }] = useQuery<SetsQueryResponse>({
     query: SETS_QUERY,
   });
@@ -19,15 +24,17 @@ export const SetSelect = ({ value, onValueChange }: Props) => {
   const getPrefix = useCallback((data: SelectSet) => String(data.id), []);
 
   return (
-    <DataSelect<number, SelectSet>
+    <DataSelect<number[], SelectSet>
       data={data?.sets}
       valueKey="id"
       labelKey="name"
       value={value}
       onValueChange={onValueChange}
       isLoading={fetching}
-      placeholder="Dragonlands, Reckoning"
+      placeholder="Select"
       prefix={getPrefix}
+      isMulti
+      isDisabled={isDisabled}
     />
   );
 };

@@ -1,5 +1,10 @@
 import { useMemo } from "react";
-import { StyledField, StyledInput, StyledSelect } from "./FormField.styled";
+import {
+  FieldLabel,
+  StyledField,
+  StyledInput,
+  StyledSelect,
+} from "./FormField.styled";
 
 export interface FormFieldProps {
   label: string;
@@ -12,7 +17,7 @@ export interface FormFieldProps {
     >
   ) => void;
   specialType?: string;
-  options?: { name: string; value: string }[];
+  options?: { name: string; value: string; key?: string }[];
 }
 
 export const SelectFormContent = ({
@@ -31,8 +36,8 @@ export const SelectFormContent = ({
       data-sptype={specialType}
     >
       {options
-        ? options.map(({ name, value }) => (
-            <option key={value} value={value}>
+        ? options.map(({ name, value, key }) => (
+            <option key={key || value} value={value}>
               {name}
             </option>
           ))
@@ -78,7 +83,7 @@ export const FormField = (props: React.PropsWithChildren<FormFieldProps>) => {
 
   return (
     <StyledField>
-      <label htmlFor={props.name}>{props.label}</label>
+      <FieldLabel htmlFor={props.name}>{props.label}</FieldLabel>
       {contentElement}
     </StyledField>
   );

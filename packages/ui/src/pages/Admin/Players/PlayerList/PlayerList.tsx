@@ -1,4 +1,4 @@
-import { useCallback } from "react";
+import { Link } from "react-router-dom";
 import { useQuery } from "urql";
 import { PlayerListItem } from "../PlayerListItem/PlayerListItem";
 import { PlayersQueryResult, PLAYERS_ADMIN_QUERY } from "../queries";
@@ -9,24 +9,19 @@ interface Props {
 }
 
 export const PlayerList = ({ searchQuery }: Props) => {
-  const [{ data }, refetch] = useQuery<PlayersQueryResult>({
+  const [{ data }] = useQuery<PlayersQueryResult>({
     query: PLAYERS_ADMIN_QUERY,
     variables: {
       searchQuery,
     },
   });
 
-  const triggerRefetch = useCallback(() => refetch(), [refetch]);
-
   return (
     <StyledPlayerList>
       {data?.adminPlayers.map((player) => (
-        <PlayerListItem
-          key={player.id}
-          player={player}
-          afterUpdate={triggerRefetch}
-          afterDelete={triggerRefetch}
-        />
+        <Link key={player.id} to={`${player.id}/links`}>
+          <PlayerListItem key={player.id} player={player} />
+        </Link>
       ))}
     </StyledPlayerList>
   );

@@ -13,8 +13,8 @@ import {
 import { StyledPlayerRowData } from "./StatRows.styled";
 
 interface Props {
-  regionFilter: string;
-  setFilter: number;
+  regionFilter: string[];
+  setFilter: number[];
   tournamentFilter: number[];
   minimumGamesFilter: number;
   paginationArgs: object;
@@ -37,8 +37,8 @@ export const StatRows = ({
   >({
     query: PLAYER_STATS_QUERY,
     variables: {
-      region: regionFilter,
-      setId: Number(setFilter),
+      regions: regionFilter,
+      setIds: setFilter,
       tournamentIds: tournamentFilter,
       minimumGames: Number(minimumGamesFilter) - 1,
       sort,
@@ -69,9 +69,13 @@ export const StatRows = ({
                 </TextIconHorizontalContainer>
               </Link>
             </StyledPlayerRowData>
-            <StyledPlayerRowData>{averagePosition}</StyledPlayerRowData>
-            <StyledPlayerRowData>{topOneCount}%</StyledPlayerRowData>
-            <StyledPlayerRowData>{topFourCount}%</StyledPlayerRowData>
+            <StyledPlayerRowData>
+              {averagePosition.toFixed(2)}
+            </StyledPlayerRowData>
+            <StyledPlayerRowData>{topOneCount.toFixed(2)}%</StyledPlayerRowData>
+            <StyledPlayerRowData>
+              {topFourCount.toFixed(2)}%
+            </StyledPlayerRowData>
             <StyledPlayerRowData>{totalGames}</StyledPlayerRowData>
           </tr>
         )

@@ -11,6 +11,7 @@ import { ADMIN_TOURNAMENTS_PATH } from "../Tournaments/AdminTournaments";
 import { StyledActionsContainer, StyledBar } from "./AdminTournament.styled";
 import { AdminTournamentContent } from "./Content/Content";
 import {
+  CLONE_TOURNAMENT_MUTATION,
   DeleteResultsResult,
   DeleteResultsVariables,
   DELETE_RESULTS_MUTATION,
@@ -25,6 +26,12 @@ import {
   TOURNAMENT_QUERY,
   UPDATE_TOURNAMENT_MUTATION,
 } from "./queries";
+import { OnlyWebmaster } from "../../../components/AuthContainer/AuthContainer";
+import {
+  CloneTournamentMutation,
+  CloneTournamentMutationVariables,
+} from "../../../gql/graphql";
+import { useCloneTournamentDialog } from "../Components/Dialogs/CloneTournamentDialog/CloneTournamentDialog";
 
 export const AdminTournament = () => {
   const { id: tournamentId } = useParams();
@@ -46,6 +53,11 @@ export const AdminTournament = () => {
     TournamentsUpdateResult,
     TournamentUpdateVariables
   >(UPDATE_TOURNAMENT_MUTATION);
+
+  const [, cloneTournament] = useMutation<
+    CloneTournamentMutation,
+    CloneTournamentMutationVariables
+  >(CLONE_TOURNAMENT_MUTATION);
 
   const [, lockResults] = useMutation<LockResultsResult, LockResultsVariables>(
     LOCK_RESULTS_MUTATION
@@ -71,6 +83,16 @@ export const AdminTournament = () => {
         id: Number(tournamentId),
       }),
     [tournamentId, updateTournament]
+  );
+
+  const onSubmitCloneTournament = useCallback(
+    ({ name, setId }: CloneTournamentMutationVariables) =>
+      cloneTournament({
+        name,
+        setId,
+        tournamentId: Number(tournamentId),
+      }),
+    [cloneTournament, tournamentId]
   );
 
   const onToggleVisibility = useCallback(async () => {
@@ -124,23 +146,54 @@ export const AdminTournament = () => {
     tournament: data?.tournament,
   });
 
+  const onSuccessCloneTournament = useCallback(
+    ({ cloneTournament }: CloneTournamentMutation) => {
+      navigate(`${ADMIN_TOURNAMENTS_PATH}/${cloneTournament.id}/players`);
+    },
+    [navigate]
+  );
+
+  const {
+    dialog: cloneTournamentDialog,
+    openDialog: openCloneTournamentDialog,
+  } = useCloneTournamentDialog({
+    onSubmit: onSubmitCloneTournament,
+    onSuccess: onSuccessCloneTournament,
+    entity: {
+      name: data?.tournament.name,
+      setId: data?.tournament.setId,
+    },
+  });
+
   const onUpdateTournament = useCallback(() => {
     openDialog();
   }, [openDialog]);
 
+  const onCloneTournament = useCallback(() => {
+    openCloneTournamentDialog();
+  }, [openCloneTournamentDialog]);
+
   return (
     <div>
       {tournamentDialog}
+      {cloneTournamentDialog}
       <StyledBar>
         <StyledActionsContainer>
           <ProTFTButton onClick={onBackToList}>Back to list</ProTFTButton>
         </StyledActionsContainer>
         <StyledActionsContainer>
-          <ProTFTButton onClick={onLockResults}>Lock results</ProTFTButton>
-          <ProTFTButton onClick={onDeleteResults}>Delete results</ProTFTButton>
+          <OnlyWebmaster>
+            <ProTFTButton onClick={onLockResults}>Lock results</ProTFTButton>
+            <ProTFTButton onClick={onDeleteResults}>
+              Delete results
+            </ProTFTButton>
+          </OnlyWebmaster>
           <ProTFTButton onClick={onToggleVisibility}>
             Make {data?.tournament.visibility ? "invisible" : "visible"}
           </ProTFTButton>
+          <OnlyWebmaster>
+            <ProTFTButton onClick={onCloneTournament}>Clone</ProTFTButton>
+          </OnlyWebmaster>
           <ProTFTButton onClick={onUpdateTournament}>Update</ProTFTButton>
           <ProTFTButton onClick={onDeleteTournament}>Delete</ProTFTButton>
         </StyledActionsContainer>

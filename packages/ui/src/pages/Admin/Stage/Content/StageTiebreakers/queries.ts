@@ -1,45 +1,43 @@
-import { gql } from "urql";
-import { Stage, Tiebreaker } from "../../../../../graphql/schema";
+import { graphql } from "../../../../../gql";
 
-export const TIEBREAKERS_QUERY = gql`
+export const TIEBREAKERS_QUERY = graphql(`
   query tiebreakers {
     tiebreakers {
       id
       description
     }
   }
-`;
+`);
 
-export interface TiebreakersQueryResult {
-  tiebreakers: Tiebreaker[];
-}
-
-export interface StageQueryResponse {
-  stage: Pick<Stage, "id" | "tiebreakers">;
-}
-
-export const STAGE_QUERY = gql`
-  query stage($id: Int!) {
+export const STAGE_QUERY = graphql(`
+  query oneStageTiebreakers($id: Int!) {
     stage(id: $id) {
       id
       tiebreakers
     }
   }
-`;
+`);
 
-export interface UpdateStageTiebreakersResult {
-  updateStage: { id: Pick<Stage, "id"> };
-}
-
-export type UpdateStageTiebreakersVariables = {
-  id: number;
-  tiebreakers: number[];
-};
-
-export const UPDATE_STAGE_TIEBREAKERS_MUTATION = gql`
+export const UPDATE_STAGE_TIEBREAKERS_MUTATION = graphql(`
   mutation updateTiebreakers($id: Int!, $tiebreakers: [Int!]!) {
     updateTiebreakers(id: $id, tiebreakers: $tiebreakers) {
       id
     }
   }
-`;
+`);
+
+export const CARRY_OVER_POINTS_MUTATION = graphql(`
+  mutation carryOverPointsFromLastStage($stageId: Int!) {
+    carryOverPointsFromLastStage(stageId: $stageId) {
+      success
+    }
+  }
+`);
+
+export const APPLY_TIEBREAKER_TO_ALL_MUTATION = graphql(`
+  mutation applyTiebreakersToAllStages($stageId: Int!) {
+    applyTiebreakersToAllStages(stageId: $stageId) {
+      id
+    }
+  }
+`);

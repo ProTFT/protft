@@ -23,7 +23,9 @@ export class PointSchema {
 
 @ObjectType()
 @Entity()
-@Index(["pointSchemaId", "position"], { unique: true })
+@Index(["pointSchemaId", "position"], {
+  unique: true,
+})
 export class Points {
   @Field(() => Int)
   @PrimaryColumn()

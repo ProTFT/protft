@@ -16,6 +16,7 @@ export interface Props<T, K> {
   formRef: React.RefObject<HTMLFormElement>;
   onSubmit: (formEntity: K) => void;
   entity?: T;
+  defaultValues?: Partial<T>;
 }
 
 const formValueToAPI = ({
@@ -42,6 +43,21 @@ const formValueToAPI = ({
     const splitValue = value.replaceAll(" ", "").split(",").map(Number);
     return [...splitValue];
   }
+
+  if (type === "datetime-local") {
+    if (!value) {
+      return "";
+    }
+    const dateValue = new Date(value);
+    const utcValue = Date.UTC(
+      dateValue.getFullYear(),
+      dateValue.getMonth(),
+      dateValue.getDate(),
+      dateValue.getHours(),
+      dateValue.getMinutes()
+    );
+    return new Date(utcValue).toISOString();
+  }
   return value;
 };
 
@@ -66,8 +82,11 @@ export const DialogForm = <T extends object, K extends object>({
   onSubmit,
   entity,
   children,
+  defaultValues,
 }: React.PropsWithChildren<Props<T, K>>) => {
-  const [localEntity, setLocalEntity] = useState<T>((entity as T) || {});
+  const [localEntity, setLocalEntity] = useState<T>(
+    (entity as T) || defaultValues || {}
+  );
 
   useEffect(() => {
     setLocalEntity((entity as T) || {});

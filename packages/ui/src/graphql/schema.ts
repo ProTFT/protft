@@ -32,6 +32,13 @@ export interface Set {
   name: string;
 }
 
+export interface PlayerLink {
+  id: number;
+  playerId: number;
+  type: string;
+  link: string;
+}
+
 export interface PlayerCalculatedStats {
   averagePosition: number;
   totalGames: number;
@@ -44,6 +51,7 @@ export interface Player {
   id: number;
   name: string;
   playerStats?: Nullable<PlayerCalculatedStats>;
+  links: PlayerLink[];
   region?: Nullable<string>;
   country?: Nullable<string>;
   slug: string;
@@ -80,6 +88,7 @@ export interface Tournament {
   setId: number;
   slug: string;
   visibility: boolean;
+  nextStartTime?: Nullable<number>;
   set: Set;
   stages?: Nullable<Stage[]>;
   players?: Nullable<Player[]>;
@@ -105,13 +114,13 @@ export interface Stage {
   name: string;
   description: string;
   sequence: number;
-  isFinal: boolean;
   tournamentId: number;
   pointSchemaId: number;
   tiebreakers: number[];
   stageType: StageType;
   qualifiedCount: number;
   roundCount: number;
+  startDateTime?: Nullable<string>;
   players: StagePlayerInfo[];
   lobbies?: Nullable<Lobby[]>;
   lobbyGroups: LobbyGroup[];
@@ -145,6 +154,10 @@ export interface CreateLobbiesResponse {
 export interface Tiebreaker {
   id: number;
   description: string;
+}
+
+export interface SuccessResponse {
+  success: boolean;
 }
 
 export interface PlayerWithStats {
@@ -184,7 +197,12 @@ export interface TournamentResult {
   tournamentId: number;
   playerId: number;
   finalPosition: string;
+  qualifyTo: number[];
   prize: number;
+  currency: string;
+  prizeInUSD: number;
+  circuitId: number;
+  circuitPointsEarned: number;
   otherRewards: string;
 }
 
@@ -206,6 +224,7 @@ export interface TournamentsPlayed {
   setId: number;
   slug: string;
   visibility: boolean;
+  nextStartTime?: Nullable<number>;
   set: Set;
   stages?: Nullable<Stage[]>;
   players?: Nullable<Player[]>;
@@ -220,6 +239,15 @@ export interface TournamentStream {
   language: string;
   isLive: boolean;
   isVOD: boolean;
+}
+
+export interface Circuit {
+  id: number;
+  name: string;
+  region: string[];
+  setId: number;
+  slug: string;
+  set: Set;
 }
 
 export interface IQuery {
@@ -256,7 +284,9 @@ export interface IQuery {
     take?: Nullable<number>,
     skip?: Nullable<number>
   ): Tournament[] | Promise<Tournament[]>;
-  tournamentsWithStats(): Tournament[] | Promise<Tournament[]>;
+  tournamentsWithStats(
+    searchQuery?: Nullable<string>
+  ): Tournament[] | Promise<Tournament[]>;
   stages(tournamentId: number): Stage[] | Promise<Stage[]>;
   stage(id: number): Stage | Promise<Stage>;
   playersFromPreviousStage(
@@ -312,16 +342,19 @@ export interface IQuery {
   resultsOfTournament(
     tournamentId: number
   ): TournamentResult[] | Promise<TournamentResult[]>;
+  playerLink(id: number): PlayerLink | Promise<PlayerLink>;
   streamsOfTournament(
     tournamentId: number
   ): TournamentStream[] | Promise<TournamentStream[]>;
+  circuits(): Circuit[] | Promise<Circuit[]>;
+  circuit(id: number): Nullable<Circuit> | Promise<Nullable<Circuit>>;
 }
 
 export interface IMutation {
   createTournament(
     name: string,
     setId: number,
-    region?: Nullable<string[]>,
+    region: string[],
     host?: Nullable<string>,
     participantsNumber?: Nullable<number>,
     prizePool?: Nullable<number>,
@@ -357,12 +390,12 @@ export interface IMutation {
     pointSchemaId: number,
     name: string,
     sequence: number,
-    isFinal: boolean,
-    qualifiedCount: number,
     stageType: StageType,
     roundCount: number,
+    qualifiedCount?: Nullable<number>,
     tiebreakers?: Nullable<number[]>,
-    description?: Nullable<string>
+    description?: Nullable<string>,
+    startDateTime?: Nullable<string>
   ): Stage | Promise<Stage>;
   updateStage(
     id: number,
@@ -370,12 +403,12 @@ export interface IMutation {
     pointSchemaId: number,
     name: string,
     sequence: number,
-    isFinal: boolean,
     qualifiedCount: number,
     stageType: StageType,
     roundCount: number,
     tiebreakers?: Nullable<number[]>,
-    description?: Nullable<string>
+    description?: Nullable<string>,
+    startDateTime?: Nullable<string>
   ): Stage | Promise<Stage>;
   updateTiebreakers(id: number, tiebreakers: number[]): Stage | Promise<Stage>;
   deleteStage(id: number): DeleteResponse | Promise<DeleteResponse>;
@@ -416,6 +449,7 @@ export interface IMutation {
     name?: Nullable<string>
   ): Lobby | Promise<Lobby>;
   deleteLobby(id: number): DeleteResponse | Promise<DeleteResponse>;
+  deleteLobbyGroups(stageId: number): DeleteResponse | Promise<DeleteResponse>;
   createRound(stageId: number, sequence: number): Round | Promise<Round>;
   createLobbyGroup(
     stageId: number,
@@ -433,14 +467,16 @@ export interface IMutation {
   createPlayer(
     name: string,
     country: string,
-    region: string
+    region: string,
+    alias?: Nullable<string[]>
   ): Player | Promise<Player>;
   updatePlayer(
     id: number,
     name?: Nullable<string>,
     country?: Nullable<string>,
     region?: Nullable<string>,
-    slug?: Nullable<string>
+    slug?: Nullable<string>,
+    alias?: Nullable<string[]>
   ): Player | Promise<Player>;
   createPlayerSlugs(): Player[] | Promise<Player[]>;
   deletePlayer(id: number): Player | Promise<Player>;
@@ -452,8 +488,22 @@ export interface IMutation {
     lobbyGroupId: number,
     results: CreateLobbyGroupResults[]
   ): RoundResult[] | Promise<RoundResult[]>;
+  carryOverPointsFromLastStage(
+    stageId: number
+  ): SuccessResponse | Promise<SuccessResponse>;
   lockTournament(id: number): TournamentResult[] | Promise<TournamentResult[]>;
   deleteTournamentResults(id: number): DeleteResponse | Promise<DeleteResponse>;
+  createPlayerLink(
+    playerId: number,
+    type: string,
+    link: string
+  ): PlayerLink | Promise<PlayerLink>;
+  updatePlayerLink(
+    id: number,
+    type?: Nullable<string>,
+    link?: Nullable<string>
+  ): PlayerLink | Promise<PlayerLink>;
+  deletePlayerLink(id: number): DeleteResponse | Promise<DeleteResponse>;
   addTournamentStream(
     tournamentId: number,
     name: string,
@@ -467,6 +517,18 @@ export interface IMutation {
     tournamentId: number,
     name: string
   ): DeleteResponse | Promise<DeleteResponse>;
+  createCircuit(
+    name: string,
+    setId: number,
+    region: string[]
+  ): Circuit | Promise<Circuit>;
+  updateCircuit(
+    id: number,
+    name?: Nullable<string>,
+    setId?: Nullable<number>,
+    region?: Nullable<string[]>
+  ): Circuit | Promise<Circuit>;
+  deleteCircuit(id: number): DeleteResponse | Promise<DeleteResponse>;
 }
 
 export type DateTime = any;

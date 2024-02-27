@@ -13,6 +13,7 @@ import { ProvideAuth } from "./hooks/useAuth";
 import { ProvideToast } from "./pages/Admin/Components/Toast/Toast";
 import { ThemeProvider } from "styled-components";
 import { theme } from "./design/theme";
+import { ProvideTracking } from "./hooks/useTracking";
 
 const rootElement = document.getElementById("root");
 if (!rootElement) throw new Error("Failed to find the root element");
@@ -66,9 +67,11 @@ root.render(
         <DndProvider backend={HTML5Backend}>
           <ProvideAuth>
             <ProvideToast>
-              <ThemeProvider theme={theme}>
-                <App />
-              </ThemeProvider>
+              <ProvideTracking>
+                <ThemeProvider theme={theme}>
+                  <App />
+                </ThemeProvider>
+              </ProvideTracking>
             </ProvideToast>
           </ProvideAuth>
         </DndProvider>

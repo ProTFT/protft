@@ -2,6 +2,10 @@ import { UnauthorizedException } from "@nestjs/common";
 import { AuthService } from "./auth.service";
 import { LocalStrategy } from "./local.strategy";
 
+jest.mock("bcrypt", () => ({
+  compare: () => true,
+}));
+
 const mockUser = {
   id: 1,
   name: "name",

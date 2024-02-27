@@ -43,6 +43,10 @@ export class StagePlayerInfosService {
     return this.findOne({ stageId, playerId });
   }
 
+  async updateMany(entries: Omit<StagePlayerInfo, "stage" | "player">[]) {
+    await this.stagePlayerInfoRepository.save(entries);
+  }
+
   async createTiebreakerBulk(fileString: string, stageId: number) {
     const { titles, lines } = parseFileString(fileString);
     const [firstTitle, secondTitle, thirdTitle] = titles;

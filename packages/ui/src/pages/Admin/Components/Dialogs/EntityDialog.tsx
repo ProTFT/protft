@@ -8,7 +8,7 @@ import { useToast } from "../Toast/Toast";
 export interface EntityDialogProps {
   dialogRef: React.RefObject<HTMLDialogElement>;
   onSubmit: (entity: any) => Promise<OperationResult>;
-  onSuccess?: () => void;
+  onSuccess?: (result?: any) => void;
   entity?: any;
   formFields: FormFieldProps[];
 }
@@ -30,7 +30,7 @@ export const EntityDialog = ({
         return alert(result.error);
       }
       show();
-      onSuccess?.();
+      onSuccess?.(result.data);
       formRef.current?.reset();
       dialogRef.current?.close();
     },

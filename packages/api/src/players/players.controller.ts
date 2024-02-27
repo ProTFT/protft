@@ -8,6 +8,7 @@ import {
   UseInterceptors,
 } from "@nestjs/common";
 import { FileInterceptor } from "@nestjs/platform-express";
+import { ApiExcludeEndpoint } from "@nestjs/swagger";
 import { JwtAuthGuard } from "../auth/jwt-auth.guard";
 import { PlayersService } from "./players.service";
 
@@ -18,6 +19,7 @@ export class PlayersController {
   @Post("uploadBulk")
   @UseGuards(JwtAuthGuard)
   @UseInterceptors(FileInterceptor("file"))
+  @ApiExcludeEndpoint()
   uploadBulk(
     @UploadedFile() file: Express.Multer.File,
     @Body() body: { dryRun: string },

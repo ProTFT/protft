@@ -1,11 +1,15 @@
 import { Repository } from "typeorm";
 import { lobby } from "../../test/generators/lobby";
 import { lobbyGroup } from "../../test/generators/lobby-group";
+import { player } from "../../test/generators/player";
 import { stage } from "../../test/generators/stage";
 import { formatString } from "../../test/helpers/File";
+import { FakeQueryBuilder } from "../../test/stubs/fakeQueryBuilder";
 import { LobbiesService } from "../lobbies/lobbies.service";
 import { LobbyPlayerInfosService } from "../lobby-player-infos/lobby-player-infos.service";
 import { RoundsService } from "../rounds/rounds.service";
+import { StagePlayerInfo } from "../stage-player-infos/stage-player-info.entity";
+import { StagePlayerInfosService } from "../stage-player-infos/stage-player-infos.service";
 import { StagesService } from "../stages/stages.service";
 import { tiebreakerMap } from "../stages/tiebreaker.logic";
 import { CreateLobbyGroupResultArgs } from "./dto/create-lobby-group-result.args";
@@ -20,85 +24,6 @@ jest.mock("./bulk-creation.logic", () => ({
   extractLobbyPlayerEntries: jest.fn(),
   sortLobbies: jest.fn(),
 }));
-
-class FakeQueryBuilder {
-  public andWhereCount = 0;
-  public orderByClause = null;
-  public takeSpy = null;
-  public skipSpy = null;
-
-  public resetAllMocks() {
-    this.andWhereCount = 0;
-    this.orderByClause = null;
-    this.takeSpy = null;
-    this.skipSpy = null;
-  }
-
-  public select() {
-    return this;
-  }
-
-  public addSelect() {
-    return this;
-  }
-
-  public from(
-    subqueryOrTable: string | ((subquery: FakeQueryBuilder) => void),
-  ) {
-    if (subqueryOrTable instanceof Function) {
-      subqueryOrTable(this);
-    }
-    return this;
-  }
-
-  public innerJoin() {
-    return this;
-  }
-
-  public groupBy() {
-    return this;
-  }
-
-  public andWhere() {
-    this.andWhereCount++;
-    return this;
-  }
-
-  public where() {
-    return this;
-  }
-
-  public orderBy(clause: string) {
-    this.orderByClause = clause;
-    return this;
-  }
-
-  public addOrderBy() {
-    return this;
-  }
-
-  public take(quantity: number) {
-    this.takeSpy = quantity;
-    return this;
-  }
-
-  public skip(quantity: number) {
-    this.skipSpy = quantity;
-    return this;
-  }
-
-  public leftJoin() {
-    return this;
-  }
-
-  public getRawMany() {
-    return [mockRawResults];
-  }
-
-  public getRawOne() {
-    return mockRawResults;
-  }
-}
 
 const mockRawResults = {
   roundId: 1,
@@ -116,6 +41,27 @@ const mockRawResults = {
   tiebreakerRanking: 1,
 };
 
+const mockStagePlayers = [
+  {
+    player: player({ id: 5 }),
+    positions: [],
+    points: [],
+    lobbyPlayerId: 0,
+    pastPoints: 0,
+    pastPositions: [],
+    tiebreakerRanking: 0,
+  },
+  {
+    player: player({ id: 10 }),
+    positions: [],
+    points: [],
+    lobbyPlayerId: 0,
+    pastPoints: 0,
+    pastPositions: [],
+    tiebreakerRanking: 0,
+  },
+];
+
 describe("RoundResults service", () => {
   let service: RoundResultsService;
   let roundResultsRepository: Repository<RoundResult>;
@@ -123,11 +69,16 @@ describe("RoundResults service", () => {
   let lobbyPlayerInfosService: LobbyPlayerInfosService;
   let lobbiesService: LobbiesService;
   let roundsService: RoundsService;
-  const fakeQueryBuilder = new FakeQueryBuilder();
+  let stagePlayerInfosService: StagePlayerInfosService;
+  const fakeQueryBuilder = new FakeQueryBuilder<typeof mockRawResults>(
+    mockRawResults,
+  );
 
   beforeEach(() => {
     stagesService = {
-      findOne: jest.fn().mockResolvedValue(stage({})),
+      findOne: jest
+        .fn()
+        .mockResolvedValue(stage({ lobbyGroups: [lobbyGroup({})] })),
       findAllByTournament: jest.fn(),
     } as unknown as StagesService;
 
@@ -157,12 +108,18 @@ describe("RoundResults service", () => {
       },
     } as unknown as Repository<RoundResult>;
 
+    stagePlayerInfosService = {
+      findAllByStage: jest.fn().mockResolvedValue(mockStagePlayers),
+      updateMany: jest.fn(),
+    } as unknown as StagePlayerInfosService;
+
     service = new RoundResultsService(
       roundResultsRepository,
       stagesService,
       lobbyPlayerInfosService,
       lobbiesService,
       roundsService,
+      stagePlayerInfosService,
     );
   });
 
@@ -267,6 +224,7 @@ describe("RoundResults service", () => {
       stagesService.findOne = jest.fn().mockResolvedValue({
         tournamentId: 1,
         sequence: 1,
+        lobbyGroups: [lobbyGroup({})],
       });
       const response = await service.overviewResultsByStage(1);
       expect(response).toStrictEqual(
@@ -274,11 +232,22 @@ describe("RoundResults service", () => {
       );
     });
 
+    it("if there are no lobby groups, should return player list", async () => {
+      stagesService.findOne = jest.fn().mockResolvedValue({
+        tournamentId: 1,
+        sequence: 1,
+        lobbyGroups: [],
+      });
+      const response = await service.overviewResultsByStage(1);
+      expect(response).toStrictEqual(mockStagePlayers);
+    });
+
     it("if tiebreaker has total event points and is not first stage, should add data from previous stages", async () => {
       stagesService.findOne = jest.fn().mockResolvedValue({
         tiebreakers: [SortingMethods.TOTAL_EVENT_POINTS],
         tournamentId: 1,
         sequence: 2,
+        lobbyGroups: [lobbyGroup({})],
       });
       stagesService.findAllByTournament = jest.fn().mockResolvedValue([
         {
@@ -312,6 +281,7 @@ describe("RoundResults service", () => {
         tiebreakers: [SortingMethods.TOTAL_EVENT_POINTS],
         tournamentId: 1,
         sequence: 1,
+        lobbyGroups: [lobbyGroup({})],
       });
       stagesService.findAllByTournament = jest.fn().mockResolvedValue([
         {
@@ -346,6 +316,7 @@ describe("RoundResults service", () => {
           tiebreakers: [method],
           tournamentId: 1,
           sequence: 2,
+          lobbyGroups: [lobbyGroup({})],
         });
         stagesService.findAllByTournament = jest.fn().mockResolvedValue([
           {
@@ -462,8 +433,8 @@ describe("RoundResults service", () => {
 
     it("if filters are passed, should apply", async () => {
       const filterPayload = {
-        region: "region",
-        setId: 1,
+        regions: ["region"],
+        setIds: [1],
         tournamentIds: [1, 2, 3],
       };
       await service.playerStats(filterPayload);
@@ -534,6 +505,46 @@ describe("RoundResults service", () => {
       expect(fakeQueryBuilder.andWhereCount).toBe(
         Object.keys(filterPayload).length,
       );
+    });
+  });
+
+  describe("carry over points from last stage", () => {
+    it("if its the first stage, should throw error", () => {
+      stagesService.findOne = jest.fn().mockResolvedValue(
+        stage({
+          sequence: 1,
+          players: [],
+        }),
+      );
+      stagesService.findAllByTournament = jest
+        .fn()
+        .mockResolvedValue([stage({ sequence: 1 }), stage({ sequence: 2 })]);
+
+      expect(
+        service.carryOverPointsFromLastStage({ stageId: 1 }),
+      ).rejects.toThrow();
+    });
+
+    it("should copy", async () => {
+      stagesService.findOne = jest.fn().mockResolvedValue(
+        stage({
+          sequence: 2,
+          players: [{ playerId: 1 } as StagePlayerInfo],
+          lobbyGroups: [lobbyGroup({})],
+        }),
+      );
+      stagesService.findAllByTournament = jest
+        .fn()
+        .mockResolvedValue([stage({ sequence: 1 }), stage({ sequence: 2 })]);
+
+      await service.carryOverPointsFromLastStage({ stageId: 1 });
+
+      expect(stagePlayerInfosService.updateMany).toHaveBeenCalledWith([
+        {
+          playerId: 1,
+          extraPoints: 5,
+        },
+      ]);
     });
   });
 });

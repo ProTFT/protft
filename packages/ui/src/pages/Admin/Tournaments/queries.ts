@@ -1,12 +1,16 @@
-import { gql } from "urql";
+import { graphql } from "../../../gql";
 import { Tournament } from "../../../graphql/schema";
 
 export interface TournamentsQueryResult {
   adminTournaments: Tournament[];
 }
 
-export const TOURNAMENTS_QUERY = gql`
-  query tournaments($searchQuery: String, $skip: Int, $take: Int) {
+export const TOURNAMENTS_QUERY = graphql(`
+  query listAdminTournamentsPaginated(
+    $searchQuery: String
+    $skip: Int
+    $take: Int
+  ) {
     adminTournaments(searchQuery: $searchQuery, skip: $skip, take: $take) {
       id
       name
@@ -22,7 +26,7 @@ export const TOURNAMENTS_QUERY = gql`
       }
     }
   }
-`;
+`);
 
 export interface CreateTournamentResult {
   createTournament: { id: Pick<Tournament, "id"> };
@@ -41,10 +45,10 @@ export type CreateTournamentVariables = Pick<
   | "currency"
 >;
 
-export const CREATE_TOURNAMENT_QUERY = gql`
+export const CREATE_TOURNAMENT_QUERY = graphql(`
   mutation createTournament(
     $name: String!
-    $region: [String!]
+    $region: [String!]!
     $host: String
     $participantsNumber: Int
     $prizePool: Float
@@ -67,24 +71,24 @@ export const CREATE_TOURNAMENT_QUERY = gql`
       id
     }
   }
-`;
+`);
 
-export const CREATE_PLAYER_SLUGS_MUTATION = gql`
-  mutation setSlug {
+export const CREATE_PLAYER_SLUGS_MUTATION = graphql(`
+  mutation createPlayerSlugs {
     createPlayerSlugs {
       id
       name
       slug
     }
   }
-`;
+`);
 
-export const CREATE_TOURNAMENT_SLUGS_MUTATION = gql`
-  mutation setSlug {
+export const CREATE_TOURNAMENT_SLUGS_MUTATION = graphql(`
+  mutation createTournamentSlugs {
     createTournamentSlugs {
       id
       name
       slug
     }
   }
-`;
+`);

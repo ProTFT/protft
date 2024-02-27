@@ -12,14 +12,14 @@ export class SortOption {
 // TODO: review this in the future, cant use intersection with arrays
 @ArgsType()
 export class GetStatsArgs {
-  @Field(() => Int, { name: "setId", nullable: true })
-  setId?: number;
+  @Field(() => [Int], { name: "setIds", nullable: true })
+  setIds?: number[];
 
   @Field(() => [Int], { name: "tournamentIds", nullable: true })
   tournamentIds?: number[];
 
-  @Field({ name: "region", nullable: true })
-  region?: string;
+  @Field(() => [String], { name: "regions", nullable: true })
+  regions?: string[];
 
   @Field(() => SortOption, { name: "sort", nullable: true })
   sort?: SortOption;

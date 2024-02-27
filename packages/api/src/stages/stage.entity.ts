@@ -11,21 +11,21 @@ import {
 import { Lobby } from "../lobbies/lobby.entity";
 import { Round } from "../rounds/round.entity";
 import { PointSchema } from "../points/point.entity";
-import { Tournament } from "../tournaments/tournament.entity";
+import { Tournament } from "../tournaments/entities/tournament.entity";
 import { StagePlayerInfo } from "../stage-player-infos/stage-player-info.entity";
 import { LobbyGroup } from "../lobbies/lobby-group.entity";
-
-export enum StageType {
-  RANKING = "Ranking",
-  GROUP_BASED = "Group Based",
-}
+import { StageType } from "./types/StageType";
+import { BaseEntity } from "../lib/BaseEntity";
 
 registerEnumType(StageType, { name: "StageType" });
 
 @ObjectType()
 @Entity()
-@Index(["tournamentId", "sequence"], { unique: true })
-export class Stage {
+@Index(["tournamentId", "sequence"], {
+  unique: true,
+  where: '"deletedAt" is null',
+})
+export class Stage extends BaseEntity {
   @Field(() => Int)
   @PrimaryGeneratedColumn()
   id: number;
@@ -42,9 +42,9 @@ export class Stage {
   @Column()
   sequence: number;
 
-  @Field()
-  @Column({ default: false })
-  isFinal: boolean;
+  @Field(() => Int)
+  @Column({ default: 0 })
+  sequenceForResult: number;
 
   @Field(() => Int)
   @Column()
@@ -68,6 +68,10 @@ export class Stage {
 
   @Field(() => Int)
   roundCount: number;
+
+  @Field({ nullable: true })
+  @Column({ nullable: true })
+  startDateTime?: string;
 
   @Field(() => [StagePlayerInfo])
   @OneToMany(

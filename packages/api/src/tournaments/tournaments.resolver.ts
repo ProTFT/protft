@@ -11,25 +11,33 @@ import {
 import { GqlJwtAuthGuard } from "../auth/jwt-auth.guard";
 import { SetsService } from "../sets/sets.service";
 import { StagesService } from "../stages/stages.service";
-import { CreateTournamentArgs } from "./dto/create-tournament.args";
-import { Tournament } from "./tournament.entity";
-import { TournamentsService } from "./tournaments.service";
+import { Tournament } from "./entities/tournament.entity";
+import { TournamentsWriteService } from "./services/tournaments-write.service";
 import { DeleteResponse } from "../lib/dto/delete-return";
-import { UpdateTournamentArgs } from "./dto/update-tournament.args";
 import {
   CreateTournamentPlayerArgs,
   CreateTournamentPlayerByNameArgs,
-} from "./dto/create-tournament-player.args";
+} from "./gql/create-tournament-player.args";
 import { Player } from "../players/player.entity";
-import { GetTournamentsArgs } from "./dto/get-tournaments.args";
 import { BaseResolver } from "../lib/BaseResolver";
+import { TournamentsReadService } from "./services/tournaments-read.service";
+import { TournamentsFieldsService } from "./services/tournaments-fields.service";
+import { CreateTournamentArgs } from "./gql/create-tournament.args";
+import { GetTournamentWithStatsArgs } from "./gql/get-tournaments-with-stats.args";
+import { GetTournamentsArgs } from "./gql/get-tournaments.args";
+import { UpdateTournamentArgs } from "./gql/update-tournament.args";
+import { CurrentUser } from "../auth/decorator/current-user";
+import { JwtUser } from "../auth/jwt.strategy";
+import { CloneTournamentArgs } from "./gql/clone-tournament.args";
 
 @Resolver(() => Tournament)
 export class TournamentsResolver extends BaseResolver {
   constructor(
-    private tournamentsService: TournamentsService,
+    private tournamentsService: TournamentsWriteService,
     private setService: SetsService,
     private stagesService: StagesService,
+    private tournamentsReadService: TournamentsReadService,
+    private tournamentsFieldsService: TournamentsFieldsService,
   ) {
     super();
   }
@@ -39,17 +47,18 @@ export class TournamentsResolver extends BaseResolver {
     @Args() { region, setId, take, skip, searchQuery }: GetTournamentsArgs,
   ) {
     const filters = this.cleanGraphQLFilters({ region, setId, searchQuery });
-    return this.tournamentsService.findAll({ ...filters }, { take, skip });
+    return this.tournamentsReadService.findAll({ ...filters }, { take, skip });
   }
 
   @UseGuards(GqlJwtAuthGuard)
   @Query(() => [Tournament])
   async adminTournaments(
     @Args() { region, setId, take, skip, searchQuery }: GetTournamentsArgs,
+    @CurrentUser() user: JwtUser,
   ) {
     const filters = this.cleanGraphQLFilters({ region, setId, searchQuery });
-    return this.tournamentsService.findAll(
-      { ...filters },
+    return this.tournamentsReadService.findAll(
+      { ...filters, user },
       { take, skip },
       false,
     );
@@ -57,17 +66,17 @@ export class TournamentsResolver extends BaseResolver {
 
   @Query(() => Tournament)
   async tournament(@Args("id", { type: () => Int }) id: number) {
-    return this.tournamentsService.findOne(id);
+    return this.tournamentsReadService.findOne(id);
   }
 
   @Query(() => Tournament)
   async tournamentBySlug(@Args("slug") slug: string) {
-    return this.tournamentsService.findOneBySlug(slug);
+    return this.tournamentsReadService.findOneBySlug(slug);
   }
 
   @Query(() => [Tournament])
   async ongoingTournaments() {
-    return this.tournamentsService.findOngoing();
+    return this.tournamentsReadService.findOngoing({});
   }
 
   @Query(() => [Tournament])
@@ -75,20 +84,29 @@ export class TournamentsResolver extends BaseResolver {
     @Args() { region, setId, take, skip, searchQuery }: GetTournamentsArgs,
   ) {
     const filters = this.cleanGraphQLFilters({ region, setId, searchQuery });
-    return this.tournamentsService.findUpcoming({ ...filters }, { take, skip });
+    return this.tournamentsReadService.findUpcoming(
+      { ...filters },
+      { take, skip },
+    );
   }
 
   @Query(() => [Tournament])
   async pastTournaments(
     @Args() { region, setId, take, skip, searchQuery }: GetTournamentsArgs,
   ) {
+    console.time("requestTimingPastTournaments");
     const filters = this.cleanGraphQLFilters({ region, setId, searchQuery });
-    return this.tournamentsService.findPast({ ...filters }, { take, skip });
+    const result = await this.tournamentsReadService.findPast(
+      { ...filters },
+      { take, skip },
+    );
+    console.timeEnd("requestTimingPastTournaments");
+    return result;
   }
 
   @Query(() => [Tournament])
-  async tournamentsWithStats() {
-    return this.tournamentsService.findWithStats();
+  async tournamentsWithStats(@Args() args: GetTournamentWithStatsArgs) {
+    return this.tournamentsReadService.findWithStats(args);
   }
 
   @ResolveField()
@@ -105,17 +123,25 @@ export class TournamentsResolver extends BaseResolver {
 
   @ResolveField()
   async players(@Parent() tournament: Tournament): Promise<Player[]> {
-    const tournamentWithPlayers = await this.tournamentsService.findOne(
+    const tournamentWithPlayers = await this.tournamentsReadService.findOne(
       tournament.id,
       ["players"],
     );
     return tournamentWithPlayers.players;
   }
 
+  @ResolveField()
+  async nextStartTime(@Parent() tournament: Tournament): Promise<number> {
+    return this.tournamentsFieldsService.findNextStageStartTime(tournament);
+  }
+
   @UseGuards(GqlJwtAuthGuard)
   @Mutation(() => Tournament)
-  async createTournament(@Args() payload: CreateTournamentArgs) {
-    return this.tournamentsService.createOne(payload);
+  async createTournament(
+    @Args() payload: CreateTournamentArgs,
+    @CurrentUser() user: JwtUser,
+  ) {
+    return this.tournamentsService.createOne(payload, user);
   }
 
   @UseGuards(GqlJwtAuthGuard)
@@ -152,5 +178,19 @@ export class TournamentsResolver extends BaseResolver {
   @Mutation(() => [Tournament])
   async createTournamentSlugs() {
     return this.tournamentsService.createMissingSlugs();
+  }
+
+  @UseGuards(GqlJwtAuthGuard)
+  @Mutation(() => Tournament)
+  async cloneTournament(
+    @Args() { tournamentId, name, setId }: CloneTournamentArgs,
+    @CurrentUser() user: JwtUser,
+  ) {
+    return this.tournamentsService.cloneTournament(
+      tournamentId,
+      name,
+      setId,
+      user,
+    );
   }
 }

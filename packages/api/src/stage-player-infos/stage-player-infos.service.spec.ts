@@ -1,4 +1,5 @@
 import { Repository } from "typeorm";
+import { stagePlayerInfo } from "../../test/generators/stage-player-info";
 import { formatString } from "../../test/helpers/File";
 import { StagePlayerInfo } from "./stage-player-info.entity";
 import { StagePlayerInfosService } from "./stage-player-infos.service";
@@ -202,6 +203,17 @@ describe("StagePlayerInfos service", () => {
         { playerId: 10 },
         { playerId: 11 },
       );
+    });
+  });
+
+  describe("updateMany", () => {
+    it("should call repository", async () => {
+      const mockStagePlayerInfo = stagePlayerInfo({});
+      await service.updateMany([mockStagePlayerInfo, mockStagePlayerInfo]);
+      expect(stagePlayerInfoRepository.save).toHaveBeenCalledWith([
+        mockStagePlayerInfo,
+        mockStagePlayerInfo,
+      ]);
     });
   });
 });

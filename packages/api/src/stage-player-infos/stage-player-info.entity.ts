@@ -1,11 +1,12 @@
 import { Field, Int, ObjectType } from "@nestjs/graphql";
 import { Column, Entity, ManyToOne, PrimaryColumn } from "typeorm";
+import { BaseEntity } from "../lib/BaseEntity";
 import { Player } from "../players/player.entity";
 import { Stage } from "../stages/stage.entity";
 
 @ObjectType()
 @Entity()
-export class StagePlayerInfo {
+export class StagePlayerInfo extends BaseEntity {
   @Field(() => Int)
   @PrimaryColumn()
   stageId: number;

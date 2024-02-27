@@ -1,4 +1,5 @@
 import styled from "styled-components";
+import { StyledVerticalContainer } from "../../../components/Layout/VerticalContainer/VerticalContainer.styled";
 import { device } from "../../../design/breakpoints";
 
 export const StyledStatsContainer = styled.div`
@@ -10,8 +11,20 @@ export const StyledStatsContainer = styled.div`
   padding-top: 1rem;
 
   @media ${device.tablet} {
-    justify-content: start;
+    justify-content: center;
     gap: 5rem;
-    padding: 2rem;
+    padding-left: 2rem;
+  }
+
+  @media ${device.desktop} {
+    flex-direction: row;
   }
 `;
+
+export const StyledStatsSection = styled(StyledVerticalContainer)(
+  ({ theme }) => ({})
+);
+
+export const SetFilterContainer = styled.div(({ theme }) => ({
+  paddingTop: "1rem",
+}));

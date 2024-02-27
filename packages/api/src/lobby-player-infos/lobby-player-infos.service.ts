@@ -56,7 +56,7 @@ export class LobbyPlayerInfosService {
   }
 
   private deleteManyLobbyPlayers(lobbyId: number, playerIds: number[]) {
-    return this.lobbyPlayerInfoRepository.delete({
+    return this.lobbyPlayerInfoRepository.softDelete({
       lobbyId,
       playerId: In(playerIds),
     });

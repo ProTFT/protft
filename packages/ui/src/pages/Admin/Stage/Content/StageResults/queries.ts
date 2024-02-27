@@ -1,4 +1,4 @@
-import { gql } from "urql";
+import { graphql } from "../../../../../gql";
 import { Player, Stage } from "../../../../../graphql/schema";
 
 export interface LobbyGroupsQueryResult {
@@ -9,8 +9,8 @@ export type LobbyGroupsQueryVariables = {
   id: number;
 };
 
-export const LOBBY_GROUPS_QUERY = gql`
-  query stage($id: Int!) {
+export const LOBBY_GROUPS_QUERY = graphql(`
+  query oneStageWithLobbyGroupsAndRoundsPlayed($id: Int!) {
     stage(id: $id) {
       id
       lobbyGroups {
@@ -20,7 +20,7 @@ export const LOBBY_GROUPS_QUERY = gql`
       }
     }
   }
-`;
+`);
 
 export interface LobbyPlayersQueryResult {
   lobbies: {
@@ -34,8 +34,8 @@ export type LobbyPlayersQueryVariables = {
   lobbyGroupId: number;
 };
 
-export const LOBBY_PLAYERS_QUERY = gql`
-  query lobby($lobbyGroupId: Int!) {
+export const LOBBY_PLAYERS_QUERY = graphql(`
+  query listLobbiesWithPlayersByLobbyGroup($lobbyGroupId: Int!) {
     lobbies(lobbyGroupId: $lobbyGroupId) {
       id
       name
@@ -47,4 +47,4 @@ export const LOBBY_PLAYERS_QUERY = gql`
       }
     }
   }
-`;
+`);

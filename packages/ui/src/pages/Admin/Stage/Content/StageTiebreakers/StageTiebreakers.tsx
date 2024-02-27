@@ -4,29 +4,49 @@ import { useQuery, useMutation } from "urql";
 import { ProTFTButton } from "../../../../../components/Button/Button";
 import { Tiebreaker } from "../../../../../graphql/schema";
 import { client } from "../../../../../hooks/useAuth";
-import { BulkPlayerDialog } from "../../../Components/Dialogs/BulkPlayerDialog/BulkPlayerDialog";
+import { FileDialog } from "../../../Components/Dialogs/FileDialog/FileDialog";
 import { DeleteButton } from "../../../Components/DeleteButton/DeleteButton";
-import {
-  StyledLeftSide,
-  StyledRightSide,
-} from "../../../Components/Layout/TwoSided.styled";
 import { useToast } from "../../../Components/Toast/Toast";
 import {
-  StageQueryResponse,
+  APPLY_TIEBREAKER_TO_ALL_MUTATION,
+  CARRY_OVER_POINTS_MUTATION,
   STAGE_QUERY,
-  TiebreakersQueryResult,
   TIEBREAKERS_QUERY,
-  UpdateStageTiebreakersResult,
-  UpdateStageTiebreakersVariables,
   UPDATE_STAGE_TIEBREAKERS_MUTATION,
 } from "./queries";
 import {
-  StyledContainer,
-  StyledStageTiebreakerBar,
-  StyledStageTiebreakerList,
   StyledTiebreakerListItem,
   StyledTitle,
 } from "./StageTiebreakers.styled";
+import {
+  ApplyTiebreakersToAllStagesMutation,
+  ApplyTiebreakersToAllStagesMutationVariables,
+  CarryOverPointsFromLastStageMutation,
+  CarryOverPointsFromLastStageMutationVariables,
+  OneStageTiebreakersQuery,
+  OneStageTiebreakersQueryVariables,
+  TiebreakersQuery,
+  TiebreakersQueryVariables,
+  UpdateTiebreakersMutation,
+  UpdateTiebreakersMutationVariables,
+} from "../../../../../gql/graphql";
+import {
+  GridContainer,
+  GridLeftSide,
+  GridRightSide,
+} from "../../../Components/PlayerSelectionGrid/PlayerSelectionGrid.styled";
+import {
+  SearchListBody,
+  SearchListContainer,
+  SearchListEntry,
+} from "../../../Components/PlayerSearchList/PlayerSearchList.styled";
+import {
+  BoardListBody,
+  BoardListButtons,
+  BoardListContainer,
+  BoardListHeader,
+} from "../../../Components/BoardPlayerList/BoardPlayerList.styled";
+import { PlayerBoard } from "../../../Components/DroppableContainer/DroppableContainer.styled";
 
 export const StageTiebreakers = () => {
   const { stageId } = useParams();
@@ -34,21 +54,34 @@ export const StageTiebreakers = () => {
   const bulkTiebreakerDialogRef = useRef<HTMLDialogElement>(null);
   const bulkTiebreakerFormRef = useRef<HTMLFormElement>(null);
 
-  const [{ data: stageData }] = useQuery<StageQueryResponse>({
+  const [{ data: stageData }] = useQuery<
+    OneStageTiebreakersQuery,
+    OneStageTiebreakersQueryVariables
+  >({
     query: STAGE_QUERY,
     variables: {
       id: Number(stageId),
     },
   });
 
-  const [{ data }] = useQuery<TiebreakersQueryResult>({
+  const [{ data }] = useQuery<TiebreakersQuery, TiebreakersQueryVariables>({
     query: TIEBREAKERS_QUERY,
   });
 
   const [, updateTiebreakers] = useMutation<
-    UpdateStageTiebreakersResult,
-    UpdateStageTiebreakersVariables
+    UpdateTiebreakersMutation,
+    UpdateTiebreakersMutationVariables
   >(UPDATE_STAGE_TIEBREAKERS_MUTATION);
+
+  const [, carryOverPoints] = useMutation<
+    CarryOverPointsFromLastStageMutation,
+    CarryOverPointsFromLastStageMutationVariables
+  >(CARRY_OVER_POINTS_MUTATION);
+
+  const [, applyTiebreakerToAll] = useMutation<
+    ApplyTiebreakersToAllStagesMutation,
+    ApplyTiebreakersToAllStagesMutationVariables
+  >(APPLY_TIEBREAKER_TO_ALL_MUTATION);
 
   const [localStageTiebreakers, setLocalStageTiebreakers] = useState<number[]>(
     () => stageData?.stage.tiebreakers || []
@@ -109,6 +142,26 @@ export const StageTiebreakers = () => {
     bulkTiebreakerDialogRef.current?.showModal();
   }, []);
 
+  const onCarryOver = useCallback(async () => {
+    const result = await carryOverPoints({
+      stageId: Number(stageId),
+    });
+    if (result.error) {
+      return alert(result.error);
+    }
+    show();
+  }, [carryOverPoints, show, stageId]);
+
+  const onApplyTiebreakerToAll = useCallback(async () => {
+    const result = await applyTiebreakerToAll({
+      stageId: Number(stageId),
+    });
+    if (result.error) {
+      return alert(result.error);
+    }
+    show();
+  }, [applyTiebreakerToAll, show, stageId]);
+
   const onBulkAdd = useCallback(
     async (file: FileList) => {
       if (!file?.item(0)) {
@@ -140,38 +193,55 @@ export const StageTiebreakers = () => {
   );
 
   return (
-    <StyledContainer>
-      <BulkPlayerDialog
+    <GridContainer>
+      <FileDialog
         dialogRef={bulkTiebreakerDialogRef}
         formRef={bulkTiebreakerFormRef}
         onSubmit={onSubmitBulkTiebreaker}
       />
-      <StyledLeftSide>
-        {remainingTiebreakers.map((tb) => (
-          <StyledTiebreakerListItem
-            clickable
-            key={tb.id}
-            onClick={onAddTiebreaker(tb.id)}
-          >
-            {tb.description}
-          </StyledTiebreakerListItem>
-        ))}
-      </StyledLeftSide>
-      <StyledRightSide>
-        <StyledStageTiebreakerBar>
-          <StyledTitle>{`Stage Tiebreakers`}</StyledTitle>
-          <ProTFTButton onClick={onUploadBulk}>Upload Bulk</ProTFTButton>
-          <ProTFTButton onClick={onSave}>Save</ProTFTButton>
-        </StyledStageTiebreakerBar>
-        <StyledStageTiebreakerList>
-          {localStageTiebreakers.map((id) => (
-            <StyledTiebreakerListItem key={id}>
-              {tiebreakerMapping[id]}
-              <DeleteButton onClick={onRemoveTiebreaker(id)} />
-            </StyledTiebreakerListItem>
-          ))}
-        </StyledStageTiebreakerList>
-      </StyledRightSide>
-    </StyledContainer>
+      <GridLeftSide>
+        <SearchListContainer>
+          <SearchListBody>
+            {remainingTiebreakers.map((tb) => (
+              <SearchListEntry key={tb.id}>
+                <StyledTiebreakerListItem
+                  clickable
+                  onClick={onAddTiebreaker(tb.id)}
+                >
+                  {tb.description}
+                </StyledTiebreakerListItem>
+              </SearchListEntry>
+            ))}
+          </SearchListBody>
+        </SearchListContainer>
+      </GridLeftSide>
+      <GridRightSide>
+        <BoardListContainer>
+          <BoardListHeader>
+            <StyledTitle>Stage Tiebreakers</StyledTitle>
+            <BoardListButtons>
+              <ProTFTButton onClick={onUploadBulk}>Add seeding</ProTFTButton>
+              <ProTFTButton onClick={onCarryOver}>
+                Carry over points
+              </ProTFTButton>
+              <ProTFTButton onClick={onApplyTiebreakerToAll}>
+                Copy to all stages
+              </ProTFTButton>
+              <ProTFTButton onClick={onSave}>Save</ProTFTButton>
+            </BoardListButtons>
+          </BoardListHeader>
+          <BoardListBody>
+            <PlayerBoard>
+              {localStageTiebreakers.map((id) => (
+                <StyledTiebreakerListItem key={id}>
+                  {tiebreakerMapping[id]}
+                  <DeleteButton onClick={onRemoveTiebreaker(id)} />
+                </StyledTiebreakerListItem>
+              ))}
+            </PlayerBoard>
+          </BoardListBody>
+        </BoardListContainer>
+      </GridRightSide>
+    </GridContainer>
   );
 };

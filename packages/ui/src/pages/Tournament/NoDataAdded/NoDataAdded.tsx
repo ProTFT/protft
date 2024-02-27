@@ -5,13 +5,20 @@ import {
   StyledSubMessage,
 } from "./NoDataAdded.styled";
 
-export const NoDataAdded = () => {
+interface Props {
+  tournamentEndDate: string;
+}
+
+export const NoDataAdded = ({ tournamentEndDate }: Props) => {
+  const endDate = new Date(tournamentEndDate);
   return (
     <StyledContainer>
       <StyledMessage>No data added (yet!)</StyledMessage>
-      <StyledSubMessage>
-        <StyledLink href="/about#WhyNotAdded">Why</StyledLink>?
-      </StyledSubMessage>
+      {endDate < new Date() && (
+        <StyledSubMessage>
+          <StyledLink href="/about#WhyNotAdded">Why</StyledLink>?
+        </StyledSubMessage>
+      )}
     </StyledContainer>
   );
 };

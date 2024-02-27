@@ -1,8 +1,10 @@
-import { Suspense, useCallback, useState } from "react";
+import { Suspense, useCallback, useMemo, useState } from "react";
 import { Helmet } from "react-helmet";
 import { colors } from "../../design/colors";
 import { ArrowRightSimpleIcon } from "../../design/icons/ArrowRightSimple";
 import { usePagination } from "../../hooks/usePagination";
+import { useTracking } from "../../hooks/useTracking";
+import { TrackingEvents } from "../../tracking/Events";
 import { Filters, SortColumn, SortDirection, SortOption } from "./queries";
 import { RegionSelect } from "./RegionSelect/RegionSelect";
 import { SetSelect } from "./SetSelect/SetSelect";
@@ -30,21 +32,29 @@ const defaultSorting: { [key in SortColumn]: boolean } = {
 };
 
 const defaultFilter: { [key in Filters]: any } = {
-  [Filters.REGION]: "",
-  [Filters.SET]: 0,
+  [Filters.REGION]: [],
+  [Filters.SET]: [],
   [Filters.TOURNAMENTS]: [],
   [Filters.MINIMUM_GAMES]: 1,
 };
+
+export enum InputNames {
+  Set = "Set",
+  Tournaments = "Tournaments",
+  PlayerRegion = "PlayerRegion",
+  MinimumGames = "MinimumGames",
+}
 
 const ITEMS_PER_PAGE = 20;
 
 export const Stats = () => {
   const [page, setPage] = useState(0);
+  const { trackEvent } = useTracking();
 
-  const [regionFilter, setRegionFilter] = useState(
+  const [regionFilter, setRegionFilter] = useState<string[]>(
     defaultFilter[Filters.REGION]
   );
-  const [setFilter, setSetFilter] = useState<number>(
+  const [setFilter, setSetFilter] = useState<number[]>(
     defaultFilter[Filters.SET]
   );
   const [tournamentFilter, setTournamentFilter] = useState<number[]>(
@@ -61,13 +71,26 @@ export const Stats = () => {
   const onValueChange = useCallback(
     <T extends unknown>(
         changeFunction: React.Dispatch<React.SetStateAction<T>>,
-        defaultValue: T
+        defaultValue: T,
+        field: string
       ) =>
       (newValue?: T) => {
-        changeFunction(newValue || defaultValue);
+        const actualValue = newValue || defaultValue;
+        changeFunction(actualValue);
+        trackEvent(TrackingEvents.APPLY_FILTER, {
+          [InputNames.Set]: setFilter.join(","),
+          [InputNames.Tournaments]: tournamentFilter.join(","),
+          [InputNames.PlayerRegion]: regionFilter.join(","),
+          [InputNames.MinimumGames]: String(minimumGamesFilter),
+          ...{
+            [field]: Array.isArray(actualValue)
+              ? actualValue.join(",")
+              : actualValue,
+          },
+        });
         setPage(0);
       },
-    []
+    [minimumGamesFilter, regionFilter, setFilter, tournamentFilter, trackEvent]
   );
 
   const changeSorting = useCallback(
@@ -89,41 +112,58 @@ export const Stats = () => {
     setPage((curr) => curr + 1);
   }, []);
 
+  const isSetSelectDisabled = useMemo(
+    () => Boolean(!setFilter.length && tournamentFilter.length),
+    [setFilter.length, tournamentFilter.length]
+  );
+
   const { paginationArgs } = usePagination(page, ITEMS_PER_PAGE);
 
   return (
     <StyledContainer>
       <Helmet>
         <title>Stats</title>
+        <meta
+          name="description"
+          content="Check out competitive stats for professional tournaments of Teamfight
+          Tactics (TFT)"
+        />
       </Helmet>
       <StyledStatsFilters>
-        <StyledFilterContainer>
-          <StyledFilterLabel>Tournaments</StyledFilterLabel>
-          <TournamentSelect
-            value={tournamentFilter}
-            onValueChange={onValueChange<number[]>(
-              setTournamentFilter,
-              defaultFilter[Filters.TOURNAMENTS]
-            )}
-          />
-        </StyledFilterContainer>
         <StyledFilterContainer>
           <StyledFilterLabel>Set</StyledFilterLabel>
           <SetSelect
             value={setFilter}
-            onValueChange={onValueChange<number>(
+            onValueChange={onValueChange<number[]>(
               setSetFilter,
-              defaultFilter[Filters.SET]
+              defaultFilter[Filters.SET],
+              InputNames.Set
             )}
+            isDisabled={isSetSelectDisabled}
           />
         </StyledFilterContainer>
         <StyledFilterContainer>
-          <StyledFilterLabel>Region</StyledFilterLabel>
+          <StyledFilterLabel>Tournaments</StyledFilterLabel>
+          <Suspense>
+            <TournamentSelect
+              value={tournamentFilter}
+              onValueChange={onValueChange<number[]>(
+                setTournamentFilter,
+                defaultFilter[Filters.TOURNAMENTS],
+                InputNames.Tournaments
+              )}
+              setIds={setFilter}
+            />
+          </Suspense>
+        </StyledFilterContainer>
+        <StyledFilterContainer>
+          <StyledFilterLabel>Player region</StyledFilterLabel>
           <RegionSelect
             value={regionFilter}
-            onValueChange={onValueChange<string>(
+            onValueChange={onValueChange<string[]>(
               setRegionFilter,
-              defaultFilter[Filters.REGION]
+              defaultFilter[Filters.REGION],
+              InputNames.PlayerRegion
             )}
           />
         </StyledFilterContainer>
@@ -135,7 +175,8 @@ export const Stats = () => {
             onChange={(event) =>
               onValueChange<number>(
                 setMinimumGamesFilter,
-                defaultFilter[Filters.MINIMUM_GAMES]
+                defaultFilter[Filters.MINIMUM_GAMES],
+                InputNames.MinimumGames
               )(Number(event.target.value))
             }
           />
@@ -145,7 +186,9 @@ export const Stats = () => {
         <StyledPlayerTable>
           <StyledPlayerTableHeader>
             <StyledPlayerTableHeaderRow>
-              <StyledPlayerTableHeaderData>Player</StyledPlayerTableHeaderData>
+              <StyledPlayerTableHeaderData alignment={"left"}>
+                Player
+              </StyledPlayerTableHeaderData>
               <StyledPlayerTableHeaderData
                 onClick={changeSorting(SortColumn.AVERAGE_POSITION)}
               >

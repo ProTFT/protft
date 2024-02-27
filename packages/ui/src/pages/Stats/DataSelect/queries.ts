@@ -1,13 +1,9 @@
-import { gql } from "urql";
-import { Set, Tournament } from "../../../graphql/schema";
+import { graphql } from "../../../gql";
+import { Set } from "../../../graphql/schema";
 
-export interface TournamentsQueryResponse {
-  tournamentsWithStats: Tournament[];
-}
-
-export const TOURNAMENTS_WITH_STATS_QUERY = gql`
-  query tournaments {
-    tournamentsWithStats {
+export const TOURNAMENTS_WITH_STATS_QUERY = graphql(`
+  query listTournamentsWithStats($setIds: [Int!]) {
+    tournamentsWithStats(setIds: $setIds) {
       id
       name
       set {
@@ -16,17 +12,33 @@ export const TOURNAMENTS_WITH_STATS_QUERY = gql`
       }
     }
   }
-`;
+`);
+
+export const TOURNAMENTS_WITH_STATS_AND_FILTER_QUERY = graphql(`
+  query listTournamentsWithStatsAndFilter(
+    $searchQuery: String
+    $setIds: [Int!]
+  ) {
+    tournamentsWithStats(searchQuery: $searchQuery, setIds: $setIds) {
+      id
+      name
+      set {
+        id
+        name
+      }
+    }
+  }
+`);
 
 export interface SetsQueryResponse {
   sets: Set[];
 }
 
-export const SETS_QUERY = gql`
-  query sets {
+export const SETS_QUERY = graphql(`
+  query listSets {
     sets {
       id
       name
     }
   }
-`;
+`);

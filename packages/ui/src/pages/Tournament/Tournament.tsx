@@ -2,15 +2,18 @@ import React, { useCallback, Suspense, useState, useMemo } from "react";
 import { Helmet } from "react-helmet";
 import { useParams } from "react-router-dom";
 import { useQuery } from "urql";
+import { S3_FOLDER_PATH } from "../../aws/Constants";
 import { TournamentContent } from "../../components/TournamentContent/TournamentContent";
+import { formatDateFromDB } from "../../formatter/Date";
+import { TournamentQuery, TournamentQueryVariables } from "../../gql/graphql";
 import { Stage } from "../../graphql/schema";
 import { useIsMobile } from "../../hooks/useIsMobile";
+import { useTracking } from "../../hooks/useTracking";
 import { getEventMetadata } from "../../seo/Event";
+import { TrackingEvents } from "../../tracking/Events";
 import { InfoBar } from "./InfoBar/InfoBar";
-import {
-  TournamentBySlugQueryResponse,
-  TOURNAMENT_BY_SLUG_QUERY,
-} from "./queries";
+import { TOURNAMENT_BY_SLUG_QUERY } from "./queries";
+import { SkeletonResultTable } from "./Results/ResultTable/SkeletonResultTable";
 import { Stages } from "./Stages/Stages";
 import {
   StyledBodyContainer,
@@ -25,44 +28,60 @@ const Results = React.lazy(() =>
 
 export const Tournament = () => {
   const { tournamentSlug } = useParams();
-  const [{ data }] = useQuery<TournamentBySlugQueryResponse>({
+  const [{ data }] = useQuery<TournamentQuery, TournamentQueryVariables>({
     query: TOURNAMENT_BY_SLUG_QUERY,
-    variables: { slug: tournamentSlug },
+    variables: { slug: tournamentSlug! },
   });
 
   const description = useMemo(() => {
-    const tournament = data?.tournamentBySlug;
-    return `${tournament?.name} is a competitive Teamfight Tactics (TFT) tournament in the ${tournament?.region} region. ${tournament?.participantsNumber} players will face off to win a prize of ${tournament?.prizePool} ${tournament?.currency}.`;
+    const {
+      name,
+      region,
+      participantsNumber,
+      prizePool,
+      currency,
+      startDate,
+      endDate,
+    } = data?.tournamentBySlug ?? {};
+    const formattedStartDate = formatDateFromDB(startDate);
+    const formattedEndDate = formatDateFromDB(endDate);
+    return `${name} is a competitive Teamfight Tactics (TFT) tournament in the ${region} region. From ${formattedStartDate} to ${formattedEndDate}, ${participantsNumber} players will face off to win a prize of ${prizePool} ${currency}.`;
   }, [data?.tournamentBySlug]);
 
   const [open, setOpen] = useState(false);
   const [openStage, setOpenStage] = useState<Stage | null>(null);
 
   const isMobile = useIsMobile();
+  const { trackEvent } = useTracking();
 
   const onSelectStage = useCallback(
     (selectedStage: Stage) => {
-      setOpen((isOpen) =>
-        isOpen && openStage?.id !== selectedStage.id ? isOpen : !isOpen
-      );
-      setOpenStage((openStage) =>
-        open && openStage?.id === selectedStage.id ? null : selectedStage
-      );
+      const hasClickedClosedStage = openStage?.id !== selectedStage.id;
+
+      if (hasClickedClosedStage) {
+        trackEvent(TrackingEvents.TOURNAMENT_STAGE_OPEN, {
+          tournamentStage: `${data?.tournamentBySlug.name} - ${selectedStage.name}`,
+        });
+      }
+
+      setOpen(hasClickedClosedStage);
+      setOpenStage(hasClickedClosedStage ? selectedStage : null);
     },
-    [open, openStage?.id]
+    [data?.tournamentBySlug.name, openStage?.id, trackEvent]
   );
 
   return (
     <>
       <Helmet>
         <title>{data?.tournamentBySlug.name}</title>
+        <meta name="description" content={description} />
         <script type="application/ld+json">
           {getEventMetadata({
             name: data!.tournamentBySlug.name,
             description,
             startDateTime: data!.tournamentBySlug.startDate,
             endDateTime: data!.tournamentBySlug.endDate,
-            image: `https://www.protft.com/sets/${
+            image: `${S3_FOLDER_PATH}/sets/${
               data!.tournamentBySlug.setId
             }.webp`,
             host: data!.tournamentBySlug.host || "",
@@ -82,12 +101,16 @@ export const Tournament = () => {
           />
         )}
         <Stages
-          tournament={data?.tournamentBySlug}
+          tournament={data?.tournamentBySlug as any}
           onSelectStage={onSelectStage}
           openStage={openStage}
         />
-        <Suspense fallback={null}>
-          <Results open={open} selectedStage={openStage} />
+        <Suspense fallback={<SkeletonResultTable />}>
+          <Results
+            open={open}
+            selectedStage={openStage}
+            tournamentEndDate={data?.tournamentBySlug.endDate}
+          />
         </Suspense>
       </StyledBodyContainer>
     </>

@@ -1,11 +1,20 @@
-import { Column, Entity, JoinColumn, ManyToOne, PrimaryColumn } from "typeorm";
+import {
+  Column,
+  Entity,
+  Index,
+  JoinColumn,
+  ManyToOne,
+  PrimaryColumn,
+} from "typeorm";
 import { Round } from "../rounds/round.entity";
 import { LobbyPlayerInfo } from "../lobby-player-infos/lobby-player-info.entity";
 import { Field, Int, ObjectType } from "@nestjs/graphql";
+import { BaseEntity } from "../lib/BaseEntity";
 
 @ObjectType()
 @Entity()
-export class RoundResult {
+@Index(["lobbyPlayerId"], { unique: false, where: `\"deletedAt\" is null` })
+export class RoundResult extends BaseEntity {
   @Field(() => Int)
   @PrimaryColumn()
   roundId: number;

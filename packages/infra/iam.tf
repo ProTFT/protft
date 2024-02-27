@@ -16,6 +16,27 @@ resource "aws_iam_role" "ecs_task_role" {
   ]
 }
 EOF
+
+inline_policy {
+  name = "ptft-ecs-task-access-dynamodb"
+  policy = <<EOF
+{
+  "Version": "2012-10-17",
+  "Statement": [
+    {
+      "Effect": "Allow",
+      "Action": [
+        "dynamodb:GetItem",
+        "dynamodb:PutItem",
+        "dynamodb:Scan",
+        "dynamodb:BatchWriteItem"
+      ],
+      "Resource": "*"
+    }
+  ]
+}
+EOF
+}
 }
 
 resource "aws_iam_role" "ecs_task_execution_role" {
@@ -51,23 +72,23 @@ resource "aws_iam_role_policy_attachment" "ecs-task-execution-role-policy-attach
 # {
 #     "Version": "2012-10-17",
 #     "Statement": [
-#         {
-#             "Effect": "Allow",
-#             "Action": [
-#                 "dynamodb:CreateTable",
-#                 "dynamodb:UpdateTimeToLive",
-#                 "dynamodb:PutItem",
-#                 "dynamodb:DescribeTable",
-#                 "dynamodb:ListTables",
-#                 "dynamodb:DeleteItem",
-#                 "dynamodb:GetItem",
-#                 "dynamodb:Scan",
-#                 "dynamodb:Query",
-#                 "dynamodb:UpdateItem",
-#                 "dynamodb:UpdateTable"
-#             ],
-#             "Resource": "*"
-#         }
+        # {
+        #     "Effect": "Allow",
+        #     "Action": [
+        #         "dynamodb:CreateTable",
+        #         "dynamodb:UpdateTimeToLive",
+        #         "dynamodb:PutItem",
+        #         "dynamodb:DescribeTable",
+        #         "dynamodb:ListTables",
+        #         "dynamodb:DeleteItem",
+        #         "dynamodb:GetItem",
+        #         "dynamodb:Scan",
+        #         "dynamodb:Query",
+        #         "dynamodb:UpdateItem",
+        #         "dynamodb:UpdateTable"
+        #     ],
+        #     "Resource": "*"
+        # }
 #     ]
 # }
 # EOF

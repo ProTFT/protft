@@ -46,3 +46,8 @@ variable "cookie_secret" {
   type        = string
   description = "Cookie encryption"
 }
+
+variable "api_key" {
+  type = string
+  description = "API Key for REST endpoints"
+}

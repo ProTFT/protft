@@ -8,10 +8,12 @@ import {
   UseInterceptors,
 } from "@nestjs/common";
 import { FileInterceptor } from "@nestjs/platform-express";
+import { ApiExcludeController } from "@nestjs/swagger";
 import { JwtAuthGuard } from "../auth/jwt-auth.guard";
 import { RoundResultsService } from "./round-results.service";
 
 @Controller("roundResults")
+@ApiExcludeController()
 export class RoundResultsController {
   constructor(private roundResultsService: RoundResultsService) {}
 

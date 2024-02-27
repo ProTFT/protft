@@ -1,12 +1,12 @@
-import { gql } from "urql";
+import { graphql } from "../../gql";
 import { Player, TournamentsPlayed } from "../../graphql/schema";
 
 export interface PlayerTournamentQueryResult {
   tournamentsPlayed: TournamentsPlayed[];
 }
 
-export const PLAYER_TOURNAMENT_QUERY = gql`
-  query tournamentsPlayed($playerId: Int!) {
+export const PLAYER_TOURNAMENT_QUERY = graphql(`
+  query listTournamentsPlayedByPlayer($playerId: Int!) {
     tournamentsPlayed(playerId: $playerId) {
       id
       name
@@ -24,24 +24,33 @@ export const PLAYER_TOURNAMENT_QUERY = gql`
       finalPosition
     }
   }
-`;
+`);
 
 export interface PlayerBySlugQueryResult {
-  playerBySlug: Pick<
-    Player,
-    "id" | "name" | "region" | "country" | "playerStats" | "alias"
-  >;
+  playerBySlug: Pick<Player, "id" | "name" | "region" | "country" | "alias">;
 }
 
-export const PLAYER_BY_SLUG_QUERY = gql`
-  query player($slug: String!) {
+export const PLAYER_BY_SLUG_QUERY = graphql(`
+  query onePlayerBySlug($slug: String!) {
     playerBySlug(slug: $slug) {
       id
       name
       region
       country
       alias
-      playerStats {
+    }
+  }
+`);
+
+export interface PlayerStatsBySlugQueryResult {
+  player: Pick<Player, "id" | "playerStats">;
+}
+
+export const PLAYER_STATS_QUERY = graphql(`
+  query onePlayerWithStats($id: Int!, $setId: Int) {
+    player(id: $id) {
+      id
+      playerStats(setId: $setId) {
         averagePosition
         totalGames
         topFourCount
@@ -49,4 +58,4 @@ export const PLAYER_BY_SLUG_QUERY = gql`
       }
     }
   }
-`;
+`);

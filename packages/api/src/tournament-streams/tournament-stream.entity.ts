@@ -1,10 +1,11 @@
 import { Field, Int, ObjectType } from "@nestjs/graphql";
 import { Column, Entity, ManyToOne, PrimaryColumn } from "typeorm";
-import { Tournament } from "../tournaments/tournament.entity";
+import { BaseEntity } from "../lib/BaseEntity";
+import { Tournament } from "../tournaments/entities/tournament.entity";
 
 @Entity()
 @ObjectType()
-export class TournamentStream {
+export class TournamentStream extends BaseEntity {
   @PrimaryColumn()
   @Field(() => Int)
   tournamentId: number;

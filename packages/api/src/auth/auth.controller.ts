@@ -9,6 +9,7 @@ import {
   UseGuards,
 } from "@nestjs/common";
 import { ConfigService } from "@nestjs/config";
+import { ApiExcludeController } from "@nestjs/swagger";
 import {
   Response as ExpressResponse,
   Request as ExpressRequest,
@@ -19,6 +20,7 @@ import { JwtAuthGuard } from "./jwt-auth.guard";
 import { LocalAuthGuard } from "./local-auth.guard";
 
 @Controller("auth")
+@ApiExcludeController()
 export class AuthController {
   constructor(
     private authService: AuthService,
@@ -38,19 +40,25 @@ export class AuthController {
     @Request() req: ExpressRequest & { user: StrippedUser },
     @Response() res: ExpressResponse,
   ) {
-    const response = await this.authService.login(req.user, res);
-    return response.status(202).send();
+    const [response, user] = await this.authService.login(req.user, res);
+    return response.status(202).send({
+      roles: user.roles,
+    });
   }
 
   @Post("signin")
   async signin(
     @Body()
-    { username, password, key }: CreateUserBodyDto,
+    { username, password, key, roles }: CreateUserBodyDto,
   ) {
     if (!key || key !== this.configService.get("SIGNIN_KEY")) {
       throw new UnauthorizedException();
     }
-    await this.authService.signin(username, password);
+    await this.authService.signin({
+      username,
+      password,
+      roles,
+    });
   }
 
   @Post("logout")

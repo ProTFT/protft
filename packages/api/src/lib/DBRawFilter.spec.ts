@@ -4,6 +4,7 @@ import {
   beforeOrToday,
   beforeToday,
   includes,
+  includesInt,
   isEqualName,
 } from "./DBRawFilter";
 
@@ -38,5 +39,12 @@ describe("DB Raw Filters", () => {
       expect(includes(["a", "b"])(alias)).toBe(
         "field && array['a','b']::character varying []",
       ));
+  });
+
+  describe("Comparing number arrays", () => {
+    const alias = "field";
+
+    it("includesInt", () =>
+      expect(includesInt([1, 2])(alias)).toBe("field && array[1,2]"));
   });
 });

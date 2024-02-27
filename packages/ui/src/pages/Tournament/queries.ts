@@ -1,16 +1,11 @@
-import { gql } from "urql";
+import { graphql } from "../../gql";
 import {
   LobbyGroupWithLobbies,
   Player,
   PlayerResults,
-  Tournament,
 } from "../../graphql/schema";
 
-export interface TournamentBySlugQueryResponse {
-  tournamentBySlug: Tournament;
-}
-
-export const TOURNAMENT_BY_SLUG_QUERY = gql`
+export const TOURNAMENT_BY_SLUG_QUERY = graphql(`
   query tournament($slug: String!) {
     tournamentBySlug(slug: $slug) {
       id
@@ -32,14 +27,13 @@ export const TOURNAMENT_BY_SLUG_QUERY = gql`
         name
         sequence
         description
-        isFinal
         roundCount
         stageType
         qualifiedCount
       }
     }
   }
-`;
+`);
 
 export interface ResultsByLobbyGroup {
   player: Player;
@@ -51,8 +45,8 @@ export interface ResultsByLobbyGroupQueryResponse {
   resultsByStage: PlayerResults[];
 }
 
-export const RESULTS_BY_STAGE_QUERY = gql`
-  query ($stageId: Int!) {
+export const RESULTS_BY_STAGE_QUERY = graphql(`
+  query listResultsByStage($stageId: Int!) {
     resultsByStage(stageId: $stageId) {
       player {
         id
@@ -64,7 +58,7 @@ export const RESULTS_BY_STAGE_QUERY = gql`
       points
     }
   }
-`;
+`);
 
 export interface ResultsByLobbyGroup {
   player: Player;
@@ -76,8 +70,8 @@ export interface ResultsByLobbyQueryResponse {
   lobbyResultsByStage: LobbyGroupWithLobbies[];
 }
 
-export const RESULTS_BY_LOBBY = gql`
-  query ($stageId: Int!) {
+export const RESULTS_BY_LOBBY = graphql(`
+  query listLobbyResultsByStage($stageId: Int!) {
     lobbyResultsByStage(stageId: $stageId) {
       id
       roundsPlayed
@@ -97,4 +91,4 @@ export const RESULTS_BY_LOBBY = gql`
       }
     }
   }
-`;
+`);

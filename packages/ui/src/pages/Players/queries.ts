@@ -1,4 +1,4 @@
-import { gql } from "urql";
+import { graphql } from "../../gql";
 import { PaginationArgs } from "../../graphql/pagination";
 import { Player } from "../../graphql/schema";
 
@@ -15,7 +15,7 @@ export interface PlayersQueryVariables extends PaginationArgs {
   searchQuery?: string;
 }
 
-export const PLAYERS_QUERY = gql`
+export const PLAYERS_QUERY = graphql(`
   query players(
     $region: String
     $country: String
@@ -38,4 +38,4 @@ export const PLAYERS_QUERY = gql`
       alias
     }
   }
-`;
+`);

@@ -7,13 +7,14 @@ export const StyledLobbyGroupContainer = styled(StyledVerticalContainer)`
 `;
 
 export const StyledBar = styled(StyledVerticalContainer)`
-  align-items: center;
-  justify-content: center;
   gap: 2rem;
 `;
 
-export const StyledButtonContainer = styled(StyledHorizontalContainer)`
-  gap: 1rem;
+export const StyledButtonContainer = styled.div`
+  display: grid;
+  column-gap: 1rem;
+  row-gap: 0.5rem;
+  grid-template-columns: 1fr 1fr 1fr;
 `;
 
 export const StyledLobbyContainer = styled(StyledHorizontalContainer)`
@@ -23,5 +24,6 @@ export const StyledLobbyContainer = styled(StyledHorizontalContainer)`
 
 export const StyledTitleContainer = styled(StyledHorizontalContainer)`
   align-items: center;
+  justify-content: center;
   gap: 1rem;
 `;

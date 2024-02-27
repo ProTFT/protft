@@ -1,31 +1,24 @@
-import { gql } from "urql";
-import { Stage, Tournament } from "../../../graphql/schema";
+import { graphql } from "../../../gql";
 
-export interface StageQueryResponse {
-  stage: Stage;
-}
-
-export const STAGE_QUERY = gql`
-  query stage($id: Int!) {
+export const STAGE_QUERY = graphql(`
+  query oneStage($id: Int!) {
     stage(id: $id) {
       id
       name
       description
       sequence
+      sequenceForResult
       pointSchemaId
       roundCount
       qualifiedCount
       stageType
+      startDateTime
     }
   }
-`;
+`);
 
-export interface TournamentQueryResponse {
-  tournament: Tournament;
-}
-
-export const TOURNAMENT_QUERY = gql`
-  query tournament($id: Int!) {
+export const TOURNAMENT_QUERY = graphql(`
+  query oneTournamentWithSet($id: Int!) {
     tournament(id: $id) {
       id
       name
@@ -35,4 +28,4 @@ export const TOURNAMENT_QUERY = gql`
       }
     }
   }
-`;
+`);

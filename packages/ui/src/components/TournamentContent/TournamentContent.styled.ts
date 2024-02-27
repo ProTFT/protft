@@ -167,4 +167,51 @@ export const StyledTournamentInfoInnerContainer = styled(
   }
 `;
 
+export const TournamentTimeLeftContainer = styled(StyledVerticalContainer)`
+  align-self: end;
+  align-items: center;
+
+  @media ${device.tablet} {
+    align-self: center;
+  }
+
+  @media ${device.desktop} {
+    align-self: center;
+  }
+`;
+
+export const TournamentTimeLeftSubtitle = styled.p`
+  color: ${colors.white};
+  font-family: VTF Redzone Classic;
+  font-size: 20px;
+  font-weight: 400;
+  letter-spacing: 0.25em;
+  text-align: left;
+
+  @media ${device.tablet} {
+    font-size: 12px;
+  }
+
+  @media ${device.desktop} {
+    font-size: 12px;
+  }
+`;
+
+export const TournamentTimeLeft = styled.p`
+  color: ${colors.white};
+  font-family: VTF Redzone Classic;
+  font-size: 20px;
+  font-weight: 400;
+  letter-spacing: 0.1em;
+  text-align: left;
+
+  @media ${device.tablet} {
+    font-size: 28px;
+  }
+
+  @media ${device.desktop} {
+    font-size: 32px;
+  }
+`;
+
 export const StyledRegionDateContainer = styled(StyledVerticalContainer)``;

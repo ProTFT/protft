@@ -8,6 +8,7 @@ import { LobbiesService } from "../lobbies/lobbies.service";
 import { createLobbyName } from "../lobbies/lobby.logic";
 import { RoundsService } from "../rounds/rounds.service";
 import { StagePlayerInfo } from "../stage-player-infos/stage-player-info.entity";
+import { ApplyTiebreakersArgs } from "./dto/apply-tiebreakers.args";
 import { CreateLobbiesResponse } from "./dto/create-lobbies.result";
 import {
   CreateStagePlayerArgs,
@@ -36,10 +37,14 @@ export class StagesService {
     });
   }
 
-  findAllByTournament(tournamentId: number): Promise<Stage[]> {
+  findAllByTournament(
+    tournamentId: number,
+    relations?: string[],
+  ): Promise<Stage[]> {
     return this.stageRepository.find({
       where: { tournamentId },
       order: { sequence: "ASC" },
+      relations,
     });
   }
 
@@ -49,7 +54,7 @@ export class StagesService {
     );
     const stageIndex = allTournamentStages.findIndex((s) => s.id === stage.id);
     if (stageIndex <= 0) {
-      throw new NotFoundException();
+      throw new NotFoundException("There is no previous stage");
     }
     return allTournamentStages[stageIndex - 1];
   }
@@ -89,7 +94,7 @@ export class StagesService {
   }
 
   async deleteOne(id: number): Promise<DeleteResponse> {
-    await this.stageRepository.delete({ id });
+    await this.stageRepository.softDelete({ id });
     return new DeleteResponse(id);
   }
 
@@ -98,8 +103,31 @@ export class StagesService {
     roundsPerLobbyGroup: number,
     playerCount: number,
   ): Promise<CreateLobbiesResponse> {
+    if (!roundsPerLobbyGroup) {
+      throw Error("Rounds before lobby swap need to be > 0");
+    }
     const stageRoundCount = await this.roundService.countByStage(stageId);
+    if (stageRoundCount % roundsPerLobbyGroup !== 0) {
+      throw Error(`
+        Can't properly calculate number of lobby iterations.
+        Number of rounds: ${stageRoundCount}
+        Rounds per lobby iteration: ${roundsPerLobbyGroup}
+        Resulting number of iterations: ${stageRoundCount / roundsPerLobbyGroup}
+
+        Total number of rounds need to be divisible by the quantity before lobby swap
+      `);
+    }
     const numberOfLobbyGroups = stageRoundCount / roundsPerLobbyGroup;
+    if (playerCount % PLAYERS_IN_TFT_LOBBY !== 0) {
+      throw Error(`
+      Can't properly calculate number of lobbies.
+      Number of players: ${playerCount}
+      Player per lobby: ${PLAYERS_IN_TFT_LOBBY}
+      Resulting number of lobbies: ${playerCount / PLAYERS_IN_TFT_LOBBY}
+      
+      Total number of players needs to be divisible by ${PLAYERS_IN_TFT_LOBBY}
+      `);
+    }
     const numberOfLobbiesPerGroup = playerCount / PLAYERS_IN_TFT_LOBBY;
     const lobbyGroupsToCreate = new Array(numberOfLobbyGroups)
       .fill(1)
@@ -156,6 +184,16 @@ export class StagesService {
     );
 
     return this.createStagePlayers({ stageId, playerIds });
+  }
+
+  async applyTiebreakersToAll({ stageId }: ApplyTiebreakersArgs) {
+    const { tournamentId, tiebreakers } = await this.findOne(stageId);
+    const allStages = await this.findAllByTournament(tournamentId);
+    const updatedStages = allStages.map((stage) => ({
+      ...stage,
+      tiebreakers,
+    }));
+    return this.stageRepository.save(updatedStages);
   }
 
   private async createRounds(stageId: number, roundCount: number) {

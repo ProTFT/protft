@@ -14,6 +14,7 @@ import {
   fromRawToConsolidatedRoundResults,
 } from "./round-result.adapter";
 import {
+  PlayerResultsWithPast,
   SortingMethodsNeedPastResults,
   sortResults,
 } from "./round-result.logic";
@@ -30,6 +31,10 @@ import {
 } from "./bulk-creation.logic";
 import { LobbyGroupWithLobbies } from "./dto/get-lobby-results.out";
 import { RoundsService } from "../rounds/rounds.service";
+import { StagePlayerInfosService } from "../stage-player-infos/stage-player-infos.service";
+import { StagePlayerInfo } from "../stage-player-infos/stage-player-info.entity";
+import { CarryOverPointsArgs } from "./dto/carry-over-points.args";
+import { SuccessResponse } from "../lib/dto/ok-return";
 
 interface FileLineWithPlayerLobby {
   lobbyPlayerId: number;
@@ -46,7 +51,42 @@ export class RoundResultsService {
     private lobbyPlayerInfosService: LobbyPlayerInfosService,
     private lobbiesService: LobbiesService,
     private roundsService: RoundsService,
+    private stagePlayerInfosService: StagePlayerInfosService,
   ) {}
+
+  public async carryOverPointsFromLastStage({
+    stageId,
+  }: CarryOverPointsArgs): Promise<SuccessResponse> {
+    const { sequence, tournamentId, players } =
+      await this.stagesService.findOne(stageId, ["players"]);
+    const stagePlayerIds = players.map((player) => player.playerId);
+    const stagesFromTournament = await this.stagesService.findAllByTournament(
+      tournamentId,
+    );
+    const lastStage = stagesFromTournament.find(
+      (stage) => stage.sequence === sequence - 1,
+    );
+    if (!lastStage) {
+      throw new BadRequestException("No stage to copy from");
+    }
+    const lastStageResults = await this.overviewResultsByStage(lastStage.id);
+
+    const filteredResults = lastStageResults.filter((result) =>
+      stagePlayerIds.includes(result.player.id),
+    );
+    const playerPoints = filteredResults.map<
+      Omit<StagePlayerInfo, "stage" | "player">
+    >((playerResult) => ({
+      ...players.find(
+        (stagePlayer) => stagePlayer.playerId === playerResult.player.id,
+      ),
+      extraPoints: lastStageResults
+        .find((result) => result.player.id === playerResult.player.id)
+        .points.reduce((a, b) => a + b, 0),
+    }));
+    await this.stagePlayerInfosService.updateMany(playerPoints);
+    return new SuccessResponse(true);
+  }
 
   public async createResults({
     lobbyGroupId,
@@ -127,9 +167,26 @@ export class RoundResultsService {
     return this.roundResultsRepository.save(finalPayload);
   }
 
-  public async overviewResultsByStage(stageId: number) {
-    const { tiebreakers, tournamentId, sequence } =
-      await this.stagesService.findOne(stageId);
+  public async overviewResultsByStage(
+    stageId: number,
+  ): Promise<PlayerResultsWithPast[]> {
+    const { tiebreakers, tournamentId, sequence, lobbyGroups } =
+      await this.stagesService.findOne(stageId, ["lobbyGroups"]);
+
+    if (!lobbyGroups.length) {
+      const stagePlayers = await this.stagePlayerInfosService.findAllByStage(
+        stageId,
+      );
+      return stagePlayers.map((stagePlayer) => ({
+        player: stagePlayer.player,
+        positions: [],
+        points: [],
+        tiebreakerRanking: 0,
+        lobbyPlayerId: 0,
+        pastPoints: 0,
+        pastPositions: [],
+      }));
+    }
     const results = await this.findResultsByStage(stageId);
     const formattedResults = fromRawToConsolidatedRoundResults(results);
     if (tiebreakers?.some((t) => SortingMethodsNeedPastResults.includes(t))) {
@@ -236,7 +293,8 @@ export class RoundResultsService {
             "tournament.id = stage.tournamentId",
           )
           .groupBy("player.id")
-          .where("lpi.playerId = :playerId", { playerId });
+          .where("lpi.playerId = :playerId", { playerId })
+          .andWhere("result.position NOT IN (0, 9)");
 
         if (setId) {
           query = query.andWhere("tournament.setId = :setId", { setId });
@@ -286,10 +344,10 @@ export class RoundResultsService {
   }
 
   private findStats({
-    setId,
+    setIds,
     skip,
     take = 10,
-    region,
+    regions,
     tournamentIds,
     sort,
     minimumGames = 0,
@@ -315,6 +373,7 @@ export class RoundResultsService {
             let query = baseQuery
               .addSelect("player.*")
               .from("round_result", "result")
+              .where("result.position NOT IN (0, 9)")
               .innerJoin(
                 "lobby_player_info",
                 "lpi",
@@ -326,15 +385,17 @@ export class RoundResultsService {
               .innerJoin("tournament", "t", "t.id = s.tournamentId")
               .groupBy("player.id");
 
-            if (region) {
-              query = query.andWhere("player.region = :region", { region });
+            if (regions?.length) {
+              query = query.andWhere("player.region IN (:...regions)", {
+                regions,
+              });
             }
 
-            if (setId) {
-              query = query.andWhere("t.setId = :setId", { setId });
+            if (setIds?.length) {
+              query = query.andWhere("t.setId IN (:...setIds)", { setIds });
             }
 
-            if (tournamentIds && tournamentIds.length) {
+            if (tournamentIds?.length) {
               query = query.andWhere("t.id IN (:...tournamentIds)", {
                 tournamentIds,
               });

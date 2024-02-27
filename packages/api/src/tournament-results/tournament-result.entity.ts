@@ -1,11 +1,12 @@
 import { Column, Entity, ManyToOne, PrimaryColumn } from "typeorm";
-import { Field, Int, ObjectType } from "@nestjs/graphql";
-import { Tournament } from "../tournaments/tournament.entity";
+import { Field, Float, Int, ObjectType } from "@nestjs/graphql";
+import { Tournament } from "../tournaments/entities/tournament.entity";
 import { Player } from "../players/player.entity";
+import { BaseEntity } from "../lib/BaseEntity";
 
 @Entity()
 @ObjectType()
-export class TournamentResult {
+export class TournamentResult extends BaseEntity {
   @Field(() => Int)
   @PrimaryColumn()
   tournamentId: number;
@@ -18,9 +19,29 @@ export class TournamentResult {
   @Column()
   finalPosition: string;
 
-  @Field(() => Int)
+  @Field(() => [Int])
+  @Column("int", { array: true, default: [] })
+  qualifyTo: number[];
+
+  @Field(() => Float)
   @Column({ default: 0 })
   prize: number;
+
+  @Field()
+  @Column({ default: "" })
+  currency: string;
+
+  @Field(() => Float)
+  @Column({ default: 0 })
+  prizeInUSD: number;
+
+  @Field(() => Int)
+  @Column({ default: 0 })
+  circuitId: number;
+
+  @Field(() => Int)
+  @Column({ default: 0 })
+  circuitPointsEarned: number;
 
   @Field()
   @Column({ default: "" })

@@ -21,9 +21,10 @@ export enum ViewType {
 interface Props {
   open: boolean;
   selectedStage: Stage | null;
+  tournamentEndDate: string;
 }
 
-export const Results = ({ open, selectedStage }: Props) => {
+export const Results = ({ open, selectedStage, tournamentEndDate }: Props) => {
   const [currentView, setCurrentView] = useState(ViewType.OVERVIEW);
 
   useEffect(() => {
@@ -52,10 +53,16 @@ export const Results = ({ open, selectedStage }: Props) => {
     );
   }, []);
 
-  if (overviewData?.resultsByStage.length === 0 && open) {
+  if (
+    ((currentView === ViewType.OVERVIEW &&
+      overviewData?.resultsByStage.length === 0) ||
+      (currentView === ViewType.LOBBY &&
+        lobbyData?.lobbyResultsByStage.length === 0)) &&
+    open
+  ) {
     return (
       <StyledResultsContainer show={open}>
-        <NoDataAdded />
+        <NoDataAdded tournamentEndDate={tournamentEndDate} />
       </StyledResultsContainer>
     );
   }

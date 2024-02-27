@@ -1,18 +1,21 @@
+import { AxiosError } from "axios";
 import { Suspense, useCallback, useRef, useState } from "react";
 import { useMutation } from "urql";
+import { OnlyWebmaster } from "../../../components/AuthContainer/AuthContainer";
 import { ProTFTButton } from "../../../components/Button/Button";
-import { StyledHorizontalContainer } from "../../../components/Layout/HorizontalContainer/HorizontalContainer.styled";
 import { TextIconHorizontalContainer } from "../../../components/Layout/HorizontalContainer/TextIconHorizontalContainer.styled";
 import { SearchField } from "../../../components/SearchFilterBar/SearchField";
 import { client } from "../../../hooks/useAuth";
 import { PlayersListSkeleton } from "../../Players/PlayersList/PlayersList.skeleton";
-import { BulkPlayerDialog } from "../Components/Dialogs/BulkPlayerDialog/BulkPlayerDialog";
+import { StyledAdminBar } from "../Components/AdminBar/AdminBar.styled";
+import { FileDialog } from "../Components/Dialogs/FileDialog/FileDialog";
 import {
   MergePlayerDialog,
   MergePlayerParameters,
 } from "../Components/Dialogs/MergePlayerDialog/MergePlayerDialog";
 import { useToast } from "../Components/Toast/Toast";
 import { StyledContainer } from "./AdminPlayers.styled";
+import { DryRunDialog, DryRunProps } from "./DryRunDialog";
 import { PlayerList } from "./PlayerList/PlayerList";
 import {
   MergePlayerResult,
@@ -20,14 +23,24 @@ import {
   MERGE_PLAYER_MUTATION,
 } from "./queries";
 
+export const ADMIN_PLAYERS_PATH = "/admin/players";
+
 export const AdminPlayers = () => {
   const [searchQuery, setSearchQuery] = useState("");
+  const [dryRunData, setDryRunData] = useState<
+    Pick<DryRunProps, "newPlayers" | "repeatedPlayers">
+  >({
+    newPlayers: [],
+    repeatedPlayers: [],
+  });
   const { show } = useToast();
   const playerDialogRef = useRef<HTMLDialogElement>(null);
   const playerFormRef = useRef<HTMLFormElement>(null);
 
   const mergeDialogRef = useRef<HTMLDialogElement>(null);
   const mergeFormRef = useRef<HTMLFormElement>(null);
+
+  const dryRunDialogRef = useRef<HTMLDialogElement>(null);
 
   const [, mergePlayer] = useMutation<MergePlayerResult, MergePlayerVariables>(
     MERGE_PLAYER_MUTATION
@@ -40,8 +53,19 @@ export const AdminPlayers = () => {
     const formData = new FormData();
     formData.append("file", file.item(0)!);
     formData.append("dryRun", String(dryRun));
-    const response = await client.postForm("/players/uploadBulk", formData);
-    return response;
+    try {
+      const response = await client.postForm("/players/uploadBulk", formData);
+      if (dryRun) {
+        setDryRunData(response.data);
+        dryRunDialogRef.current?.showModal();
+        return;
+      }
+      return response;
+    } catch (error: unknown) {
+      const axiosError = (error as AxiosError<{ message: string }>).response
+        ?.data.message;
+      alert(axiosError);
+    }
   }, []);
 
   const onSubmitMergePlayer = useCallback(
@@ -65,7 +89,7 @@ export const AdminPlayers = () => {
         console.log(result?.data);
       }
       if (result?.status !== 201) {
-        return alert(result?.statusText);
+        return;
       }
       show();
       playerFormRef.current?.reset();
@@ -84,26 +108,30 @@ export const AdminPlayers = () => {
 
   return (
     <StyledContainer>
-      <StyledHorizontalContainer>
+      <StyledAdminBar>
         <SearchField
           placeholder="Search players"
           setSearchQuery={setSearchQuery}
         />
         <TextIconHorizontalContainer>
           <ProTFTButton onClick={onClickAddBulkPlayer}>Bulk Add</ProTFTButton>
-          <ProTFTButton onClick={onClickMergePlayer}>Merge</ProTFTButton>
+          <OnlyWebmaster>
+            <ProTFTButton onClick={onClickMergePlayer}>Merge</ProTFTButton>
+          </OnlyWebmaster>
         </TextIconHorizontalContainer>
-        <BulkPlayerDialog
+        <FileDialog
           dialogRef={playerDialogRef}
           formRef={playerFormRef}
           onSubmit={onSubmitBulkAddPlayer}
+          showDryRun
         />
         <MergePlayerDialog
           dialogRef={mergeDialogRef}
           formRef={mergeFormRef}
           onSubmit={onSubmitMergePlayer}
         />
-      </StyledHorizontalContainer>
+        <DryRunDialog dialogRef={dryRunDialogRef} {...dryRunData} />
+      </StyledAdminBar>
       <Suspense fallback={<PlayersListSkeleton />}>
         <PlayerList searchQuery={searchQuery} />
       </Suspense>

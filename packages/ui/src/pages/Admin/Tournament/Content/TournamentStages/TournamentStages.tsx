@@ -1,7 +1,5 @@
 import { Link, useParams } from "react-router-dom";
 import {
-  CreateStageResult,
-  CreateStageVariables,
   CREATE_STAGE_MUTATION,
   TournamentStageQueryResponse,
   TOURNAMENT_STAGES_QUERY,
@@ -9,8 +7,10 @@ import {
 import { useMutation, useQuery } from "urql";
 import { ProTFTButton } from "../../../../../components/Button/Button";
 import { useRef, useCallback } from "react";
-import { StageDialog } from "../../../Components/Dialogs/StageDialog/StageDialog";
-import { Stage } from "../../../../../graphql/schema";
+import {
+  DialogStage,
+  StageDialog,
+} from "../../../Components/Dialogs/StageDialog/StageDialog";
 import {
   StyledButtonBar,
   StyledStagesContainer,
@@ -18,6 +18,10 @@ import {
 import { StageCard } from "./StageCard/StageCard";
 import { useToast } from "../../../Components/Toast/Toast";
 import { StyledVerticalContainer } from "../../../../../components/Layout/VerticalContainer/VerticalContainer.styled";
+import {
+  CreateStageMutation,
+  CreateStageMutationVariables,
+} from "../../../../../gql/graphql";
 
 export const TournamentStages = () => {
   const { id: tournamentId } = useParams();
@@ -31,18 +35,20 @@ export const TournamentStages = () => {
     variables: { id: Number(tournamentId) },
   });
 
-  const [, createStage] = useMutation<CreateStageResult, CreateStageVariables>(
-    CREATE_STAGE_MUTATION
-  );
+  const [, createStage] = useMutation<
+    CreateStageMutation,
+    CreateStageMutationVariables
+  >(CREATE_STAGE_MUTATION);
 
   const networkRefetch = useCallback(() => refetch(), [refetch]);
 
   const onSubmit = useCallback(
-    async (stage: Omit<Stage, "id" | "rounds" | "lobbies">) => {
+    async (stage: DialogStage) => {
       const result = await createStage({
         ...stage,
+        startDateTime: stage.startDateTime ?? undefined,
         tournamentId: Number(tournamentId),
-        isFinal: false,
+        sequenceForResult: stage.sequenceForResult || stage.sequence,
       });
       if (result.error) {
         return alert(result.error);

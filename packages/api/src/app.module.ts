@@ -23,7 +23,17 @@ import { getDatabaseInfo } from "./config/dbConfig";
 import { getOrigin } from "./config/cors";
 import { TournamentResultsModule } from "./tournament-results/tournament-results.module";
 import { TournamentStreamsModule } from "./tournament-streams/tournament-streams.module";
-import { RatingModule } from './rating/rating.module';
+import { RatingModule } from "./rating/rating.module";
+import { PlayerLinksModule } from "./player-links/player-links.module";
+import { CircuitsModule } from "./circuits/circuits.module";
+import { PlayerAccountsModule } from "./player-accounts/player-accounts.module";
+import { ServersModule } from "./servers/servers.module";
+import { CacheModule } from "./cache/cache.module";
+import { ClsModule } from "nestjs-cls";
+import { APP_INTERCEPTOR } from "@nestjs/core";
+import { UserStoreInterceptor } from "./auth/interceptor/user-store.interceptor";
+import { BaseEntitySubscriber } from "./lib/BaseEntity.subscriber";
+import { SeedingModule } from "./seeding/seeding.module";
 
 @Module({
   imports: [
@@ -67,6 +77,10 @@ import { RatingModule } from './rating/rating.module';
         };
       },
     }),
+    ClsModule.forRoot({
+      global: true,
+      middleware: { mount: true },
+    }),
     SetsModule,
     TournamentsModule,
     StagesModule,
@@ -82,8 +96,21 @@ import { RatingModule } from './rating/rating.module';
     TournamentResultsModule,
     TournamentStreamsModule,
     RatingModule,
+    PlayerLinksModule,
+    CircuitsModule,
+    PlayerAccountsModule,
+    ServersModule,
+    CacheModule,
+    SeedingModule,
   ],
   controllers: [AppController],
-  providers: [AppService],
+  providers: [
+    AppService,
+    BaseEntitySubscriber,
+    {
+      provide: APP_INTERCEPTOR,
+      useClass: UserStoreInterceptor,
+    },
+  ],
 })
 export class AppModule {}

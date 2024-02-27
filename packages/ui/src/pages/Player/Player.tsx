@@ -11,6 +11,9 @@ import { Header } from "./Header/Header";
 import { Stats } from "./Stats/Stats";
 import { TourneyStats } from "./TourneyStats/TourneyStats";
 import { Helmet } from "react-helmet";
+import { Suspense, useMemo } from "react";
+import { StatsSkeleton } from "./Stats/Stats.skeleton";
+import { byIso } from "country-code-lookup";
 
 export const Player = () => {
   const { playerSlug } = useParams();
@@ -24,13 +27,22 @@ export const Player = () => {
     variables: { playerId: Number(playerSlug?.split("-")[0]) },
   });
 
+  const description = useMemo(() => {
+    const { name, country, region } = data?.playerBySlug ?? {};
+    const playerCountry = byIso(country ?? "") || "No Country representation";
+    return `${name} is a competitive Teamfight Tactics (TFT) player, native from ${playerCountry}, who plays in the ${region} region`;
+  }, [data?.playerBySlug]);
+
   return (
     <StyledPageContainer>
       <Helmet>
         <title>{data?.playerBySlug.name || "Loading"}</title>
+        <meta name="description" content={description} />
       </Helmet>
       <Header player={data?.playerBySlug} />
-      <Stats player={data?.playerBySlug} />
+      <Suspense fallback={<StatsSkeleton />}>
+        <Stats playerId={data?.playerBySlug.id} />
+      </Suspense>
       <TourneyStats tournaments={tournamentData?.tournamentsPlayed} />
     </StyledPageContainer>
   );

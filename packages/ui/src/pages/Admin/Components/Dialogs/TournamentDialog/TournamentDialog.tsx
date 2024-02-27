@@ -3,7 +3,7 @@ import { FormFieldProps } from "../../DialogForm/FormField";
 import { BaseDialogProps } from "../Dialogs.types";
 import { useEntityDialog } from "../useEntityDialog";
 
-const SET_OPTIONS = [
+export const SET_OPTIONS = [
   {
     value: "1",
     name: "1 - Beta",
@@ -35,6 +35,14 @@ const SET_OPTIONS = [
   {
     value: "8",
     name: "8 - Monsters Attack!",
+  },
+  {
+    value: "9",
+    name: "9 - Runeterra Reforged",
+  },
+  {
+    value: "10",
+    name: "10 - Remix Rumble",
   },
 ];
 

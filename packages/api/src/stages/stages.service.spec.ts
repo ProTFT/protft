@@ -30,7 +30,7 @@ describe("Stages service", () => {
       find: jest.fn(),
       save: jest.fn(),
       update: jest.fn(),
-      delete: jest.fn(),
+      softDelete: jest.fn(),
       manager: {
         createQueryBuilder: jest.fn().mockReturnThis(),
         select: jest.fn().mockReturnThis(),
@@ -39,6 +39,8 @@ describe("Stages service", () => {
         andWhere: jest.fn().mockReturnThis(),
         orWhere: jest.fn().mockReturnThis(),
         innerJoin: jest.fn().mockReturnThis(),
+        distinct: jest.fn().mockReturnThis(),
+        leftJoin: jest.fn().mockReturnThis(),
         getRawMany: jest.fn().mockResolvedValue(databaseResult),
       },
     } as unknown as Repository<Stage>;
@@ -210,7 +212,9 @@ describe("Stages service", () => {
     it("should delete", async () => {
       const response = await service.deleteOne(mockStageId);
 
-      expect(stageRepository.delete).toHaveBeenCalledWith({ id: mockStageId });
+      expect(stageRepository.softDelete).toHaveBeenCalledWith({
+        id: mockStageId,
+      });
       expect(response).toStrictEqual(new DeleteResponse(mockStageId));
     });
   });
@@ -355,6 +359,32 @@ describe("Stages service", () => {
     it("should get static data", () => {
       const response = service.findTiebreakers();
       expect(response).toStrictEqual(getAll());
+    });
+  });
+
+  describe("applyTiebreakersToAll", () => {
+    it("should save all related stages", async () => {
+      const mockOtherStageId = 345;
+      const mockAnotherStageId = 678;
+      const tiebreakers = [1, 2, 3];
+
+      stageRepository.findOne = jest.fn().mockResolvedValue({
+        tournamentId: mockTournamentId,
+        tiebreakers,
+      });
+      stageRepository.find = jest
+        .fn()
+        .mockResolvedValue([
+          { id: mockStageId },
+          { id: mockOtherStageId },
+          { id: mockAnotherStageId },
+        ]);
+      await service.applyTiebreakersToAll({ stageId: mockStageId });
+      expect(stageRepository.save).toHaveBeenCalledWith([
+        { id: mockStageId, tiebreakers },
+        { id: mockOtherStageId, tiebreakers },
+        { id: mockAnotherStageId, tiebreakers },
+      ]);
     });
   });
 });

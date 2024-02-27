@@ -13,11 +13,15 @@ import { PlayerFilterMeta } from "./dto/get-player-filter-meta.out";
 import { GetPlayerArgs } from "./dto/get-players.args";
 import { Player, PlayerCalculatedStats } from "./player.entity";
 import { PlayersService } from "./players.service";
-import { UseGuards } from "@nestjs/common";
+import { UseGuards, UseInterceptors } from "@nestjs/common";
 import { GqlJwtAuthGuard } from "../auth/jwt-auth.guard";
 import { GetPlayerStatsArgs } from "./dto/get-player-stats.args";
 import { TournamentsPlayed } from "./dto/get-tournaments-played.out";
 import { UpdatePlayerArgs } from "./dto/update-player.args";
+import { PlayerLink } from "../player-links/player-link.entity";
+import { CacheInterceptor } from "../cache/cache.interceptor";
+import { CacheKey } from "../cache/cache-key.decorator";
+import { ExtractPlayerCacheKeyFromRequest } from "./players.cache";
 
 @Resolver(() => Player)
 export class PlayersResolver extends BaseResolver {
@@ -39,9 +43,11 @@ export class PlayersResolver extends BaseResolver {
     @Args() { region, country, take, skip, searchQuery }: GetPlayerArgs,
   ) {
     const filters = this.cleanGraphQLFilters({ region, country, searchQuery });
-    return this.playersService.findAll(filters, { take, skip }, { id: "DESC" });
+    return this.playersService.findAll(filters, { take, skip });
   }
 
+  @CacheKey(ExtractPlayerCacheKeyFromRequest)
+  @UseInterceptors(CacheInterceptor)
   @Query(() => Player)
   async player(@Args("id", { type: () => Int }) id: number) {
     return this.playersService.findOne(id);
@@ -70,6 +76,13 @@ export class PlayersResolver extends BaseResolver {
     @Args() { setId, tournamentId }: GetPlayerStatsArgs,
   ): Promise<PlayerCalculatedStats> {
     return this.playersService.getPlayerStats(player, setId, tournamentId);
+  }
+
+  @CacheKey(ExtractPlayerCacheKeyFromRequest)
+  @UseInterceptors(CacheInterceptor)
+  @ResolveField()
+  async links(@Parent() player: Player): Promise<PlayerLink[]> {
+    return this.playersService.findLinks(player.id);
   }
 
   @Query(() => [TournamentsPlayed])
@@ -104,7 +117,7 @@ export class PlayersResolver extends BaseResolver {
     return this.playersService.deleteOne(id);
   }
 
-  // @UseGuards(GqlJwtAuthGuard)
+  @UseGuards(GqlJwtAuthGuard)
   @Mutation(() => Player)
   async mergePlayer(
     @Args("playerIdToMaintain", { type: () => Int }) playerIdToMaintain: number,

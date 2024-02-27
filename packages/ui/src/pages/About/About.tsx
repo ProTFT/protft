@@ -1,4 +1,5 @@
 import { Helmet } from "react-helmet";
+import { S3_FOLDER_PATH } from "../../aws/Constants";
 import { useIsMobile } from "../../hooks/useIsMobile";
 import {
   StyledContainer,
@@ -22,7 +23,10 @@ export const About = () => {
       </Helmet>
       <StyledHeader>
         {!isMobile && (
-          <StyledTournamentImage src={`/sets/7.webp`} alt={"TFT"} />
+          <StyledTournamentImage
+            src={`${S3_FOLDER_PATH}/sets/7.webp`}
+            alt={"TFT"}
+          />
         )}
         <StyledHeaderContent>
           <StyledTitle>A hub for TFT Esports</StyledTitle>

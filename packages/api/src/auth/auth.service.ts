@@ -3,7 +3,7 @@ import { UsersService } from "../users/users.service";
 import { JwtService } from "@nestjs/jwt";
 import { Response } from "express";
 import { compare } from "bcrypt";
-import { User } from "../users/user.entity";
+import { Roles, User } from "../users/user.entity";
 
 export type StrippedUser = Pick<User, "id" | "user">;
 
@@ -33,8 +33,12 @@ export class AuthService {
     return null;
   }
 
-  public async login({ user, id }: StrippedUser, res: Response) {
-    const payload = { username: user, sub: id };
+  public async login(
+    { user, id }: StrippedUser,
+    res: Response,
+  ): Promise<[Response, User]> {
+    const dbUser = await this.usersService.findOne(user);
+    const payload = { username: user, sub: id, roles: dbUser.roles };
     const token = this.jwtService.sign(payload);
     res.cookie(this.COOKIE_NAME, token, {
       httpOnly: true,
@@ -42,7 +46,7 @@ export class AuthService {
       signed: true,
       secure: true,
     });
-    return res;
+    return [res, dbUser];
   }
 
   public async logout(res: Response) {
@@ -50,11 +54,19 @@ export class AuthService {
     return res;
   }
 
-  public async signin(username: string, password: string) {
+  public async signin({
+    username,
+    password,
+    roles,
+  }: {
+    username: string;
+    password: string;
+    roles: Roles[];
+  }) {
     const userAlreadyExists = await this.usersService.findOne(username);
     if (userAlreadyExists) {
       throw new BadRequestException();
     }
-    return await this.usersService.createOne(username, password);
+    return await this.usersService.createOne(username, password, roles);
   }
 }
