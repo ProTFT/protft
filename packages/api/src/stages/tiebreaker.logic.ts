@@ -152,6 +152,11 @@ export const tiebreakerMap: { [key in SortingMethods]: Tiebreaker } = {
     description: "Most top fours + first places",
     order: 30,
   },
+  [SortingMethods.TOTAL_EVENT_TOP_FOURS_PLUS_FIRST]: {
+    id: 30,
+    description: "Total Event Most top fours + first places",
+    order: 31,
+  },
 };
 
 export const getAll = () =>

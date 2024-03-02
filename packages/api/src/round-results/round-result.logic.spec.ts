@@ -33,6 +33,7 @@ import {
   sortByTotalEventSixthPosition,
   sortByTotalEventThirdPosition,
   sortByTotalEventTopFour,
+  sortByTotalTopFourPlusFirsts,
   SortingMethods,
   sortResults,
 } from "./round-result.logic";
@@ -816,6 +817,40 @@ describe("Sorting with tie breakers", () => {
       expect(
         sortByTopFourPlusFirsts(eightTopFoursAndOnes, eightTopFoursAndOnes),
       ).toBe(0);
+    });
+  });
+
+  describe("sort by total event most top fours and top 1s combined", () => {
+    const bestNowWorstOverall = generatePlayerWithPastResults(
+      [1, 2, 3],
+      0,
+      [8, 8, 8, 8, 8, 8],
+    );
+    const worstNowBestOverall = generatePlayerWithPastResults(
+      [8, 8, 8],
+      0,
+      [1, 2, 3, 4, 1, 2],
+    );
+    const middle = generatePlayerWithPastResults(
+      [1, 2, 3],
+      0,
+      [4, 8, 8, 6, 6, 6],
+    );
+
+    it("should be negative if a has higher placement than b", () => {
+      expect(
+        sortByTotalTopFourPlusFirsts(worstNowBestOverall, bestNowWorstOverall),
+      ).toBeLessThan(0);
+    });
+
+    it("should be positive if b has higher placement than a", () => {
+      expect(
+        sortByTotalTopFourPlusFirsts(bestNowWorstOverall, middle),
+      ).toBeGreaterThan(0);
+    });
+
+    it("should be zero if both players had the same position", () => {
+      expect(sortByTotalTopFourPlusFirsts(middle, middle)).toBe(0);
     });
   });
 
