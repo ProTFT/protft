@@ -31,7 +31,7 @@ export enum SortingMethods {
   TOTAL_EVENT_SIXTH_PLACE = 27,
   TOTAL_EVENT_SEVENTH_PLACE = 28,
   TOP_FOURS_PLUS_FIRST = 29,
-  TOTAL_EVENT_TOP_FOURS_PLUS_DOUBLE_FIRST = 30,
+  TOTAL_EVENT_TOP_FOURS_PLUS_FIRST = 30,
 }
 
 export const SortingMethodsNeedPastResults = [
@@ -46,7 +46,7 @@ export const SortingMethodsNeedPastResults = [
   SortingMethods.TOTAL_EVENT_FIFTH_PLACE,
   SortingMethods.TOTAL_EVENT_SIXTH_PLACE,
   SortingMethods.TOTAL_EVENT_SEVENTH_PLACE,
-  SortingMethods.TOTAL_EVENT_TOP_FOURS_PLUS_DOUBLE_FIRST,
+  SortingMethods.TOTAL_EVENT_TOP_FOURS_PLUS_FIRST,
 ];
 
 // b - a, if MORE = highest position
@@ -308,16 +308,7 @@ export const sortByTopFourPlusFirsts = (a: PlayerResults, b: PlayerResults) =>
   (a.positions.filter((p) => p <= 4).length +
     a.positions.filter((p) => p === 1).length);
 
-export const sortByTopFourPlusDoubleFirsts = (
-  a: PlayerResults,
-  b: PlayerResults,
-) =>
-  b.positions.filter((p) => p <= 4).length +
-  b.positions.filter((p) => p === 1).length * 2 -
-  (a.positions.filter((p) => p <= 4).length +
-    a.positions.filter((p) => p === 1).length * 2);
-
-export const sortByTotalTopFourPlusDoubleFirsts = (
+export const sortByTotalTopFourPlusFirsts = (
   a: PlayerResultsWithPast,
   b: PlayerResultsWithPast,
 ) => {
@@ -329,7 +320,7 @@ export const sortByTotalTopFourPlusDoubleFirsts = (
     ...b,
     positions: [...b.pastPositions, ...b.positions],
   };
-  return sortByTopFourPlusDoubleFirsts(aWithAllPositions, bWithAllPositions);
+  return sortByTopFourPlusFirsts(aWithAllPositions, bWithAllPositions);
 };
 
 interface PastPoints {
@@ -374,8 +365,8 @@ export const sortingMethods: {
   [SortingMethods.TOTAL_EVENT_SIXTH_PLACE]: sortByTotalEventSixthPosition,
   [SortingMethods.TOTAL_EVENT_SEVENTH_PLACE]: sortByTotalEventSeventhPosition,
   [SortingMethods.TOP_FOURS_PLUS_FIRST]: sortByTopFourPlusFirsts,
-  [SortingMethods.TOTAL_EVENT_TOP_FOURS_PLUS_DOUBLE_FIRST]:
-    sortByTotalTopFourPlusDoubleFirsts,
+  [SortingMethods.TOTAL_EVENT_TOP_FOURS_PLUS_FIRST]:
+    sortByTotalTopFourPlusFirsts,
 };
 
 export interface PlayerResultsWithPast extends PlayerResults {
